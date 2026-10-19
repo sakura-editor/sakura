@@ -1078,10 +1078,7 @@ int CGrepAgent::DoGrepFile(
 	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	int		nHitCount;
 	LONGLONG	nLine;
-	const wchar_t*	pszRes; // 2002/08/29 const付加
 	ECodeType	nCharCode;
-	const wchar_t*	pCompareData; // 2002/08/29 const付加
-	int		nColumn;
 	BOOL	bOutFileName;
 	bOutFileName = FALSE;
 	CEol	cEol;
@@ -1226,20 +1223,16 @@ int CGrepAgent::DoGrepFile(
 		/* 検索条件が長さゼロの場合はファイル名だけ返す */
 		// 2002/08/29 ファイルオープンの手前へ移動
 	
-		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
-		if( sSearchOption.bWordOnly ){
-			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
-		}
+		const CLineMatchFinder finder( pattern, pRegexp );
 
 		// 注意 : cfl.ReadLine が throw する可能性がある
 		while( RESULT_FAILURE != cfl.ReadLine( &cUnicodeBuffer, &cEol ) )
 		{
 			const wchar_t*	pLine = cUnicodeBuffer.GetStringPtr();
-			int		nLineLen = cUnicodeBuffer.GetStringLength();
+			const int	nLineLen = cUnicodeBuffer.GetStringLength();
 
 			nEolCodeLen = cEol.GetLen();
 			++nLine;
-			pCompareData = pLine;
 
 			/* 処理中のユーザー操作を可能にする */
 			// 2010.08.31 間隔を1/32にする
@@ -1279,147 +1272,34 @@ int CGrepAgent::DoGrepFile(
 			int nHitOldLine = nHitCount;
 			int nHitCountOldLine = *pnHitCount;
 
-			/* 正規表現検索 */
-			if( sSearchOption.bRegularExp ){
-				int nIndex = 0;
-#ifdef _DEBUG
-				int nIndexPrev = -1;
-#endif
-
-				//	Jun. 21, 2003 genta ループ条件見直し
-				//	マッチ箇所を1行から複数検出するケースを標準に，
-				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-				//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
-				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-				// 2010.08.25 行頭以外で^にマッチする不具合の修正
-				while( nIndex <= nLineLen && pRegexp->Match( pLine, nLineLen, nIndex ) ){
-
-					//	パターン発見
-					nIndex = pRegexp->GetIndex();
-					int matchlen = pRegexp->GetMatchLen();
-#ifdef _DEBUG
-					if( nIndex <= nIndexPrev ){
-						MYTRACE( L"ERROR: CEditView::DoGrepFile() nIndex <= nIndexPrev break \n" );
-						break;
-					}
-					nIndexPrev = nIndex;
-#endif
-					++nHitCount;
-					++(*pnHitCount);
-					if( sGrepOption.nGrepOutputLineType != 2 ){
-						OutputPathInfo(
-							cmemMessage, sGrepOption,
-							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-							bOutputBaseFolder, bOutputFolderName, bOutFileName
-						);
-						SetGrepResult(
-							cmemMessage, pszDispFilePath, pszCodeName,
-							nLine, nIndex + 1, pLine, nLineLen, nEolCodeLen,
-							pLine + nIndex, matchlen, sGrepOption
-						);
-					}
-					// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
-						break;
-					}
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					if( matchlen <= 0 ){
-						matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
-						if( matchlen <= 0 ){
-							matchlen = 1;
-						}
-					}
-					nIndex += matchlen;
-				}
-			}
-			/* 単語のみ検索 */
-			else if( sSearchOption.bWordOnly ){
-				/*
-					2002/02/23 Norio Nakatani
-					単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
-					英単語やC/C++識別子などの検索条件ならヒットします。
-
-					2002/03/06 YAZAKI
-					Grepにも試験導入。
-					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
-				*/
-				int nMatchLen;
-				int nIdx = 0;
-				// Jun. 26, 2003 genta 無駄なwhileは削除
-				while( ( pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ) != nullptr ){
-					nIdx = int(pszRes - pLine + nMatchLen);
-					++nHitCount;
-					++(*pnHitCount);
-					if( sGrepOption.nGrepOutputLineType != 2 ){
-						OutputPathInfo(
-							cmemMessage, sGrepOption,
-							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-							bOutputBaseFolder, bOutputFolderName, bOutFileName
-						);
-						SetGrepResult(
-							cmemMessage, pszDispFilePath, pszCodeName,
-							//	Jun. 25, 2002 genta
-							//	桁位置は1始まりなので1を足す必要がある
-							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
-							pszRes, nMatchLen, sGrepOption
-						);
-					}
-
-					// 2010.10.31 ryoji 行単位で出力する場合は1つ見つかれば十分
-					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
-						break;
-					}
-				}
-			}
-			else {
-				/* 文字列検索 */
-				int nColumnPrev = 0;
-				//	Jun. 21, 2003 genta ループ条件見直し
-				//	マッチ箇所を1行から複数検出するケースを標準に，
-				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-				//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
-				for (;;) {
-					pszRes = CSearchAgent::SearchString(
-						pCompareData,
-						nLineLen,
-						0,
-						pattern
+			/* 一致を探す(正規表現・単語単位・文字列) */
+			//	Jun. 21, 2003 genta ループ条件見直し
+			//	マッチ箇所を1行から複数検出するケースを標準に，
+			//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
+			//	ループ継続・打ち切り条件(nGrepOutputLineType)を逆にした．
+			int nStart = 0;
+			while( const auto match = finder.Find( pLine, nLineLen, nStart ) ){
+				++nHitCount;
+				++(*pnHitCount);
+				if( sGrepOption.nGrepOutputLineType != 2 ){
+					OutputPathInfo(
+						cmemMessage, sGrepOption,
+						pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
+						bOutputBaseFolder, bOutputFolderName, bOutFileName
 					);
-					if(!pszRes)break;
-
-					nColumn = int(pszRes - pCompareData + 1);
-
-					++nHitCount;
-					++(*pnHitCount);
-					if( sGrepOption.nGrepOutputLineType != 2 ){
-						OutputPathInfo(
-							cmemMessage, sGrepOption,
-							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-							bOutputBaseFolder, bOutputFolderName, bOutFileName
-						);
-						SetGrepResult(
-							cmemMessage, pszDispFilePath, pszCodeName,
-							nLine, nColumn + nColumnPrev, pCompareData, nLineLen, nEolCodeLen,
-							pszRes, nKeyLen, sGrepOption
-						);
-					}
-
-					//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
-					if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
-						break;
-					}
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColumn += nKeyLen - 1;
-					pCompareData += nPosDiff;
-					nLineLen -= nPosDiff;
-					nColumnPrev += nPosDiff;
+					//	Jun. 25, 2002 genta 桁位置は1始まりなので1を足す
+					SetGrepResult(
+						cmemMessage, pszDispFilePath, pszCodeName,
+						nLine, match->nIndex + 1, pLine, nLineLen, nEolCodeLen,
+						pLine + match->nIndex, match->nLength, sGrepOption
+					);
 				}
+				//	Jun. 21, 2003 genta 行単位で出力する場合は1つ見つかれば十分
+				if ( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ) {
+					break;
+				}
+				//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
+				nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
 			}
 			// 2014.09.23 否ヒット行を出力
 			if( sGrepOption.nGrepOutputLineType == 2 ){
@@ -1607,8 +1487,8 @@ int CGrepAgent::DoGrepReplaceFile(
 	bool&					bOutputFolderName	//!< [i/o] フォルダー名を出力したか
 )
 {
-	// 構造体にまとめた引数を、本体で使ってきた名前で受ける
-	const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
+	// 構造体にまとめた引数を、本体で使ってきた名前で受ける(検索語は使わない)
+	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
 	auto& [pcViewDst, pcDlgCancel, pnHitCount, cmemMessage, cUnicodeBuffer, bOutputBaseFolder] = out;
 	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	LONGLONG	nLine = 0;
@@ -1618,7 +1498,6 @@ int CGrepAgent::DoGrepReplaceFile(
 	CEol	cEol;
 	int		nEolCodeLen;
 	int		nOldPercent = 0;
-	auto nKeyLen = int(wcslen(pszKey));
 	const WCHAR*	pszCodeName = L"";
 
 	const STypeConfigMini* type = nullptr;
@@ -1658,10 +1537,7 @@ int CGrepAgent::DoGrepReplaceFile(
 		}
 		int nOutputHitCount = 0;
 
-		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords;
-		if( sSearchOption.bWordOnly ){
-			CSearchAgent::CreateWordList( searchWords, pszKey, nKeyLen );
-		}
+		const CLineMatchFinder finder( pattern, pRegexp );
 
 		CNativeW cOutBuffer;
 		// 注意 : cfl.ReadLine が throw する可能性がある
@@ -1707,24 +1583,12 @@ int CGrepAgent::DoGrepReplaceFile(
 				bOutput = false;
 			}
 
-			/* 正規表現検索 */
-			if( sSearchOption.bRegularExp ){
-				int nIndex = 0;
-				int nIndexOld = nIndex;
-				int nMatchNum = 0;
-				//	Jun. 21, 2003 genta ループ条件見直し
-				//	マッチ箇所を1行から複数検出するケースを標準に，
-				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-				//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-				//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
-				// From Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-				// 2010.08.25 行頭以外で^にマッチする不具合の修正
-				while( nIndex <= nLineLen &&
-					(( !sGrepOption.bGrepPaste && (nMatchNum = pRegexp->Replace( pLine, nLineLen, nIndex ))) || 
-					( sGrepOption.bGrepPaste && pRegexp->Match( pLine, nLineLen, nIndex ))) ){
+			/* 正規表現(貼り付けなし) */
+			if( sSearchOption.bRegularExp && !sGrepOption.bGrepPaste ){
+				// gオプションで行末まで一度に置換する
+				if( const int nMatchNum = pRegexp->Replace( pLine, nLineLen, 0 ) ){
 					//	パターン発見
-					nIndex = pRegexp->GetIndex();
-					int matchlen = pRegexp->GetMatchLen();
+					const int nIndex = pRegexp->GetIndex();
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -1736,62 +1600,23 @@ int CGrepAgent::DoGrepReplaceFile(
 							cmemMessage, pszDispFilePath, pszCodeName,
 							nLine, nIndex + 1,
 							pLine, nLineLen, nEolCodeLen,
-							pLine + nIndex, matchlen,
+							pLine + nIndex, pRegexp->GetMatchLen(),
 							sGrepOption
 						);
-						// To Here 2005.03.19 かろと もはやBREGEXP構造体に直接アクセスしない
-						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
-							bOutput = false;
-						}
 					}
 					output.OutputHead();
-					++nHitCount;
-					++(*pnHitCount);
-					if( !sGrepOption.bGrepPaste ){
-						// gオプションでは行末まで一度に置換済み
-						nHitCount += nMatchNum - 1;
-						*pnHitCount += nMatchNum - 1;
-						cOutBuffer.AppendString( pRegexp->GetString(), pRegexp->GetStringLen() );
-						nIndexOld = nLineLen;
-						break;
-					}
-					if( 0 < nIndex - nIndexOld ){
-						cOutBuffer.AppendString( &pLine[nIndexOld], nIndex - nIndexOld );
-					}
-					cOutBuffer.AppendNativeData( cmGrepReplace );
-					//	探し始める位置を補正
-					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					if( matchlen <= 0 ){
-						matchlen = CNativeW::GetSizeOfChar( pLine, nLineLen, nIndex );
-						if( matchlen <= 0 ){
-							matchlen = 1;
-						}
-					}
-					nIndex += matchlen;
-					nIndexOld = nIndex;
-				}
-				if( 0 < nLineLen - nIndexOld ){
-					cOutBuffer.AppendString( &pLine[nIndexOld], nLineLen - nIndexOld );
+					nHitCount += nMatchNum;
+					*pnHitCount += nMatchNum;
+					cOutBuffer.AppendString( pRegexp->GetString(), pRegexp->GetStringLen() );
+				}else{
+					cOutBuffer.AppendString( pLine, nLineLen );
 				}
 			}
-			/* 単語のみ検索 */
-			else if( sSearchOption.bWordOnly ){
-				/*
-					2002/02/23 Norio Nakatani
-					単語単位のGrepを試験的に実装。単語はWhereCurrentWord()で判別してますので、
-					英単語やC/C++識別子などの検索条件ならヒットします。
-
-					2002/03/06 YAZAKI
-					Grepにも試験導入。
-					WhereCurrentWordで単語を抽出して、その単語が検索語とあっているか比較する。
-				*/
-				const wchar_t* pszRes;
-				int nMatchLen;
-				int nIdx = 0;
-				int nOutputPos = 0;
-				// Jun. 26, 2003 genta 無駄なwhileは削除
-				while ((pszRes = CSearchAgent::SearchStringWord(pLine, nLineLen, nIdx, searchWords, sSearchOption.bLoHiCase, &nMatchLen))) {
-					nIdx = int(pszRes - pLine + nMatchLen);
+			/* 一致を探して置き換える(正規表現で貼り付け・単語単位・文字列) */
+			else{
+				int nStart = 0;
+				int nCopyFrom = 0;	// 置換後の行に、まだ写していない部分の始まり
+				while( const auto match = finder.Find( pLine, nLineLen, nStart ) ){
 					if( bOutput ){
 						OutputPathInfo(
 							cmemMessage, sGrepOption,
@@ -1801,10 +1626,9 @@ int CGrepAgent::DoGrepReplaceFile(
 						/* Grep結果を、cmemMessageに格納する */
 						SetGrepResult(
 							cmemMessage, pszDispFilePath, pszCodeName,
-							//	Jun. 25, 2002 genta
-							//	桁位置は1始まりなので1を足す必要がある
-							nLine, int(pszRes - pLine + 1), pLine, nLineLen, nEolCodeLen,
-							pszRes, nMatchLen,
+							nLine, match->nIndex + 1,
+							pLine, nLineLen, nEolCodeLen,
+							pLine + match->nIndex, match->nLength,
 							sGrepOption
 						);
 						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
@@ -1814,62 +1638,17 @@ int CGrepAgent::DoGrepReplaceFile(
 					output.OutputHead();
 					++nHitCount;
 					++(*pnHitCount);
-					if( 0 < pszRes - pLine - nOutputPos ){
-						cOutBuffer.AppendString( &pLine[nOutputPos], pszRes - pLine - nOutputPos );
-					}
+					// 一致の前の部分を写す(一致が写し始める位置より前なら写さない)
+					cOutBuffer.AppendString( &pLine[nCopyFrom], std::max( 0, match->nIndex - nCopyFrom ) );
 					cOutBuffer.AppendNativeData( cmGrepReplace );
-					nOutputPos = int(pszRes - pLine + nMatchLen);
-				}
-				cOutBuffer.AppendString( &pLine[nOutputPos], nLineLen - nOutputPos );
-			}
-			else {
-				/* 文字列検索 */
-				int nColumnPrev = 0;
-				const wchar_t*	pCompareData = pLine;
-				int nCompareLen = nLineLen;
-				//	Jun. 21, 2003 genta ループ条件見直し
-				//	マッチ箇所を1行から複数検出するケースを標準に，
-				//	マッチ箇所を1行から1つだけ検出する場合を例外ケースととらえ，
-				//	ループ継続・打ち切り条件(bGrepOutputLine)を逆にした．
-				for(;;){
-					const wchar_t* pszRes = CSearchAgent::SearchString( pCompareData, nCompareLen, 0, pattern );
-					if(!pszRes)break;
-
-					auto nColumn = int(pszRes - pCompareData);
-					if( bOutput ){
-						OutputPathInfo(
-							cmemMessage, sGrepOption,
-							pszFullPath, pszBaseFolder, pszFolder, pszRelPath, pszCodeName,
-							bOutputBaseFolder, bOutputFolderName, bOutFileName
-						);
-						/* Grep結果を、cmemMessageに格納する */
-						SetGrepResult(
-							cmemMessage, pszDispFilePath, pszCodeName,
-							nLine, nColumn + nColumnPrev + 1, pLine, nLineLen, nEolCodeLen,
-							pszRes, nKeyLen,
-							sGrepOption
-						);
-						if( sGrepOption.nGrepOutputLineType != 0 || sGrepOption.bGrepOutputFileOnly ){
-							bOutput = false;
-						}
-					}
-					output.OutputHead();
-					++nHitCount;
-					++(*pnHitCount);
-					if( nColumn ){
-						cOutBuffer.AppendString( pCompareData, nColumn );
-					}
-					cOutBuffer.AppendNativeData( cmGrepReplace );
-					//	探し始める位置を補正
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	nClom : マッチ位置
-					//	matchlen : マッチした文字列の長さ
-					int nPosDiff = nColumn + nKeyLen;
-					pCompareData += nPosDiff;
-					nCompareLen -= nPosDiff;
-					nColumnPrev += nPosDiff;
+					//	長さ 0 の一致では、写し始める位置も探し始める位置と一緒に 1 文字進む(#2743 の 4。今の動きのまま)
+					nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
+					nCopyFrom = nStart;
 				}
-				cOutBuffer.AppendString( &pLine[nColumnPrev], nLineLen - nColumnPrev );
+				if( nCopyFrom < nLineLen ){
+					cOutBuffer.AppendString( &pLine[nCopyFrom], nLineLen - nCopyFrom );
+				}
 			}
 			output.AppendBuffer(cOutBuffer);
 

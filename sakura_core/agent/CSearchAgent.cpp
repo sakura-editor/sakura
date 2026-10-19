@@ -337,6 +337,53 @@ const wchar_t* CSearchAgent::SearchStringWord(
 	return nullptr;
 }
 
+CLineMatchFinder::CLineMatchFinder( const CSearchStringPattern& pattern, CBregexp* pRegexp )
+	: m_pPattern( &pattern )
+	, m_pRegexp( pRegexp )
+{
+	if( pattern.GetSearchOption().bWordOnly ){
+		CSearchAgent::CreateWordList( m_searchWords, pattern.GetKey(), pattern.GetLen() );
+	}
+}
+
+std::optional<SLineMatch> CLineMatchFinder::Find( const wchar_t* pLine, int nLineLen, int nStart ) const
+{
+	if( nLineLen < nStart ){
+		return std::nullopt;
+	}
+	const SSearchOption& sSearchOption = m_pPattern->GetSearchOption();
+	if( sSearchOption.bRegularExp ){
+		// 2010.08.25 行頭以外で^にマッチする不具合の修正(行の先頭を渡し、探し始める位置を別に渡す)
+		if( !m_pRegexp->Match( pLine, nLineLen, nStart ) ){
+			return std::nullopt;
+		}
+		return SLineMatch{ m_pRegexp->GetIndex(), m_pRegexp->GetMatchLen() };
+	}
+	if( sSearchOption.bWordOnly ){
+		int nMatchLen = 0;
+		const wchar_t* pszRes = CSearchAgent::SearchStringWord( pLine, nLineLen, nStart, m_searchWords, sSearchOption.bLoHiCase, &nMatchLen );
+		if( !pszRes ){
+			return std::nullopt;
+		}
+		return SLineMatch{ static_cast<int>(pszRes - pLine), nMatchLen };
+	}
+	const wchar_t* pszRes = CSearchAgent::SearchString( pLine, nLineLen, nStart, *m_pPattern );
+	if( !pszRes ){
+		return std::nullopt;
+	}
+	return SLineMatch{ static_cast<int>(pszRes - pLine), m_pPattern->GetLen() };
+}
+
+int CLineMatchFinder::GetNextStart( const wchar_t* pLine, int nLineLen, const SLineMatch& match )
+{
+	if( 0 < match.nLength ){
+		return match.nIndex + match.nLength;
+	}
+	// 2003.06.10 Moca 長さ 0 の一致は、同じ位置で何度も一致しないよう 1 文字進める
+	const int nCharLen = CNativeW::GetSizeOfChar( pLine, nLineLen, match.nIndex );
+	return match.nIndex + ( 0 < nCharLen ? nCharLen : 1 );
+}
+
 /* 現在位置の単語の範囲を調べる */
 // 2001/06/23 N.Nakatani WhereCurrentWord()変更 WhereCurrentWord_2をコールするようにした
 bool CSearchAgent::WhereCurrentWord(
