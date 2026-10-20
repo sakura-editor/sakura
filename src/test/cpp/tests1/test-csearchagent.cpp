@@ -1169,6 +1169,14 @@ TEST_F(CLineMatchFinderTest, WordStartInsideWord)
 	EXPECT_THAT(Find(L"foofoo foo", 1), ElementsAre(7, 3));
 }
 
+//! 単語単位: 探し始める位置を含む単語が検索語と同じなら、その単語の先頭を返す(探し始める位置より前でも)
+TEST_F(CLineMatchFinderTest, WordContainingStart)
+{
+	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
+	EXPECT_THAT(Find(L"foo foo", 1), ElementsAre(0, 3));
+	EXPECT_THAT(Find(L"foo foo", 3), ElementsAre(4, 3));
+}
+
 //! 正規表現: 1 行の中の一致をすべて探す
 TEST_F(CLineMatchFinderTest, RegexFindsEachMatch)
 {

@@ -139,7 +139,13 @@ public:
 	*/
 	CLineMatchFinder( const CSearchStringPattern& pattern, CBregexp* pRegexp );
 
-	//! nStart から後ろで最初の一致を探す。見つからなければ空
+	/*!
+		nStart から後ろで最初の一致を探す。見つからなければ空
+
+		単語単位では、nStart を含む単語から調べる。その単語が検索語の単語と同じなら、
+		単語の先頭を一致として返す(nStart より前のこともある)。
+		文書の中の検索で、カーソルが単語の途中にあるときに、その単語に一致させるため。
+	*/
 	std::optional<SLineMatch> Find( const wchar_t* pLine, int nLineLen, int nStart ) const;
 
 	//! 一致の次に探し始める位置。長さ 0 の一致なら 1 文字進める
