@@ -1,21 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Other Files">
-      <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
-      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
-    </Filter>
-    <Filter Include="Resource Files\images">
-      <UniqueIdentifier>{7740d8e5-2c5b-43b3-8180-f2cefab85f70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="C Source Files">
       <UniqueIdentifier>{6a236fae-9c81-4376-87fc-725f282ca48a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files">
       <UniqueIdentifier>{b6f61c8b-ac13-4987-9a99-2b7da1df0b64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\_main">
+      <UniqueIdentifier>{20477f14-fbc4-4df0-96a3-ba7108de6823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\_os">
+      <UniqueIdentifier>{b392279e-e61d-4ed2-bb30-df9bdd366896}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\agent">
       <UniqueIdentifier>{5155b2c1-f11d-4fa7-b5ca-8368cabe573a}</UniqueIdentifier>
@@ -23,8 +19,14 @@
     <Filter Include="Cpp Source Files\apiwrap">
       <UniqueIdentifier>{12de9474-c14e-43a8-ad81-11ec4f1e6a31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\basis">
+      <UniqueIdentifier>{14ca2a67-8e83-47fe-a304-a0a016184b57}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Cpp Source Files\charset">
       <UniqueIdentifier>{70f28734-d8bc-48ef-aaf0-faa1f27601d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\cmd">
+      <UniqueIdentifier>{0595cd15-40b1-4098-a613-dd41df2e4d6b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\config">
       <UniqueIdentifier>{9f07a45b-cdc5-4d3f-bdcd-16be1d8fe100}</UniqueIdentifier>
@@ -32,47 +34,14 @@
     <Filter Include="Cpp Source Files\convert">
       <UniqueIdentifier>{a66d8a4d-3e58-418f-8287-4c0b142d03c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\grep">
-      <UniqueIdentifier>{52380d76-5357-4ad3-8603-49c58a89276c}</UniqueIdentifier>
+    <Filter Include="Cpp Source Files\cxx">
+      <UniqueIdentifier>{83db0c05-0f12-4241-8ff8-1f4cec6ff190}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\io">
-      <UniqueIdentifier>{aee06311-846b-4d77-bf4d-a007eed7ca40}</UniqueIdentifier>
+    <Filter Include="Cpp Source Files\debug">
+      <UniqueIdentifier>{63e3f63a-d93c-4ada-844e-2ffbe35eb559}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\mem">
-      <UniqueIdentifier>{386f19de-1cd1-4146-b511-589eead7556e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\parse">
-      <UniqueIdentifier>{37e3a085-00ee-4ede-aec9-6e39a18844af}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\env">
-      <UniqueIdentifier>{60727dd6-67cb-4897-9c81-0226601f69ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\util">
-      <UniqueIdentifier>{2be12596-e832-4f04-8891-7e5c6cdaa15d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\basis">
-      <UniqueIdentifier>{14ca2a67-8e83-47fe-a304-a0a016184b57}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\typeprop">
-      <UniqueIdentifier>{77da7502-434b-468d-87d4-36d8380adbea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\types">
-      <UniqueIdentifier>{c5e0ce9f-a82c-4b4f-9ae8-3d2c4eee9e56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\view">
-      <UniqueIdentifier>{d9294bbd-b07c-4588-99a7-27e3fec6c323}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\view\colors">
-      <UniqueIdentifier>{21d6d944-986c-4116-92fb-e08f3ec32c0b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\view\figures">
-      <UniqueIdentifier>{bec39f09-f6c2-4c75-8502-79b5ba9180b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\prop">
-      <UniqueIdentifier>{1ab803c4-1521-4dc8-91d5-c37fa1a43306}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\recent">
-      <UniqueIdentifier>{66659d03-6eaf-45cc-b463-6b6e3331979d}</UniqueIdentifier>
+    <Filter Include="Cpp Source Files\dlg">
+      <UniqueIdentifier>{ff6fd676-e25b-46d9-a373-226df382d8ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\doc">
       <UniqueIdentifier>{c052a0e6-a544-431a-b4ff-4b91d9a69952}</UniqueIdentifier>
@@ -83,59 +52,59 @@
     <Filter Include="Cpp Source Files\doc\logic">
       <UniqueIdentifier>{241e79a0-4dbe-492f-b8c5-9fd911d4e388}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\macro">
-      <UniqueIdentifier>{ea97049b-340b-4481-8de3-41f5f1e539f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\dlg">
-      <UniqueIdentifier>{ff6fd676-e25b-46d9-a373-226df382d8ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\window">
-      <UniqueIdentifier>{59a7d494-3361-4997-8877-c66e7a3473ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Cpp Source Files\docplus">
       <UniqueIdentifier>{26846f98-18ea-4ef9-bcf0-67feff76dea8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Cpp Source Files\debug">
-      <UniqueIdentifier>{63e3f63a-d93c-4ada-844e-2ffbe35eb559}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\_main">
-      <UniqueIdentifier>{20477f14-fbc4-4df0-96a3-ba7108de6823}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\_os">
-      <UniqueIdentifier>{b392279e-e61d-4ed2-bb30-df9bdd366896}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\outline">
-      <UniqueIdentifier>{db617130-faf1-4171-94f3-677e3130560e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\func">
-      <UniqueIdentifier>{51f93de8-870e-4e97-b47b-42a88fb6ac68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\plugin">
-      <UniqueIdentifier>{5669a386-521c-49b4-abed-446bcd75e07c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\cmd">
-      <UniqueIdentifier>{0595cd15-40b1-4098-a613-dd41df2e4d6b}</UniqueIdentifier>
+    <Filter Include="Cpp Source Files\env">
+      <UniqueIdentifier>{60727dd6-67cb-4897-9c81-0226601f69ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\extmodule">
       <UniqueIdentifier>{8f308ded-1d7f-4015-a253-647de0e447d0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\func">
+      <UniqueIdentifier>{51f93de8-870e-4e97-b47b-42a88fb6ac68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\grep">
+      <UniqueIdentifier>{52380d76-5357-4ad3-8603-49c58a89276c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\io">
+      <UniqueIdentifier>{aee06311-846b-4d77-bf4d-a007eed7ca40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\macro">
+      <UniqueIdentifier>{ea97049b-340b-4481-8de3-41f5f1e539f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\mem">
+      <UniqueIdentifier>{386f19de-1cd1-4146-b511-589eead7556e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\outline">
+      <UniqueIdentifier>{db617130-faf1-4171-94f3-677e3130560e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\parse">
+      <UniqueIdentifier>{37e3a085-00ee-4ede-aec9-6e39a18844af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\plugin">
+      <UniqueIdentifier>{5669a386-521c-49b4-abed-446bcd75e07c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Cpp Source Files\print">
       <UniqueIdentifier>{8b893691-7710-41d8-81bc-4c9a3650da02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\prop">
+      <UniqueIdentifier>{1ab803c4-1521-4dc8-91d5-c37fa1a43306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\recent">
+      <UniqueIdentifier>{66659d03-6eaf-45cc-b463-6b6e3331979d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\typeprop">
+      <UniqueIdentifier>{77da7502-434b-468d-87d4-36d8380adbea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\types">
+      <UniqueIdentifier>{c5e0ce9f-a82c-4b4f-9ae8-3d2c4eee9e56}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\uiparts">
       <UniqueIdentifier>{930f3f82-ab3f-49e3-af4a-d4f9c2d51f46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pre-compiled Header">
-      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Generated Files">
-      <UniqueIdentifier>{b50fc2d7-a5f2-4b9f-af30-bf04dda44839}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\cxx">
-      <UniqueIdentifier>{83db0c05-0f12-4241-8ff8-1f4cec6ff190}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Cpp Source Files\util\os">
-      <UniqueIdentifier>{455493d8-e520-4f42-86bf-780a426fc2fe}</UniqueIdentifier>
+    <Filter Include="Cpp Source Files\util">
+      <UniqueIdentifier>{2be12596-e832-4f04-8891-7e5c6cdaa15d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Cpp Source Files\util\file">
       <UniqueIdentifier>{a76cabac-8045-444f-95ee-99914e06eea9}</UniqueIdentifier>
@@ -143,10 +112,74 @@
     <Filter Include="Cpp Source Files\util\format">
       <UniqueIdentifier>{d15ac9af-e9e5-4790-b727-661075a4abc7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\util\os">
+      <UniqueIdentifier>{455493d8-e520-4f42-86bf-780a426fc2fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\view">
+      <UniqueIdentifier>{d9294bbd-b07c-4588-99a7-27e3fec6c323}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\view\colors">
+      <UniqueIdentifier>{21d6d944-986c-4116-92fb-e08f3ec32c0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\view\figures">
+      <UniqueIdentifier>{bec39f09-f6c2-4c75-8502-79b5ba9180b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Cpp Source Files\window">
+      <UniqueIdentifier>{59a7d494-3361-4997-8877-c66e7a3473ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{b50fc2d7-a5f2-4b9f-af30-bf04dda44839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Other Files">
+      <UniqueIdentifier>{0eefa0df-ca7f-489c-9844-9a182e1dba18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pre-compiled Header">
+      <UniqueIdentifier>{7b508b25-349b-4d39-8fd2-d8e42ceafe83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5c65d7b0-dbc3-457b-b062-2662606d3160}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\images">
+      <UniqueIdentifier>{7740d8e5-2c5b-43b3-8180-f2cefab85f70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
-      <Filter>Generated Files</Filter>
+    <ClInclude Include="_main\CAppMode.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CCommandLine.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CControlProcess.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CControlTray.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CMutex.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CNormalProcess.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CProcess.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\CProcessFactory.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_main\global.h">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClInclude>
+    <ClInclude Include="_os\CClipboard.h">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClInclude>
+    <ClInclude Include="_os\CDropTarget.h">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClInclude>
+    <ClInclude Include="_os\OleTypes.h">
+      <Filter>Cpp Source Files\_os</Filter>
     </ClInclude>
     <ClInclude Include="..\build\$(Platform)\CMakeTools\Funccode_define.h">
       <Filter>Generated Files</Filter>
@@ -157,14 +190,83 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\resources\sakura.hh">
-      <Filter>Other Files</Filter>
+    <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\first_derived.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\load_string.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\lock_resource.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\ResourceHolder.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\TComImpl.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\FilePointer.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\MappedFileView.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\file\NamedFilePointer.hpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\format\PrintfArg.hpp">
+      <Filter>Cpp Source Files\util\format</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\make_system_error.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
+      <Filter>Cpp Source Files\util\os</Filter>
     </ClInclude>
     <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="StdAfx.h">
-      <Filter>Pre-compiled Header</Filter>
+    <ClInclude Include="..\src\main\resources\sakura.hh">
+      <Filter>Other Files</Filter>
     </ClInclude>
     <ClInclude Include="agent\CAutoReloadAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
@@ -175,101 +277,17 @@
     <ClInclude Include="agent\CBackupAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="env\CCodeChecker.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CDataProfile.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CDicMgr.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="CEditApp.h">
-      <Filter>Cpp Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CEol.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CFileExt.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
     <ClInclude Include="agent\CGrepAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
-    <ClInclude Include="grep\CGrepEnumFileBase.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepEnumFiles.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepEnumFilterFiles.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepEnumFilterFolders.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepEnumFolders.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepEnumKeys.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\CGrepExceptFileRegexps.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="grep\GrepMessageFormat.h">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CHokanMgr.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CKeyWordSetMgr.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
     <ClInclude Include="agent\CLoadAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CMarkMgr.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd\COpe.h">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd\COpeBlk.h">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd\COpeBuf.h">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CProfile.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CPropertyManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CReadManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CRegexKeyword.h">
-      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
     <ClInclude Include="agent\CSaveAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
     </ClInclude>
     <ClInclude Include="agent\CSearchAgent.h">
       <Filter>Cpp Source Files\agent</Filter>
-    </ClInclude>
-    <ClInclude Include="CSelectLang.h">
-      <Filter>Cpp Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CSortedTagJumpList.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CWriteManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\EditInfo.h">
-      <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
     <ClInclude Include="apiwrap\CommonControl.h">
       <Filter>Cpp Source Files\apiwrap</Filter>
@@ -279,6 +297,60 @@
     </ClInclude>
     <ClInclude Include="apiwrap\StdControl.h">
       <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CEol.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CErrorInfo.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CFileExt.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CLaxInteger.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CMyPoint.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CMyRect.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CMySize.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CMyString.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CStrictInteger.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CStrictPoint.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CStrictRange.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\CStrictRect.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\EditInfo.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\GrepInfo.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\primitive.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\SakuraBasis.h">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="basis\TComImpl.hpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="CEditApp.h">
+      <Filter>Cpp Source Files</Filter>
     </ClInclude>
     <ClInclude Include="charset\CCesu8.h">
       <Filter>Cpp Source Files\charset</Filter>
@@ -305,6 +377,9 @@
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
     <ClInclude Include="charset\charset.h">
+      <Filter>Cpp Source Files\charset</Filter>
+    </ClInclude>
+    <ClInclude Include="charset\CharsetDetector.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
     <ClInclude Include="charset\CJis.h">
@@ -334,6 +409,21 @@
     <ClInclude Include="charset\CUtf8.h">
       <Filter>Cpp Source Files\charset</Filter>
     </ClInclude>
+    <ClInclude Include="cmd\COpe.h">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd\COpeBlk.h">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd\COpeBuf.h">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd\CViewCommander_inline.h">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
+    <ClInclude Include="cmd\CViewCommander.h">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
     <ClInclude Include="config\app_constants.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
@@ -346,7 +436,13 @@
     <ClInclude Include="config\system_constants.h">
       <Filter>Cpp Source Files\config</Filter>
     </ClInclude>
-    <ClInclude Include="convert\CConvert.h">
+    <ClInclude Include="convert\CConvert_CodeAutoToSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="convert\CConvert_CodeFromSjis.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
+    <ClInclude Include="convert\CConvert_CodeToSjis.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
     <ClInclude Include="convert\CConvert_HaneisuToZeneisu.h">
@@ -388,7 +484,7 @@
     <ClInclude Include="convert\CConvert_ZenkataToHankata.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="convert\CDecode.h">
+    <ClInclude Include="convert\CConvert.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
     <ClInclude Include="convert\CDecode_Base64Decode.h">
@@ -397,440 +493,26 @@
     <ClInclude Include="convert\CDecode_UuDecode.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
+    <ClInclude Include="convert\CDecode.h">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClInclude>
     <ClInclude Include="convert\convert_util.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
     <ClInclude Include="convert\convert_util2.h">
       <Filter>Cpp Source Files\convert</Filter>
     </ClInclude>
-    <ClInclude Include="io\CBinaryStream.h">
-      <Filter>Cpp Source Files\io</Filter>
+    <ClInclude Include="CSelectLang.h">
+      <Filter>Cpp Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="io\CFile.h">
-      <Filter>Cpp Source Files\io</Filter>
+    <ClInclude Include="debug\CRunningTimer.h">
+      <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="io\CFileLoad.h">
-      <Filter>Cpp Source Files\io</Filter>
+    <ClInclude Include="debug\Debug1.h">
+      <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
-    <ClInclude Include="io\CIoBridge.h">
-      <Filter>Cpp Source Files\io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\CStream.h">
-      <Filter>Cpp Source Files\io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\CTextStream.h">
-      <Filter>Cpp Source Files\io</Filter>
-    </ClInclude>
-    <ClInclude Include="io\CZipFile.h">
-      <Filter>Cpp Source Files\io</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CMemory.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CMemoryIterator.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CNative.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CNativeA.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CNativeW.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="mem\CRecycledBuffer.h">
-      <Filter>Cpp Source Files\mem</Filter>
-    </ClInclude>
-    <ClInclude Include="parse\CWordParse.h">
-      <Filter>Cpp Source Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CAppNodeManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CDocTypeManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CFileNameManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CFormatManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CHelpManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CommonSetting.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CSakuraEnvironment.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CSearchKeywordManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CShareData.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CShareData_IO.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\CTagJumpManager.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="env\DLLSHAREDATA.h">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClInclude>
-    <ClInclude Include="util\container.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\design_template.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\file.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\format.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\input.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\MessageBoxF.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\module.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\ole_convert.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\os.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\RegKey.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\relation_tool.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\shell.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\StaticType.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\std_macro.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\string_ex.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\string_ex2.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\tchar_convert.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\tchar_template.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="util\window.h">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CLaxInteger.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CMyPoint.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CMyRect.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CMySize.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CMyString.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CStrictInteger.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CStrictPoint.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CStrictRange.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\CStrictRect.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\primitive.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="basis\SakuraBasis.h">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CDlgKeywordSelect.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CDlgSameColor.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CDlgTypeAscertain.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CDlgTypeList.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CImpExpManager.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="typeprop\CPropTypes.h">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClInclude>
-    <ClInclude Include="types\CType.h">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="types\CTypeSupport.h">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CCaret.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CEditView.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CEditView_Paint.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CRuler.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CTextArea.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CTextDrawer.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CTextMetrics.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CViewCalc.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CViewFont.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CViewParser.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\CViewSelect.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\DispPos.h">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Comment.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Found.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Heredoc.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_KeywordSet.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Numeric.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Quote.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_RegexKeyword.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColor_Url.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\CColorStrategy.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\colors\EColorIndexType.h">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_Comma.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_CtrlCode.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_Eol.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_HanSpace.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_Tab.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigure_ZenSpace.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigureManager.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="view\figures\CFigureStrategy.h">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClInclude>
-    <ClInclude Include="prop\CPropCommon.h">
-      <Filter>Cpp Source Files\prop</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CMRUFile.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CMRUFolder.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CMruListener.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecent.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentCmd.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentCurDir.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentEditNode.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentExceptMru.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentFile.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentFolder.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentGrepFile.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentGrepFolder.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentImp.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentReplace.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentSearch.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\CRecentTagjumpKeyword.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CBlockComment.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocEditor.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocFile.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocFileOperation.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocListener.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocLocker.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocOutline.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocReader.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocType.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocTypeSetting.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CDocVisitor.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CEditDoc.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\CLineComment.h">
-      <Filter>Cpp Source Files\doc</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\layout\CLayout.h">
-      <Filter>Cpp Source Files\doc\layout</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\layout\CLayoutExInfo.h">
-      <Filter>Cpp Source Files\doc\layout</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\layout\CLayoutMgr.h">
-      <Filter>Cpp Source Files\doc\layout</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\layout\CTsvModeInfo.h">
-      <Filter>Cpp Source Files\doc\layout</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\logic\CDocLine.h">
-      <Filter>Cpp Source Files\doc\logic</Filter>
-    </ClInclude>
-    <ClInclude Include="doc\logic\CDocLineMgr.h">
-      <Filter>Cpp Source Files\doc\logic</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CCookieManager.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CEditorIfObj.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CIfObj.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CKeyMacroMgr.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CMacro.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CMacroFactory.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CMacroManagerBase.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CPPA.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CPPAMacroMgr.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CSMacroMgr.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CWSH.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CWSHIfObj.h">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClInclude>
-    <ClInclude Include="macro\CWSHManager.h">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClInclude Include="debug\Debug2.h">
+      <Filter>Cpp Source Files\debug</Filter>
     </ClInclude>
     <ClInclude Include="dlg\CDialog.h">
       <Filter>Cpp Source Files\dlg</Filter>
@@ -907,32 +589,62 @@
     <ClInclude Include="dlg\CDlgWinSize.h">
       <Filter>Cpp Source Files\dlg</Filter>
     </ClInclude>
-    <ClInclude Include="window\CAutoScrollWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CBlockComment.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CEditWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocEditor.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CMainStatusBar.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocFile.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CMainToolBar.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocFileOperation.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CSplitBoxWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocListener.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CSplitterWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocLocker.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CTabWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocOutline.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CTipWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocReader.h">
+      <Filter>Cpp Source Files\doc</Filter>
     </ClInclude>
-    <ClInclude Include="window\CWnd.h">
-      <Filter>Cpp Source Files\window</Filter>
+    <ClInclude Include="doc\CDocType.h">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\CDocTypeSetting.h">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\CDocVisitor.h">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\CEditDoc.h">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\CLineComment.h">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\layout\CLayout.h">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\layout\CLayoutExInfo.h">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\layout\CLayoutMgr.h">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\layout\CTsvModeInfo.h">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\logic\CDocLine.h">
+      <Filter>Cpp Source Files\doc\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="doc\logic\CDocLineMgr.h">
+      <Filter>Cpp Source Files\doc\logic</Filter>
     </ClInclude>
     <ClInclude Include="docplus\CBookmarkManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
@@ -946,50 +658,212 @@
     <ClInclude Include="docplus\CModifyManager.h">
       <Filter>Cpp Source Files\docplus</Filter>
     </ClInclude>
-    <ClInclude Include="debug\CRunningTimer.h">
-      <Filter>Cpp Source Files\debug</Filter>
+    <ClInclude Include="env\CAppNodeManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="debug\Debug1.h">
-      <Filter>Cpp Source Files\debug</Filter>
+    <ClInclude Include="env\CCodeChecker.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="debug\Debug2.h">
-      <Filter>Cpp Source Files\debug</Filter>
+    <ClInclude Include="env\CDataProfile.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CAppMode.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CDicMgr.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CCommandLine.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CDocTypeManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CControlProcess.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CFileNameManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CControlTray.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CFormatManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CMutex.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CHelpManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CNormalProcess.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CHokanMgr.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CProcess.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CKeyWordSetMgr.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\CProcessFactory.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CMarkMgr.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_main\global.h">
-      <Filter>Cpp Source Files\_main</Filter>
+    <ClInclude Include="env\CommonSetting.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_os\CClipboard.h">
-      <Filter>Cpp Source Files\_os</Filter>
+    <ClInclude Include="env\CProfile.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_os\CDropTarget.h">
-      <Filter>Cpp Source Files\_os</Filter>
+    <ClInclude Include="env\CPropertyManager.h">
+      <Filter>Cpp Source Files\env</Filter>
     </ClInclude>
-    <ClInclude Include="_os\OleTypes.h">
-      <Filter>Cpp Source Files\_os</Filter>
+    <ClInclude Include="env\CReadManager.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CRegexKeyword.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CSakuraEnvironment.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CSearchKeywordManager.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CShareData_IO.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CShareData.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CSortedTagJumpList.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CTagJumpManager.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\CWriteManager.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="env\DLLSHAREDATA.h">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClInclude>
+    <ClInclude Include="extmodule\CBregexp.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="extmodule\CBregexpDll2.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="extmodule\CDllHandler.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="extmodule\CMigemo.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="extmodule\CUchardet.h">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="func\CFuncKeyWnd.h">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="func\CFuncLookup.h">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="func\CKeyBind.h">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="func\Funccode.h">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumFileBase.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumFiles.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumFilterFiles.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumFilterFolders.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumFolders.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepEnumKeys.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\CGrepExceptFileRegexps.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="grep\GrepMessageFormat.h">
+      <Filter>Cpp Source Files\grep</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CBinaryStream.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CFile.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CFileLoad.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CIoBridge.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CStream.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CTextStream.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="io\CZipFile.h">
+      <Filter>Cpp Source Files\io</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CCookieManager.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CEditorIfObj.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CIfObj.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CKeyMacroMgr.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CMacro.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CMacroFactory.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CMacroManagerBase.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CPPA.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CPPAMacroMgr.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CPythonMacroManager.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CSMacroMgr.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CWSH.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CWSHIfObj.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="macro\CWSHManager.h">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CMemory.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CMemoryIterator.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CNative.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CNativeA.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CNativeW.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CPoolResource.h">
+      <Filter>Cpp Source Files\mem</Filter>
+    </ClInclude>
+    <ClInclude Include="mem\CRecycledBuffer.h">
+      <Filter>Cpp Source Files\mem</Filter>
     </ClInclude>
     <ClInclude Include="outline\CDlgFileTree.h">
       <Filter>Cpp Source Files\outline</Filter>
@@ -1003,17 +877,11 @@
     <ClInclude Include="outline\CFuncInfoArr.h">
       <Filter>Cpp Source Files\outline</Filter>
     </ClInclude>
-    <ClInclude Include="func\CFuncKeyWnd.h">
-      <Filter>Cpp Source Files\func</Filter>
+    <ClInclude Include="parse\CWordParse.h">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="func\CFuncLookup.h">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClInclude>
-    <ClInclude Include="func\CKeyBind.h">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClInclude>
-    <ClInclude Include="func\Funccode.h">
-      <Filter>Cpp Source Files\func</Filter>
+    <ClInclude Include="parse\DetectIndentationStyle.h">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="plugin\CComplementIfObj.h">
       <Filter>Cpp Source Files\plugin</Filter>
@@ -1042,29 +910,98 @@
     <ClInclude Include="plugin\CWSHPlugin.h">
       <Filter>Cpp Source Files\plugin</Filter>
     </ClInclude>
-    <ClInclude Include="cmd\CViewCommander.h">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="cmd\CViewCommander_inline.h">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClInclude>
-    <ClInclude Include="extmodule\CBregexp.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
-    <ClInclude Include="extmodule\CBregexpDll2.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
-    <ClInclude Include="extmodule\CDllHandler.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
-    <ClInclude Include="extmodule\CMigemo.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
     <ClInclude Include="print\CPrint.h">
       <Filter>Cpp Source Files\print</Filter>
     </ClInclude>
     <ClInclude Include="print\CPrintPreview.h">
       <Filter>Cpp Source Files\print</Filter>
+    </ClInclude>
+    <ClInclude Include="prop\CPropCommon.h">
+      <Filter>Cpp Source Files\prop</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CMRUFile.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CMRUFolder.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CMruListener.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecent.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentCmd.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentCurDir.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentEditNode.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentExceptMru.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentExcludeFile.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentExcludeFolder.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentFile.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentFolder.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentGrepFile.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentGrepFolder.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentImp.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentReplace.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentSearch.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\CRecentTagjumpKeyword.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="recent\SShare_History.h">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClInclude>
+    <ClInclude Include="StdAfx.h">
+      <Filter>Pre-compiled Header</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CDlgKeywordSelect.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CDlgSameColor.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CDlgTypeAscertain.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CDlgTypeList.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CImpExpManager.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="typeprop\CPropTypes.h">
+      <Filter>Cpp Source Files\typeprop</Filter>
+    </ClInclude>
+    <ClInclude Include="types\CType.h">
+      <Filter>Cpp Source Files\types</Filter>
+    </ClInclude>
+    <ClInclude Include="types\CTypeSupport.h">
+      <Filter>Cpp Source Files\types</Filter>
     </ClInclude>
     <ClInclude Include="uiparts\CGraphics.h">
       <Filter>Cpp Source Files\uiparts</Filter>
@@ -1087,135 +1024,198 @@
     <ClInclude Include="uiparts\HandCursor.h">
       <Filter>Cpp Source Files\uiparts</Filter>
     </ClInclude>
-    <ClInclude Include="recent\CRecentExcludeFile.h">
-      <Filter>Cpp Source Files\recent</Filter>
+    <ClInclude Include="util\container.h">
+      <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="recent\CRecentExcludeFolder.h">
-      <Filter>Cpp Source Files\recent</Filter>
+    <ClInclude Include="util\design_template.h">
+      <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="mem\CPoolResource.h">
-      <Filter>Cpp Source Files\mem</Filter>
+    <ClInclude Include="util\file.h">
+      <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="basis\GrepInfo.h">
-      <Filter>Cpp Source Files\basis</Filter>
+    <ClInclude Include="util\format.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\input.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\MessageBoxF.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\module.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\ole_convert.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\os.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\RegKey.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\relation_tool.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\shell.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\StaticType.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\std_macro.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\string_ex.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\string_ex2.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\tchar_convert.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\tchar_template.h">
+      <Filter>Cpp Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\window.h">
+      <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
     <ClInclude Include="util\zoom.h">
       <Filter>Cpp Source Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="basis\TComImpl.hpp">
-      <Filter>Cpp Source Files\basis</Filter>
+    <ClInclude Include="view\CCaret.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="basis\CErrorInfo.h">
-      <Filter>Cpp Source Files\basis</Filter>
+    <ClInclude Include="view\CEditView_Paint.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="convert\CConvert_CodeAutoToSjis.h">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClInclude>
-    <ClInclude Include="convert\CConvert_CodeFromSjis.h">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClInclude>
-    <ClInclude Include="convert\CConvert_CodeToSjis.h">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClInclude>
-    <ClInclude Include="recent\SShare_History.h">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClInclude>
-    <ClInclude Include="extmodule\CUchardet.h">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClInclude>
-    <ClInclude Include="charset\CharsetDetector.h">
-      <Filter>Cpp Source Files\charset</Filter>
+    <ClInclude Include="view\CEditView.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
     <ClInclude Include="view\CMiniMapView.h">
       <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="parse\DetectIndentationStyle.h">
-      <Filter>Cpp Source Files\parse</Filter>
+    <ClInclude Include="view\colors\CColor_Comment.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\TComPtr.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_Found.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_Heredoc.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\first_derived.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_KeywordSet.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\TComImpl.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_Numeric.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\ResourceHolder.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_Quote.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_arg.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColor_RegexKeyword.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="macro\CPythonMacroManager.h">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClInclude Include="view\colors\CColor_Url.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\load_string.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\CColorStrategy.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\lock_resource.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\colors\EColorIndexType.h">
+      <Filter>Cpp Source Files\view\colors</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp">
-      <Filter>Cpp Source Files\cxx</Filter>
+    <ClInclude Include="view\CRuler.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\Comdlg32.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CTextArea.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CTextDrawer.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CTextMetrics.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\Bcrypt.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CViewCalc.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CViewFont.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\CViewParser.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\CViewSelect.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\DispPos.h">
+      <Filter>Cpp Source Files\view</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\FilePointer.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\figures\CFigure_Comma.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\NamedFilePointer.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\figures\CFigure_CtrlCode.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\MappedFileView.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\figures\CFigure_Eol.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp">
-      <Filter>Cpp Source Files\util\file</Filter>
+    <ClInclude Include="view\figures\CFigure_HanSpace.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\os\make_system_error.hpp">
-      <Filter>Cpp Source Files\util\os</Filter>
+    <ClInclude Include="view\figures\CFigure_Tab.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\main\cpp\util\format\PrintfArg.hpp">
-      <Filter>Cpp Source Files\util\format</Filter>
+    <ClInclude Include="view\figures\CFigure_ZenSpace.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClInclude>
+    <ClInclude Include="view\figures\CFigureManager.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClInclude>
+    <ClInclude Include="view\figures\CFigureStrategy.h">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CAutoScrollWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CEditWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CMainStatusBar.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CMainToolBar.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CSplitBoxWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CSplitterWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CTabWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CTipWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="window\CWnd.h">
+      <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\src\main\resources\images\auto_scroll_center.cur">
       <Filter>Resource Files\images</Filter>
     </None>
-    <None Include="..\src\main\resources\images\auto_scroll_down.cur">
-      <Filter>Resource Files\images</Filter>
-    </None>
     <None Include="..\src\main\resources\images\auto_scroll_down_left.cur">
       <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_down_right.cur">
+      <Filter>Resource Files\images</Filter>
+    </None>
+    <None Include="..\src\main\resources\images\auto_scroll_down.cur">
       <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_horizontal.cur">
@@ -1227,13 +1227,13 @@
     <None Include="..\src\main\resources\images\auto_scroll_right.cur">
       <Filter>Resource Files\images</Filter>
     </None>
-    <None Include="..\src\main\resources\images\auto_scroll_up.cur">
-      <Filter>Resource Files\images</Filter>
-    </None>
     <None Include="..\src\main\resources\images\auto_scroll_up_left.cur">
       <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_up_right.cur">
+      <Filter>Resource Files\images</Filter>
+    </None>
+    <None Include="..\src\main\resources\images\auto_scroll_up.cur">
       <Filter>Resource Files\images</Filter>
     </None>
     <None Include="..\src\main\resources\images\auto_scroll_vertical.cur">
@@ -1273,8 +1273,80 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="StdAfx.cpp">
-      <Filter>Pre-compiled Header</Filter>
+    <ClCompile Include="_main\CAppMode.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CCommandLine.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CControlProcess.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CControlTray.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CNormalProcess.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CProcess.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\CProcessFactory.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\global.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_main\WinMain.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
+    <ClCompile Include="_os\CClipboard.cpp">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClCompile>
+    <ClCompile Include="_os\CDropTarget.cpp">
+      <Filter>Cpp Source Files\_os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp">
+      <Filter>Cpp Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FileMapping.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\FilePointer.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\MappedFileView.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\file\NamedFilePointer.cpp">
+      <Filter>Cpp Source Files\util\file</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
+      <Filter>Cpp Source Files\util\os</Filter>
     </ClCompile>
     <ClCompile Include="agent\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
@@ -1285,62 +1357,11 @@
     <ClCompile Include="agent\CBackupAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="env\CCodeChecker.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CDataProfile.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CDicMgr.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="CEditApp.cpp">
-      <Filter>Cpp Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CEol.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CFileExt.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
     <ClCompile Include="agent\CGrepAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="grep\GrepMessageFormat.cpp">
-      <Filter>Cpp Source Files\grep</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CHokanMgr.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CKeyWordSetMgr.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
     <ClCompile Include="agent\CLoadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CMarkMgr.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\COpe.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\COpeBlk.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\COpeBuf.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CProfile.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CPropertyManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CReadManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CRegexKeyword.cpp">
-      <Filter>Cpp Source Files\env</Filter>
     </ClCompile>
     <ClCompile Include="agent\CSaveAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
@@ -1348,20 +1369,59 @@
     <ClCompile Include="agent\CSearchAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>
     </ClCompile>
-    <ClCompile Include="CSelectLang.cpp">
-      <Filter>Cpp Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CSortedTagJumpList.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CWriteManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
     <ClCompile Include="apiwrap\StdApi.cpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
     </ClCompile>
     <ClCompile Include="apiwrap\StdControl.cpp">
       <Filter>Cpp Source Files\apiwrap</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CEol.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CErrorInfo.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CFileExt.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CLaxInteger.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CMyPoint.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CMyRect.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CMySize.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CMyString.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CStrictInteger.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CStrictPoint.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CStrictRange.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\CStrictRect.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\EditInfo.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\GrepInfo.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="basis\SakuraBasis.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="CEditApp.cpp">
+      <Filter>Cpp Source Files</Filter>
     </ClCompile>
     <ClCompile Include="charset\CCesu8.cpp">
       <Filter>Cpp Source Files\charset</Filter>
@@ -1388,6 +1448,9 @@
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
     <ClCompile Include="charset\charset.cpp">
+      <Filter>Cpp Source Files\charset</Filter>
+    </ClCompile>
+    <ClCompile Include="charset\CharsetDetector.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
     <ClCompile Include="charset\CJis.cpp">
@@ -1417,7 +1480,91 @@
     <ClCompile Include="charset\CUtf8.cpp">
       <Filter>Cpp Source Files\charset</Filter>
     </ClCompile>
-    <ClCompile Include="convert\CConvert.cpp">
+    <ClCompile Include="cmd\COpe.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\COpeBlk.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\COpeBuf.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Bookmark.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Clipboard.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Convert.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Cursor.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_CustMenu.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Diff.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Edit_advanced.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Edit_word_line.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Edit.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_File.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Grep.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Insert.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Macro.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_ModeChange.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Outline.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Search.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Select.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Settings.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Support.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_TagJump.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander_Window.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="cmd\CViewCommander.cpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClCompile>
+    <ClCompile Include="config\build_config.cpp">
+      <Filter>Cpp Source Files\config</Filter>
+    </ClCompile>
+    <ClCompile Include="convert\CConvert_CodeAutoToSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="convert\CConvert_CodeFromSjis.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="convert\CConvert_CodeToSjis.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
     <ClCompile Include="convert\CConvert_HaneisuToZeneisu.cpp">
@@ -1459,6 +1606,9 @@
     <ClCompile Include="convert\CConvert_ZenkataToHankata.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
+    <ClCompile Include="convert\CConvert.cpp">
+      <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
     <ClCompile Include="convert\CDecode_Base64Decode.cpp">
       <Filter>Cpp Source Files\convert</Filter>
     </ClCompile>
@@ -1470,6 +1620,276 @@
     </ClCompile>
     <ClCompile Include="convert\convert_util2.cpp">
       <Filter>Cpp Source Files\convert</Filter>
+    </ClCompile>
+    <ClCompile Include="CSelectLang.cpp">
+      <Filter>Cpp Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\CRunningTimer.cpp">
+      <Filter>Cpp Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\Debug1.cpp">
+      <Filter>Cpp Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="debug\Debug2.cpp">
+      <Filter>Cpp Source Files\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgAbout.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgCancel.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgCompare.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgCtrlCode.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgDiff.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgExec.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgFavorite.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgFileUpdateQuery.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgFind.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgGrep.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgGrepReplace.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgInput1.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgJump.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgOpenFile_CommonFileDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgOpenFile_CommonItemDialog.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgOpenFile.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgPluginOption.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgPrintSetting.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgProfileMgr.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgProperty.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgReplace.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgSetCharSet.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgTagJumpList.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgTagsMake.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgWindowList.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="dlg\CDlgWinSize.cpp">
+      <Filter>Cpp Source Files\dlg</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CBlockComment.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocEditor.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocFile.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocFileOperation.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocListener.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocLocker.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocOutline.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocReader.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocType.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocTypeSetting.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CDocVisitor.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CEditDoc.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\CLineComment.cpp">
+      <Filter>Cpp Source Files\doc</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CLayout.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CLayoutMgr_DoLayout.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CLayoutMgr_New.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CLayoutMgr_New2.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CLayoutMgr.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\layout\CTsvModeInfo.cpp">
+      <Filter>Cpp Source Files\doc\layout</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\logic\CDocLine.cpp">
+      <Filter>Cpp Source Files\doc\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="doc\logic\CDocLineMgr.cpp">
+      <Filter>Cpp Source Files\doc\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="docplus\CBookmarkManager.cpp">
+      <Filter>Cpp Source Files\docplus</Filter>
+    </ClCompile>
+    <ClCompile Include="docplus\CDiffManager.cpp">
+      <Filter>Cpp Source Files\docplus</Filter>
+    </ClCompile>
+    <ClCompile Include="docplus\CFuncListManager.cpp">
+      <Filter>Cpp Source Files\docplus</Filter>
+    </ClCompile>
+    <ClCompile Include="docplus\CModifyManager.cpp">
+      <Filter>Cpp Source Files\docplus</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CAppNodeManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CCodeChecker.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CDataProfile.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CDicMgr.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CDocTypeManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CFileNameManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CFormatManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CHelpManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CHokanMgr.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CKeyWordSetMgr.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CMarkMgr.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CommonSetting.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CProfile.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CPropertyManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CReadManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CRegexKeyword.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CSakuraEnvironment.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CSearchKeywordManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CShareData_IO.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CShareData.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CSortedTagJumpList.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CTagJumpManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\CWriteManager.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="env\DLLSHAREDATA.cpp">
+      <Filter>Cpp Source Files\env</Filter>
+    </ClCompile>
+    <ClCompile Include="extmodule\CBregexp.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="extmodule\CBregexpDll2.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="extmodule\CDllHandler.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="extmodule\CMigemo.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="extmodule\CUchardet.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="func\CFuncKeyWnd.cpp">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="func\CFuncLookup.cpp">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="func\CKeyBind.cpp">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="func\Funccode.cpp">
+      <Filter>Cpp Source Files\func</Filter>
+    </ClCompile>
+    <ClCompile Include="grep\GrepMessageFormat.cpp">
+      <Filter>Cpp Source Files\grep</Filter>
     </ClCompile>
     <ClCompile Include="io\CBinaryStream.cpp">
       <Filter>Cpp Source Files\io</Filter>
@@ -1492,6 +1912,48 @@
     <ClCompile Include="io\CZipFile.cpp">
       <Filter>Cpp Source Files\io</Filter>
     </ClCompile>
+    <ClCompile Include="macro\CCookieManager.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CEditorIfObj.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CIfObj.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CKeyMacroMgr.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CMacro.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CMacroFactory.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CMacroManagerBase.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CPPA.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CPPAMacroMgr.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CPythonMacroManager.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CSMacroMgr.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CWSH.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CWSHIfObj.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
+    <ClCompile Include="macro\CWSHManager.cpp">
+      <Filter>Cpp Source Files\macro</Filter>
+    </ClCompile>
     <ClCompile Include="mem\CMemory.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
@@ -1507,341 +1969,44 @@
     <ClCompile Include="mem\CRecycledBuffer.cpp">
       <Filter>Cpp Source Files\mem</Filter>
     </ClCompile>
+    <ClCompile Include="outline\CDlgFileTree.cpp">
+      <Filter>Cpp Source Files\outline</Filter>
+    </ClCompile>
+    <ClCompile Include="outline\CDlgFuncList.cpp">
+      <Filter>Cpp Source Files\outline</Filter>
+    </ClCompile>
+    <ClCompile Include="outline\CFuncInfo.cpp">
+      <Filter>Cpp Source Files\outline</Filter>
+    </ClCompile>
+    <ClCompile Include="outline\CFuncInfoArr.cpp">
+      <Filter>Cpp Source Files\outline</Filter>
+    </ClCompile>
     <ClCompile Include="parse\CWordParse.cpp">
       <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="env\CAppNodeManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="parse\DetectIndentationStyle.cpp">
+      <Filter>Cpp Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="env\CDocTypeManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="plugin\CDllPlugin.cpp">
+      <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="env\CFileNameManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="plugin\CJackManager.cpp">
+      <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="env\CFormatManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="plugin\CPlugin.cpp">
+      <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="env\CHelpManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="plugin\CPluginManager.cpp">
+      <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="env\CommonSetting.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="plugin\CWSHPlugin.cpp">
+      <Filter>Cpp Source Files\plugin</Filter>
     </ClCompile>
-    <ClCompile Include="env\CSakuraEnvironment.cpp">
-      <Filter>Cpp Source Files\env</Filter>
+    <ClCompile Include="print\CPrint.cpp">
+      <Filter>Cpp Source Files\print</Filter>
     </ClCompile>
-    <ClCompile Include="env\CSearchKeywordManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CShareData.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CShareData_IO.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\CTagJumpManager.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="env\DLLSHAREDATA.cpp">
-      <Filter>Cpp Source Files\env</Filter>
-    </ClCompile>
-    <ClCompile Include="util\file.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\format.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\input.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\MessageBoxF.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\module.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\ole_convert.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\os.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\relation_tool.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\shell.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\string_ex.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\string_ex2.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\tchar_convert.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\tchar_template.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="util\window.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CLaxInteger.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CMyPoint.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CMyRect.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CMySize.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CMyString.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CStrictInteger.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CStrictPoint.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CStrictRange.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CStrictRect.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\SakuraBasis.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CDlgKeywordSelect.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CDlgSameColor.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CDlgTypeAscertain.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CDlgTypeList.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CImpExpManager.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypes.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesColor.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesKeyHelp.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesRegex.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesScreen.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesSupport.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="typeprop\CPropTypesWindow.cpp">
-      <Filter>Cpp Source Files\typeprop</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Asm.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Awk.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Basis.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Cobol.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_CorbaIdl.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Cpp.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Dos.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Erlang.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Html.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Ini.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Java.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Others.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Pascal.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Perl.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Python.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Rich.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Sql.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Tex.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Text.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CType_Vb.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="types\CTypeSupport.cpp">
-      <Filter>Cpp Source Files\types</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CCaret.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Cmdgrep.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_CmdHokan.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Cmdisrch.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Command.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Command_New.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Diff.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_ExecCmd.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Ime.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Mouse.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Paint.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Paint_Bracket.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Scroll.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CEditView_Search.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CRuler.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CTextArea.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CTextDrawer.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CTextMetrics.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CViewCalc.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CViewFont.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CViewParser.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CViewSelect.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\DispPos.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Comment.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Found.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Heredoc.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_KeywordSet.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Numeric.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Quote.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_RegexKeyword.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColor_Url.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\colors\CColorStrategy.cpp">
-      <Filter>Cpp Source Files\view\colors</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_Comma.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_CtrlCode.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_Eol.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_HanSpace.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_Tab.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigure_ZenSpace.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigureManager.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
-    </ClCompile>
-    <ClCompile Include="view\figures\CFigureStrategy.cpp">
-      <Filter>Cpp Source Files\view\figures</Filter>
+    <ClCompile Include="print\CPrintPreview.cpp">
+      <Filter>Cpp Source Files\print</Filter>
     </ClCompile>
     <ClCompile Include="prop\CPropComBackup.cpp">
       <Filter>Cpp Source Files\prop</Filter>
@@ -1924,6 +2089,12 @@
     <ClCompile Include="recent\CRecentExceptMru.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
+    <ClCompile Include="recent\CRecentExcludeFile.cpp">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClCompile>
+    <ClCompile Include="recent\CRecentExcludeFolder.cpp">
+      <Filter>Cpp Source Files\recent</Filter>
+    </ClCompile>
     <ClCompile Include="recent\CRecentFile.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
@@ -1948,182 +2119,299 @@
     <ClCompile Include="recent\CRecentTagjumpKeyword.cpp">
       <Filter>Cpp Source Files\recent</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CBlockComment.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="StdAfx.cpp">
+      <Filter>Pre-compiled Header</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocEditor.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CDlgKeywordSelect.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocFile.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CDlgSameColor.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocFileOperation.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CDlgTypeAscertain.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocListener.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CDlgTypeList.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocLocker.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CImpExpManager.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocOutline.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypes.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocReader.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesColor.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocType.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesKeyHelp.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocTypeSetting.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesRegex.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CDocVisitor.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesScreen.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CEditDoc.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesSupport.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\CLineComment.cpp">
-      <Filter>Cpp Source Files\doc</Filter>
+    <ClCompile Include="typeprop\CPropTypesWindow.cpp">
+      <Filter>Cpp Source Files\typeprop</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CLayout.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_Asm.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CLayoutMgr.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_Awk.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CLayoutMgr_DoLayout.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_Basis.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CLayoutMgr_New.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_Cobol.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CLayoutMgr_New2.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_CorbaIdl.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\layout\CTsvModeInfo.cpp">
-      <Filter>Cpp Source Files\doc\layout</Filter>
+    <ClCompile Include="types\CType_Cpp.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\logic\CDocLine.cpp">
-      <Filter>Cpp Source Files\doc\logic</Filter>
+    <ClCompile Include="types\CType_Dos.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="doc\logic\CDocLineMgr.cpp">
-      <Filter>Cpp Source Files\doc\logic</Filter>
+    <ClCompile Include="types\CType_Erlang.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CCookieManager.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Html.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CEditorIfObj.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Ini.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CIfObj.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Java.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CKeyMacroMgr.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Others.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CMacro.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Pascal.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CMacroFactory.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Perl.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CMacroManagerBase.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Python.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CPPA.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Rich.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CPPAMacroMgr.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Sql.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CSMacroMgr.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Tex.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CWSH.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Text.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CWSHIfObj.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType_Vb.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="macro\CWSHManager.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
+    <ClCompile Include="types\CType.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDialog.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="types\CTypeSupport.cpp">
+      <Filter>Cpp Source Files\types</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgAbout.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CGraphics.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgCancel.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CImageListMgr.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgCompare.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CMenuDrawer.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgCtrlCode.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CSoundSet.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgDiff.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CVisualProgress.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgExec.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="uiparts\CWaitCursor.cpp">
+      <Filter>Cpp Source Files\uiparts</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgFavorite.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\file.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgFileUpdateQuery.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\format.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgFind.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\input.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgGrep.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\MessageBoxF.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgGrepReplace.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\module.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgInput1.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\ole_convert.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgJump.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\os.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgOpenFile.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\relation_tool.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgPluginOption.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\shell.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgPrintSetting.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\string_ex.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgProfileMgr.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\string_ex2.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgProperty.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\tchar_convert.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgReplace.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\tchar_template.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgSetCharSet.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\window.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgTagJumpList.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="util\zoom.cpp">
+      <Filter>Cpp Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgTagsMake.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="view\CCaret.cpp">
+      <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgWindowList.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="view\CEditView_Cmdgrep.cpp">
+      <Filter>Cpp Source Files\view</Filter>
     </ClCompile>
-    <ClCompile Include="dlg\CDlgWinSize.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
+    <ClCompile Include="view\CEditView_CmdHokan.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Cmdisrch.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Command_New.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Command.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Diff.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_ExecCmd.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Ime.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Mouse.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Paint_Bracket.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Paint.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Scroll.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView_Search.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CEditView.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CMiniMapView.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Comment.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Found.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Heredoc.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_KeywordSet.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Numeric.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Quote.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_RegexKeyword.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColor_Url.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\colors\CColorStrategy.cpp">
+      <Filter>Cpp Source Files\view\colors</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CRuler.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CTextArea.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CTextDrawer.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CTextMetrics.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CViewCalc.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CViewFont.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CViewParser.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\CViewSelect.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\DispPos.cpp">
+      <Filter>Cpp Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_Comma.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_CtrlCode.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_Eol.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_HanSpace.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_Tab.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigure_ZenSpace.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigureManager.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
+    </ClCompile>
+    <ClCompile Include="view\figures\CFigureStrategy.cpp">
+      <Filter>Cpp Source Files\view\figures</Filter>
     </ClCompile>
     <ClCompile Include="window\CAutoScrollWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
@@ -2151,294 +2439,6 @@
     </ClCompile>
     <ClCompile Include="window\CWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
-    </ClCompile>
-    <ClCompile Include="docplus\CBookmarkManager.cpp">
-      <Filter>Cpp Source Files\docplus</Filter>
-    </ClCompile>
-    <ClCompile Include="docplus\CDiffManager.cpp">
-      <Filter>Cpp Source Files\docplus</Filter>
-    </ClCompile>
-    <ClCompile Include="docplus\CFuncListManager.cpp">
-      <Filter>Cpp Source Files\docplus</Filter>
-    </ClCompile>
-    <ClCompile Include="docplus\CModifyManager.cpp">
-      <Filter>Cpp Source Files\docplus</Filter>
-    </ClCompile>
-    <ClCompile Include="debug\CRunningTimer.cpp">
-      <Filter>Cpp Source Files\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="debug\Debug1.cpp">
-      <Filter>Cpp Source Files\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="debug\Debug2.cpp">
-      <Filter>Cpp Source Files\debug</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CAppMode.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CCommandLine.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CControlProcess.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CControlTray.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CNormalProcess.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CProcess.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\CProcessFactory.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\global.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_main\WinMain.cpp">
-      <Filter>Cpp Source Files\_main</Filter>
-    </ClCompile>
-    <ClCompile Include="_os\CClipboard.cpp">
-      <Filter>Cpp Source Files\_os</Filter>
-    </ClCompile>
-    <ClCompile Include="_os\CDropTarget.cpp">
-      <Filter>Cpp Source Files\_os</Filter>
-    </ClCompile>
-    <ClCompile Include="outline\CDlgFileTree.cpp">
-      <Filter>Cpp Source Files\outline</Filter>
-    </ClCompile>
-    <ClCompile Include="outline\CDlgFuncList.cpp">
-      <Filter>Cpp Source Files\outline</Filter>
-    </ClCompile>
-    <ClCompile Include="outline\CFuncInfo.cpp">
-      <Filter>Cpp Source Files\outline</Filter>
-    </ClCompile>
-    <ClCompile Include="outline\CFuncInfoArr.cpp">
-      <Filter>Cpp Source Files\outline</Filter>
-    </ClCompile>
-    <ClCompile Include="func\CFuncKeyWnd.cpp">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClCompile>
-    <ClCompile Include="func\CFuncLookup.cpp">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClCompile>
-    <ClCompile Include="func\CKeyBind.cpp">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClCompile>
-    <ClCompile Include="func\Funccode.cpp">
-      <Filter>Cpp Source Files\func</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin\CDllPlugin.cpp">
-      <Filter>Cpp Source Files\plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin\CJackManager.cpp">
-      <Filter>Cpp Source Files\plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin\CPlugin.cpp">
-      <Filter>Cpp Source Files\plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin\CPluginManager.cpp">
-      <Filter>Cpp Source Files\plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="plugin\CWSHPlugin.cpp">
-      <Filter>Cpp Source Files\plugin</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Bookmark.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Clipboard.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Convert.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Cursor.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_CustMenu.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Diff.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Edit.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Edit_advanced.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Edit_word_line.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_File.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Grep.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Insert.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Macro.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_ModeChange.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Outline.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Search.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Select.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Settings.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Support.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_TagJump.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="cmd\CViewCommander_Window.cpp">
-      <Filter>Cpp Source Files\cmd</Filter>
-    </ClCompile>
-    <ClCompile Include="extmodule\CBregexp.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="extmodule\CBregexpDll2.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="extmodule\CDllHandler.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="extmodule\CMigemo.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="print\CPrint.cpp">
-      <Filter>Cpp Source Files\print</Filter>
-    </ClCompile>
-    <ClCompile Include="print\CPrintPreview.cpp">
-      <Filter>Cpp Source Files\print</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CGraphics.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CImageListMgr.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CMenuDrawer.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CSoundSet.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CVisualProgress.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="uiparts\CWaitCursor.cpp">
-      <Filter>Cpp Source Files\uiparts</Filter>
-    </ClCompile>
-    <ClCompile Include="config\build_config.cpp">
-      <Filter>Cpp Source Files\config</Filter>
-    </ClCompile>
-    <ClCompile Include="recent\CRecentExcludeFile.cpp">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClCompile>
-    <ClCompile Include="recent\CRecentExcludeFolder.cpp">
-      <Filter>Cpp Source Files\recent</Filter>
-    </ClCompile>
-    <ClCompile Include="dlg\CDlgOpenFile_CommonFileDialog.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
-    </ClCompile>
-    <ClCompile Include="dlg\CDlgOpenFile_CommonItemDialog.cpp">
-      <Filter>Cpp Source Files\dlg</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\EditInfo.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\GrepInfo.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="util\zoom.cpp">
-      <Filter>Cpp Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="basis\CErrorInfo.cpp">
-      <Filter>Cpp Source Files\basis</Filter>
-    </ClCompile>
-    <ClCompile Include="convert\CConvert_CodeAutoToSjis.cpp">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClCompile>
-    <ClCompile Include="convert\CConvert_CodeFromSjis.cpp">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClCompile>
-    <ClCompile Include="convert\CConvert_CodeToSjis.cpp">
-      <Filter>Cpp Source Files\convert</Filter>
-    </ClCompile>
-    <ClCompile Include="extmodule\CUchardet.cpp">
-      <Filter>Cpp Source Files\extmodule</Filter>
-    </ClCompile>
-    <ClCompile Include="charset\CharsetDetector.cpp">
-      <Filter>Cpp Source Files\charset</Filter>
-    </ClCompile>
-    <ClCompile Include="view\CMiniMapView.cpp">
-      <Filter>Cpp Source Files\view</Filter>
-    </ClCompile>
-    <ClCompile Include="parse\DetectIndentationStyle.cpp">
-      <Filter>Cpp Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="macro\CPythonMacroManager.cpp">
-      <Filter>Cpp Source Files\macro</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
-      <Filter>Cpp Source Files\cxx</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\Bcrypt.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp">
-      <Filter>Cpp Source Files\util\os</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\FileMapping.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\FilePointer.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\NamedFilePointer.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\MappedFileView.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp">
-      <Filter>Cpp Source Files\util\file</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp">
-      <Filter>Cpp Source Files\cxx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
