@@ -850,6 +850,14 @@ TEST_F(CSearchAgentSearchTest, RegexBackwardZeroLength)
 	EXPECT_THAT(Search(2, 0, SEARCH_BACKWARD), ElementsAre(0, 0, 0, 0));
 }
 
+//! 正規表現・後方: 長さ 0 の一致の後は 1 文字(サロゲートペアは 2)進めるので、正字と異体字セレクタの間の一致も見つける
+TEST_F(CSearchAgentSearchTest, RegexBackwardZeroLengthBeforeVariationSelector)
+{
+	SetDocument({ L"\u845B\U000E0100x" });	// 葛 + 異体字セレクタ(VS17) + x
+	ASSERT_THAT(SetKey(L"^|\U000E0100", true, true, false), IsTrue());
+	EXPECT_THAT(Search(4, 0, SEARCH_BACKWARD), ElementsAre(1, 0, 3, 0));
+}
+
 //! 見つからない
 TEST_F(CSearchAgentSearchTest, RegexNotFound)
 {

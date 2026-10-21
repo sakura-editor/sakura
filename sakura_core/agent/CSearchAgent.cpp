@@ -498,7 +498,12 @@ std::optional<SLineMatch> FindLastInLineBefore( const CLineMatchFinder& finder, 
 			break;
 		}
 		lastMatch = match;
-		nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
+		if( 0 == match->nLength ){
+			// 長さ 0 の一致は、サロゲートペアなら 2、それ以外は 1 進める(異体字セレクタの前でも止まる)
+			nStart = match->nIndex + ( CNativeW::GetSizeOfChar( pLine, nLineLen, match->nIndex ) == 2 ? 2 : 1 );
+		}else{
+			nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
+		}
 	}
 	return lastMatch;
 }
