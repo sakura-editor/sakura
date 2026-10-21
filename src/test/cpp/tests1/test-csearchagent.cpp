@@ -1090,3 +1090,134 @@ TEST_F(CSearchAgentSearchTest, RegexCrInsideCrlf)
 	ASSERT_THAT(SetKey(L"\\r", true, true, false), IsTrue());
 	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(3, 0, 4, 0));
 }
+
+/*!
+	@brief 1 行の中で一致を探す部品(CLineMatchFinder)のテスト
+
+	Grep・Grep 置換が、1 行の中の一致を前から順に探すのに使う。
+	検索の条件の準備(共有データ・SetKey())は CSearchAgentSearchTest のものを使う。
+ */
+struct CLineMatchFinderTest : public CSearchAgentSearchTest {
+	//! 行の先頭から順に探し、見つかった一致を { 始まり, 長さ, 始まり, 長さ, ... } で返す
+	std::vector<int> FindAll(std::wstring_view line)
+	{
+		const CLineMatchFinder finder(m_cPattern, &m_cRegexp);
+		const auto nLineLen = static_cast<int>(line.length());
+		std::vector<int> result;
+		int nStart = 0;
+		while (const auto match = finder.Find(line.data(), nLineLen, nStart)) {
+			result.push_back(match->nIndex);
+			result.push_back(match->nLength);
+			nStart = CLineMatchFinder::GetNextStart(line.data(), nLineLen, *match);
+		}
+		return result;
+	}
+
+	//! nStart から 1 つ探す。見つかれば { 始まり, 長さ }、見つからなければ空
+	std::vector<int> Find(std::wstring_view line, int nStart)
+	{
+		const CLineMatchFinder finder(m_cPattern, &m_cRegexp);
+		const auto match = finder.Find(line.data(), static_cast<int>(line.length()), nStart);
+		if (!match) {
+			return {};
+		}
+		return { match->nIndex, match->nLength };
+	}
+};
+
+//! 文字列: 一致の後ろから次を探すので、重なる一致は数えない
+TEST_F(CLineMatchFinderTest, StringDoesNotOverlap)
+{
+	ASSERT_THAT(SetKey(L"aa", false, true, false), IsTrue());
+	EXPECT_THAT(FindAll(L"aaaaa\n"), ElementsAre(0, 2, 2, 2));
+}
+
+//! 文字列: 大文字と小文字を区別しない
+TEST_F(CLineMatchFinderTest, StringIgnoreCase)
+{
+	ASSERT_THAT(SetKey(L"ab", false, false, false), IsTrue());
+	EXPECT_THAT(FindAll(L"Ab xaB"), ElementsAre(0, 2, 4, 2));
+}
+
+//! 文字列: 見つからない・検索語が行より長い
+TEST_F(CLineMatchFinderTest, StringNotFound)
+{
+	ASSERT_THAT(SetKey(L"ab", false, true, false), IsTrue());
+	EXPECT_THAT(FindAll(L"xyz"), IsEmpty());
+	EXPECT_THAT(FindAll(L"a"), IsEmpty());
+}
+
+//! 単語単位: 単語の一部(foobar・foo_bar の foo)は飛ばす
+TEST_F(CLineMatchFinderTest, WordSkipsPartOfWord)
+{
+	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
+	EXPECT_THAT(FindAll(L"foo foobar foo_bar foo\n"), ElementsAre(0, 3, 19, 3));
+	EXPECT_THAT(FindAll(L"foobar"), IsEmpty());
+}
+
+//! 単語単位: 検索語が 2 単語なら、どちらにも一致する
+TEST_F(CLineMatchFinderTest, WordMultipleWordsKey)
+{
+	ASSERT_THAT(SetKey(L"foo bar", false, true, true), IsTrue());
+	EXPECT_THAT(FindAll(L"bar x foo"), ElementsAre(0, 3, 6, 3));
+}
+
+//! 単語単位: 単語の途中から探すと、その単語は飛ばす
+TEST_F(CLineMatchFinderTest, WordStartInsideWord)
+{
+	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
+	EXPECT_THAT(Find(L"foofoo foo", 1), ElementsAre(7, 3));
+}
+
+//! 単語単位: 探し始める位置を含む単語が検索語と同じなら、その単語の先頭を返す(探し始める位置より前でも)
+TEST_F(CLineMatchFinderTest, WordContainingStart)
+{
+	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
+	EXPECT_THAT(Find(L"foo foo", 1), ElementsAre(0, 3));
+	EXPECT_THAT(Find(L"foo foo", 3), ElementsAre(4, 3));
+}
+
+//! 正規表現: 1 行の中の一致をすべて探す
+TEST_F(CLineMatchFinderTest, RegexFindsEachMatch)
+{
+	ASSERT_THAT(SetKey(L"[0-9]+", true, true, false), IsTrue());
+	EXPECT_THAT(FindAll(L"a1b22\r\n"), ElementsAre(1, 1, 3, 2));
+	EXPECT_THAT(FindAll(L"abc\r\n"), IsEmpty());
+}
+
+//! 正規表現: 長さ 0 の一致(行頭・行末)は、同じ位置で 2 回数えない
+TEST_F(CLineMatchFinderTest, RegexZeroLength)
+{
+	ASSERT_THAT(SetKey(L"^", true, true, false), IsTrue());
+	EXPECT_THAT(FindAll(L"ab\r\n"), ElementsAre(0, 0));
+	ASSERT_THAT(SetKey(L"$", true, true, false), IsTrue());
+	EXPECT_THAT(FindAll(L"ab"), ElementsAre(2, 0));
+}
+
+//! 正規表現と単語単位の両方を指定したときは、正規表現で探す
+TEST_F(CLineMatchFinderTest, RegexTakesPrecedenceOverWord)
+{
+	ASSERT_THAT(SetKey(L"fo+", true, true, true), IsTrue());
+	EXPECT_THAT(FindAll(L"foo foobar"), ElementsAre(0, 3, 4, 3));
+}
+
+//! 探し始める位置が行の長さ以上なら、見つからない
+//! (行の長さちょうどは CBregexp::Match() が一致にしない。行の長さより後ろは部品が探さない)
+TEST_F(CLineMatchFinderTest, StartBeyondLine)
+{
+	ASSERT_THAT(SetKey(L"$", true, true, false), IsTrue());
+	EXPECT_THAT(Find(L"ab", 1), ElementsAre(2, 0));
+	EXPECT_THAT(Find(L"ab", 2), IsEmpty());
+	EXPECT_THAT(Find(L"ab", 3), IsEmpty());
+}
+
+//! 次に探し始める位置: 一致の後ろ。長さ 0 の一致なら 1 文字(サロゲートペアは 2)進め、行の末尾でも 1 進める
+TEST(CLineMatchFinder, GetNextStart)
+{
+	constexpr std::wstring_view line = L"a\U0001F600b";
+	const auto nLineLen = static_cast<int>(line.length());
+	EXPECT_THAT(CLineMatchFinder::GetNextStart(line.data(), nLineLen, { 1, 2 }), Eq(3));
+	EXPECT_THAT(CLineMatchFinder::GetNextStart(line.data(), nLineLen, { 0, 0 }), Eq(1));
+	EXPECT_THAT(CLineMatchFinder::GetNextStart(line.data(), nLineLen, { 1, 0 }), Eq(3));
+	EXPECT_THAT(CLineMatchFinder::GetNextStart(line.data(), nLineLen, { 4, 0 }), Eq(5));
+}

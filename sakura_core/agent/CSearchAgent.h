@@ -9,6 +9,7 @@
 #define SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_
 #pragma once
 
+#include <optional>
 #include "_main/global.h"
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
@@ -115,5 +116,44 @@ public:
 	void ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol );
 private:
 	CDocLineMgr* m_pcDocLineMgr;
+};
+
+//! 1 行の中で見つかった一致
+struct SLineMatch {
+	int nIndex;		//!< 一致の始まり(行の先頭からの位置)
+	int nLength;	//!< 一致の長さ(正規表現では 0 のこともある)
+};
+
+/*!
+	@brief 1 行の中から、検索語に一致する部分を前から順に探す
+
+	Grep・Grep 置換で使う。正規表現・単語単位・文字列のどれで探すかは、
+	検索のオプションで決まる(正規表現・単語単位の順に優先する)。
+	正規表現は CBregexp::Match() で探す。置換(CBregexp::Replace())はしない。
+*/
+class CLineMatchFinder {
+public:
+	/*!
+		@param pattern [in] 検索の条件。設定済みであること。探し終わるまで残しておく
+		@param pRegexp [in] 正規表現で探すときのコンパイル済みのデータ。探し終わるまで残しておく
+	*/
+	CLineMatchFinder( const CSearchStringPattern& pattern, CBregexp* pRegexp );
+
+	/*!
+		nStart から後ろで最初の一致を探す。見つからなければ空
+
+		単語単位では、nStart を含む単語から調べる。その単語が検索語の単語と同じなら、
+		単語の先頭を一致として返す(nStart より前のこともある)。
+		文書の中の検索で、カーソルが単語の途中にあるときに、その単語に一致させるため。
+	*/
+	std::optional<SLineMatch> Find( const wchar_t* pLine, int nLineLen, int nStart ) const;
+
+	//! 一致の次に探し始める位置。長さ 0 の一致なら 1 文字進める
+	static int GetNextStart( const wchar_t* pLine, int nLineLen, const SLineMatch& match );
+
+private:
+	const CSearchStringPattern* m_pPattern;
+	CBregexp* m_pRegexp;
+	std::vector<std::pair<const wchar_t*, CLogicInt> > m_searchWords;	//!< 単語単位で探すときの、検索語の単語
 };
 #endif /* SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_ */
