@@ -1,13 +1,14 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/DLLSHAREDATA.h"
+
 #include "_main/CMutex.h"
 #include "dlg/CDlgCancel.h"
 #include "uiparts/CWaitCursor.h"
@@ -38,14 +39,14 @@ DLLSHAREDATA& GetDllShareData()
 
 CShareDataLockCounter::CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
-	GetDllShareData().m_nLockCount++;
+	assert_warning( 0 <= m_pShareData->m_nLockCount );
+	m_pShareData->m_nLockCount++;
 }
 
 CShareDataLockCounter::~CShareDataLockCounter(){
 	LockGuard<CMutex> guard( g_cKeywordMutex );
-	GetDllShareData().m_nLockCount--;
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
+	m_pShareData->m_nLockCount--;
+	assert_warning( 0 <= m_pShareData->m_nLockCount );
 }
 
 int CShareDataLockCounter::GetLockCounter(){

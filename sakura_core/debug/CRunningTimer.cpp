@@ -48,8 +48,19 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputSty
 
 CRunningTimer::~CRunningTimer()
 {
+	// デストラクタに例外を投げ得る処理を書いてはならない
+	try {
+
 	WriteTraceInternal( GetTime(), TraceType::ExitScope );
 	FlushPendingTraces();
+
+	}
+	// エラーが発生した場合
+	catch(const std::exception& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+	}
+
 	if( m_nDepth == 0 ){
 		OutputFooter();
 	}
