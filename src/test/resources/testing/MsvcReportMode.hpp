@@ -27,12 +27,12 @@ struct MsvcReportMode
 		int prevMode = ::_CrtSetReportMode(_CRT_ASSERT, 0);
 	};
 
-	static void _Cleanup(const SReportMode* oldMode)
+	static void _CleanUp(const SReportMode* oldMode) noexcept
 	{
 		::_CrtSetReportMode(_CRT_ASSERT, oldMode->prevMode);
 	}
 
-	using Holder = cxx::ResourceHolder<&_Cleanup>;
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 	using Me = MsvcReportMode;
 
 	MsvcReportMode() = default;

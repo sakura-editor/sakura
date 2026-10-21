@@ -7,9 +7,9 @@
 #include "pch.h"
 #include "util/os/MockComdlg32.hpp"
 
-/* static */ void MockComdlg32::_Cleanup(
+/* static */ void MockComdlg32::_CleanUp(
 	[[maybe_unused]] const MockComdlg32* /* pThis */
-)
+) noexcept
 {
 	gm_Files.clear();
 }

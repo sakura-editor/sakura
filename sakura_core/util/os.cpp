@@ -330,7 +330,7 @@ CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
  */
 /* static */ void CCurrentDirectoryBackupPoint::_CleanUp(
 	const CCurrentDirectoryBackupPoint* pThis
-)
+) noexcept
 {
 	// カレントディレクトリが保存されていないとき
 	if (pThis->m_szCurDir.empty()) {
