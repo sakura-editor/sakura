@@ -23,9 +23,9 @@ struct MockComdlg32 final : public Comdlg32 {
 
 	static inline std::vector<std::wstring> gm_Files;
 
-	static void _Cleanup(
+	static void _CleanUp(
 		[[maybe_unused]] const MockComdlg32*
-	);
+	) noexcept;
 
 	static BOOL _GetOpenFileNameW(
 		LPOPENFILENAMEW pOfn
@@ -37,6 +37,6 @@ struct MockComdlg32 final : public Comdlg32 {
 
 	MockComdlg32();
 
-	using Holder = cxx::ResourceHolder<&_Cleanup>;
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 	Holder m_Holder{ this };
 };

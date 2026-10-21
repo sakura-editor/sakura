@@ -28,13 +28,15 @@ private:
 	/*!
 	 * @brief COMライブラリのクリーンアップ
 	 */
-	static void Cleanup([[maybe_unused]] const COleInit*)
+	static void _CleanUp(
+		[[maybe_unused]] const COleInit* /* pThis */
+	) noexcept
 	{
 		// OLEをシャットダウンする
 		::OleUninitialize();
 	}
 
-	using CleanupHolder = cxx::ResourceHolder<&COleInit::Cleanup>;
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
 	using Me = COleInit;
 
@@ -45,7 +47,7 @@ private:
 	 * 初期化に成功した場合、クリーンアップ用のリソースホルダーを生成する。
 	 * 初期化失敗した場合、リソースホルダーはnullptrとなり、クリーンアップは行われない。
 	 */
-	CleanupHolder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
+	Holder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
 
 public:
 	COleInit() = default;
