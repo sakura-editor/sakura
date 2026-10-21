@@ -61,7 +61,17 @@ CGraphics::~CGraphics()
 	ClearClipping();
 	ClearMyFont();
 	ClearPen();
+
+	// 暫定対応(デストラクタに例外を投げ得る処理を書いてはならない)
+	try {
+
+	//TODO: ClearBrush()をnoexceptにする
 	ClearBrush();
+
+	} catch(...) {
+		// 例外は握りつぶす
+	}
+
 	RestoreTextColors();
 }
 
