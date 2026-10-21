@@ -89,7 +89,7 @@ private:
 
 	static void _CleanUp(
 		const CCurrentDirectoryBackupPoint* pThis
-	);
+	) noexcept;
 
 	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
