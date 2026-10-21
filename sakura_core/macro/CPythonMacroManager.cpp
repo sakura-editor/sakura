@@ -196,7 +196,9 @@ PyObject* PyXCFunctionNew(PyMethodDef* ml, PyObject* self)
 /*
  * @note inline関数を独自定義したもの。
  */
-void PyXDecRef(PyObject* object)
+void PyXDecRef(
+	PyObject* object
+) noexcept
 {
 	const auto& Py_DecRef = PythonApi::getInstance()->Py_DecRef;
 	if (object != _Py_NULL) {

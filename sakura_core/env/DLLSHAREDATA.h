@@ -1,10 +1,10 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 #ifndef SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
@@ -15,6 +15,7 @@
 #include "env/CAppNodeManager.h"	//SShare_Nodes
 //2007.09.28 kobake Common構造体をCShareData.hから分離
 #include "env/CommonSetting.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
 #include "env/CTagJumpManager.h"		//SShare_TagJump
 #include "env/CFileNameManager.h"		//SShare_FileNameManagement
@@ -135,7 +136,7 @@ struct DLLSHAREDATA{
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
-class CShareDataLockCounter{
+class CShareDataLockCounter : private env::ShareDataClient {
 	using Me = CShareDataLockCounter;
 
 public:
