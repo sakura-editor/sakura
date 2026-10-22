@@ -210,63 +210,16 @@ void CBookmarkManager::MarkSearchWord(
 	const CSearchStringPattern& pattern
 )
 {
-	const SSearchOption&	sSearchOption = pattern.GetSearchOption();
-	CDocLine*	pDocLine;
-	const wchar_t*	pLine;
-	int			nLineLen;
-
-	/* 1==正規表現 */
-	if( sSearchOption.bRegularExp ){
-		CBregexp*	pRegexp = pattern.GetRegexp();
-		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
-		while( pDocLine ){
-			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				// 2005.03.19 かろと 前方一致サポートのためのメソッド変更
-				if( pRegexp->Match( pLine, nLineLen, 0 ) ){
-					CBookmarkSetter(pDocLine).SetBookmark(true);
-				}
-			}
-			pDocLine = pDocLine->GetNextLine();
+	const CLineMatchFinder finder( pattern, pattern.GetRegexp() );
+	for( CDocLine* pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) ); nullptr != pDocLine; pDocLine = pDocLine->GetNextLine() ){
+		if( CBookmarkGetter(pDocLine).IsBookmarked() ){
+			continue;
 		}
-	}
-	/* 1==単語のみ検索 */
-	else if( sSearchOption.bWordOnly ){
-		const wchar_t*	pszPattern = pattern.GetKey();
-		const int	nPatternLen = pattern.GetLen();
-		// 検索語を単語に分割して searchWordsに格納する。
-		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
-		CSearchAgent::CreateWordList(searchWords, pszPattern, nPatternLen);
-
-		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
-		while( pDocLine ){
-			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
-				pLine = pDocLine->GetDocLineStrWithEOL(&nLineLen);
-				int nMatchLen;
-				if( CSearchAgent::SearchStringWord(pLine, nLineLen, 0, searchWords, sSearchOption.bLoHiCase, &nMatchLen) ){
-					CBookmarkSetter(pDocLine).SetBookmark(true);
-				}
-			}
-			/* 次の行を見に行く */
-			pDocLine = pDocLine->GetNextLine();
-		}
-	}
-	else{
-		/* 検索条件の情報 */
-		pDocLine = m_pcDocLineMgr->GetLine( CLogicInt(0) );
-		while( nullptr != pDocLine ){
-			if(!CBookmarkGetter(pDocLine).IsBookmarked()){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				if( CSearchAgent::SearchString(
-					pLine,
-					nLineLen,
-					0,
-					pattern
-				) ){
-					CBookmarkSetter(pDocLine).SetBookmark(true);
-				}
-			}
-			pDocLine = pDocLine->GetNextLine();
+		int nLineLen = 0;
+		const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+		// 2005.03.19 かろと 前方一致サポートのためのメソッド変更(正規表現は行頭から照合する)
+		if( finder.Find( pLine, nLineLen, 0 ) ){
+			CBookmarkSetter(pDocLine).SetBookmark(true);
 		}
 	}
 }

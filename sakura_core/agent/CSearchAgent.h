@@ -115,6 +115,8 @@ public:
 
 	void ReplaceData( DocLineReplaceArg* pArg, bool bEnableExtEol );
 private:
+	bool SearchWordBackwardByWord( CLogicPoint ptSerachBegin, CLogicRange* pMatchRange, const CSearchStringPattern& pattern );
+
 	CDocLineMgr* m_pcDocLineMgr;
 };
 
@@ -127,7 +129,7 @@ struct SLineMatch {
 /*!
 	@brief 1 行の中から、検索語に一致する部分を前から順に探す
 
-	Grep・Grep 置換で使う。正規表現・単語単位・文字列のどれで探すかは、
+	検索・ブックマークの一括設定・Grep・Grep 置換で使う。正規表現・単語単位・文字列のどれで探すかは、
 	検索のオプションで決まる(正規表現・単語単位の順に優先する)。
 	正規表現は CBregexp::Match() で探す。置換(CBregexp::Replace())はしない。
 */
@@ -139,14 +141,16 @@ public:
 	*/
 	CLineMatchFinder( const CSearchStringPattern& pattern, CBregexp* pRegexp );
 
-	/*!
-		nStart から後ろで最初の一致を探す。見つからなければ空
+	//! nStart から後ろで最初の一致を探す。見つからなければ空
+	std::optional<SLineMatch> Find( const wchar_t* pLine, int nLineLen, int nStart ) const;
 
-		単語単位では、nStart を含む単語から調べる。その単語が検索語の単語と同じなら、
-		単語の先頭を一致として返す(nStart より前のこともある)。
+	/*!
+		Find() と同じ。ただし単語単位では、nStart を含む単語から調べる
+
+		その単語が検索語の単語と同じなら、単語の先頭を一致として返す(nStart より前のこともある)。
 		文書の中の検索で、カーソルが単語の途中にあるときに、その単語に一致させるため。
 	*/
-	std::optional<SLineMatch> Find( const wchar_t* pLine, int nLineLen, int nStart ) const;
+	std::optional<SLineMatch> FindIncludingWordAt( const wchar_t* pLine, int nLineLen, int nStart ) const;
 
 	//! 一致の次に探し始める位置。長さ 0 の一致なら 1 文字進める
 	static int GetNextStart( const wchar_t* pLine, int nLineLen, const SLineMatch& match );

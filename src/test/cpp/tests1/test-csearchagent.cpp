@@ -738,6 +738,16 @@ TEST_F(CSearchAgentSearchTest, WordBackwardNotFoundAtTop)
 	EXPECT_THAT(Search(0, 0, SEARCH_BACKWARD), IsEmpty());
 }
 
+//! 後方: 大文字小文字を区別しないときだけ、前の行の単語に一致する
+TEST_F(CSearchAgentSearchTest, WordBackwardIgnoreCase)
+{
+	SetWordDocument();
+	ASSERT_THAT(SetKey(L"FOO", false, false, true), IsTrue());
+	EXPECT_THAT(Search(0, 1, SEARCH_BACKWARD), ElementsAre(19, 0, 22, 0));
+	ASSERT_THAT(SetKey(L"FOO", false, true, true), IsTrue());
+	EXPECT_THAT(Search(0, 1, SEARCH_BACKWARD), IsEmpty());
+}
+
 // ---------------------------------------------------------------------------
 // SearchWord: 正規表現
 // ---------------------------------------------------------------------------
@@ -838,6 +848,14 @@ TEST_F(CSearchAgentSearchTest, RegexBackwardZeroLength)
 	SetDocument({ L"abc" });
 	ASSERT_THAT(SetKey(L"^", true, true, false), IsTrue());
 	EXPECT_THAT(Search(2, 0, SEARCH_BACKWARD), ElementsAre(0, 0, 0, 0));
+}
+
+//! 正規表現・後方: 長さ 0 の一致の後は 1 文字(サロゲートペアは 2)進めるので、正字と異体字セレクタの間の一致も見つける
+TEST_F(CSearchAgentSearchTest, RegexBackwardZeroLengthBeforeVariationSelector)
+{
+	SetDocument({ L"\u845B\U000E0100x" });	// 葛 + 異体字セレクタ(VS17) + x
+	ASSERT_THAT(SetKey(L"^|\U000E0100", true, true, false), IsTrue());
+	EXPECT_THAT(Search(4, 0, SEARCH_BACKWARD), ElementsAre(1, 0, 3, 0));
 }
 
 //! 見つからない
@@ -1075,6 +1093,14 @@ TEST_F(CSearchAgentSearchTest, RegexBackwardLineEnd)
 	EXPECT_THAT(Search(4, 0, SEARCH_BACKWARD), ElementsAre(3, 0, 3, 0));
 }
 
+//! 正規表現・後方: 前の行へさかのぼると、その行の行末(長さ 0)に一致する
+TEST_F(CSearchAgentSearchTest, RegexBackwardPrevLineEnd)
+{
+	SetDocument({ L"ab\n", L"cd" });
+	ASSERT_THAT(SetKey(L"$", true, true, false), IsTrue());
+	EXPECT_THAT(Search(0, 1, SEARCH_BACKWARD), ElementsAre(2, 0, 2, 0));
+}
+
 //! 正規表現: 「.」は改行文字に一致しないので、改行だけの行を飛ばす
 TEST_F(CSearchAgentSearchTest, RegexDotSkipsEol)
 {
@@ -1169,12 +1195,31 @@ TEST_F(CLineMatchFinderTest, WordStartInsideWord)
 	EXPECT_THAT(Find(L"foofoo foo", 1), ElementsAre(7, 3));
 }
 
-//! 単語単位: 探し始める位置を含む単語が検索語と同じなら、その単語の先頭を返す(探し始める位置より前でも)
+//! 単語単位: 探し始める位置を含む単語が検索語と同じでも、探し始める位置より前から始まるなら飛ばす
 TEST_F(CLineMatchFinderTest, WordContainingStart)
 {
 	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
-	EXPECT_THAT(Find(L"foo foo", 1), ElementsAre(0, 3));
+	EXPECT_THAT(Find(L"foo foo", 1), ElementsAre(4, 3));
 	EXPECT_THAT(Find(L"foo foo", 3), ElementsAre(4, 3));
+}
+
+//! 単語単位(FindIncludingWordAt): 探し始める位置を含む単語が検索語と同じなら、その単語の先頭を返す(探し始める位置より前でも)
+TEST_F(CLineMatchFinderTest, WordIncludingWordAt)
+{
+	ASSERT_THAT(SetKey(L"foo", false, true, true), IsTrue());
+	const CLineMatchFinder finder(m_cPattern, &m_cRegexp);
+	constexpr std::wstring_view line = L"foo foo";
+	const auto match = finder.FindIncludingWordAt(line.data(), static_cast<int>(line.length()), 1);
+	ASSERT_THAT(match.has_value(), IsTrue());
+	EXPECT_THAT(match->nIndex, Eq(0));
+	EXPECT_THAT(match->nLength, Eq(3));
+}
+
+//! 単語単位: 長音「ー」は前後どちらの単語にも付くので、一致の終わりから探すと前の一致に重なる単語が見つかる。重なる一致は返さない
+TEST_F(CLineMatchFinderTest, WordOverlapByProlongedSoundMark)
+{
+	ASSERT_THAT(SetKey(L"あー ーカ", false, true, true), IsTrue());
+	EXPECT_THAT(FindAll(L"あーカ"), ElementsAre(0, 2));
 }
 
 //! 正規表現: 1 行の中の一致をすべて探す

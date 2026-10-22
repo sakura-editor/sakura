@@ -15,16 +15,12 @@
 #include "dlg/CDlgCancel.h"
 #include "util/string_ex.h"
 #include <algorithm>
+#include <limits>
 #include "sakura_rc.h"
 #include "CEditApp.h"
 #include "agent/CGrepAgent.h"
 #include "apiwrap/CommonControl.h"
 #include "env/DLLSHAREDATA.h"
-
-//#define MEASURE_SEARCH_TIME
-#ifdef MEASURE_SEARCH_TIME
-#include <time.h>
-#endif
 
 // CSearchStringPattern
 // @date 2010.06.22 Moca
@@ -348,6 +344,16 @@ CLineMatchFinder::CLineMatchFinder( const CSearchStringPattern& pattern, CBregex
 
 std::optional<SLineMatch> CLineMatchFinder::Find( const wchar_t* pLine, int nLineLen, int nStart ) const
 {
+	auto match = FindIncludingWordAt( pLine, nLineLen, nStart );
+	// 単語単位では、nStart を含む単語が nStart より前から始まることがある。その単語の後ろから探し直す
+	while( match && match->nIndex < nStart ){
+		match = FindIncludingWordAt( pLine, nLineLen, match->nIndex + match->nLength );
+	}
+	return match;
+}
+
+std::optional<SLineMatch> CLineMatchFinder::FindIncludingWordAt( const wchar_t* pLine, int nLineLen, int nStart ) const
+{
 	if( nLineLen < nStart ){
 		return std::nullopt;
 	}
@@ -451,6 +457,79 @@ bool CSearchAgent::PrevOrNextWord(
 	return true;
 }
 
+namespace {
+
+/*!
+	1 行の中で、探し始めてよい最後の位置
+
+	正規表現は、改行文字の中から探し始めない
+*/
+int GetLastSearchStart( const CDocLine& docLine, int nLineLen, bool bRegularExp )
+{
+	if( bRegularExp ){
+		return docLine.GetLengthWithoutEOL();
+	}
+	return nLineLen;
+}
+
+//! 1 行の中で、nStart から後ろの最初の一致を探す
+std::optional<SLineMatch> FindFirstInLine( const CLineMatchFinder& finder, const CDocLine& docLine, int nStart, bool bRegularExp )
+{
+	int nLineLen = 0;
+	const wchar_t* pLine = docLine.GetDocLineStrWithEOL( &nLineLen );
+	if( GetLastSearchStart( docLine, nLineLen, bRegularExp ) < nStart ){
+		return std::nullopt;
+	}
+	// 単語単位では、カーソルが単語の途中にあれば、その単語にも一致させる
+	return finder.FindIncludingWordAt( pLine, nLineLen, nStart );
+}
+
+//! 1 行の中で、始まりが nHitTo より前の一致のうち、最後のものを探す
+std::optional<SLineMatch> FindLastInLineBefore( const CLineMatchFinder& finder, const CDocLine& docLine, int nHitTo, bool bRegularExp )
+{
+	int nLineLen = 0;
+	const wchar_t* pLine = docLine.GetDocLineStrWithEOL( &nLineLen );
+	const int nLastStart = GetLastSearchStart( docLine, nLineLen, bRegularExp );
+	std::optional<SLineMatch> lastMatch;
+	int nStart = 0;
+	while( nStart <= nLastStart ){
+		const auto match = finder.Find( pLine, nLineLen, nStart );
+		if( !match || nHitTo <= match->nIndex ){
+			break;
+		}
+		lastMatch = match;
+		if( 0 == match->nLength ){
+			// 長さ 0 の一致は、サロゲートペアなら 2、それ以外は 1 進める(異体字セレクタの前でも止まる)
+			nStart = match->nIndex + ( CNativeW::GetSizeOfChar( pLine, nLineLen, match->nIndex ) == 2 ? 2 : 1 );
+		}else{
+			nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
+		}
+	}
+	return lastMatch;
+}
+
+//! 単語が、検索語の単語のどれかと同じか
+bool IsInWordList(
+	const wchar_t*	pWord,
+	int				nWordLen,
+	const std::vector<std::pair<const wchar_t*, CLogicInt> >& searchWords,
+	bool			bLoHiCase
+)
+{
+	return std::any_of( searchWords.cbegin(), searchWords.cend(), [pWord, nWordLen, bLoHiCase]( const std::pair<const wchar_t*, CLogicInt>& searchWord ){
+		if( searchWord.second != nWordLen ){
+			return false;
+		}
+		/* 1==大文字小文字の区別 */
+		if( bLoHiCase ){
+			return 0 == wmemcmp( pWord, searchWord.first, nWordLen );
+		}
+		return 0 == wmemicmp( pWord, searchWord.first, nWordLen );
+	} );
+}
+
+} // namespace
+
 /*! 単語検索
 
 	@date 2003.05.22 かろと 行頭処理など見直し
@@ -464,297 +543,105 @@ int CSearchAgent::SearchWord(
 	const CSearchStringPattern&	pattern		//!< 検索パターン
 )
 {
-	CDocLine*	pDocLine;
-	CLogicInt	nLinePos;
-	CLogicInt	nIdxPos;
-	CLogicInt	nIdxPosOld;
-	const wchar_t*	pLine;
-	int			nLineLen;
-	const wchar_t*	pszRes;
-	CLogicInt	nHitTo;
-	CLogicInt	nHitPos;
-	CLogicInt	nHitPosOld;
-	int			nRetVal = 0;
 	const SSearchOption&	sSearchOption = pattern.GetSearchOption();
-	CBregexp*	pRegexp = pattern.GetRegexp();
-#ifdef MEASURE_SEARCH_TIME
-	long clockStart, clockEnd;
-	clockStart = clock();
-#endif
+	const bool	bRegularExp = sSearchOption.bRegularExp;
+	if( eDirection == SEARCH_BACKWARD && sSearchOption.bWordOnly && !bRegularExp ){
+		return SearchWordBackwardByWord( ptSerachBegin, pMatchRange, pattern ) ? 1 : 0;
+	}
 
-	//正規表現
-	if( sSearchOption.bRegularExp ){
-		nLinePos = ptSerachBegin.GetY2();		// 検索行＝検索開始行
-		pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-		// 後方検索
-		if( eDirection == SEARCH_BACKWARD ){
-			//
-			// 後方(↑)検索(正規表現)
-			//
-			nHitTo = ptSerachBegin.x;				// 検索開始位置
-			nIdxPos = 0;
-			while( nullptr != pDocLine ){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				nHitPos		= -1;	// -1:この行でマッチ位置なし
-				for (;;) {
-					nHitPosOld = nHitPos;
-					nIdxPosOld = nIdxPos;
-					// 長さ０でマッチしたので、この位置で再度マッチしないように、１文字進める
-					if (nIdxPos == nHitPos) {
-						// 2005-09-02 D.S.Koba GetSizeOfChar
-						nIdxPos += (CNativeW::GetSizeOfChar( pLine, nLineLen, nIdxPos ) == 2 ? 2 : 1);
-					}
-					if (	nIdxPos <= pDocLine->GetLengthWithoutEOL() 
-						&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
-						// 検索にマッチした！
-						nHitPos = pRegexp->GetIndex();
-						nIdxPos = pRegexp->GetLastIndex();
-						if( nHitPos >= nHitTo ){
-							// マッチしたのは、カーソル位置以降だった
-							// すでにマッチした位置があれば、それを返し、なければ前の行へ
-							break;
-						}
-					} else {
-						// マッチしなかった
-						// すでにマッチした位置があれば、それを返し、なければ前の行へ
-						break;
-					}
-				}
-
-				if ( -1 != nHitPosOld ) {
-					// この行でマッチした位置が存在するので、この行で検索終了
-					pMatchRange->SetFromX( nHitPosOld );	// マッチ位置from
-					pMatchRange->SetToX  ( nIdxPosOld );	// マッチ位置to
-					break;
-				} else {
-					// この行でマッチした位置が存在しないので、前の行を検索へ
-					nLinePos--;
-					pDocLine = pDocLine->GetPrevLine();
-					nIdxPos = 0;
-					if( nullptr != pDocLine ){
-						nHitTo = pDocLine->GetLengthWithEOL() + 1;		// 前の行のNULL文字(\0)にもマッチさせるために+1 2003.05.16 かろと 
-					}
-				}
+	const CLineMatchFinder finder( pattern, pattern.GetRegexp() );
+	CLogicInt	nLinePos = ptSerachBegin.GetY2();
+	const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
+	std::optional<SLineMatch> match;
+	if( eDirection == SEARCH_BACKWARD ){
+		// 後方検索: 始まりがカーソルより前の一致のうち、最後のもの。無ければ前の行の最後の一致
+		int nHitTo = ptSerachBegin.GetX2();
+		while( nullptr != pDocLine ){
+			match = FindLastInLineBefore( finder, *pDocLine, nHitTo, bRegularExp );
+			if( match ){
+				break;
 			}
-		}
-		// 前方検索
-		else {
-			//
-			// 前方検索(正規表現)
-			//
-			nIdxPos = ptSerachBegin.x;
-			while( nullptr != pDocLine ){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				if(		nIdxPos <= pDocLine->GetLengthWithoutEOL() 
-					&&	pRegexp->Match( pLine, nLineLen, nIdxPos ) ){
-					// マッチした
-					pMatchRange->SetFromX( pRegexp->GetIndex()     );	// マッチ位置from
-					pMatchRange->SetToX  ( pRegexp->GetLastIndex() );	// マッチ位置to
-					break;
-				}
-				++nLinePos;
-				pDocLine = pDocLine->GetNextLine();
-				nIdxPos = 0;
-			}
-		}
-		//
-		// 正規表現検索の後処理
-		if ( pDocLine != nullptr ) {
-			// マッチした行がある
-			pMatchRange->SetFromY(nLinePos); // マッチ行
-			pMatchRange->SetToY  (nLinePos); // マッチ行
-			nRetVal = 1;
-			// レイアウト行では改行文字内の位置を表現できないため、マッチ開始位置を補正
-			if (pMatchRange->GetFrom().x > pDocLine->GetLengthWithoutEOL()) {
-				// \r\n改行時に\nにマッチすると置換できない不具合となるため
-				// 改行文字内でマッチした場合、改行文字の始めからマッチしたことにする
-				pMatchRange->SetFromX( pDocLine->GetLengthWithoutEOL() );
-			}
+			--nLinePos;
+			pDocLine = pDocLine->GetPrevLine();
+			nHitTo = std::numeric_limits<int>::max();	// 前の行は、行末の長さ 0 の一致も含めて探す
 		}
 	}
-	//単語のみ検索
-	else if( sSearchOption.bWordOnly ){
-		// 検索語を単語に分割して searchWordsに格納する。
-		const wchar_t* pszPattern = pattern.GetKey();
-		const int	nPatternLen = pattern.GetLen();
-		std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
-		CreateWordList( searchWords, pszPattern, nPatternLen );
-		/*
-			2001/06/23 Norio Nakatani
-			単語単位の検索を試験的に実装。単語はWhereCurrentWord()で判別してますので、
-			英単語やC/C++識別子などの検索条件ならヒットします。
-		*/
-
-		// 後方検索
-		if( eDirection == SEARCH_BACKWARD ){
-			nLinePos = ptSerachBegin.GetY2();
-			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-			CLogicInt nNextWordFrom;
-			CLogicInt nNextWordFrom2;
-			CLogicInt nNextWordTo2;
-			CLogicInt nWork;
-			nNextWordFrom = ptSerachBegin.GetX2();
-			while( nullptr != pDocLine ){
-				if( PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE ) ){
-					nNextWordFrom = nWork;
-					if( WhereCurrentWord( nLinePos, nNextWordFrom, &nNextWordFrom2, &nNextWordTo2 , nullptr, nullptr ) ){
-						size_t nSize = searchWords.size();
-						for( size_t iSW = 0; iSW < nSize; ++iSW ) {
-							if( searchWords[iSW].second == nNextWordTo2 - nNextWordFrom2 ){
-								const wchar_t* pData = pDocLine->GetPtr();	// 2002/2/10 aroka CMemory変更
-								/* 1==大文字小文字の区別 */
-								if( (!sSearchOption.bLoHiCase && 0 == wmemicmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) ) ||
-									(sSearchOption.bLoHiCase && 0 ==   wmemcmp( &(pData[nNextWordFrom2]) , searchWords[iSW].first, searchWords[iSW].second ) )
-								){
-									pMatchRange->SetFromY(nLinePos);	// マッチ行
-									pMatchRange->SetToY  (nLinePos);	// マッチ行
-									pMatchRange->SetFromX(nNextWordFrom2);						// マッチ位置from
-									pMatchRange->SetToX  (pMatchRange->GetFrom().x + searchWords[iSW].second);// マッチ位置to
-									nRetVal = 1;
-									goto end_of_func;
-								}
-							}
-						}
-						continue;
-					}
-				}
-				/* 前の行を見に行く */
-				nLinePos--;
-				pDocLine = pDocLine->GetPrevLine();
-				if( nullptr != pDocLine ){
-					nNextWordFrom = pDocLine->GetLengthWithEOL() - pDocLine->GetEol().GetLen();
-					if( 0 > nNextWordFrom ){
-						nNextWordFrom = CLogicInt(0);
-					}
-				}
-			}
-		}
-		// 前方検索
-		else{
-			nLinePos = ptSerachBegin.GetY2();
-			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-			CLogicInt	nNextWordFrom = ptSerachBegin.GetX2();
-			while( nullptr != pDocLine ){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				int nMatchLen;
-				pszRes = SearchStringWord(pLine, nLineLen, nNextWordFrom, searchWords, sSearchOption.bLoHiCase, &nMatchLen);
-				if( nullptr != pszRes ){
-					pMatchRange->SetFromY(nLinePos);	// マッチ行
-					pMatchRange->SetToY  (nLinePos);	// マッチ行
-					pMatchRange->SetFromX(CLogicInt(pszRes - pLine));						// マッチ位置from
-					pMatchRange->SetToX  (pMatchRange->GetFrom().x + nMatchLen);// マッチ位置to
-					nRetVal = 1;
-					goto end_of_func;
-				}
-				/* 次の行を見に行く */
-				nLinePos++;
-				pDocLine = pDocLine->GetNextLine();
-				nNextWordFrom = CLogicInt(0);
-			}
-		}
-
-		nRetVal = 0;
-		goto end_of_func;
-	}
-	//普通の検索 (正規表現でも単語単位でもない)
 	else{
-		const int	nPatternLen = pattern.GetLen();
-		// 後方検索
-		if( eDirection == SEARCH_BACKWARD ){
-			nLinePos = ptSerachBegin.GetY2();
-			nHitTo = ptSerachBegin.x;
-
-			nIdxPos = 0;
-			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-			while( nullptr != pDocLine ){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				nHitPos = -1;
-				for (;;) {
-					nHitPosOld = nHitPos;
-					nIdxPosOld = nIdxPos;
-					pszRes = SearchString(
-						pLine,
-						nLineLen,
-						nIdxPos,
-						pattern
-					);
-					if( nullptr != pszRes ){
-						nHitPos = pszRes - pLine;
-						nIdxPos = nHitPos + nPatternLen;	// マッチ文字列長進めるように変更 2005.10.28 Karoto
-						if( nHitPos >= nHitTo ){
-							if( -1 != nHitPosOld ){
-								pMatchRange->SetFromY(nLinePos);	// マッチ行
-								pMatchRange->SetToY  (nLinePos);	// マッチ行
-								pMatchRange->SetFromX(nHitPosOld);	// マッチ位置from
- 								pMatchRange->SetToX  (nIdxPosOld);	// マッチ位置to
-								nRetVal = 1;
-								goto end_of_func;
-							}else{
-								break;
-							}
-						}
-					}else{
-						if( -1 != nHitPosOld ){
-							pMatchRange->SetFromY(nLinePos);	// マッチ行
-							pMatchRange->SetToY  (nLinePos);	// マッチ行
-							pMatchRange->SetFromX(nHitPosOld);	// マッチ位置from
-							pMatchRange->SetToX  (nIdxPosOld);	// マッチ位置to
-							nRetVal = 1;
-							goto end_of_func;
-						}else{
-							break;
-						}
-					}
-				}
-				nLinePos--;
-				pDocLine = pDocLine->GetPrevLine();
-				nIdxPos = 0;
-				if( nullptr != pDocLine ){
-					nHitTo = pDocLine->GetLengthWithEOL();
-				}
+		// 前方検索: 検索開始位置から後ろの最初の一致。無ければ次の行の最初の一致
+		int nStart = ptSerachBegin.GetX2();
+		while( nullptr != pDocLine ){
+			match = FindFirstInLine( finder, *pDocLine, nStart, bRegularExp );
+			if( match ){
+				break;
 			}
-			nRetVal = 0;
-			goto end_of_func;
-		}
-		// 前方検索
-		else{
-			nIdxPos = ptSerachBegin.x;
-			nLinePos = ptSerachBegin.GetY2();
-			pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-			while( nullptr != pDocLine ){
-				pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
-				pszRes = SearchString(
-					pLine,
-					nLineLen,
-					nIdxPos,
-					pattern
-				);
-				if( nullptr != pszRes ){
-					pMatchRange->SetFromY(nLinePos);	// マッチ行
-					pMatchRange->SetToY  (nLinePos);	// マッチ行
-					pMatchRange->SetFromX(CLogicInt(pszRes - pLine));							// マッチ位置from (文字単位)
-					pMatchRange->SetToX  (pMatchRange->GetFrom().x + nPatternLen);	// マッチ位置to   (文字単位)
-					nRetVal = 1;
-					goto end_of_func;
-				}
-				++nLinePos;
-				pDocLine = pDocLine->GetNextLine();
-				nIdxPos = 0;
-			}
-			nRetVal = 0;
-			goto end_of_func;
+			++nLinePos;
+			pDocLine = pDocLine->GetNextLine();
+			nStart = 0;
 		}
 	}
-end_of_func:;
-#ifdef MEASURE_SEARCH_TIME
-	clockEnd = clock();
-	WCHAR buf[100];
-	memset(buf, 0x00, sizeof(buf));
-	::swprintf_s(buf, L"%d", clockEnd - clockStart);
-	::MessageBox( NULL, buf, GSTR_APPNAME, MB_OK );
-#endif
+	if( !match ){
+		return 0;
+	}
 
-	return nRetVal;
+	pMatchRange->SetFromY( nLinePos );	// マッチ行
+	pMatchRange->SetToY  ( nLinePos );	// マッチ行
+	pMatchRange->SetFromX( CLogicInt(match->nIndex) );					// マッチ位置from
+	pMatchRange->SetToX  ( CLogicInt(match->nIndex + match->nLength) );	// マッチ位置to
+	// レイアウト行では改行文字内の位置を表現できないため、マッチ開始位置を補正
+	if( bRegularExp && pDocLine->GetLengthWithoutEOL() < match->nIndex ){
+		// \r\n改行時に\nにマッチすると置換できない不具合となるため
+		// 改行文字内でマッチした場合、改行文字の始めからマッチしたことにする
+		pMatchRange->SetFromX( pDocLine->GetLengthWithoutEOL() );
+	}
+	return 1;
+}
+
+/*!
+	単語単位の後方検索
+
+	カーソルの位置から単語を 1 つずつさかのぼり、検索語のどれかの単語と同じ単語を探す。
+	行の先頭まで来たら、前の行の行末からさかのぼる。
+	@retval true 見つかった。pMatchRange に一致の範囲を返す
+*/
+bool CSearchAgent::SearchWordBackwardByWord(
+	CLogicPoint				ptSerachBegin,	//!< 検索開始位置
+	CLogicRange*			pMatchRange,	//!< [out] マッチ範囲。ロジック単位。
+	const CSearchStringPattern&	pattern		//!< 検索パターン
+)
+{
+	// 検索語を単語に分割して searchWordsに格納する。
+	std::vector<std::pair<const wchar_t*, CLogicInt> > searchWords; // 単語の開始位置と長さの配列。
+	CreateWordList( searchWords, pattern.GetKey(), pattern.GetLen() );
+	const bool bLoHiCase = pattern.GetSearchOption().bLoHiCase;
+
+	CLogicInt	nLinePos = ptSerachBegin.GetY2();
+	const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
+	CLogicInt	nNextWordFrom = ptSerachBegin.GetX2();
+	CLogicInt	nWork(0);		// さかのぼった単語の先頭
+	CLogicInt	nWordFrom(0);	// その単語の範囲の始まり
+	CLogicInt	nWordTo(0);		// その単語の範囲の終わりの次
+	while( nullptr != pDocLine ){
+		if( PrevOrNextWord( nLinePos, nNextWordFrom, &nWork, TRUE, FALSE )
+			&& WhereCurrentWord( nLinePos, nWork, &nWordFrom, &nWordTo, nullptr, nullptr )
+		){
+			nNextWordFrom = nWork;
+			if( IsInWordList( &pDocLine->GetPtr()[nWordFrom], nWordTo - nWordFrom, searchWords, bLoHiCase ) ){
+				pMatchRange->SetFromY( nLinePos );	// マッチ行
+				pMatchRange->SetToY  ( nLinePos );	// マッチ行
+				pMatchRange->SetFromX( nWordFrom );	// マッチ位置from
+				pMatchRange->SetToX  ( nWordTo );	// マッチ位置to
+				return true;
+			}
+			continue;
+		}
+		/* 前の行を見に行く */
+		nLinePos--;
+		pDocLine = pDocLine->GetPrevLine();
+		if( nullptr != pDocLine ){
+			nNextWordFrom = pDocLine->GetLengthWithoutEOL();
+		}
+	}
+	return false;
 }
 
 /* 指定範囲のデータを置換(削除 & データを挿入)
