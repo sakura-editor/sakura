@@ -10,13 +10,50 @@
 #pragma once
 
 #include "doc/CDocListener.h"
-class CDlgCancel;
 class CEditView;
 class CSearchStringPattern;
 class CGrepEnumKeys;
 class CGrepEnumFiles;
 class CGrepEnumFolders;
 struct GrepInfo;
+
+/*!
+	@brief Grep の中断の確認と、進み具合の表示
+
+	CGrepAgent::DoGrep() が、検索・置換の途中で呼ぶ。
+	画面では「Grep実行中」のダイアログを使う。テストでは差し替えて、中断する位置を決めたり、表示した内容を確かめたりする。
+
+	中断の確認と表示をどれだけ間引くかは、実装が決める(前回の時刻は実装が持つ)。
+	CGrepAgent は時刻を持たない。
+*/
+class CGrepProgress {
+public:
+	virtual ~CGrepProgress() = default;
+
+	//! 中断の確認をする時機かを返す(false なら IsCanceled() と表示を飛ばす)
+	virtual bool IsCheckTime() = 0;
+	//! 処理中のファイル名を表示する時機かを返す
+	virtual bool IsFileNameTime() = 0;
+	//! 処理中のユーザー操作を受け付け、中断するかを返す
+	virtual bool IsCanceled() = 0;
+	//! リアルタイム表示の指定を、すべてのビューの表示に反映する
+	virtual void ApplyRealTimeView() = 0;
+	//! ヒット数を表示する
+	virtual void SetHitCount( int nHitCount ) = 0;
+	//! 処理中のファイル名を表示する
+	virtual void SetFileName( const wchar_t* pszFileName ) = 0;
+	//! 処理中のフォルダーを表示する
+	virtual void SetFolder( const wchar_t* pszFolder ) = 0;
+};
+
+/*!
+	@brief Grep の実行で差し替えるもの
+
+	CGrepAgent::DoGrep() の間だけ使う。nullptr のものは、画面で使う既定のものにする。
+*/
+struct SGrepHooks {
+	CGrepProgress*	pProgress = nullptr;	//!< 中断の確認と進み具合の表示。nullptr なら「Grep実行中」のダイアログを出す
+};
 
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //	Mar. 28, 2004 genta DoGrepFileから不要な引数を削除
@@ -36,6 +73,13 @@ public:
 	DWORD DoGrep(
 		CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
 		const GrepInfo&			gi			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
+	);
+
+	// Grep実行(中断の確認と進み具合の表示などを差し替える)
+	DWORD DoGrep(
+		CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
+		const GrepInfo&			gi,			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
+		const SGrepHooks&		hooks		//!< [in] 差し替えるもの
 	);
 
 private:
@@ -71,7 +115,7 @@ private:
 	//! 結果の出力先と、出力の途中の状態
 	struct SGrepOutput {
 		CEditView*		pcViewDst;					//!< 結果の出力先
-		CDlgCancel*		pcDlgCancel;				//!< Cancelダイアログ
+		CGrepProgress*	pProgress;					//!< 中断の確認と進み具合の表示
 		int*			pnHitCount;					//!< ヒット数の合計
 		CNativeW&		cmemMessage;				//!< まだ出力していない結果
 		CNativeW&		cUnicodeBuffer;				//!< 1 行の読み込みに使うバッファー
@@ -108,9 +152,6 @@ private:
 		const WCHAR*			pszBasePath
 	);
 
-	// 処理中のユーザー操作を受け付け、中断されたかを返す
-	bool IsGrepCanceled( CDlgCancel* pcDlgCancel, DWORD dwNow );
-
 	// Grep実行
 	int DoGrepFile(
 		const SGrepSearchCond&	cond,
@@ -130,8 +171,6 @@ private:
 	);
 
 	DWORD m_dwTickAddTail = 0;	// AddTail() を呼び出した時間
-	DWORD m_dwTickUICheck = 0;	// 処理中にユーザーによるUI操作が行われていないか確認した時間
-	DWORD m_dwTickUIFileName = 0;	// Cancelダイアログのファイル名表示更新を行った時間
 
 public: //$$ 仮
 	bool	m_bGrepMode = false;		//!< Grepモードか
