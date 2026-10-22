@@ -964,6 +964,22 @@ TEST_F(Kernel32, GetCurrentDirectoryW102)
 	);
 }
 
+TEST_F(Kernel32, GetLastWriteTime101)
+{
+	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, OPEN_EXISTING, _, nullptr))
+		.WillOnce(Return(INVALID_HANDLE_VALUE));
+
+	FILETIME ft{};
+	CFileTime ftLastWrite{ ft };
+	EXPECT_FALSE(GetLastWriteTimestamp(L"tests1.ini", &ftLastWrite));
+
+	// 呼ぶだけ
+	ftLastWrite.GetFILETIME();
+
+	// 呼ぶだけ
+	EXPECT_FALSE(ftLastWrite);
+}
+
 TEST_F(Kernel32, GetModuleFileNameW101)
 {
 	// APIが0を返したら例外。
