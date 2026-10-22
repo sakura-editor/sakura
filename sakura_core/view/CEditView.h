@@ -55,6 +55,8 @@
 #include "util/design_template.h"
 #include "_os/CClipboard.h"
 
+#include <string_view>
+
 class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
@@ -434,6 +436,8 @@ public:
 	void TranslateCommand_isearch(EFunctionCode& nCommand, bool& bRedraw, LPARAM& lparam1, LPARAM& lparam2, LPARAM& lparam3,  LPARAM& lparam4 );
 	bool ProcessCommand_isearch(int	nCommand, bool	bRedraw, LPARAM	lparam1, LPARAM	lparam2, LPARAM	lparam3, LPARAM	lparam4 );
 
+	bool RefreshSearchPattern();
+
 	//	Jan. 10, 2005 genta HandleCommandからgrep関連処理を分離
 	void TranslateCommand_grep(EFunctionCode& nCommand, bool& bRedraw, LPARAM& param1, LPARAM& param2, LPARAM& param3, LPARAM& param4 );
 
@@ -452,7 +456,12 @@ public:
 	};
 	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
 
-	int IsSearchString(const CStringRef& cStr, CLogicInt nPos, CLogicInt* pnSearchStart, CLogicInt* pnSearchEnd) const;	/* 現在位置が検索文字列に該当するか */	//2002.02.08 hor 引数追加
+	int IsSearchString(
+		std::wstring_view line,
+		int nPos,
+		CLogicInt* pnSearchStart,
+		CLogicInt* pnSearchEnd
+	);
 
 	void GetCurrentTextForSearch( CNativeW& cmemCurText, bool bStripMaxPath = true, bool bTrimSpaceTab = false );			/* 現在カーソル位置単語または選択範囲より検索等のキーを取得 */
 	bool GetCurrentTextForSearchDlg(CNativeW& cmemCurText, bool bGetHistory = false );		/* 現在カーソル位置単語または選択範囲より検索等のキーを取得（ダイアログ用） 2006.08.23 ryoji */
@@ -705,7 +714,7 @@ public:
 
 	//検索
 	CSearchStringPattern m_sSearchPattern;
-	mutable CBregexp	m_CurRegexp;				/*!< コンパイルデータ */
+	CBregexp			m_CurRegexp{};				/*!< コンパイルデータ */
 	bool				m_bCurSrchKeyMark = false;			/* 検索文字列のマーク */
 	bool				m_bCurSearchUpdate = false;			//!< コンパイルデータ更新要求
 	int					m_nCurSearchKeySequence = -1;	//!< 検索キーシーケンス

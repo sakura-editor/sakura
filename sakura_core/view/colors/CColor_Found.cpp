@@ -92,7 +92,7 @@ void CColor_Found::OnStartScanLogic()
 bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 {
 	if(!cStr.IsValid())return false;
-	const CEditView* pcView = CColorStrategyPool::getInstance()->GetCurrentView();
+	auto pcView = CColorStrategyPool::getInstance()->GetCurrentView();
 	if( !pcView->m_bCurSrchKeyMark || 0 == this->validColorNum ){
 		return false;
 	}
@@ -103,8 +103,8 @@ bool CColor_Found::BeginColor(const CStringRef& cStr, int nPos)
 	// 2002.02.08 hor 正規表現の検索文字列マークを少し高速化
 	if( pcView->m_sCurSearchOption.bWordOnly || (m_nSearchResult && m_nSearchStart < nPos) ){
 		m_nSearchResult = pcView->IsSearchString(
-			cStr,
-			CLogicInt(nPos),
+			static_cast<std::wstring_view>(cStr),
+			nPos,
 			&m_nSearchStart,
 			&m_nSearchEnd
 		);

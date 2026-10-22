@@ -440,8 +440,8 @@ DWORD CGrepAgent::DoGrep(
 		Note: ここで強調するのは最後の検索文字列であって
 		Grep対象パターンではないことに注意
 	*/
-	if( !pcViewDst->m_sSearchPattern.SetPattern(pcViewDst->GetHwnd(), pcViewDst->m_strCurSearchKey.c_str(), pcViewDst->m_strCurSearchKey.size(),
-			pcViewDst->m_sCurSearchOption, &pcViewDst->m_CurRegexp) ){
+	if (!pcViewDst->RefreshSearchPattern())
+	{
 		this->m_bGrepRunning = false;
 		pcViewDst->m_bDoing_UndoRedo = false;
 		pcViewDst->SetUndoBuffer();

@@ -415,16 +415,20 @@ bool CEditView::GetCurrentTextForSearchDlg( CNativeW& cmemCurText, bool bGetHist
 		(それ以外) 指定位置が検索文字列の始まりだった。
 */
 int CEditView::IsSearchString(
-	const CStringRef&	cStr,
-	/*
-	const wchar_t*	pszData,
-	CLogicInt		nDataLen,
-	*/
-	CLogicInt		nPos,
-	CLogicInt*		pnSearchStart,
-	CLogicInt*		pnSearchEnd
-) const
+	std::wstring_view	line,
+	int					nPos,
+	CLogicInt*			pnSearchStart,
+	CLogicInt*			pnSearchEnd
+)
 {
+	const auto cStr = CStringRef{ line };
+
+	// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+	if (!pnSearchStart) throw std::invalid_argument( "pnSearchStart is required." );
+
+	// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+	if (!pnSearchEnd) throw std::invalid_argument( "pnSearchEnd is required." );
+
 	*pnSearchStart = nPos;	// 2002.02.08 hor
 
 	if( m_sCurSearchOption.bRegularExp ){

@@ -473,3 +473,14 @@ HWND CEditView::StartProgress()
 	}
 	return hwndProgress;
 }
+
+bool CEditView::RefreshSearchPattern()
+{
+	return m_sSearchPattern.SetPattern(
+		GetHwnd(),
+		m_strCurSearchKey.c_str(),
+		m_strCurSearchKey.size(),
+		m_sCurSearchOption,
+		&m_CurRegexp
+	);
+}
