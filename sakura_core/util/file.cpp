@@ -17,6 +17,7 @@
 #include <string_view>
 
 #include "charset/codechecker.h"
+#include "util/file/FileHandle.hpp"
 #include "util/module.h"
 #include "util/os.h"
 #include "util/window.h"
@@ -772,35 +773,36 @@ bool IsDirectory(LPCWSTR pszPath)
 	return false;
 }
 
-/*!	ファイルの更新日時を取得
-
-	@return true: 成功, false: 失敗
-*/
-bool GetLastWriteTimestamp(
-	const WCHAR*	pszFileName,	//!< [in]  ファイルのパス
-	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
+/*!
+ * @brief ファイルの更新日時を取得
+ *
+ * @param[in] filename ファイルのパス
+ * @returns ファイルの更新日時
+ */
+FILETIME GetLastWriteTime(
+	std::wstring_view	fileName	//!< [in]  ファイルのパス
 )
 {
+	using namespace cxx;
+
 	// dwDesiredAccess に 0 を指定する事で読み取りアクセスが拒否されてしまうような場合でも、
 	// ファイル自体にはアクセスせずにメタデータの読み取りが可能
 	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
 	// If this parameter is zero, the application can query certain metadata such as file, directory, or device attributes without accessing that file or device, even if GENERIC_READ access would have been denied.
-	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, nullptr, OPEN_EXISTING, 0, nullptr);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	FILETIME ftLastWrite;
-	BOOL ret = ::GetFileTime(hFile, nullptr, nullptr, &ftLastWrite);
-	::CloseHandle(hFile);
-	if (ret == 0)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	pcFileTime->SetFILETIME(ftLastWrite);
-	return true;
+	const auto hFile = FileHandle::OpenExisting(
+		fileName,
+		0,
+		0
+	);
+
+	FILETIME ftLastWrite{};
+	hFile.GetFileTime(
+		nullptr,
+		nullptr,
+		&ftLastWrite
+	);
+
+	return ftLastWrite;
 }
 
 // -----------------------------------------------------------------------------
