@@ -14,25 +14,30 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2007, kobake
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include <Ole2.h>
-#include <locale.h>
 #include "_main/CCommandLine.h"
 #include "CProcessFactory.h"
 #include "CProcess.h"
 #include "util/os.h"
+#include "util/MessageBoxF.h"
 #include "util/module.h"
 #include "debug/CRunningTimer.h"
 #include "version.h"
 #include "util/std_macro.h"
 #include "env/DLLSHAREDATA.h"
 #include "apiwrap/DarkMode.h"
+
+#include <clocale>
+
+#include <ole2.h>
+
+#pragma comment(lib, "ole32.lib") 
 
 /*!
 	Windows Entry point
@@ -45,12 +50,17 @@
 		+----------+---------------------------+---------------------------+
 		|無        |エディタプロセスとなる     |CNormalProcessクラス       |
 		+----------+---------------------------+---------------------------+
-*/
+ *
+ * @date 2007/08/16 kobake setlocale 追加。ロケールを日本語に固定。
+ * @date 2009/01/07 ryoji OleInitialize/OleUninitialize 追加
+ * @date 2009/09/10 syat メモリリークチェックを追加
+ * @date 2014/04/24 syat DLLの検索パスからカレントディレクトリを削除する
+ */
 int WINAPI wWinMain(
-	HINSTANCE	hInstance,		//!< handle to current instance
-	[[maybe_unused]] HINSTANCE	hPrevInstance,	//!< handle to previous instance
-	LPWSTR		lpCmdLine,		//!< pointer to command line
-	[[maybe_unused]] int			nCmdShow		//!< show state of window
+	_In_ HINSTANCE		hInstance,		//!< handle to current instance
+	_In_opt_ HINSTANCE	hPrevInstance [[maybe_unused]],	//!< handle to previous instance
+	_In_ LPWSTR			lpCmdLine,		//!< pointer to command line
+	_In_ int			nCmdShow		//!< show state of window
 )
 {
 #ifdef USE_LEAK_CHECK_WITH_CRTDBG
@@ -63,11 +73,14 @@ int WINAPI wWinMain(
 		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
 		::SetDllDirectory( L"" );
 		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
-
-		setlocale( LC_ALL, "Japanese" ); //2007.08.16 kobake 追加
-		::OleInitialize( nullptr );	// 2009.01.07 ryoji 追加
 	}
+
+	// Cランタイムのロケールを日本語に設定する
+	::setlocale(LC_ALL, "Japanese-Japan.932");
 	
+	// COMライブラリを初期化する(失敗したら即終了する)
+	if (FAILED(::OleInitialize(nullptr))) return 1;	// 仮の終了コード
+
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
 	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
@@ -76,23 +89,47 @@ int WINAPI wWinMain(
 	DarkMode::setDarkModeConfig();
 	DarkMode::setDefaultColors(true);
 
-	//コマンドラインクラスのインスタンスを確保する
-	CCommandLine cCommandLine;
+	// 終了コード
+	int exitCode;
 
-	//プロセスの生成とメッセージループ
-	CProcessFactory aFactory;
-	CProcess *process = nullptr;
-	try{
-		process = aFactory.Create( hInstance, lpCmdLine );
+	try {
+		//コマンドラインクラスのインスタンスを確保する
+		CCommandLine cCommandLine;
+
+		//プロセスの生成とメッセージループ
+		CProcessFactory aFactory;
+		auto process = aFactory.Create( hInstance, lpCmdLine );
+
+		// プロセスの生成に失敗したら即終了する
+		if (!process) return 1;	// 仮の終了コード
+
 		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
-	}
-	catch(...){
-	}
-	if( nullptr != process ){
+
+		(void)nCmdShow;	//TODO: Runに渡す
+
 		process->Run();
 		delete process;
+
+		exitCode = 0;	//TODO: Runの戻り値を返すように変える
+	}
+	//TODO: 初期化失敗の例外を作る
+	// ・例外で指定されたエラーメッセージを表示する
+	// ・例外で指定された終了コードを設定する
+
+	// メモリ不足エラーが発生した場合
+	catch (const std::bad_alloc&) {
+		ErrorBeep();
+		TopErrorMessage(nullptr, L"メモリ不足です。\n終了します。");	//TODO: リソースに入れる
+		exitCode = 2;	// 仮の終了コード
+	}
+	// その他エラーが発生した場合
+	catch (const std::exception&) {
+		ErrorBeep();
+		TopErrorMessage(nullptr, L"予期せぬエラーが発生しました。\n終了します。");	//TODO: リソースに入れる
+		exitCode = 4;	// 仮の終了コード
 	}
 
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
-	return 0;
+
+	return exitCode;
 }
