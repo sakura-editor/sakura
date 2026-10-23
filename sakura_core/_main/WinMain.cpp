@@ -21,8 +21,7 @@
 */
 
 #include "StdAfx.h"
-#include "_main/CCommandLine.h"
-#include "CProcessFactory.h"
+#include "_main/CProcessFactory.h"
 
 #include "basis/initialization_error.hpp"
 #include "util/os.h"
@@ -98,8 +97,7 @@ int WINAPI wWinMain(
 		CCommandLine cCommandLine;
 
 		//プロセスの生成とメッセージループ
-		CProcessFactory aFactory;
-		auto process = aFactory.Create( hInstance, lpCmdLine );
+		const auto process = CProcessFactory(hInstance).CreateInstance(lpCmdLine);
 
 		// プロセスの生成に失敗したら即終了する
 		if (!process) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
@@ -109,7 +107,6 @@ int WINAPI wWinMain(
 		(void)nCmdShow;	//TODO: Runに渡す
 
 		process->Run();
-		delete process;
 
 		exitCode = EAppExitCode::Exited;	//TODO: Runの戻り値を返すように変える
 	}
