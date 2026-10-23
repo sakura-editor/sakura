@@ -55,7 +55,9 @@ std::filesystem::path CProcess::GetIniFileName() const
 
 	共有メモリを初期化する
 */
-bool CProcess::InitializeProcess()
+bool CProcess::InitializeProcess(
+	int nCmdShow [[maybe_unused]]
+)
 {
 	/* 共有データ構造体のアドレスを返す */
 	if( !GetShareData().InitShareData() ){
@@ -90,9 +92,7 @@ EAppExitCode CProcess::Run(
 
 	//TODO: __try-__exceptで囲む
 
-	(void)nCmdShow;	//TODO: InitializeProcessに渡す
-
-	if( InitializeProcess() )
+	if( InitializeProcess(nCmdShow) )
 	{
 
 			MainLoop() ;
