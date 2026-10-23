@@ -23,7 +23,8 @@
 #include "StdAfx.h"
 #include "_main/CCommandLine.h"
 #include "CProcessFactory.h"
-#include "CProcess.h"
+
+#include "basis/initialization_error.hpp"
 #include "util/os.h"
 #include "util/MessageBoxF.h"
 #include "util/module.h"
@@ -112,10 +113,14 @@ int WINAPI wWinMain(
 
 		exitCode = EAppExitCode::Exited;	//TODO: Runの戻り値を返すように変える
 	}
-	//TODO: 初期化失敗の例外を作る
-	// ・例外で指定されたエラーメッセージを表示する
-	// ・例外で指定された終了コードを設定する
-
+	// アプリの初期化に失敗した場合
+	catch (const basis::initialization_error& e) {
+		// 例外で指定されたメッセージを表示
+		ErrorBeep();
+		TopErrorMessage(nullptr, e.message().c_str());
+		// 例外で指定された終了コードで終了
+		exitCode = e.exitCode().value_or(EAppExitCode::AppInitFailed);
+	}
 	// メモリ不足エラーが発生した場合
 	catch (const std::bad_alloc&) {
 		// L"メモリ不足です。\n終了します。"

@@ -193,6 +193,12 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\version.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\basis\initialization_error.hpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\basis\make_initialization_error.hpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
@@ -1305,6 +1311,12 @@
     </ClCompile>
     <ClCompile Include="_os\CDropTarget.cpp">
       <Filter>Cpp Source Files\_os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\basis\initialization_error.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\basis\make_initialization_error.cpp">
+      <Filter>Cpp Source Files\basis</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\cxx\load_string.cpp">
       <Filter>Cpp Source Files\cxx</Filter>

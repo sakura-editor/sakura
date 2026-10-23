@@ -148,6 +148,8 @@
     <ClInclude Include="..\build\$(Platform)\CMakeTools\python3_config.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\main\cpp\basis\initialization_error.hpp" />
+    <ClInclude Include="..\src\main\cpp\basis\make_initialization_error.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp" />
@@ -524,6 +526,8 @@
     <ResourceCompile Include="sakura_rc.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\main\cpp\basis\initialization_error.cpp" />
+    <ClCompile Include="..\src\main\cpp\basis\make_initialization_error.cpp" />
     <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp" />
     <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp" />
     <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp" />

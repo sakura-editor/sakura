@@ -22,6 +22,7 @@
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 #include "basis/CMyString.h"
+#include "basis/make_initialization_error.hpp"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
@@ -1201,6 +1202,36 @@ TEST_F(WinMainFuncTest, CreateControlProcess105)
 			exit(ret);
 		},
 		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::UnExpected)),
+		".*"
+	);
+}
+
+/*!
+ * @brief wWinMainで 初期化失敗 を検知するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess106)
+{
+	EXPECT_EXIT({
+			Kernel32::setInstance<MockKernel32>();
+
+			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+			SetUpSelectLang();
+
+			// basis::initialization_errorで失敗させる
+			EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+				.WillOnce(testing::Throw(basis::make_initialization_error(L"dummy")));
+
+			// コントロールプロセスを起動する
+			const auto hInstance = G_AppInstance();
+			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
+			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+
+			Kernel32::resetInstance();
+
+			exit(ret);
+		},
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::AppInitFailed)),
 		".*"
 	);
 }
