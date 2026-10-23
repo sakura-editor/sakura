@@ -96,7 +96,6 @@ EAppExitCode CProcess::Run(
 	{
 
 			MainLoop() ;
-			OnExitProcess();
 
 		exitCode = EAppExitCode::Exited;	//TODO: MainLoopの戻り値を返すように変える
 	}

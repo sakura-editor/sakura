@@ -48,7 +48,6 @@ protected:
 	CControlProcess();
 	bool InitializeProcess() override;
 	bool MainLoop() override;
-	void OnExitProcess() override;
 
 private:
 	std::filesystem::path GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const;

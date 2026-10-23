@@ -46,6 +46,7 @@
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "plugin/CJackManager.h"
+#include "plugin/CPluginManager.h"
 #include "agent/CGrepAgent.h"
 #include "env/CMarkMgr.h"
 #include "doc/layout/CLayout.h"
@@ -1527,6 +1528,9 @@ LRESULT CEditWnd::DispatchEvent(
 
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 		::PostMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DELETE_ME, 0, 0 );
+
+		/* プラグイン解放 */
+		CPluginManager::getInstance()->UnloadAllPlugin();
 
 		/* Windows にスレッドの終了を要求します */
 		::PostQuitMessage( 0 );
