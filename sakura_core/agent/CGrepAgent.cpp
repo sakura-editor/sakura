@@ -43,103 +43,106 @@
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
 #define UIFILENAME_INTERVAL_MILLISEC 15	// Cancelダイアログのファイル名表示更新間隔
 
-namespace {
+namespace grep {
 
 /*!
-	@brief 「Grep実行中」のダイアログで、中断を受け付けて進み具合を表示する
-*/
-class CGrepProgressDlg final : public CGrepProgress {
-public:
-	explicit CGrepProgressDlg( HWND hwndParent )
-	{
-		const HWND hwndCancel = m_cDlgCancel.DoModeless( G_AppInstance(), hwndParent, IDD_GREPRUNNING );
-		::SetDlgItemInt( hwndCancel, IDC_STATIC_HITCOUNT, 0, FALSE );
-		ApiWrap::DlgItem_SetText( hwndCancel, IDC_STATIC_CURFILE, L" " );	// 2002/09/09 Moca add
-		::CheckDlgButton( hwndCancel, IDC_CHECK_REALTIMEVIEW, GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView );	// 2003.06.23 Moca
-	}
+	@brief 「Grep実行中」のダイアログ。中断を受け付けて進み具合を表示する
 
+	DoModeless() で出し、初期表示は OnInitDialog() で行う。
+*/
+class CDlgGrepRunning : public CDlgCancel, public IGrepProgress {
+public:
 	bool IsCheckTime() override
 	{
-		return IsIntervalPassed( m_dwTickUICheck, UICHECK_INTERVAL_MILLISEC );
+		return IsIntervalPassed( m_nextCheckTime, UICHECK_INTERVAL_MILLISEC );
 	}
 
 	bool IsFileNameTime() override
 	{
-		return IsIntervalPassed( m_dwTickUIFileName, UIFILENAME_INTERVAL_MILLISEC );
+		return IsIntervalPassed( m_nextFileNameTime, UIFILENAME_INTERVAL_MILLISEC );
 	}
 
-	bool IsCanceled() override
+	bool IsCancelRequested() override
 	{
 		/* 処理中のユーザー操作を可能にする */
 		/* 中断ボタン押下チェック */
-		return !::BlockingHook( m_cDlgCancel.GetHwnd() ) || m_cDlgCancel.IsCanceled();
+		return !::BlockingHook( GetHwnd() ) || IsCanceled();
 	}
 
 	void ApplyRealTimeView() override
 	{
 		CEditWnd::getInstance()->SetDrawSwitchOfAllViews(
-			0 != ::IsDlgButtonChecked( m_cDlgCancel.GetHwnd(), IDC_CHECK_REALTIMEVIEW )
+			0 != ::IsDlgButtonChecked( GetHwnd(), IDC_CHECK_REALTIMEVIEW )
 		);
 	}
 
 	void SetHitCount( int nHitCount ) override
 	{
-		::SetDlgItemInt( m_cDlgCancel.GetHwnd(), IDC_STATIC_HITCOUNT, nHitCount, FALSE );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_HITCOUNT, std::to_wstring( nHitCount ).c_str() );
 	}
 
-	void SetFileName( const wchar_t* pszFileName ) override
+	void SetFileName( std::wstring_view fileName ) override
 	{
-		ApiWrap::DlgItem_SetText( m_cDlgCancel.GetHwnd(), IDC_STATIC_CURFILE, pszFileName );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_CURFILE, std::wstring( fileName ).c_str() );
 	}
 
-	void SetFolder( const wchar_t* pszFolder ) override
+	void SetFolder( std::wstring_view folder ) override
 	{
-		ApiWrap::DlgItem_SetText( m_cDlgCancel.GetHwnd(), IDC_STATIC_CURPATH, pszFolder );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_CURPATH, std::wstring( folder ).c_str() );
+	}
+
+protected:
+	BOOL OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam ) override
+	{
+		const BOOL bRet = CDlgCancel::OnInitDialog( hwndDlg, wParam, lParam );
+		SetHitCount( 0 );
+		SetFileName( L" " );	// 2002/09/09 Moca add
+		::CheckDlgButton( GetHwnd(), IDC_CHECK_REALTIMEVIEW, GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView );	// 2003.06.23 Moca
+		return bRet;
 	}
 
 private:
-	//! 前回から dwInterval ミリ秒を過ぎたかを返す(過ぎていれば今の時刻を前回の時刻として覚える)
-	static bool IsIntervalPassed( DWORD& dwTick, DWORD dwInterval )
+	//! 前回の時機から nInterval ミリ秒を過ぎたかを返す(過ぎていれば、次の時機を今から nInterval ミリ秒後にする)
+	static bool IsIntervalPassed( ULONGLONG& nNextTime, ULONGLONG nInterval )
 	{
-		const DWORD dwNow = ::GetTickCount();
-		if( dwNow - dwTick <= dwInterval ){
+		const ULONGLONG nNow = ::GetTickCount64();
+		if( nNow <= nNextTime ){
 			return false;
 		}
-		dwTick = dwNow;
+		nNextTime = nNow + nInterval;
 		return true;
 	}
 
-	CDlgCancel	m_cDlgCancel;
-	DWORD		m_dwTickUICheck = 0;		//!< 処理中にユーザーによるUI操作が行われていないか確認した時間
-	DWORD		m_dwTickUIFileName = 0;		//!< Cancelダイアログのファイル名表示更新を行った時間
+	ULONGLONG	m_nextCheckTime = 0;		//!< この時刻を過ぎたら、処理中にユーザーによるUI操作が行われていないか確認する
+	ULONGLONG	m_nextFileNameTime = 0;		//!< この時刻を過ぎたら、Cancelダイアログのファイル名表示を更新する
 };
 
 //! 大きいファイルの読んだ割合を、前回の表示から 5% 以上進んだら表示する
-void ShowReadPercent( CGrepProgress* pProgress, const wchar_t* pszFile, int nPercent, int& nOldPercent )
+void ShowReadPercent( IGrepProgress* pProgress, const wchar_t* pszFile, int nPercent, int& nOldPercent )
 {
 	if( nPercent - nOldPercent < 5 ){
 		return;
 	}
 	nOldPercent = nPercent;
-	pProgress->SetFileName( std::format( L"{} ({:3d}%)", pszFile, nPercent ).c_str() );
+	pProgress->SetFileName( std::format( L"{} ({:3d}%)", pszFile, nPercent ) );
 }
 
 /*!
 	@brief 処理中のユーザー操作を受け付け、中断されたかを返す
 
-	確かめる時機(CGrepProgress::IsCheckTime())でなければ何もしない。
+	確かめる時機(IGrepProgress::IsCheckTime())でなければ何もしない。
 	時機なら、メッセージを処理し、中断ボタンとリアルタイム表示のチェックボックスを確かめる。
 
 	@param[in]	pProgress	中断の確認と進み具合の表示
 	@retval true	中断する
 */
-bool IsGrepCanceled( CGrepProgress* pProgress )
+bool IsGrepCanceled( IGrepProgress* pProgress )
 {
 	if( !pProgress->IsCheckTime() ){
 		return false;
 	}
 	/* 処理中のユーザー操作を可能にする */
-	if( pProgress->IsCanceled() ){
+	if( pProgress->IsCancelRequested() ){
 		return true;
 	}
 	/* 表示設定をチェック */
@@ -147,7 +150,7 @@ bool IsGrepCanceled( CGrepProgress* pProgress )
 	return false;
 }
 
-} // namespace
+} // namespace grep
 
 /*!
  * 指定された文字列をタイプ別設定に従ってエスケープする
@@ -356,7 +359,7 @@ std::wstring CGrepAgent::ChopYen( const std::wstring& str )
 
 void CGrepAgent::AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout )
 {
-	m_dwTickAddTail = ::GetTickCount();
+	m_lastAddTailTime = ::GetTickCount64();
 	if( bAddStdout ){
 		HANDLE out = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		if( out && out != INVALID_HANDLE_VALUE ){
@@ -451,23 +454,13 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
   @date 2008.12.07 nasukoji	ファイル名パターンのバッファオーバラン対策
   @date 2008.12.13 genta 検索パターンのバッファオーバラン対策
   @date 2012.10.13 novice 検索オプションをクラスごと代入
-*/
-DWORD CGrepAgent::DoGrep(
-	CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
-	const GrepInfo&			gi			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
-)
-{
-	return DoGrep( pcViewDst, gi, SGrepHooks{} );
-}
 
-/*! Grep実行(中断の確認と進み具合の表示などを差し替える)
-
-  @param[in] hooks 差し替えるもの。hooks.pProgress が nullptr なら「Grep実行中」のダイアログを出す
+  @param[in] optProgress 中断の確認と進み具合の表示。指定が無い(nullptr を含む)ときは「Grep実行中」のダイアログを出す
 */
 DWORD CGrepAgent::DoGrep(
 	CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
 	const GrepInfo&			gi,			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
-	const SGrepHooks&		hooks		//!< [in] 差し替えるもの
+	const std::optional<IGrepProgress*>&	optProgress	//!< [in] 中断の確認と進み具合の表示
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DoGrep" );
@@ -575,11 +568,19 @@ DWORD CGrepAgent::DoGrep(
 	GetEditWnd().m_cDlgGrepReplace.m_bSetText = true;
 
 	// 中断の確認と進み具合の表示。指定が無ければ「Grep実行中」のダイアログを出す
-	std::unique_ptr<CGrepProgressDlg> pcProgressDlg;
-	if( nullptr == hooks.pProgress ){
-		pcProgressDlg = std::make_unique<CGrepProgressDlg>( pcViewDst->m_hwndParent );
+	std::unique_ptr<grep::CDlgGrepRunning> pcDlgRunning;
+	IGrepProgress* pcProgress = optProgress.value_or( nullptr );
+	if( nullptr == pcProgress ){
+		pcDlgRunning = std::make_unique<grep::CDlgGrepRunning>();
+		if( nullptr == pcDlgRunning->DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING ) ){
+			// ダイアログを出せなければ、検索せずに終える
+			this->m_bGrepRunning = false;
+			pcViewDst->m_bDoing_UndoRedo = false;
+			pcViewDst->SetUndoBuffer();
+			return 0;
+		}
+		pcProgress = pcDlgRunning.get();
 	}
-	CGrepProgress* const pcProgress = pcProgressDlg ? pcProgressDlg.get() : hooks.pProgress;
 
 	//	2008.12.13 genta パターンが長すぎる場合は登録しない
 	//	(正規表現が途中で途切れると困るので)
@@ -928,7 +929,7 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->GetCaret().MoveCursor( CLayoutPoint(CLayoutInt(0), tmp_PosY_Layout), true );	//	カーソルをGrep直前の位置に戻す。
 
 	// 「Grep実行中」のダイアログを閉じる
-	pcProgressDlg.reset();
+	pcDlgRunning.reset();
 
 	/* アクティブにする */
 	ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );
@@ -1002,7 +1003,7 @@ int CGrepAgent::DoGrepFiles(
 )
 {
 	CEditView* const		pcViewDst = out.pcViewDst;
-	CGrepProgress* const	pProgress = out.pProgress;
+	IGrepProgress* const	pProgress = out.pProgress;
 	const wchar_t* const	pszKey = cond.pszKey;
 	const GrepInfo&			sGrepOption = cond.sGrepOption;
 	const int* const		pnHitCount = out.pnHitCount;
@@ -1018,7 +1019,7 @@ int CGrepAgent::DoGrepFiles(
 	for( const auto& target : vFiles ){
 		const LPCWSTR lpFileName = target.strFileName.c_str();
 
-		if( IsGrepCanceled( pProgress ) ){
+		if( grep::IsGrepCanceled( pProgress ) ){
 			return -1;
 		}
 
@@ -1052,7 +1053,7 @@ int CGrepAgent::DoGrepFiles(
 		/* 結果出力 */
 		if( 0 < cmemMessage.GetStringLength() &&
 		   (*pnHitCount - nHitCountOld) >= 10 &&
-		   (::GetTickCount() - m_dwTickAddTail) > ADDTAIL_INTERVAL_MILLISEC
+		   (::GetTickCount64() - m_lastAddTailTime) > ADDTAIL_INTERVAL_MILLISEC
 		){
 			AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
 			cmemMessage._SetStringLength(0);
@@ -1085,7 +1086,7 @@ int CGrepAgent::DoGrepTree(
 )
 {
 	CEditView* const		pcViewDst = out.pcViewDst;
-	CGrepProgress* const	pProgress = out.pProgress;
+	IGrepProgress* const	pProgress = out.pProgress;
 	const GrepInfo&			sGrepOption = cond.sGrepOption;
 	CNativeW&				cmemMessage = out.cmemMessage;
 	int			count;
@@ -1118,7 +1119,7 @@ int CGrepAgent::DoGrepTree(
 			currentPath += lpFileName;
 
 			//サブフォルダーの探索を再帰呼び出し。中断されたら呼ばない
-			if( IsGrepCanceled( pProgress )
+			if( grep::IsGrepCanceled( pProgress )
 			 || -1 == DoGrepTree( cond, pRegexp, out, enumCond, currentPath.c_str(), pszBasePath, nNest + 1 ) ){
 				goto cancel_return;
 			}
@@ -1294,7 +1295,7 @@ int CGrepAgent::DoGrepFile(
 		}
 
 		/* 処理中のユーザー操作を可能にし、中断ボタン押下をチェックする */
-		if( pProgress->IsCheckTime() && pProgress->IsCanceled() ){
+		if( pProgress->IsCheckTime() && pProgress->IsCancelRequested() ){
 			return -1;
 		}
 		int nOutputHitCount = 0;
@@ -1317,14 +1318,14 @@ int CGrepAgent::DoGrepFile(
 			// 2010.08.31 間隔を1/32にする
 			if( 0 == nLine % 32 && pProgress->IsCheckTime() ){
 				/* 中断ボタン押下チェック */
-				if( pProgress->IsCanceled() ){
+				if( pProgress->IsCancelRequested() ){
 					return -1;
 				}
 				//	2003.06.23 Moca 表示設定をチェック
 				pProgress->ApplyRealTimeView();
 				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 				if( 5000000 < cfl.GetFileSize() ){
-					ShowReadPercent( pProgress, pszFile, cfl.GetPercent(), nOldPercent );
+					grep::ShowReadPercent( pProgress, pszFile, cfl.GetPercent(), nOldPercent );
 				}else{
 					pProgress->SetFileName( pszFile );
 				}
@@ -1387,7 +1388,7 @@ int CGrepAgent::DoGrepFile(
 			}
 			if( 0 < cmemMessage.GetStringLength() &&
 				(nHitCount - nOutputHitCount >= 10) &&
-				(::GetTickCount() - m_dwTickAddTail) >= ADDTAIL_INTERVAL_MILLISEC
+				(::GetTickCount64() - m_lastAddTailTime) >= ADDTAIL_INTERVAL_MILLISEC
 			){
 				nOutputHitCount = nHitCount;
 				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );
@@ -1590,7 +1591,7 @@ int CGrepAgent::DoGrepReplaceFile(
 			}
 		}
 		/* 処理中のユーザー操作を可能にし、中断ボタン押下をチェックする */
-		if( pProgress->IsCanceled() ){
+		if( pProgress->IsCancelRequested() ){
 			return -1;
 		}
 		int nOutputHitCount = 0;
@@ -1609,14 +1610,14 @@ int CGrepAgent::DoGrepReplaceFile(
 
 			if( pProgress->IsCheckTime() ){
 				/* 処理中のユーザー操作を可能にし、中断ボタン押下をチェックする */
-				if( pProgress->IsCanceled() ){
+				if( pProgress->IsCancelRequested() ){
 					return -1;
 				}
 				//	2003.06.23 Moca 表示設定をチェック
 				pProgress->ApplyRealTimeView();
 				// 2002/08/30 Moca 進行状態を表示する(5MB以上)
 				if( 5000000 < cfl.GetFileSize() ){
-					ShowReadPercent( pProgress, pszFile, cfl.GetPercent(), nOldPercent );
+					grep::ShowReadPercent( pProgress, pszFile, cfl.GetPercent(), nOldPercent );
 				}
 			}
 			cOutBuffer.SetString( L"", 0 );
@@ -1695,7 +1696,7 @@ int CGrepAgent::DoGrepReplaceFile(
 			output.AppendBuffer(cOutBuffer);
 
 			if( 0 < cmemMessage.GetStringLength() &&
-				(::GetTickCount() - m_dwTickAddTail > ADDTAIL_INTERVAL_MILLISEC)
+				(::GetTickCount64() - m_lastAddTailTime > ADDTAIL_INTERVAL_MILLISEC)
 			){
 				nOutputHitCount = nHitCount;
 				AddTail( pcViewDst, cmemMessage, sGrepOption.bGrepStdout );

@@ -1870,9 +1870,9 @@ TEST_F(GrepHwndTargetTest, ClosedWindow)
 	@brief テスト用の中断の確認と進み具合の表示
 
 	間引かない(IsCheckTime()・IsFileNameTime() はいつも true)。checkTime に false を渡すと、確かめる時機を来させない。
-	IsCanceled() が cancelAt 回目に呼ばれたときから中断する(0 なら中断しない)。
+	IsCancelRequested() が cancelAt 回目に呼ばれたときから中断する(0 なら中断しない)。
 */
-class FakeGrepProgress final : public CGrepProgress {
+class FakeGrepProgress : public IGrepProgress {
 public:
 	explicit FakeGrepProgress(int cancelAt = 0, bool checkTime = true)
 		: m_cancelAt(cancelAt)
@@ -1890,7 +1890,7 @@ public:
 		return true;
 	}
 
-	bool IsCanceled() override
+	bool IsCancelRequested() override
 	{
 		++checkCount;
 		return 0 < m_cancelAt && m_cancelAt <= checkCount;
@@ -1906,17 +1906,17 @@ public:
 		hitCounts.push_back(nHitCount);
 	}
 
-	void SetFileName(const wchar_t* pszFileName) override
+	void SetFileName(std::wstring_view fileName) override
 	{
-		fileNames.emplace_back(pszFileName);
+		fileNames.emplace_back(fileName);
 	}
 
-	void SetFolder(const wchar_t* pszFolder) override
+	void SetFolder(std::wstring_view folder) override
 	{
-		folders.emplace_back(pszFolder);
+		folders.emplace_back(folder);
 	}
 
-	int checkCount = 0;						//!< IsCanceled() が呼ばれた回数
+	int checkCount = 0;						//!< IsCancelRequested() が呼ばれた回数
 	int applyCount = 0;						//!< ApplyRealTimeView() が呼ばれた回数
 	std::vector<int> hitCounts;				//!< 表示したヒット数
 	std::vector<std::wstring> fileNames;	//!< 表示したファイル名
@@ -1931,14 +1931,14 @@ private:
 	@brief 中断と進み具合の表示のテスト
 
 	DoGrep() に FakeGrepProgress を渡し、「Grep実行中」のダイアログの代わりに使う。
-	確かめる時機なら、中断の確認(IsCanceled())は、ファイルごとに 2 回(検索する前・ファイルを開いた後。検索キーが空なら検索する前の 1 回だけ)、
+	確かめる時機なら、中断の確認(IsCancelRequested())は、ファイルごとに 2 回(検索する前・ファイルを開いた後。検索キーが空なら検索する前の 1 回だけ)、
 	Grep はファイルの 32 行ごと、Grep 置換は 1 行ごと、サブフォルダーに入る前に 1 回呼ばれる。
 */
 struct GrepProgressTest : public GrepCommandLineTest {
 	//! 引数を解析し、progress を渡して Grep を実行する
 	DWORD GrepWith(FakeGrepProgress& progress, std::wstring_view key, std::wstring_view file, std::wstring_view opt, std::wstring_view extra = L"") const
 	{
-		return CEditApp::getInstance()->m_pcGrepAgent->DoGrep(&pcEditWnd->GetActiveView(), ParseGrepCommandLine(Args(key, file, opt, extra)), SGrepHooks{ .pProgress = &progress });
+		return CEditApp::getInstance()->m_pcGrepAgent->DoGrep(&pcEditWnd->GetActiveView(), ParseGrepCommandLine(Args(key, file, opt, extra)), &progress);
 	}
 
 	//! 1 行に HIT が 1 つの行を lineCount 行並べたファイルを作る
