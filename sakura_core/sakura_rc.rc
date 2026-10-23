@@ -4089,6 +4089,8 @@ BEGIN
     F_WINMAXIMIZE     "最大化"
     F_WINMINIMIZE     "最小化"
     F_WINRESTORE      "元に戻す"
+    IDS_BAD_ALLOC     "メモリ不足です。\n終了します。"
+    IDS_UNHANDLED     "予期せぬエラーが発生しました。\n終了します。"
 END
 
 #endif    // 日本語 (日本) resources

@@ -118,14 +118,16 @@ int WINAPI wWinMain(
 
 	// メモリ不足エラーが発生した場合
 	catch (const std::bad_alloc&) {
+		// L"メモリ不足です。\n終了します。"
 		ErrorBeep();
-		TopErrorMessage(nullptr, L"メモリ不足です。\n終了します。");	//TODO: リソースに入れる
+		TopErrorMessage(nullptr, LS(IDS_BAD_ALLOC));
 		exitCode = EAppExitCode::BadAlloc;
 	}
 	// その他エラーが発生した場合
 	catch (const std::exception&) {
+		// L"予期せぬエラーが発生しました。\n終了します。"
 		ErrorBeep();
-		TopErrorMessage(nullptr, L"予期せぬエラーが発生しました。\n終了します。");	//TODO: リソースに入れる
+		TopErrorMessage(nullptr, LS(IDS_UNHANDLED));
 		exitCode = EAppExitCode::UnExpected;
 	}
 
