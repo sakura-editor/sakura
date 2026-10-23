@@ -1170,7 +1170,7 @@ TEST_F(WinMainFuncTest, CreateControlProcess104)
 
 			exit(ret);
 		},
-		::testing::ExitedWithCode(2),	// 仮の終了コード
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::BadAlloc)),
 		".*"
 	);
 }
@@ -1200,7 +1200,7 @@ TEST_F(WinMainFuncTest, CreateControlProcess105)
 
 			exit(ret);
 		},
-		::testing::ExitedWithCode(4),	// 仮の終了コード
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::UnExpected)),
 		".*"
 	);
 }

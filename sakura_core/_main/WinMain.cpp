@@ -79,7 +79,7 @@ int WINAPI wWinMain(
 	::setlocale(LC_ALL, "Japanese-Japan.932");
 	
 	// COMライブラリを初期化する(失敗したら即終了する)
-	if (FAILED(::OleInitialize(nullptr))) return 1;	// 仮の終了コード
+	if (FAILED(::OleInitialize(nullptr))) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
 
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
@@ -90,7 +90,7 @@ int WINAPI wWinMain(
 	DarkMode::setDefaultColors(true);
 
 	// 終了コード
-	int exitCode;
+	EAppExitCode exitCode;
 
 	try {
 		//コマンドラインクラスのインスタンスを確保する
@@ -101,7 +101,7 @@ int WINAPI wWinMain(
 		auto process = aFactory.Create( hInstance, lpCmdLine );
 
 		// プロセスの生成に失敗したら即終了する
-		if (!process) return 1;	// 仮の終了コード
+		if (!process) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
 
 		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
 
@@ -110,7 +110,7 @@ int WINAPI wWinMain(
 		process->Run();
 		delete process;
 
-		exitCode = 0;	//TODO: Runの戻り値を返すように変える
+		exitCode = EAppExitCode::Exited;	//TODO: Runの戻り値を返すように変える
 	}
 	//TODO: 初期化失敗の例外を作る
 	// ・例外で指定されたエラーメッセージを表示する
@@ -120,16 +120,16 @@ int WINAPI wWinMain(
 	catch (const std::bad_alloc&) {
 		ErrorBeep();
 		TopErrorMessage(nullptr, L"メモリ不足です。\n終了します。");	//TODO: リソースに入れる
-		exitCode = 2;	// 仮の終了コード
+		exitCode = EAppExitCode::BadAlloc;
 	}
 	// その他エラーが発生した場合
 	catch (const std::exception&) {
 		ErrorBeep();
 		TopErrorMessage(nullptr, L"予期せぬエラーが発生しました。\n終了します。");	//TODO: リソースに入れる
-		exitCode = 4;	// 仮の終了コード
+		exitCode = EAppExitCode::UnExpected;
 	}
 
 	::OleUninitialize();	// 2009.01.07 ryoji 追加
 
-	return exitCode;
+	return static_cast<int>(exitCode);
 }
