@@ -56,19 +56,28 @@ enum class EAppExitCode : int {
 class CProcess : public TSingleInstance<CProcess> {
 public:
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	bool Run();
-	virtual ~CProcess(){}
+
+	~CProcess() override = default;
+
+	/*!
+	 * @brief プロセス実行
+	 *
+	 * @param[in] nCmdShow コマンドラインから渡されたウィンドウ表示フラグ
+	 * @returns アプリ終了コード
+	 */
+	EAppExitCode Run(
+		int nCmdShow
+	);
+
 	virtual void RefreshString();
 
 	virtual std::filesystem::path GetIniFileName() const;
 
 protected:
-	CProcess();
 	virtual bool InitializeProcess();
 	virtual bool MainLoop() = 0;
 	virtual void OnExitProcess() = 0;
 
-protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
 
 public:

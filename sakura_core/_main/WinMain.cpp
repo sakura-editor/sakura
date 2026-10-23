@@ -104,11 +104,10 @@ int WINAPI wWinMain(
 
 		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
 
-		(void)nCmdShow;	//TODO: Runに渡す
-
-		process->Run();
-
-		exitCode = EAppExitCode::Exited;	//TODO: Runの戻り値を返すように変える
+		// プロセス実行(初期化してメッセージループを実行する)
+		exitCode = process->Run(
+			nCmdShow
+		);
 	}
 	// アプリの初期化に失敗した場合
 	catch (const basis::initialization_error& e) {
