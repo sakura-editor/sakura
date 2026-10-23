@@ -1862,4 +1862,221 @@ TEST_F(GrepHwndTargetTest, ClosedWindow)
 	EXPECT_THAT(Contains(GetDocumentText(), L"HWND handle error."), IsTrue());
 }
 
+// ---------------------------------------------------------------------------
+// 中断と進み具合の表示
+// ---------------------------------------------------------------------------
+
+/*!
+	@brief テスト用の中断の確認と進み具合の表示
+
+	間引かない(IsCheckTime()・IsFileNameTime() はいつも true)。checkTime に false を渡すと、確かめる時機を来させない。
+	IsCancelRequested() が cancelAt 回目に呼ばれたときから中断する(0 なら中断しない)。
+*/
+class FakeGrepProgress : public IGrepProgress {
+public:
+	explicit FakeGrepProgress(int cancelAt = 0, bool checkTime = true)
+		: m_cancelAt(cancelAt)
+		, m_checkTime(checkTime)
+	{
+	}
+
+	bool IsCheckTime() override
+	{
+		return m_checkTime;
+	}
+
+	bool IsFileNameTime() override
+	{
+		return true;
+	}
+
+	bool IsCancelRequested() override
+	{
+		++checkCount;
+		return 0 < m_cancelAt && m_cancelAt <= checkCount;
+	}
+
+	void ApplyRealTimeView() override
+	{
+		++applyCount;
+	}
+
+	void SetHitCount(int nHitCount) override
+	{
+		hitCounts.push_back(nHitCount);
+	}
+
+	void SetFileName(std::wstring_view fileName) override
+	{
+		fileNames.emplace_back(fileName);
+	}
+
+	void SetFolder(std::wstring_view folder) override
+	{
+		folders.emplace_back(folder);
+	}
+
+	int checkCount = 0;						//!< IsCancelRequested() が呼ばれた回数
+	int applyCount = 0;						//!< ApplyRealTimeView() が呼ばれた回数
+	std::vector<int> hitCounts;				//!< 表示したヒット数
+	std::vector<std::wstring> fileNames;	//!< 表示したファイル名
+	std::vector<std::wstring> folders;		//!< 表示したフォルダー
+
+private:
+	const int m_cancelAt;
+	const bool m_checkTime;
+};
+
+/*!
+	@brief 中断と進み具合の表示のテスト
+
+	DoGrep() に FakeGrepProgress を渡し、「Grep実行中」のダイアログの代わりに使う。
+	確かめる時機なら、中断の確認(IsCancelRequested())は、ファイルごとに 2 回(検索する前・ファイルを開いた後。検索キーが空なら検索する前の 1 回だけ)、
+	Grep はファイルの 32 行ごと、Grep 置換は 1 行ごと、サブフォルダーに入る前に 1 回呼ばれる。
+*/
+struct GrepProgressTest : public GrepCommandLineTest {
+	//! 引数を解析し、progress を渡して Grep を実行する
+	DWORD GrepWith(FakeGrepProgress& progress, std::wstring_view key, std::wstring_view file, std::wstring_view opt, std::wstring_view extra = L"") const
+	{
+		return CEditApp::getInstance()->m_pcGrepAgent->DoGrep(&pcEditWnd->GetActiveView(), ParseGrepCommandLine(Args(key, file, opt, extra)), &progress);
+	}
+
+	//! 1 行に HIT が 1 つの行を lineCount 行並べたファイルを作る
+	void AddLinesFile(const std::filesystem::path& relPath, int lineCount) const
+	{
+		std::string data;
+		for (int i = 0; i < lineCount; ++i) {
+			data += "HIT\r\n";
+		}
+		folder.AddFile(relPath, data);
+	}
+};
+
+//! 最初のファイルの前に中断すると、どのファイルも探さず「中断しました」を出す
+TEST_F(GrepProgressTest, CancelBeforeFirstFile)
+{
+	AddBasicFiles();
+	FakeGrepProgress progress(1);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"*.txt", L"X"), Eq(0u));
+	const auto text = GetDocumentText();
+	EXPECT_THAT(Contains(text, LS(STR_GREP_SUSPENDED)), IsTrue());
+	EXPECT_THAT(Contains(text, L"a.txt"), IsFalse());
+}
+
+//! 2 つ目のファイルの前に中断すると、1 つ目のファイルの結果だけが残る
+TEST_F(GrepProgressTest, CancelBetweenFiles)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"b.txt", "HIT\r\n");
+	FakeGrepProgress progress(3);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"*.txt", L"X"), Eq(1u));
+	const auto text = GetDocumentText();
+	EXPECT_THAT(Contains(text, LS(STR_GREP_SUSPENDED)), IsTrue());
+	EXPECT_THAT(Contains(text, L"a.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"b.txt"), IsFalse());
+	EXPECT_THAT(progress.checkCount, Eq(3));
+}
+
+//! ファイルの途中(32 行目)で中断すると、その前の 31 行の結果が残る
+TEST_F(GrepProgressTest, CancelInsideFile)
+{
+	AddLinesFile(L"many.txt", 64);
+	FakeGrepProgress progress(3);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"many.txt", L"X"), Eq(31u));
+	EXPECT_THAT(Contains(GetDocumentText(), LS(STR_GREP_SUSPENDED)), IsTrue());
+}
+
+//! サブフォルダーに入る前に中断すると、サブフォルダーは探さない
+TEST_F(GrepProgressTest, CancelBeforeSubFolder)
+{
+	AddBasicFiles();
+	FakeGrepProgress progress(5);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"*.txt", L"XS"), Eq(3u));
+	const auto text = GetDocumentText();
+	EXPECT_THAT(Contains(text, LS(STR_GREP_SUSPENDED)), IsTrue());
+	EXPECT_THAT(Contains(text, L"d.txt"), IsFalse());
+}
+
+//! Grep 置換をファイルの途中(2 行目)で中断すると、1 行目は数えるが、ファイルは書き換えず、一時ファイルも残さない
+TEST_F(GrepProgressTest, CancelReplaceKeepsFile)
+{
+	folder.AddFile(L"r.txt", "HIT\r\nHIT\r\n");
+	FakeGrepProgress progress(4);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"r.txt", L"X", LR"(-GREPR="REP")"), Eq(1u));
+	EXPECT_THAT(folder.ReadFile(L"r.txt"), StrEq("HIT\r\nHIT\r\n"));
+	EXPECT_THAT(folder.Exists(L"r.txt.skrnew"), IsFalse());
+	EXPECT_THAT(Contains(GetDocumentText(), LS(STR_GREP_SUSPENDED)), IsTrue());
+}
+
+//! ファイル名だけを返す(検索キーが空)ときは、ファイルごとにヒット数を表示する。最後はファイル名を消す
+TEST_F(GrepProgressTest, ShowsHitCountOfFileList)
+{
+	AddBasicFiles();
+	FakeGrepProgress progress;
+	EXPECT_THAT(GrepWith(progress, L"", L"*.txt", L"X"), Eq(2u));
+	EXPECT_THAT(progress.hitCounts, ::testing::ElementsAre(1, 2));
+	ASSERT_THAT(progress.fileNames, ::testing::SizeIs(3));
+	EXPECT_THAT(progress.fileNames.back(), StrEq(L" "));
+}
+
+//! ファイルの途中では、32 行ごとにリアルタイム表示を反映し、ファイル名・ヒット数・フォルダーを表示する
+TEST_F(GrepProgressTest, ShowsProgressInsideFile)
+{
+	AddLinesFile(L"many.txt", 64);
+	FakeGrepProgress progress;
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"many.txt", L"X"), Eq(64u));
+	EXPECT_THAT(progress.checkCount, Eq(4));
+	EXPECT_THAT(progress.applyCount, Eq(3));
+	EXPECT_THAT(progress.hitCounts, ::testing::ElementsAre(31, 63));
+	EXPECT_THAT(progress.fileNames, ::testing::ElementsAre(StrEq(L"many.txt"), StrEq(L"many.txt"), StrEq(L"many.txt"), StrEq(L" ")));
+	EXPECT_THAT(progress.folders, ::testing::SizeIs(2));
+}
+
+//! 5MB を超えるファイルでは、読んだ割合をファイル名に付けて表示する(Grep・Grep 置換とも)
+TEST_F(GrepProgressTest, ShowsReadPercentOfLargeFile)
+{
+	const std::string line = std::string(94, 'x') + " HIT\r\n";	// 100 バイト
+	constexpr size_t lineCount = 60000;							// 6MB
+	std::string data;
+	data.reserve(line.size() * lineCount);
+	for (size_t i = 0; i < lineCount; ++i) {
+		data += line;
+	}
+	folder.AddFile(L"large.txt", data);
+
+	FakeGrepProgress grep;
+	EXPECT_THAT(GrepWith(grep, L"HIT", L"large.txt", L"XN"), Eq(0u));
+	EXPECT_THAT(grep.fileNames, ::testing::Contains(StartsWith(L"large.txt (")));
+
+	FakeGrepProgress replace;
+	EXPECT_THAT(GrepWith(replace, L"NOHIT", L"large.txt", L"X", LR"(-GREPR="REP")"), Eq(0u));
+	EXPECT_THAT(replace.fileNames, ::testing::Contains(StartsWith(L"large.txt (")));
+}
+
+//! 確かめる時機でなければ、中断の確認もリアルタイム表示の反映も進み具合の表示もしない(Grep 置換のファイルを開いた後だけは時機を見ずに確かめる)
+TEST_F(GrepProgressTest, SkipsCheckUntilCheckTime)
+{
+	AddLinesFile(L"many.txt", 64);
+
+	FakeGrepProgress grep(1, false);
+	EXPECT_THAT(GrepWith(grep, L"HIT", L"many.txt", L"X"), Eq(64u));
+	EXPECT_THAT(grep.checkCount, Eq(0));
+	EXPECT_THAT(grep.applyCount, Eq(0));
+	EXPECT_THAT(grep.hitCounts, ::testing::IsEmpty());
+
+	FakeGrepProgress replace(1, false);
+	EXPECT_THAT(GrepWith(replace, L"HIT", L"many.txt", L"X", LR"(-GREPR="REP")"), Eq(0u));
+	EXPECT_THAT(replace.checkCount, Eq(1));
+	EXPECT_THAT(Contains(GetDocumentText(), LS(STR_GREP_SUSPENDED)), IsTrue());
+}
+
+//! サブフォルダーから戻ると、元のフォルダーを表示する
+TEST_F(GrepProgressTest, ShowsFolderAfterSubFolder)
+{
+	AddBasicFiles();
+	FakeGrepProgress progress;
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"*.txt", L"XS"), Eq(4u));
+	EXPECT_THAT(progress.folders, ::testing::ElementsAre(::testing::EndsWith(L"GrepProgressTest.ShowsFolderAfterSubFolder")));
+}
+
 } // namespace grep_test
