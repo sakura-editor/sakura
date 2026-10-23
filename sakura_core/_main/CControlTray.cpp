@@ -877,6 +877,8 @@ LRESULT CControlTray::DispatchEvent(
 	case WM_DESTROY:
 		OnDestroy();
 
+		m_pShareData->m_sHandles.m_hwndTray = nullptr;
+
 		/* Windows にスレッドの終了を要求します。*/
 		::PostQuitMessage( 0 );
 		return 0L;

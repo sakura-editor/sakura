@@ -17,11 +17,13 @@
 */
 
 #include "StdAfx.h"
-#include "CProcessFactory.h"
-#include "CControlProcess.h"
-#include "CNormalProcess.h"
-#include "CCommandLine.h"
-#include "CControlTray.h"
+#include "_main/CProcessFactory.h"
+
+#include "_main/CControlProcess.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
+#include "basis/primitive.h"
+
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
@@ -29,7 +31,12 @@
 #include "CSelectLang.h"
 #include "config/system_constants.h"
 
-class CProcess;
+CProcessFactory::CProcessFactory(
+	_In_opt_ HINSTANCE hInstance
+)
+	: m_hInstance(hInstance ? hInstance : G_AppInstance())
+{
+}
 
 /*!
 	@brief プロセスクラスを生成する
@@ -38,22 +45,32 @@ class CProcess;
 	適当なプロセスクラスを生成する。
 	
 	@param[in] hInstance インスタンスハンドル
-	@param[in] lpCmdLine コマンドライン文字列
+	@param[in] commandLine コマンドライン文字列
 	
 	@author aroka
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
+	std::wstring_view commandLine
+) const
 {
 	// 言語環境を初期化する
 	CSelectLang::InitializeLanguageEnvironment();
+
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _CommandLine{ commandLine };
+
+	// メンバー変数を引数のように扱う
+	const auto hInstance = m_hInstance;
+
+	// NUL終端文字列から文字列ポインターを取り出す
+	const auto lpCmdLine = _CommandLine.c_str();
 
 	if( !ProfileSelect( hInstance, lpCmdLine ) ){
 		return nullptr;
 	}
 
-	CProcess* process = nullptr;
 	if( !IsValidVersion() ){
 		return nullptr;
 	}
@@ -68,16 +85,11 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-
-			process = new CControlProcess( hInstance, lpCmdLine );
-
+		return std::make_unique<CControlProcess>(m_hInstance, lpCmdLine);
 	}
 	else{
-
-			process = new CNormalProcess( hInstance, lpCmdLine );
-
+		return std::make_unique<CNormalProcess>(m_hInstance, lpCmdLine);
 	}
-	return process;
 }
 
 bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const

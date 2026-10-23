@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -28,25 +28,57 @@
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
+
+/*!
+ * @brief アプリ終了コード
+ *
+ * サクラエディタの終了コードを定義する。
+ * 当初は「常にゼロを返す」な実装になっていた。
+ * 実際は他の値を返すことがあり微妙になっていた。
+ * 制御できる範囲を増やすため、終了コードを導入する。
+ *
+ * @note 仮の終了コード。
+ * @note 将来的に拡張する可能性あり。
+ */
+enum class EAppExitCode : int {
+	Exited,			//!< 終了した
+	AbEnd,			//!< 異常終了した
+	BadAlloc,		//!< メモリ不足で終了した
+	Terminated,		//!< 強制終了された
+	UnExpected,		//!< 予期せぬエラーで終了した
+	Crashed,		//!< クラッシュした
+	AppInitFailed,	//!< アプリ初期化が失敗した
+};
+
 /*!
 	@brief プロセス基底クラス
 */
 class CProcess : public TSingleInstance<CProcess> {
 public:
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-	bool Run();
-	virtual ~CProcess(){}
+
+	~CProcess() override = default;
+
+	/*!
+	 * @brief プロセス実行
+	 *
+	 * @param[in] nCmdShow コマンドラインから渡されたウィンドウ表示フラグ
+	 * @returns アプリ終了コード
+	 */
+	EAppExitCode Run(
+		int nCmdShow
+	);
+
 	virtual void RefreshString();
 
 	virtual std::filesystem::path GetIniFileName() const;
 
 protected:
-	CProcess();
-	virtual bool InitializeProcess();
+	virtual bool InitializeProcess(
+		int nCmdShow [[maybe_unused]]
+	);
 	virtual bool MainLoop() = 0;
-	virtual void OnExitProcess() = 0;
 
-protected:
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
 
 public:

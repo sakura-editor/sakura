@@ -22,6 +22,7 @@
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
 #include "basis/CMyString.h"
+#include "basis/make_initialization_error.hpp"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
@@ -33,6 +34,7 @@
 
 #include "testing/StartEditorProcess.hpp"
 #include "dlg/ModalDialogCloser.hpp"
+#include "util/os/MockKernel32.hpp"
 #include "window/EditorTestSuite.hpp"
 
 #include "tests1_rc.h"
@@ -1114,6 +1116,124 @@ TEST_F(WinMainFuncTest, CreateControlProcess103)
 
 	// プロセスが完全に終了するまで待つ
 	ep.lock();
+}
+
+/*!
+ * @brief CSelectLangの初期化が通るようにモックを設定する
+ *
+ * この時点では最後まで初期化を完了させず、エラー終了をエミュレートできるようにしている。
+ */
+static void SetUpSelectLang()
+{
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+}
+
+/*!
+ * @brief wWinMainで メモリ不足 を検知するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess104)
+{
+	EXPECT_EXIT({
+			Kernel32::setInstance<MockKernel32>();
+
+			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+			SetUpSelectLang();
+
+			// std::bad_allocで失敗させる
+			EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+				.WillOnce(testing::Throw(std::bad_alloc()));
+
+			// コントロールプロセスを起動する
+			const auto hInstance = G_AppInstance();
+			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
+			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+
+			Kernel32::resetInstance();
+
+			exit(ret);
+		},
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::BadAlloc)),
+		".*"
+	);
+}
+
+/*!
+ * @brief wWinMainで 例外 を検知するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess105)
+{
+	EXPECT_EXIT({
+			Kernel32::setInstance<MockKernel32>();
+
+			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+			SetUpSelectLang();
+
+			// std::exceptionで失敗させる
+			EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+				.WillOnce(testing::Throw(std::invalid_argument("dummy")));
+
+			// コントロールプロセスを起動する
+			const auto hInstance = G_AppInstance();
+			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
+			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+
+			Kernel32::resetInstance();
+
+			exit(ret);
+		},
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::UnExpected)),
+		".*"
+	);
+}
+
+/*!
+ * @brief wWinMainで 初期化失敗 を検知するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess106)
+{
+	EXPECT_EXIT({
+			Kernel32::setInstance<MockKernel32>();
+
+			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+			SetUpSelectLang();
+
+			// basis::initialization_errorで失敗させる
+			EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+				.WillOnce(testing::Throw(basis::make_initialization_error(L"dummy")));
+
+			// コントロールプロセスを起動する
+			const auto hInstance = G_AppInstance();
+			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
+			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+
+			Kernel32::resetInstance();
+
+			exit(ret);
+		},
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::AppInitFailed)),
+		".*"
+	);
 }
 
 /*!

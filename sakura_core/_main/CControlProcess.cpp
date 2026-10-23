@@ -118,7 +118,9 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
 	@date 2013.03.20 novice コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 */
-bool CControlProcess::InitializeProcess()
+bool CControlProcess::InitializeProcess(
+	int nCmdShow [[maybe_unused]] // 指定を無視して非表示で起動する
+)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
@@ -163,7 +165,7 @@ bool CControlProcess::InitializeProcess()
 	}
 
 	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess() ){
+	if( !CProcess::InitializeProcess(SW_HIDE) ){
 		return false;
 	}
 
@@ -215,18 +217,6 @@ bool CControlProcess::MainLoop()
 		return true;
 	}
 	return false;
-}
-
-/*!
-	@brief コントロールプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
-*/
-void CControlProcess::OnExitProcess()
-{
-	GetDllShareData().m_sHandles.m_hwndTray = nullptr;
 }
 
 CControlProcess::~CControlProcess()

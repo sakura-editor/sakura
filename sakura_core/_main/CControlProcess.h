@@ -35,22 +35,25 @@ class CControlTray;
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class CControlProcess final : public CProcess {
-public:
-	CControlProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine ) : 
-		CProcess( hInstance, lpCmdLine )
-	{}
+private:
+	using Base = CProcess;
+	using Me = CControlProcess;
 
-	~CControlProcess();
+public:
+	// コンストラクタは流用する
+	using Base::Base;
+
+	~CControlProcess() override;
 
 	std::filesystem::path GetIniFileName() const override;
 
-protected:
-	CControlProcess();
-	bool InitializeProcess() override;
-	bool MainLoop() override;
-	void OnExitProcess() override;
-
 private:
+	bool InitializeProcess(
+		int nCmdShow [[maybe_unused]]
+	) override;
+
+	bool MainLoop() override;
+
 	std::filesystem::path GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const;
 
 	HANDLE			m_hMutex = nullptr;					//!< アプリケーション実行検出用ミューテックス

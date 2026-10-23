@@ -9,7 +9,7 @@
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2004, Moca
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -55,7 +55,9 @@ std::filesystem::path CProcess::GetIniFileName() const
 
 	共有メモリを初期化する
 */
-bool CProcess::InitializeProcess()
+bool CProcess::InitializeProcess(
+	int nCmdShow [[maybe_unused]]
+)
 {
 	/* 共有データ構造体のアドレスを返す */
 	if( !GetShareData().InitShareData() ){
@@ -73,20 +75,32 @@ bool CProcess::InitializeProcess()
 }
 
 /*!
-	@brief プロセス実行
-	
-	@author aroka
-	@date 2002/01/16
-*/
-bool CProcess::Run()
+ * @brief プロセス実行
+ *
+ * @param[in] nCmdShow コマンドラインから渡されたウィンドウ表示フラグ
+ * @returns アプリ終了コード
+ *
+ * @author aroka
+ * @date 2002/01/16 aroka 新規作成（？）
+ */
+EAppExitCode CProcess::Run(
+	int nCmdShow
+)
 {
-	if( InitializeProcess() )
+	// 終了コード
+	auto exitCode = EAppExitCode::Exited;
+
+	//TODO: __try-__exceptで囲む
+
+	if( InitializeProcess(nCmdShow) )
 	{
+
 			MainLoop() ;
-			OnExitProcess();
-		return true;
+
+		exitCode = EAppExitCode::Exited;	//TODO: MainLoopの戻り値を返すように変える
 	}
-	return false;
+
+	return exitCode;
 }
 
 /*!
