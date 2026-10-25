@@ -93,6 +93,9 @@ int WINAPI wWinMain(
 	EAppExitCode exitCode;
 
 	try {
+		// terminateされたときにスタックトレースを出す
+		std::set_terminate(&CProcess::OnTerminated);
+
 		//コマンドラインクラスのインスタンスを確保する
 		CCommandLine cCommandLine;
 
@@ -125,7 +128,7 @@ int WINAPI wWinMain(
 		exitCode = EAppExitCode::BadAlloc;
 	}
 	// その他エラーが発生した場合
-	catch (const std::exception&) {
+	catch (...) {
 		// L"予期せぬエラーが発生しました。\n終了します。"
 		ErrorBeep();
 		TopErrorMessage(nullptr, LS(IDS_UNHANDLED));

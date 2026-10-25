@@ -150,6 +150,9 @@
   <ItemGroup>
     <ClInclude Include="..\src\main\cpp\basis\initialization_error.hpp" />
     <ClInclude Include="..\src\main\cpp\basis\make_initialization_error.hpp" />
+    <ClInclude Include="..\src\main\cpp\extmodule\DbgHelp.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\debug\MiniDumpWriter.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\debug\StackTraceWriter.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileHandle.hpp" />
     <ClInclude Include="..\src\main\cpp\util\file\FileMapping.hpp" />
@@ -529,6 +532,9 @@
     <ClCompile Include="..\src\main\cpp\basis\initialization_error.cpp" />
     <ClCompile Include="..\src\main\cpp\basis\make_initialization_error.cpp" />
     <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp" />
+    <ClCompile Include="..\src\main\cpp\extmodule\DbgHelp.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\debug\MiniDumpWriter.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\debug\StackTraceWriter.cpp" />
     <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp" />
     <ClCompile Include="..\src\main\cpp\util\file\FileHandle.cpp" />
     <ClCompile Include="..\src\main\cpp\util\file\FileMapping.cpp" />
