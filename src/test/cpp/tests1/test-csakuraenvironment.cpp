@@ -769,7 +769,7 @@ TEST_F(Kernel32, FilePointerCreateFilePath101)
 
 TEST_F(Kernel32, FilePointerCreateTempFile101)
 {
-	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
 		.WillRepeatedly(testing::DoDefault());
 
 	EXPECT_CALL(*pKernel32, GetProcAddress(_, _))
@@ -785,7 +785,7 @@ TEST_F(Kernel32, FilePointerCreateTempFile101)
 
 TEST_F(Kernel32, FilePointerCreateTempFile102)
 {
-	EXPECT_CALL(*pKernel32, GetModuleFileNameW(nullptr, _, _))
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
 		.WillRepeatedly(testing::DoDefault());
 
 	EXPECT_CALL(*pKernel32, GetProcAddress(_, _))

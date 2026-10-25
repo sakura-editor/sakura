@@ -414,6 +414,11 @@ struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public win
 	void SetUp() override
 	{
 		User32::setInstance<MockUser32>();
+
+		auto pUser32 = (MockUser32*)User32::getInstance();
+
+		EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+			.WillRepeatedly(Return(MB_OK));
 	}
 
 	/*!
