@@ -1254,7 +1254,7 @@ TEST_F(WinMainFuncTest, CreateControlProcess106)
 /*!
  * @brief wWinMainで SEH例外 を検知するパターンのテスト
  */
-TEST_F(WinMainFuncTest, CreateControlProcess107)
+TEST_F(WinMainFuncTest, DISABLED_CreateControlProcess107)	// GitHub Actionsで動かないので無効化しておく
 {
 	constexpr auto expectedExitCode =
 #if defined(_MSC_VER) &&  defined(_DEBUG)
