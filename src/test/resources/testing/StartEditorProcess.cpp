@@ -86,23 +86,14 @@ int CallWinMain(
 	std::wstring& cmdLine
 )
 {
-#ifdef USE_STACK_TRACE
-	__try
-	{
-#endif
+	// 実行中モジュールのインスタンスハンドルを取得する
+	const auto hInstance = G_AppInstance();
 
-		// 実行中モジュールのインスタンスハンドルを取得する
-		const auto hInstance = ::GetModuleHandleW(nullptr);
+	// wWinMainには書き込み可能なコマンドライン文字列を渡す
+	LPWSTR lpCmdLine = cmdLine.data();
 
-		return wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
-
-#ifdef USE_STACK_TRACE
-	}
-	__except (OnUnhandledException(GetExceptionInformation()))
-	{
-		return 1;
-	}
-#endif
+	// wWinMainを呼び出す
+	return wWinMain(hInstance, nullptr, lpCmdLine, SW_SHOWDEFAULT);
 }
 
 /*!

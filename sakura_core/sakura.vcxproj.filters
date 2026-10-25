@@ -232,6 +232,9 @@
     <ClInclude Include="..\src\main\cpp\extmodule\DbgHelp.hpp">
       <Filter>Cpp Source Files\extmodule</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\debug\MiniDumpWriter.hpp">
+      <Filter>Cpp Source Files\util\debug</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\cpp\util\debug\StackTraceWriter.hpp">
       <Filter>Cpp Source Files\util\debug</Filter>
     </ClInclude>
@@ -1335,6 +1338,9 @@
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\extmodule\DbgHelp.cpp">
       <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\debug\MiniDumpWriter.cpp">
+      <Filter>Cpp Source Files\util\debug</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\debug\StackTraceWriter.cpp">
       <Filter>Cpp Source Files\util\debug</Filter>

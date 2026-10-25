@@ -1252,6 +1252,64 @@ TEST_F(WinMainFuncTest, CreateControlProcess106)
 }
 
 /*!
+ * @brief wWinMainで SEH例外 を検知するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess107)
+{
+	constexpr auto expectedExitCode =
+#if defined(_MSC_VER) &&  defined(_DEBUG)
+		// MSVC版は「SEH例外でクラッシュしたこと」を検知する
+		EAppExitCode::Crashed
+#else
+		// MSVC以外は SEH例外 を検知できないので「予期せぬエラーが発生したこと」を検知する
+		EAppExitCode::UnExpected
+#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
+		;
+
+	EXPECT_EXIT({
+			Kernel32::setInstance<MockKernel32>();
+
+			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+			SetUpSelectLang();
+
+			// SEH例外を発生させる
+			EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
+				.WillOnce(Invoke([](
+					LPCWSTR lpFileName,
+					LPWIN32_FIND_DATAW lpFindFileData
+				)
+			{
+				// AV例外を発生させる
+				::RaiseException(
+					EXCEPTION_ACCESS_VIOLATION,
+					EXCEPTION_NONCONTINUABLE,
+					0,
+					nullptr
+				);
+
+				return nullptr; // 戻り値型を満たすため
+			}));
+
+			// クラッシュダンプ用のファイル作成をパスさせる(MiNGW版では呼ばれない)
+			EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, CREATE_ALWAYS, _, nullptr))
+				.WillRepeatedly(testing::DoDefault());
+
+			// コントロールプロセスを起動する
+			const auto hInstance = G_AppInstance();
+			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
+			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+
+			Kernel32::resetInstance();
+
+			exit(ret);
+		},
+		::testing::ExitedWithCode(static_cast<int>(expectedExitCode)),
+		".*"
+	);
+}
+
+/*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  複数ファイルを開くパターンのテスト。

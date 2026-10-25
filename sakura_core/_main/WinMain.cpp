@@ -128,7 +128,7 @@ int WINAPI wWinMain(
 		exitCode = EAppExitCode::BadAlloc;
 	}
 	// その他エラーが発生した場合
-	catch (const std::exception&) {
+	catch (...) {
 		// L"予期せぬエラーが発生しました。\n終了します。"
 		ErrorBeep();
 		TopErrorMessage(nullptr, LS(IDS_UNHANDLED));

@@ -17,6 +17,8 @@
 #define SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
 #pragma once
 
+#include "basis/primitive.h"
+
 #include <filesystem>
 #include <string>
 #include <string_view>
@@ -59,6 +61,54 @@ public:
 	 * @brief C++例外ハンドラー
 	 */
 	[[noreturn]] static void OnTerminated() noexcept;
+
+	/*!
+	 * @brief クラッシュダンプを出力する
+	 *
+	 * @param[in] code 例外コード
+	 * @param[in] pExceptionParams 例外情報
+	 * @retval EXCEPTION_EXECUTE_HANDLER ハンドラブロックに入る
+	 * @retval EXCEPTION_CONTINUE_SEARCH ハンドラの検索を続行する
+	 */
+	static int WriteDump(
+		DWORD code,
+		PEXCEPTION_POINTERS pExceptionParams
+	) noexcept;
+
+	/*!
+	 * @brief ミニダンプを出力する
+	 *
+	 * @param[in] file ミニダンプを出力するファイルパス
+	 * @param[in] pExceptionParams 例外情報
+	 */
+	static void WriteMiniDumpIgnoringExceptions(
+		std::wstring_view file,
+		PEXCEPTION_POINTERS pExceptionParams
+	) noexcept;
+
+	/*!
+	 * @brief ミニダンプを出力する
+	 *
+	 * @tparam A NUL終端文字列を生成できる型
+	 * @param[in] file ミニダンプを出力するファイルパス
+	 * @param[in] pExceptionParams 例外情報
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	static void WriteMiniDumpIgnoringExceptions(
+		const A& file,
+		PEXCEPTION_POINTERS pExceptionParams
+	) noexcept
+	{
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _File{ file };
+
+		// 文字列を渡すバージョンを呼び出す
+		WriteMiniDumpIgnoringExceptions(
+			_File.str(),
+			pExceptionParams
+		);
+	}
 
 	/*!
 	 * @brief スタックトレースを出力する
