@@ -55,6 +55,22 @@ enum class EAppExitCode : int {
 */
 class CProcess : public TSingleInstance<CProcess> {
 public:
+	/*!
+	 * @brief C++例外ハンドラー
+	 */
+	[[noreturn]] static void OnTerminated() noexcept;
+
+	/*!
+	 * @brief スタックトレースを出力する
+	 *
+	 * @param[in] context スタックトレースを取得するコンテキスト情報
+	 * @param[in] out 出力先のストリーム
+	 */
+	static void WriteStackTraceIgnoringExceptions(
+		CONTEXT& context,
+		std::ostream* out
+	) noexcept;
+
 	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
 
 	~CProcess() override = default;

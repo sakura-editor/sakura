@@ -106,6 +106,9 @@
     <Filter Include="Cpp Source Files\util">
       <UniqueIdentifier>{2be12596-e832-4f04-8891-7e5c6cdaa15d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\util\debug">
+      <UniqueIdentifier>{175707f3-21c4-45b5-9ef7-12881f766a2f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Cpp Source Files\util\file">
       <UniqueIdentifier>{a76cabac-8045-444f-95ee-99914e06eea9}</UniqueIdentifier>
     </Filter>
@@ -225,6 +228,12 @@
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\type_of_Nth_lambda_arg.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\extmodule\DbgHelp.hpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\debug\StackTraceWriter.hpp">
+      <Filter>Cpp Source Files\util\debug</Filter>
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\util\file\FileFind.hpp">
       <Filter>Cpp Source Files\util\file</Filter>
@@ -1323,6 +1332,12 @@
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\cxx\lock_resource.cpp">
       <Filter>Cpp Source Files\cxx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\extmodule\DbgHelp.cpp">
+      <Filter>Cpp Source Files\extmodule</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\debug\StackTraceWriter.cpp">
+      <Filter>Cpp Source Files\util\debug</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\file\FileFind.cpp">
       <Filter>Cpp Source Files\util\file</Filter>

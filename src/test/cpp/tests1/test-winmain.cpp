@@ -48,6 +48,8 @@ namespace cxx {
 
 HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
 
+[[noreturn]] void OnTerminated();
+
 template<class T>
 concept DataAndSizeAccessible = requires(const T& value) {
 	std::data(value);
@@ -568,6 +570,19 @@ void TerminateControlProcess(
 } // namespace testing
 
 namespace winmain {
+
+TEST(OnTerminated, test101)
+{
+	EXPECT_EXIT({
+			// terminateされたときにスタックトレースを出す
+			std::set_terminate(&CProcess::OnTerminated);
+
+			std::terminate();
+		},
+		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::Terminated)),
+		".*"
+	);
+}
 
 /*!
  * WinMain起動テストのためのフィクスチャクラス

@@ -93,6 +93,9 @@ int WINAPI wWinMain(
 	EAppExitCode exitCode;
 
 	try {
+		// terminateされたときにスタックトレースを出す
+		std::set_terminate(&CProcess::OnTerminated);
+
 		//コマンドラインクラスのインスタンスを確保する
 		CCommandLine cCommandLine;
 

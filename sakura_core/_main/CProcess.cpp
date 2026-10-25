@@ -18,11 +18,68 @@
 #include "StdAfx.h"
 #include "_main/CProcess.h"
 
+#include "debug/Debug1.h"	// TRACE
+#include "util/debug/StackTraceWriter.hpp"
 #include "util/module.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "config/app_constants.h"
 #include "CSelectLang.h"
+
+using namespace cxx;
+
+/*!
+ * @brief C++例外ハンドラー
+ *
+ * プロセスが terminate されたときに呼ばれるハンドラ関数
+ * プログラム開始時に std::set_terminate で登録する
+ */
+/* static */ [[noreturn]] void CProcess::OnTerminated() noexcept
+{
+	// コンテキスト情報
+	CONTEXT ctx{};
+
+	// 実行中のコンテキストを取得する
+	::RtlCaptureContext(&ctx);
+
+	// スタックトレースを出力する
+	WriteStackTraceIgnoringExceptions(
+		ctx,
+		&std::cerr
+	);
+
+	// 強制終了する
+	std::abort();
+}
+
+/*!
+ * @brief スタックトレースを出力する
+ *
+ * @param[in] context スタックトレースを取得するコンテキスト情報
+ * @param[in] out 出力先のストリーム
+ */
+/* static */ void CProcess::WriteStackTraceIgnoringExceptions(
+	CONTEXT& context,
+	std::ostream* out
+) noexcept
+{
+	try {
+		// スタックトレースを出力する
+		StackTraceWriter().WriteStackTrace(context, out);
+	}
+	catch (...) {
+		// 例外発生時はデバッガーへの出力を試みる。例外以外は無視する
+		const auto ep = std::current_exception();
+		if (!ep) return;
+
+		try {
+			std::rethrow_exception(ep);
+		} catch (const std::exception& e) {
+			// ログを出力する
+			TRACE("fail: %hs", e.what());
+		}
+	}
+}
 
 /*!
 	@brief プロセス基底クラス

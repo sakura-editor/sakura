@@ -28,13 +28,6 @@ namespace testing {
 int StartEditorProcess(const std::wstring& commandLine);
 
 /*!
- * @brief テストコード専用terminateハンドラー
- *
- * プロセスがterminateされたときに、スタックトレースを出力する。
- */
-[[noreturn]] void OnTerminate();
-
-/*!
  * @brief テストコード専用SEH構造化例外ハンドラー
  */
 LONG OnUnhandledException(EXCEPTION_POINTERS* ep);
