@@ -28,6 +28,7 @@
 #include "apiwrap/DarkMode.h"
 
 #include "util/os.h"
+#include "util/sync/MutexHandle.hpp"
 
 //-------------------------------------------------
 
@@ -125,8 +126,17 @@ bool CControlProcess::InitializeProcess(
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( nullptr, FALSE, GSTR_MUTEX_SAKURA );
-	if( nullptr == m_hMutex ){
+	try
+	{
+		// ミューテックスを作成する
+		auto hMutex = cxx::MutexHandle::CreateMutexW(nullptr, FALSE, GSTR_MUTEX_SAKURA);
+
+		// 生ハンドルを取り出す
+		m_hMutex = hMutex.release();
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
 		ErrorBeep();
 		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
 		return false;
@@ -145,13 +155,21 @@ bool CControlProcess::InitializeProcess(
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
-	m_hMutexCP = ::CreateMutex( nullptr, TRUE, strCtrlProcEvent.c_str() );
-	if( nullptr == m_hMutexCP ){
+	try
+	{
+		// ミューテックスを作成する
+		auto hMutex = cxx::MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
+
+		// 生ハンドルを取り出す
+		m_hMutexCP = hMutex.release();
+	}
+	// エラーが発生した場合
+	catch (const std::system_error& e)
+	{
+		if (ERROR_ALREADY_EXISTS == e.code().value()) return false;
+
 		ErrorBeep();
 		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
-	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
 		return false;
 	}
 	
