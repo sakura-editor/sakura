@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,18 +9,20 @@
 #define SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_
 #pragma once
 
-class CEditView;
-
 #include "basis/SakuraBasis.h"
 #include "doc/layout/CLayout.h"
 
+#include <limits.h>
+
+class CEditView;
+
 class CViewSelect{
 public:
+	explicit CViewSelect(CEditView* pcEditView);
+
 	CEditView* GetEditView(){ return m_pcEditView; }
 	const CEditView* GetEditView() const{ return m_pcEditView; }
 
-public:
-	CViewSelect(CEditView* pcEditView);
 	void CopySelectStatus(CViewSelect* pSelect) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -83,6 +85,7 @@ public:
 	//                           描画                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void DrawSelectArea(bool bDrawBracketCursorLine = true);		//!< 指定行の選択領域の描画
+
 private:
 	void DrawSelectArea2(HDC) const;		//!< 指定範囲の選択領域の描画
 	void DrawSelectAreaLine(			//!< 指定行の選択領域の描画
@@ -90,6 +93,7 @@ private:
 		CLayoutInt			nLineNum,	//!< [in] 描画対象行(レイアウト行)
 		const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
 	) const;
+
 public:
 	void GetSelectAreaLineFromRange(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout, const CLayoutRange& sRange) const;
 	void GetSelectAreaLine(CLayoutRange& ret, CLayoutInt nLineNum, const CLayout* pcLayout) const{
@@ -111,9 +115,6 @@ public:
 	bool IsTextSelected() const
 	{
 		return m_sSelect.IsValid();
-//		return 0!=(
-//			~((DWORD)(m_sSelect.nLineFrom | m_sSelect.nLineTo | m_sSelect.nColumnFrom | m_sSelect.nColumnTo)) >> 31
-//			);
 	}
 
 	//! テキストの選択中か
@@ -142,19 +143,20 @@ private:
 
 public:
 
-	bool	m_bDrawSelectArea;		// 選択範囲を描画したか	// 02/12/13 ai
+	bool	m_bDrawSelectArea = false;		// 選択範囲を描画したか	// 02/12/13 ai
 
 	// 選択状態
-	bool	m_bSelectingLock;		// 選択状態のロック
+	bool	m_bSelectingLock = false;		// 選択状態のロック
+
 private:
-	bool	m_bBeginSelect;			// 範囲選択中
-	bool	m_bBeginBoxSelect;		// 矩形範囲選択中
-	bool	m_bSelectAreaChanging;	// 選択範囲変更中
-	int		m_nLastSelectedByteLen;	// 前回選択時の選択バイト数
+	bool	m_bBeginSelect = false;			// 範囲選択中
+	bool	m_bBeginBoxSelect = false;		// 矩形範囲選択中
+	bool	m_bSelectAreaChanging = false;	// 選択範囲変更中
+	int		m_nLastSelectedByteLen = 0;	// 前回選択時の選択バイト数
 
 public:
-	bool	m_bBeginLineSelect;		// 行単位選択中
-	bool	m_bBeginWordSelect;		// 単語単位選択中
+	bool	m_bBeginLineSelect = false;		// 行単位選択中
+	bool	m_bBeginWordSelect = false;		// 単語単位選択中
 
 	// 選択範囲を保持するための変数群
 	// これらはすべて折り返し行と、折り返し桁を保持している。
@@ -171,4 +173,5 @@ m_sSelectOldについて
 	現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
 	DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
 */
+
 #endif /* SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_ */
