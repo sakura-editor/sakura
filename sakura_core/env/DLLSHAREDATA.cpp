@@ -38,19 +38,19 @@ DLLSHAREDATA& GetDllShareData()
 }
 
 CShareDataLockCounter::CShareDataLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
+	std::lock_guard lock{ g_cKeywordMutex };
 	assert_warning( 0 <= m_pShareData->m_nLockCount );
 	m_pShareData->m_nLockCount++;
 }
 
 CShareDataLockCounter::~CShareDataLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
+	std::lock_guard lock{ g_cKeywordMutex };
 	m_pShareData->m_nLockCount--;
 	assert_warning( 0 <= m_pShareData->m_nLockCount );
 }
 
 int CShareDataLockCounter::GetLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
+	std::lock_guard lock{ g_cKeywordMutex };
 	assert_warning( 0 <= GetDllShareData().m_nLockCount );
 	return GetDllShareData().m_nLockCount;
 }
@@ -91,7 +91,7 @@ public:
 // countが0だったらLockして返す
 static int GetCountIf0Lock( CShareDataLockCounter** ppLock )
 {
-	LockGuard<CMutex> guard(g_cKeywordMutex);
+	std::lock_guard lock{ g_cKeywordMutex };
 	int count = GetDllShareData().m_nLockCount;
 	if( count <= 0 ){
 		if( ppLock ){

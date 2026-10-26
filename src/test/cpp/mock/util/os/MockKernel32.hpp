@@ -31,6 +31,12 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HANDLE hTemplateFile
 	));
 
+	MOCK_CONST_METHOD3(CreateMutexW, HANDLE(
+		_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
+		_In_ BOOL bInitialOwner,
+		_In_opt_ LPCWSTR lpName
+	));
+
 	MOCK_CONST_METHOD2(FindFirstFileW, HANDLE(
 		_In_ LPCWSTR lpFileName,
 		_Out_ LPWIN32_FIND_DATAW lpFindFileData
@@ -152,6 +158,12 @@ struct MockKernel32 final : public Kernel32
 		_In_ DWORD dwCreationDisposition,
 		_In_ DWORD dwFlagsAndAttributes,
 		_In_opt_ HANDLE hTemplateFile
+	);
+
+	static HANDLE _CreateMutexW(
+		_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
+		_In_ BOOL bInitialOwner,
+		_In_opt_ LPCWSTR lpName
 	);
 
 	static HANDLE _FindFirstFileW(

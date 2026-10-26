@@ -47,6 +47,19 @@ HANDLE Kernel32::CreateFileW(
 	);
 }
 
+HANDLE Kernel32::CreateMutexW(
+	_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
+	_In_ BOOL bInitialOwner,
+	_In_opt_ LPCWSTR lpName
+) const
+{
+	return ::CreateMutexW(
+		lpMutexAttributes,
+		bInitialOwner,
+		lpName
+	);
+}
+
 HANDLE Kernel32::FindFirstFileW(
 	_In_ LPCWSTR lpFileName,
 	_Out_ LPWIN32_FIND_DATAW lpFindFileData
