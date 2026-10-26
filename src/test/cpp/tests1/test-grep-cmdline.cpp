@@ -1016,7 +1016,7 @@ struct GrepOutputSnapshotTest : public GrepCommandLineTest {
 		return buf;
 	}
 
-	//! 標準出力のバイト列を文書の文字コードで戻す(AddTail() の逆)
+	//! 標準出力のバイト列を文書の文字コードで戻す(結果を標準出力に書くときの逆)
 	static std::wstring Decode(const std::string& bytes)
 	{
 		std::unique_ptr<CCodeBase> pcCodeBase(CCodeFactory::CreateCodeBase(pcEditDoc->GetDocumentEncoding(), 0));
@@ -2077,6 +2077,110 @@ TEST_F(GrepProgressTest, ShowsFolderAfterSubFolder)
 	FakeGrepProgress progress;
 	EXPECT_THAT(GrepWith(progress, L"HIT", L"*.txt", L"XS"), Eq(4u));
 	EXPECT_THAT(progress.folders, ::testing::ElementsAre(::testing::EndsWith(L"GrepProgressTest.ShowsFolderAfterSubFolder")));
+}
+
+// ---------------------------------------------------------------------------
+// 結果の出力先
+// ---------------------------------------------------------------------------
+
+/*!
+	@brief テスト用の結果の出力先
+
+	足された文字列を、足された順にためる。
+*/
+class FakeGrepOutput : public IGrepOutputTarget {
+public:
+	void Append(const CNativeW& cmem) override
+	{
+		chunks.emplace_back(cmem.GetStringPtr(), cmem.GetStringLength());
+	}
+
+	bool IsDrawing() const override
+	{
+		return false;
+	}
+
+	//! 足された文字列をつないだもの
+	std::wstring Text() const
+	{
+		std::wstring text;
+		for (const auto& chunk : chunks) {
+			text += chunk;
+		}
+		return text;
+	}
+
+	std::vector<std::wstring> chunks;	//!< 足された文字列
+};
+
+/*!
+	@brief 結果の出力先のテスト
+
+	DoGrep() に FakeGrepOutput を渡し、結果の文書の代わりに使う。
+*/
+struct GrepOutputTargetTest : public GrepCommandLineTest {
+	//! output を渡して Grep を実行する(progress の指定が無ければダイアログを出す)
+	DWORD GrepTo(FakeGrepOutput& output, const GrepInfo& gi, const std::optional<IGrepProgress*>& progress = std::nullopt) const
+	{
+		return CEditApp::getInstance()->m_pcGrepAgent->DoGrep(&pcEditWnd->GetActiveView(), gi, progress, &output);
+	}
+};
+
+//! 見出し・結果・件数は、すべて出力先に足され、結果の文書には足されない
+TEST_F(GrepOutputTargetTest, AppendsAllToTarget)
+{
+	AddBasicFiles();
+	FakeGrepOutput output;
+	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XS"))), Eq(4u));
+	EXPECT_THAT(GetDocumentText(), ::testing::IsEmpty());
+	const auto text = output.Text();
+	EXPECT_THAT(Contains(text, LS(STR_GREP_SEARCH_CONDITION)), IsTrue());
+	EXPECT_THAT(Contains(text, L"d.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, MatchCountText(4)), IsTrue());
+}
+
+//! 出力先に足される文字列は、結果の文書に足される文字列と同じ
+TEST_F(GrepOutputTargetTest, SameTextAsDocument)
+{
+	AddBasicFiles();
+	FakeGrepOutput output;
+	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XSP"))), Eq(3u));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSP"), Eq(3u));
+	EXPECT_THAT(output.Text(), StrEq(GetDocumentText()));
+}
+
+//! 中断したときの「中断しました」も出力先に足される
+TEST_F(GrepOutputTargetTest, SuspendedMessageToTarget)
+{
+	AddBasicFiles();
+	FakeGrepOutput output;
+	FakeGrepProgress progress(1);
+	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"X")), &progress), Eq(0u));
+	EXPECT_THAT(Contains(output.Text(), LS(STR_GREP_SUSPENDED)), IsTrue());
+	EXPECT_THAT(GetDocumentText(), ::testing::IsEmpty());
+}
+
+//! 標準出力(U)で存在しないフォルダーを指定すると、メッセージを出力先に足して止まる
+TEST_F(GrepOutputTargetTest, NonexistentFolderMessageToTarget)
+{
+	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT=XU)", (folder.Path() / L"none").native());
+	FakeGrepOutput output;
+	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(args)), Eq(0u));
+	EXPECT_THAT(output.Text(), StrEq(std::wstring(LS(STR_DLGGREP5)) + L"\r\n"));
+}
+
+/*!
+	無効な :HWND: のエラーも出力先に足される
+
+	このエラーの経路は m_bGrepRunning を戻さない(DISABLED_InvalidHwndTargetResetsRunningFlag の件)。
+	後始末は GrepTestSuite::TearDown() が行うので、このテストでは DoGrep() を 1 回だけ呼ぶ。
+*/
+TEST_F(GrepOutputTargetTest, HwndErrorToTarget)
+{
+	FakeGrepOutput output;
+	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L":HWND:0", L"X"))), Eq(0u));
+	EXPECT_THAT(Contains(output.Text(), L"HWND handle error."), IsTrue());
+	EXPECT_THAT(GetDocumentText(), ::testing::IsEmpty());
 }
 
 } // namespace grep_test
