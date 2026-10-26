@@ -482,7 +482,8 @@ void CViewSelect::DrawSelectAreaLine(
 	const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
 ) const
 {
-	CEditView const * const pView = m_pcEditView;
+	auto pView = m_pcEditView;
+
 	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
 
 	const CLayoutMgr& layoutMgr = pView->m_pcEditDoc->m_cLayoutMgr;
