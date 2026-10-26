@@ -52,7 +52,7 @@ private:
 	// 外部依存
 	const wchar_t*	m_pszKey = nullptr;
 	const SSearchOption* m_psSearchOption = nullptr;
-	mutable CBregexp* m_pRegexp = nullptr;
+	CBregexp* m_pRegexp = nullptr;
 
 	const wchar_t* m_pszCaseKeyRef = nullptr;
 
