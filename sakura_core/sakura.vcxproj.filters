@@ -118,6 +118,9 @@
     <Filter Include="Cpp Source Files\util\os">
       <UniqueIdentifier>{455493d8-e520-4f42-86bf-780a426fc2fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Cpp Source Files\util\sync">
+      <UniqueIdentifier>{161d1d5b-3f34-4f1e-bbfc-8a3b9dcb8f97}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Cpp Source Files\view">
       <UniqueIdentifier>{d9294bbd-b07c-4588-99a7-27e3fec6c323}</UniqueIdentifier>
     </Filter>
@@ -279,6 +282,9 @@
     </ClInclude>
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
       <Filter>Cpp Source Files\util\os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
     </ClInclude>
     <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
@@ -1380,6 +1386,9 @@
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
       <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\sync\MutexHandle.cpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
     </ClCompile>
     <ClCompile Include="agent\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>

@@ -28,6 +28,19 @@
 	);
 }
 
+/* static */ HANDLE MockKernel32::_CreateMutexW(
+	_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
+	_In_ BOOL bInitialOwner,
+	_In_opt_ LPCWSTR lpName
+)
+{
+	return ::CreateMutexW(
+		lpMutexAttributes,
+		bInitialOwner,
+		lpName
+	);
+}
+
 /* static */ HANDLE MockKernel32::_FindFirstFileW(
 	_In_ LPCWSTR lpFileName,
 	_Out_ LPWIN32_FIND_DATAW lpFindFileData
@@ -135,6 +148,7 @@ MockKernel32::MockKernel32()
 {
 	// デフォルトの動作を設定する
 	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
+	ON_CALL(*this, CreateMutexW(_, _, _)).WillByDefault(&_CreateMutexW);
 	ON_CALL(*this, FindResourceG(_, _, _)).WillByDefault(&_FindResourceG);
 	ON_CALL(*this, GetProcAddress(_, _)).WillByDefault(&_GetProcAddress);
 	ON_CALL(*this, GetModuleFileNameW(_, _, _)).WillByDefault(&_GetModuleFileNameW);

@@ -26,6 +26,7 @@
 #include "util/file.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "util/sync/MutexHandle.hpp"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
 #include "version.h"
@@ -932,6 +933,21 @@ TEST_F(Kernel32, LoadStringResource104)
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("LockResource() failed"))
 	);
+}
+
+/*!
+ * @brief MutexHandleの失敗テスト
+ */
+TEST_F(Kernel32, MutexHandleCreateMutexW101)
+{
+	// モックは使わない
+	Target::resetInstance();
+
+	// ミューテックス作成
+	auto m1 = MutexHandle::CreateMutexW(nullptr, TRUE, L"test_mutex");
+
+	// 同名を指定して失敗させる
+	EXPECT_ANY_THROW(MutexHandle::CreateMutexW(nullptr, TRUE, L"test_mutex"));
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)
