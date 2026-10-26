@@ -919,6 +919,7 @@
     <ClCompile Include="_main\CCommandLine.cpp" />
     <ClCompile Include="_main\CControlProcess.cpp" />
     <ClCompile Include="_main\CControlTray.cpp" />
+    <ClCompile Include="_main\CMutex.cpp" />
     <ClCompile Include="_main\CNormalProcess.cpp" />
     <ClCompile Include="_main\CProcess.cpp" />
     <ClCompile Include="_main\CProcessFactory.cpp" />

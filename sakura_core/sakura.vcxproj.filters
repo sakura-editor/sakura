@@ -1309,6 +1309,9 @@
     <ClCompile Include="_main\CControlTray.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
+    <ClCompile Include="_main\CMutex.cpp">
+      <Filter>Cpp Source Files\_main</Filter>
+    </ClCompile>
     <ClCompile Include="_main\CNormalProcess.cpp">
       <Filter>Cpp Source Files\_main</Filter>
     </ClCompile>
