@@ -93,6 +93,37 @@ void SetGrepResult(
 	}
 }
 
+void AppendFolderHeadings(
+	CNativeW&			cmemMessage,
+	const GrepInfo&		gi,
+	std::wstring_view	baseFolder,
+	std::wstring_view	folder,
+	bool&				bOutputBaseFolder,
+	bool&				bOutputFolderName
+)
+{
+	if( !bOutputBaseFolder && gi.bGrepOutputBaseFolder ){
+		if( !gi.bGrepSeparateFolder && 2 != gi.nGrepOutputStyle ){
+			cmemMessage.AppendString( L"■\"" );
+		}else{
+			cmemMessage.AppendString( L"◎\"" );
+		}
+		cmemMessage.AppendString( baseFolder.data(), baseFolder.length() );
+		cmemMessage.AppendString( L"\"\r\n" );
+		bOutputBaseFolder = true;
+	}
+	if( !bOutputFolderName && gi.bGrepSeparateFolder ){
+		if( !folder.empty() ){
+			cmemMessage.AppendString( L"■\"" );
+			cmemMessage.AppendString( folder.data(), folder.length() );
+			cmemMessage.AppendString( L"\"\r\n" );
+		}else{
+			cmemMessage.AppendString( L"■\r\n" );
+		}
+		bOutputFolderName = true;
+	}
+}
+
 void OutputPathInfo(
 	CNativeW&		cmemMessage,
 	const GrepInfo&	gi,
@@ -121,26 +152,7 @@ void OutputPathInfo(
 		return;
 	}
 
-	if( !bOutputBaseFolder && gi.bGrepOutputBaseFolder ){
-		if( !gi.bGrepSeparateFolder && 1 == gi.nGrepOutputStyle ){
-			cmemMessage.AppendString( L"■\"" );
-		}else{
-			cmemMessage.AppendString( L"◎\"" );
-		}
-		cmemMessage.AppendString( pszBaseFolder );
-		cmemMessage.AppendString( L"\"\r\n" );
-		bOutputBaseFolder = true;
-	}
-	if( !bOutputFolderName && gi.bGrepSeparateFolder ){
-		if( pszFolder[0] ){
-			cmemMessage.AppendString( L"■\"" );
-			cmemMessage.AppendString( pszFolder );
-			cmemMessage.AppendString( L"\"\r\n" );
-		}else{
-			cmemMessage.AppendString( L"■\r\n" );
-		}
-		bOutputFolderName = true;
-	}
+	AppendFolderHeadings( cmemMessage, gi, pszBaseFolder, pszFolder, bOutputBaseFolder, bOutputFolderName );
 	// WZ風では見出しにファイル名を出す。ノーマルはヒット行ごとに出すので不要
 	if( 2 == gi.nGrepOutputStyle && !bOutFileName ){
 		// 上位のフォルダー名を既に出しているならフルパスは冗長なので相対パスにする
@@ -157,4 +169,35 @@ void OutputPathInfo(
 		cmemMessage.AppendString( L"\r\n" );
 		bOutFileName = TRUE;
 	}
+}
+
+CGrepResultWriter::CGrepResultWriter(
+	CNativeW&				cmemMessage,
+	const GrepInfo&			gi,
+	const SGrepResultFile&	file,
+	bool&					bOutputBaseFolder,
+	bool&					bOutputFolderName
+)
+	: m_cmemMessage( cmemMessage )
+	, m_gi( gi )
+	, m_file( file )
+	, m_bOutputBaseFolder( bOutputBaseFolder )
+	, m_bOutputFolderName( bOutputFolderName )
+{
+}
+
+void CGrepResultWriter::AddMatch( const SGrepResultMatch& match )
+{
+	OutputPathInfo(
+		m_cmemMessage, m_gi,
+		m_file.pszFullPath, m_file.pszBaseFolder, m_file.pszFolder, m_file.pszRelPath, m_file.pszCodeName,
+		m_bOutputBaseFolder, m_bOutputFolderName, m_bOutFileName
+	);
+	// 上位のフォルダー名を出しているなら、ファイル名は相対パスで表示する
+	const WCHAR* pszDispFilePath = ( m_gi.bGrepSeparateFolder || m_gi.bGrepOutputBaseFolder ) ? m_file.pszRelPath : m_file.pszFullPath;
+	SetGrepResult(
+		m_cmemMessage, pszDispFilePath, m_file.pszCodeName,
+		match.nLine, match.nColumn, match.pLine, match.nLineLen, match.nEolLen,
+		match.pMatch, match.nMatchLen, m_gi
+	);
 }
