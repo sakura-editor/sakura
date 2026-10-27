@@ -47,6 +47,21 @@ struct IGrepProgress {
 	virtual void SetFolder( std::wstring_view folder ) = 0;
 };
 
+/*!
+	@brief Grep の結果の出力先
+
+	CGrepAgent::DoGrep() が、検索条件の見出し・結果・件数を順に足す。
+	画面では Grep の結果の文書(-GOPT=U なら標準出力)に足す。テストでは差し替えて、足された文字列を確かめる。
+*/
+struct IGrepOutputTarget {
+	virtual ~IGrepOutputTarget() = default;
+
+	//! 結果を出力先の末尾に足す
+	virtual void Append( const CNativeW& cmem ) = 0;
+	//! 足した結果をすぐに表示しているか(リアルタイム表示)。途中の結果を早めに足すかを決めるのに使う
+	virtual bool IsDrawing() const = 0;
+};
+
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え
 //	Mar. 28, 2004 genta DoGrepFileから不要な引数を削除
 class CGrepAgent : public CDocListenerEx{
@@ -59,13 +74,13 @@ public:
 
 	static void CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths );
 	static std::wstring ChopYen( const std::wstring& str );
-	void AddTail( CEditView* pcEditView, const CNativeW& cmem, bool bAddStdout );
 
 	// Grep実行
 	DWORD DoGrep(
-		CEditView*				pcViewDst,	//!< [in] Grep結果の出力先
+		CEditView*				pcViewDst,	//!< [in] Grep結果の文書のビュー
 		const GrepInfo&			gi,			//!< [in] Grep実行の入力一式(検索キー・対象・オプション)
-		const std::optional<IGrepProgress*>&	optProgress = std::nullopt	//!< [in] 中断の確認と進み具合の表示。指定が無ければ「Grep実行中」のダイアログを出す
+		const std::optional<IGrepProgress*>&	optProgress = std::nullopt,	//!< [in] 中断の確認と進み具合の表示。指定が無ければ「Grep実行中」のダイアログを出す
+		const std::optional<IGrepOutputTarget*>&	optOutput = std::nullopt	//!< [in] 結果の出力先。指定が無ければ pcViewDst の文書(-GOPT=U なら標準出力)に足す
 	);
 
 private:
@@ -100,7 +115,7 @@ private:
 
 	//! 結果の出力先と、出力の途中の状態
 	struct SGrepOutput {
-		CEditView*		pcViewDst;					//!< 結果の出力先
+		IGrepOutputTarget*	pOutput;				//!< 結果の出力先
 		IGrepProgress*	pProgress;					//!< 中断の確認と進み具合の表示
 		int*			pnHitCount;					//!< ヒット数の合計
 		CNativeW&		cmemMessage;				//!< まだ出力していない結果
@@ -116,6 +131,9 @@ private:
 		const WCHAR*	pszFolder;		//!< 結果に表示するフォルダー
 		const WCHAR*	pszRelPath;		//!< 結果に表示する相対パス
 	};
+
+	// 結果を出力先に足す(足す直前の時刻を覚える)
+	void AppendResult( IGrepOutputTarget* pOutput, const CNativeW& cmem );
 
 	// Grep実行
 	int DoGrepTree(
@@ -156,7 +174,7 @@ private:
 		bool&					bOutputFolderName
 	);
 
-	ULONGLONG m_lastAddTailTime = 0;	// AddTail() を呼び出した時間
+	ULONGLONG m_lastAddTailTime = 0;	// AppendResult() を呼び出した時間
 
 public: //$$ 仮
 	bool	m_bGrepMode = false;		//!< Grepモードか
