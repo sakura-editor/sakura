@@ -5,6 +5,9 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include "_main/CProcessFactory.h"
+
+#include "_main/CControlProcess.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -29,8 +32,6 @@
 #include "util/os/make_system_error.hpp"
 #include "util/file.h"
 #include "config/system_constants.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 
 #include "testing/StartEditorProcess.hpp"
 #include "dlg/ModalDialogCloser.hpp"
@@ -1321,29 +1322,59 @@ TEST_F(WinMainFuncTest, DISABLED_CreateControlProcess107)	// GitHub Actionsで�
  */
 TEST_F(WinMainFuncTest, CreateControlProcess108)
 {
-	EXPECT_EXIT({
-			Kernel32::setInstance<MockKernel32>();
+	Kernel32::setInstance<MockKernel32>();
 
-			auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
 
-			SetUpSelectLang();
+	// NULLを返して失敗させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
+		.WillOnce(Return(nullptr));
 
-			// NULLを返して失敗させる
-			EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
-				.WillOnce(Return(nullptr));
+	// コマンドラインのインスタンスを用意する
+	CCommandLine commandLine;
 
-			// コントロールプロセスを起動する
-			const auto hInstance = G_AppInstance();
-			auto cmdLine =std::wstring{ LR"(-NOWIN -PROF="")" };
-			const auto ret = wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
+	// コントロールプロセスを起動する
+	const auto process = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
-			Kernel32::resetInstance();
-
-			exit(ret);
-		},
-		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::Exited)),
-		".*"
+	EXPECT_THAT(([&process] {
+			process->InitializeProcess(SW_HIDE);
+		}),
+		ThrowsMessage<basis::initialization_error>(StartsWith("CreateMutex()"))
 	);
+
+	Kernel32::resetInstance();
+}
+
+/*!
+ * @brief 2つ目のミューテックス作成に失敗するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess109)
+{
+	Kernel32::setInstance<MockKernel32>();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
+		.WillOnce(testing::DoDefault());
+
+	// NULLを返して失敗させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_CP)))
+		.WillOnce(Return(nullptr));
+
+	// コマンドラインのインスタンスを用意する
+	CCommandLine commandLine;
+
+	// コントロールプロセスを起動する
+	const auto process = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
+
+	EXPECT_THAT(([&process] {
+			process->InitializeProcess(SW_HIDE);
+		}),
+		ThrowsMessage<basis::initialization_error>(StartsWith("CreateMutex()"))
+	);
+
+	Kernel32::resetInstance();
 }
 
 /*!
