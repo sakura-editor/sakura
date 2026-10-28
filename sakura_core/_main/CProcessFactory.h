@@ -53,7 +53,11 @@ public:
 
 private:
 	bool	IsValidVersion() const;
-	bool	ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const;
+
+	bool ProfileSelect(
+		CCommandLine& cCommandLine
+	) const;
+
 	bool	IsStartingControlProcess() const;
 
 	HINSTANCE	m_hInstance;

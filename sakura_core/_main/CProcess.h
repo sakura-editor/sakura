@@ -139,10 +139,11 @@ public:
 
 	virtual std::filesystem::path GetIniFileName() const;
 
-protected:
 	virtual bool InitializeProcess(
 		int nCmdShow [[maybe_unused]]
 	);
+
+protected:
 	virtual bool MainLoop() = 0;
 
 	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }

@@ -37,6 +37,8 @@
 
 #include <ole2.h>
 
+#include "CSelectLang.h"
+
 #pragma comment(lib, "ole32.lib") 
 
 /*!
@@ -96,6 +98,9 @@ int WINAPI wWinMain(
 		// terminateされたときにスタックトレースを出す
 		std::set_terminate(&CProcess::OnTerminated);
 
+		// 言語環境を初期化する
+		CSelectLang::InitializeLanguageEnvironment();
+
 		//コマンドラインクラスのインスタンスを確保する
 		CCommandLine cCommandLine;
 
@@ -114,9 +119,14 @@ int WINAPI wWinMain(
 	}
 	// アプリの初期化に失敗した場合
 	catch (const basis::initialization_error& e) {
-		// 例外で指定されたメッセージを表示
-		ErrorBeep();
-		TopErrorMessage(nullptr, e.message().c_str());
+		// 例外で指定されたメッセージが空でない場合
+		if (const auto message = e.message();
+			!message.empty())
+		{
+			// 例外で指定されたメッセージを表示
+			ErrorBeep();
+			TopErrorMessage(nullptr, message.c_str());
+		}
 		// 例外で指定された終了コードで終了
 		exitCode = e.exitCode().value_or(EAppExitCode::AppInitFailed);
 	}

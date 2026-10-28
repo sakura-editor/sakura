@@ -19,6 +19,7 @@
 #include "_main/CControlProcess.h"
 
 #include "apiwrap/DarkMode.h"
+#include "basis/make_initialization_error.hpp"
 #include "debug/CRunningTimer.h"
 #include "env/CShareData.h"
 #include "env/CShareData_IO.h"
@@ -28,7 +29,7 @@
 
 #include "config/system_constants.h"
 
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
+#include "sakura_rc.h"
 
 //-------------------------------------------------
 
@@ -134,9 +135,11 @@ bool CControlProcess::InitializeProcess(
 	// エラーが発生した場合
 	catch (const std::system_error&)
 	{
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 
 	const auto pszProfileName = GetProfileName();
@@ -160,11 +163,19 @@ bool CControlProcess::InitializeProcess(
 	// エラーが発生した場合
 	catch (const std::system_error& e)
 	{
-		if (ERROR_ALREADY_EXISTS == e.code().value()) return false;
+		if (ERROR_ALREADY_EXISTS == e.code().value())
+		{
+			throw basis::make_initialization_error(
+				L"",
+				static_cast<int>(EAppExitCode::Exited)
+			);
+		}
 
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 	
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更

@@ -55,19 +55,27 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	std::wstring_view commandLine
 ) const
 {
-	// 言語環境を初期化する
-	CSelectLang::InitializeLanguageEnvironment();
-
 	// 引数はNUL終端文字列として扱う
 	cxx::NullTerminatedString<WCHAR> _CommandLine{ commandLine };
-
-	// メンバー変数を引数のように扱う
-	const auto hInstance = m_hInstance;
 
 	// NUL終端文字列から文字列ポインターを取り出す
 	const auto lpCmdLine = _CommandLine.c_str();
 
-	if( !ProfileSelect( hInstance, lpCmdLine ) ){
+	auto& cCommandLine = *CCommandLine::getInstance();
+
+	// 実行ファイル名を取得する
+	std::wstring exeFileName{ GetExeFileName() };
+	auto szExeFileName = exeFileName.data();
+	const auto cchExeFileName = static_cast<int>(exeFileName.length());
+
+	// 実行ファイル名をもとに漢字コードを固定する．
+	cCommandLine.ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+
+	// コマンドラインを解析する
+	cCommandLine.ParseCommandLine(lpCmdLine);
+
+	if (!ProfileSelect(cCommandLine))
+	{
 		return nullptr;
 	}
 
@@ -92,17 +100,11 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	}
 }
 
-bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const
+bool CProcessFactory::ProfileSelect(
+	CCommandLine& cCommandLine
+) const
 {
-	auto* pCommandLine = CCommandLine::getInstance();
-
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(nullptr, szExeFileName, int(std::size(szExeFileName)));
-	pCommandLine->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
-
-	pCommandLine->ParseCommandLine(lpCmdLine);
+	auto* pCommandLine = &cCommandLine;
 
 	// コマンドラインオプションから起動プロファイルを判定する
 	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(pCommandLine);
