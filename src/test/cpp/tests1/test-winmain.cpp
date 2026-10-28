@@ -655,11 +655,9 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 
 		// コマンドラインのインスタンスを用意する
 		CCommandLine commandLine;
-		const auto strCommandLine = std::format(LR"(-PROF="{}")", profileName);
-		commandLine.ParseCommandLine(strCommandLine.c_str(), false);
 
 		// プロセスのインスタンスを用意する
-		CControlProcess dummy(nullptr, strCommandLine.data());
+		const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 		// INIファイルのパスを取得
 		iniPath = GetIniFileName();

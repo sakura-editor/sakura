@@ -11,6 +11,8 @@
 #include "StdAfx.h"
 #include "file.h"
 
+#include "_main/CProcessFactory.h"
+
 #include <Shlwapi.h>
 
 #include <regex>
@@ -24,8 +26,6 @@
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 
 //! ファイル名に使えない文字(ADSを使えるように':'は除外する)
 static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
