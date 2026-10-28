@@ -40,11 +40,49 @@ CSearchStringPattern::~CSearchStringPattern()
 	Reset();
 }
 
+/*!
+	@brief 正規表現のオプション(大文字小文字の区別・全域)を返す
+*/
+int CSearchStringPattern::GetRegexpOption() const
+{
+	int nFlag = (GetLoHiCase() ? CBregexp::optCaseSensitive : CBregexp::optNothing);
+	if( m_bGlobal ){
+		nFlag |= CBregexp::optGlobal;
+	}
+	return nFlag;
+}
+
+/*!
+	@brief SetPattern() で設定したパターンを、別の CBregexp にもコンパイルする
+
+	1 つの CBregexp は同時に 1 つのスレッドからしか使えないので、
+	複数のスレッドで同じパターンを探すときに、スレッドごとの CBregexp を作るのに使う。
+	メッセージは出さない(SetPattern() で同じパターンのコンパイルに成功している前提)。
+
+	@param[in,out]	regexp	コンパイル先
+	@retval true	コンパイルした。正規表現でなければ何もせず true
+	@retval false	正規表現ライブラリを使えないか、コンパイルに失敗した
+
+	@note SetPattern() に渡したパターン・置換後文字列・検索オプションを、このオブジェクトと同じく参照する。
+*/
+bool CSearchStringPattern::CompileRegexp( CBregexp& regexp ) const
+{
+	if( !m_psSearchOption || !m_psSearchOption->bRegularExp ){
+		return true;
+	}
+	if( !InitRegexp( nullptr, regexp, false ) ){
+		return false;
+	}
+	return regexp.Compile( m_pszKey, m_pszKey2, GetRegexpOption() );
+}
+
 void CSearchStringPattern::Reset(){
 	m_pszKey = nullptr;
+	m_pszKey2 = nullptr;
 	m_pszCaseKeyRef = nullptr;
 	m_psSearchOption = nullptr;
 	m_pRegexp = nullptr;
+	m_bGlobal = false;
 
 	delete [] m_pszPatternCase;
 	m_pszPatternCase = nullptr;
@@ -74,6 +112,8 @@ bool CSearchStringPattern::SetPattern(
 	m_nPatternLen = nPatternLen;
 	m_psSearchOption = &sSearchOption;
 	m_pRegexp = regexp;
+	m_pszKey2 = pszPattern2;
+	m_bGlobal = bGlobal;
 	if( m_psSearchOption->bRegularExp ){
 		if( !m_pRegexp ){
 			return false;
@@ -81,10 +121,7 @@ bool CSearchStringPattern::SetPattern(
 		if( !InitRegexp( hwnd, *m_pRegexp, true ) ){
 			return false;
 		}
-		int nFlag = (GetLoHiCase() ? CBregexp::optCaseSensitive : CBregexp::optNothing);
-		if( bGlobal ){
-			nFlag |= CBregexp::optGlobal;
-		}
+		const int nFlag = GetRegexpOption();
 		/* 検索パターンのコンパイル */
 		if( pszPattern2 ){
 			if( !m_pRegexp->Compile( pszPattern, pszPattern2, nFlag ) ){
