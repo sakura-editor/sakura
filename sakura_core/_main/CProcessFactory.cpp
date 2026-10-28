@@ -55,9 +55,6 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	std::wstring_view commandLine
 ) const
 {
-	// 言語環境を初期化する
-	CSelectLang::InitializeLanguageEnvironment();
-
 	// 引数はNUL終端文字列として扱う
 	cxx::NullTerminatedString<WCHAR> _CommandLine{ commandLine };
 

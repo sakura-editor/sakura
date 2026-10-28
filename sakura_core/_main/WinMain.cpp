@@ -37,6 +37,8 @@
 
 #include <ole2.h>
 
+#include "CSelectLang.h"
+
 #pragma comment(lib, "ole32.lib") 
 
 /*!
@@ -95,6 +97,9 @@ int WINAPI wWinMain(
 	try {
 		// terminateされたときにスタックトレースを出す
 		std::set_terminate(&CProcess::OnTerminated);
+
+		// 言語環境を初期化する
+		CSelectLang::InitializeLanguageEnvironment();
 
 		//コマンドラインクラスのインスタンスを確保する
 		CCommandLine cCommandLine;
