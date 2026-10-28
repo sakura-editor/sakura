@@ -6,7 +6,7 @@
   },
   "registries": [
     {
-      "baseline": "2026-07-11",
+      "baseline": "2026-10-28",
       "kind": "filesystem",
       "packages": [
         "bregonig",

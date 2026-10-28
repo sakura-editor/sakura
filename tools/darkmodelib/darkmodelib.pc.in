@@ -4,6 +4,6 @@ includedir=${prefix}/include
 
 Name: darkmodelib
 Description: Dark mode support library for Win32 applications
-Version: 0.48.0
+Version: 0.130.0
 Libs: -L${libdir} -ldarkmode
 Cflags: -I${includedir}
