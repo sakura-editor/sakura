@@ -151,6 +151,9 @@ BEGIN
 	STR_BREGONIG_INIT				"bregonig.dll の利用に失敗しました。\r\n正規表現を利用するには Unicode 版の bregonig.dll が必要です。\r\n入手方法はヘルプを参照してください。"
 	STR_GSTR_APPNAME				_GSTR_APPNAME
 
+	// 日本語アプリ名(日本語のみに対応するリソースのチェック用)
+	IDS_APPNAME_JP					_GSTR_APPNAME
+
 	// Select Language
 	STR_SELLANG_NAME				"Japanese"						// language name [Primary language (Sublanguage)]
 	STR_SELLANG_LANGID				"0x0411"						// language id (hexadecimal string)
