@@ -158,16 +158,21 @@ int CProcess::WriteDump(
 }
 
 /*!
-	@brief プロセス基底クラス
-	
-	@author aroka
-	@date 2002/01/07
-*/
+ * @brief コンストラクタ
+ *
+ * プロセス基底クラスのコンストラクタ。
+ *
+ * @param[in] hInstance プロセスのインスタンスハンドル
+ * @param[in] cmdLineHolder コマンドラインホルダー
+ * @author aroka
+ * @date 2002/01/07
+ */
 CProcess::CProcess(
-	HINSTANCE	hInstance,		//!< handle to process instance
-	[[maybe_unused]] LPCWSTR		lpCmdLine		//!< pointer to command line
+	_In_ HINSTANCE hInstance,
+	CmdLineHolder&& cmdLineHolder
 )
-: m_hInstance( hInstance )
+	: m_hInstance{ hInstance }
+	, m_CmdLineHolder{ std::move(cmdLineHolder) }
 {
 }
 

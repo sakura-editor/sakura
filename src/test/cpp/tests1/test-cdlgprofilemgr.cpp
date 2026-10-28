@@ -48,9 +48,6 @@ protected:
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
-		// コマンドラインのインスタンスを用意する
-		CCommandLine cCommandLine;
-
 		// プロセスのインスタンスを用意する
 		constexpr auto profileName = L"";
 		const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
@@ -171,9 +168,6 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
  */
 TEST(file, GetProfileMgrFileName_NoArg1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profileName = L"";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
@@ -188,9 +182,6 @@ TEST(file, GetProfileMgrFileName_NoArg1)
  */
 TEST(file, GetProfileMgrFileName_NoArg2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profileName = L"profile1";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
@@ -205,9 +196,6 @@ TEST(file, GetProfileMgrFileName_NoArg2)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profileName = L"";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
@@ -222,9 +210,6 @@ TEST(file, GetProfileMgrFileName_DefaultProfile1)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profileName = L"profile1";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
@@ -239,9 +224,6 @@ TEST(file, GetProfileMgrFileName_DefaultProfile2)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profile = L"profile1";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profile));
@@ -256,9 +238,6 @@ TEST(file, GetProfileMgrFileName_NamedProfile1)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-
 	// プロセスのインスタンスを用意する
 	constexpr auto profile = L"profile1";
 	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profile));

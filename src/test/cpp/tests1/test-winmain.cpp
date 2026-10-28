@@ -653,9 +653,6 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		// テスト用プロファイル名
 		const std::wstring_view profileName{ GetProfileName() };
 
-		// コマンドラインのインスタンスを用意する
-		CCommandLine commandLine;
-
 		// プロセスのインスタンスを用意する
 		const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
@@ -1328,9 +1325,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess108)
 	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
 		.WillOnce(Return(nullptr));
 
-	// コマンドラインのインスタンスを用意する
-	CCommandLine commandLine;
-
 	// コントロールプロセスを起動する
 	const auto process = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
@@ -1359,9 +1353,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess109)
 	// NULLを返して失敗させる
 	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_CP)))
 		.WillOnce(Return(nullptr));
-
-	// コマンドラインのインスタンスを用意する
-	CCommandLine commandLine;
 
 	// コントロールプロセスを起動する
 	const auto process = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");

@@ -23,7 +23,6 @@
 #include "io/CTextStream.h"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
-#include "_main/CCommandLine.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
 #include "util/file/FileMapping.hpp"
@@ -983,9 +982,6 @@ TEST(file, GetIniFileName_OutOfProcess)
  */
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
@@ -999,9 +995,6 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
  */
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
@@ -1077,9 +1070,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
@@ -1107,9 +1097,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
@@ -1134,9 +1121,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
@@ -1160,9 +1144,6 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
-
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
 
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
@@ -1211,9 +1192,6 @@ TEST(file, Deprecated_GetInidir)
  */
 TEST(file, GetInidirOrExedir)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-
 	// プロセスのインスタンスを用意する
 	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
