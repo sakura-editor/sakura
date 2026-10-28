@@ -16,19 +16,19 @@
 */
 
 #include "StdAfx.h"
-#include "CControlProcess.h"
-#include "CControlTray.h"
-#include "env/DLLSHAREDATA.h"
-#include "CCommandLine.h"
-#include "env/CShareData_IO.h"
+#include "_main/CControlProcess.h"
+
+#include "apiwrap/DarkMode.h"
 #include "debug/CRunningTimer.h"
 #include "env/CShareData.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
-#include "config/system_constants.h"
-#include "apiwrap/DarkMode.h"
-
+#include "env/CShareData_IO.h"
+#include "env/DLLSHAREDATA.h"
 #include "util/os.h"
 #include "util/sync/MutexHandle.hpp"
+
+#include "config/system_constants.h"
+
+#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
 
 //-------------------------------------------------
 
@@ -129,10 +129,7 @@ bool CControlProcess::InitializeProcess(
 	try
 	{
 		// ミューテックスを作成する
-		auto hMutex = cxx::MutexHandle::CreateMutexW(nullptr, FALSE, GSTR_MUTEX_SAKURA);
-
-		// 生ハンドルを取り出す
-		m_hMutex = hMutex.release();
+		m_hMutex = MutexHandle::CreateMutexW(nullptr, FALSE, GSTR_MUTEX_SAKURA);
 	}
 	// エラーが発生した場合
 	catch (const std::system_error&)
@@ -158,10 +155,7 @@ bool CControlProcess::InitializeProcess(
 	try
 	{
 		// ミューテックスを作成する
-		auto hMutex = cxx::MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
-
-		// 生ハンドルを取り出す
-		m_hMutexCP = hMutex.release();
+		m_hMutexCP = MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
 	}
 	// エラーが発生した場合
 	catch (const std::system_error& e)
@@ -203,7 +197,7 @@ bool CControlProcess::InitializeProcess(
 	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcTray = new CControlTray;
+	m_pcTray = std::make_unique<CControlTray>();
 
 	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
@@ -236,18 +230,3 @@ bool CControlProcess::MainLoop()
 	}
 	return false;
 }
-
-CControlProcess::~CControlProcess()
-{
-	delete m_pcTray;
-
-	if( m_hMutexCP ){
-		::ReleaseMutex( m_hMutexCP );
-	}
-	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
-};
