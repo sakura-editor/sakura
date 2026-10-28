@@ -1,7 +1,7 @@
 get_filename_component(REPO_ROOT "${CURRENT_PORT_DIR}/../../../.." ABSOLUTE)
 set(DARKMODELIB_ROOT "${REPO_ROOT}/externals/darkmodelib")
 
-if(NOT EXISTS "${DARKMODELIB_ROOT}/include/DarkModeSubclass.h")
+if(NOT EXISTS "${DARKMODELIB_ROOT}/include/Darkmodelib.h")
   message(FATAL_ERROR "darkmodelib source not found: ${DARKMODELIB_ROOT}")
 endif()
 

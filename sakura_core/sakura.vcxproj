@@ -169,6 +169,7 @@
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
+    <ClInclude Include="apiwrap\DarkMode.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
     <ClInclude Include="apiwrap\StdControl.h" />
     <ClInclude Include="basis\TComImpl.hpp" />
