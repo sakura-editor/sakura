@@ -15,6 +15,7 @@
 #pragma once
 
 #include <cassert>
+#include <string_view>
 
 #include "basis/GrepInfo.h"	//GrepInfo
 #include "mem/CNativeW.h"	//CNativeW
@@ -103,6 +104,31 @@ void SetGrepResult(
 	const GrepInfo&	gi
 );
 
+/*!	@brief ベースフォルダー名・フォルダー名の見出しのうち、まだ出していないものを cmemMessage の末尾へ追加する
+
+	ベースフォルダー名の前には、フォルダー毎に表示しないときは「■」(出力形式2(WZ風)だけ「◎」)、
+	フォルダー毎に表示するときは「◎」を付ける。
+	フォルダー名の前には「■」を付け、ベースフォルダーそのもの(folder が空)なら「■」だけの行にする。
+
+	@param[in,out]	cmemMessage			出力先
+	@param[in]		gi					Grep実行の入力一式(正規化済み)
+	@param[in]		baseFolder			検索開始フォルダー
+	@param[in]		folder				結果に表示するフォルダー
+	@param[in,out]	bOutputBaseFolder	ベースフォルダー名を出力済みか(出したら true にする)
+	@param[in,out]	bOutputFolderName	フォルダー名を出力済みか(出したら true にする)
+
+	@note 出力形式3(結果のみ)でも出す。一致した行の前の見出し(OutputPathInfo())は出力形式3では出さず、
+	      検索キーが空のときのファイル名の一覧では出す。
+*/
+void AppendFolderHeadings(
+	CNativeW&			cmemMessage,
+	const GrepInfo&		gi,
+	std::wstring_view	baseFolder,
+	std::wstring_view	folder,
+	bool&				bOutputBaseFolder,
+	bool&				bOutputFolderName
+);
+
 /*!	@brief ベースフォルダー名・フォルダー名・ファイル名をGrep結果に出力する
 
 	ヒット行の前に置く見出し行を cmemMessage の末尾へ追加する。
@@ -135,4 +161,59 @@ void OutputPathInfo(
 	bool&			bOutputFolderName,
 	BOOL&			bOutFileName
 );
+
+//! Grep で一致したファイル(結果の見出しのもと)
+struct SGrepResultFile {
+	const WCHAR*	pszFullPath;	//!< ファイルのフルパス
+	const WCHAR*	pszBaseFolder;	//!< 検索したフォルダー
+	const WCHAR*	pszFolder;		//!< 結果に表示するフォルダー
+	const WCHAR*	pszRelPath;		//!< 結果に表示する相対パス
+	const WCHAR*	pszCodeName;	//!< 文字コード名(" [SJIS]" など)
+};
+
+//! Grep で見つかった一致 1 件(結果の 1 行のもと)
+struct SGrepResultMatch {
+	LONGLONG		nLine;		//!< 行番号(1～)
+	int				nColumn;	//!< 桁番号(1～)
+	const wchar_t*	pLine;		//!< 行の文字列
+	int				nLineLen;	//!< 行の長さ(行末を含む)
+	int				nEolLen;	//!< 行末の長さ
+	const wchar_t*	pMatch;		//!< 一致した文字列
+	int				nMatchLen;	//!< 一致した文字列の長さ
+};
+
+/*!	@brief 1 ファイルぶんの Grep の結果を、文字列にして足していく
+
+	一致 1 件ごとに、見出し(OutputPathInfo())と結果の行(SetGrepResult())を cmemMessage の末尾へ追加する。
+	見出しは出していないものだけを出す。ベースフォルダー名・フォルダー名を出したかは、
+	ファイルをまたいで呼び出し側と共有する。ファイル名を出したかは、このオブジェクトが持つ。
+
+	@note 出力先・オプション・フラグは参照で、ファイルの名前・文字コード名はポインターで持つだけで、
+	      自分では持たない。1 ファイルを処理する間だけ使い、それらより長く残さない。
+	@note ファイル名を出したかの状態を持つので、コピーしない(1 ファイルに 1 つ)。
+*/
+class CGrepResultWriter {
+public:
+	CGrepResultWriter(
+		CNativeW&				cmemMessage,		//!< [in,out] 出力先
+		const GrepInfo&			gi,					//!< [in] Grep実行の入力一式(正規化済み)
+		const SGrepResultFile&	file,				//!< [in] 一致したファイル
+		bool&					bOutputBaseFolder,	//!< [in,out] ベースフォルダー名を出力済みか
+		bool&					bOutputFolderName	//!< [in,out] フォルダー名を出力済みか
+	);
+
+	CGrepResultWriter( const CGrepResultWriter& ) = delete;
+	CGrepResultWriter& operator = ( const CGrepResultWriter& ) = delete;
+
+	//! 一致 1 件の見出しと結果の行を足す
+	void AddMatch( const SGrepResultMatch& match );
+
+private:
+	CNativeW&		m_cmemMessage;
+	const GrepInfo&	m_gi;
+	SGrepResultFile	m_file;
+	bool&			m_bOutputBaseFolder;
+	bool&			m_bOutputFolderName;
+	BOOL			m_bOutFileName = FALSE;	//!< ファイル名を出力済みか(OutputPathInfo() の引数に合わせて BOOL)
+};
 #endif /* SAKURA_GREPMESSAGEFORMAT_812C2479_9955_44DB_8529_75296A7E19E6_H_ */

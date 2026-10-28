@@ -113,6 +113,12 @@ private:
 		CGrepEnumFolders&	cGrepExceptAbsFolders;	//!< 除外フォルダー絶対パス
 	};
 
+	//! 見出し(ベースフォルダー名・フォルダー名)を出したか
+	struct SGrepHeading {
+		bool	bBaseFolder = false;	//!< ベースフォルダー名を出したか(検索するフォルダーごとに戻す)
+		bool	bFolderName = false;	//!< フォルダー名を出したか(フォルダーごとに戻す)
+	};
+
 	//! 結果の出力先と、出力の途中の状態
 	struct SGrepOutput {
 		IGrepOutputTarget*	pOutput;				//!< 結果の出力先
@@ -120,7 +126,7 @@ private:
 		int*			pnHitCount;					//!< ヒット数の合計
 		CNativeW&		cmemMessage;				//!< まだ出力していない結果
 		CNativeW&		cUnicodeBuffer;				//!< 1 行の読み込みに使うバッファー
-		bool			bOutputBaseFolder = false;	//!< ベースフォルダー名を出力したか
+		SGrepHeading	heading;					//!< 見出しを出したか
 	};
 
 	//! 検索するファイル 1 つの名前とパス
@@ -133,7 +139,7 @@ private:
 	};
 
 	// 結果を出力先に足す(足す直前の時刻を覚える)
-	void AppendResult( IGrepOutputTarget* pOutput, const CNativeW& cmem );
+	void AppendResult( IGrepOutputTarget& output, const CNativeW& cmem );
 
 	// Grep実行
 	int DoGrepTree(
@@ -162,16 +168,14 @@ private:
 		CBregexp*				pRegexp,		//	Jun. 27, 2001 genta	正規表現ライブラリの差し替え
 		SGrepOutput&			out,
 		HWND					hWndTarget,
-		const SGrepFilePath&	path,
-		bool&					bOutputFolderName
+		const SGrepFilePath&	path
 	);
 
 	int DoGrepReplaceFile(
 		const SGrepSearchCond&	cond,
 		CBregexp*				pRegexp,
 		SGrepOutput&			out,
-		const SGrepFilePath&	path,
-		bool&					bOutputFolderName
+		const SGrepFilePath&	path
 	);
 
 	ULONGLONG m_lastAddTailTime = 0;	// AppendResult() を呼び出した時間
