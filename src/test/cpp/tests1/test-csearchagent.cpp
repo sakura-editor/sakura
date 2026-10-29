@@ -1256,6 +1256,75 @@ TEST_F(CLineMatchFinderTest, StartBeyondLine)
 	EXPECT_THAT(Find(L"ab", 3), IsEmpty());
 }
 
+/*!
+	@brief CSearchStringPattern::CompileRegexp() のテスト
+
+	SetPattern() で設定したパターンを別の CBregexp にコンパイルし、その CBregexp で探した結果を確かめる。
+ */
+struct CompileRegexpTest : public CLineMatchFinderTest {
+	CBregexp m_cOtherRegexp;
+
+	//! 別の CBregexp を使って、行の先頭から順に探す
+	std::vector<int> FindAllWithOther(std::wstring_view line)
+	{
+		const CLineMatchFinder finder(m_cPattern, &m_cOtherRegexp);
+		const auto nLineLen = static_cast<int>(line.length());
+		std::vector<int> result;
+		int nStart = 0;
+		while (const auto match = finder.Find(line.data(), nLineLen, nStart)) {
+			result.push_back(match->nIndex);
+			result.push_back(match->nLength);
+			nStart = CLineMatchFinder::GetNextStart(line.data(), nLineLen, *match);
+		}
+		return result;
+	}
+};
+
+//! 正規表現: 別の CBregexp でも、同じ一致になる
+TEST_F(CompileRegexpTest, SameMatches)
+{
+	ASSERT_THAT(SetKey(L"H.T", true, true, false), IsTrue());
+	ASSERT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+	EXPECT_THAT(FindAllWithOther(L"xHIT HAT hit\n"), ElementsAre(1, 3, 5, 3));
+	EXPECT_THAT(FindAllWithOther(L"xHIT HAT hit\n"), ::testing::ContainerEq(FindAll(L"xHIT HAT hit\n")));
+}
+
+//! 正規表現: 大文字と小文字を区別しない指定も引き継ぐ
+TEST_F(CompileRegexpTest, IgnoreCase)
+{
+	ASSERT_THAT(SetKey(L"hit", true, false, false), IsTrue());
+	ASSERT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+	EXPECT_THAT(FindAllWithOther(L"HIT Hit\n"), ElementsAre(0, 3, 4, 3));
+}
+
+//! 正規表現の置換: 置換後文字列と全域オプションも引き継ぐ
+TEST_F(CompileRegexpTest, ReplacePattern)
+{
+	m_strKey = L"HIT";
+	m_sSearchOption = SSearchOption(true, true, false);
+	ASSERT_THAT(m_cPattern.SetPattern(nullptr, m_strKey.c_str(), m_strKey.length(), L"R", m_sSearchOption, &m_cRegexp, true), IsTrue());
+	ASSERT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+
+	constexpr std::wstring_view target = L"HIT x HIT";
+	EXPECT_THAT(m_cOtherRegexp.Replace(target.data(), static_cast<int>(target.length())), Eq(2));
+	EXPECT_THAT(std::wstring_view(m_cOtherRegexp.GetString(), m_cOtherRegexp.GetStringLen()), Eq(L"R x R"));
+}
+
+//! 正規表現でなければ、何もせず true を返す(別の CBregexp は初期化しない)
+TEST_F(CompileRegexpTest, NotRegexp)
+{
+	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
+	EXPECT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+	EXPECT_THAT(m_cOtherRegexp.IsAvailable(), IsFalse());
+}
+
+//! パターンを設定する前は、何もせず true を返す
+TEST_F(CompileRegexpTest, BeforeSetPattern)
+{
+	EXPECT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+	EXPECT_THAT(m_cOtherRegexp.IsAvailable(), IsFalse());
+}
+
 //! 次に探し始める位置: 一致の後ろ。長さ 0 の一致なら 1 文字(サロゲートペアは 2)進め、行の末尾でも 1 進める
 TEST(CLineMatchFinder, GetNextStart)
 {
