@@ -5,6 +5,10 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include "env/CSakuraEnvironment.h"
+
+#include "_main/CProcessFactory.h"
+
 #include <tchar.h>
 #include <Windows.h>
 #include <Shlwapi.h>
@@ -14,9 +18,6 @@
 #include "debug/Debug2.h"
 #include "basis/CMyString.h"
 #include "mem/CNativeW.h"
-#include "env/CSakuraEnvironment.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 #include "cxx/com_pointer.hpp"
 #include "env/CProfile.h"
 #include "io/CFile.h"

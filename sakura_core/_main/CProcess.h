@@ -17,9 +17,11 @@
 #define SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_
 #pragma once
 
+#include "_main/CCommandLine.h"
 #include "basis/primitive.h"
 
 #include <filesystem>
+#include <memory>
 #include <string>
 #include <string_view>
 
@@ -56,6 +58,11 @@ enum class EAppExitCode : int {
 	@brief プロセス基底クラス
 */
 class CProcess : public TSingleInstance<CProcess> {
+private:
+	using CmdLineHolder = std::unique_ptr<CCommandLine>;
+
+	using Me = CProcess;
+
 public:
 	/*!
 	 * @brief C++例外ハンドラー
@@ -121,7 +128,16 @@ public:
 		std::ostream* out
 	) noexcept;
 
-	CProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine );
+	/*!
+	 * @brief コンストラクタ
+	 *
+	 * @param[in] hInstance プロセスのインスタンスハンドル
+	 * @param[in] cmdLineHolder コマンドラインホルダー
+	 */
+	CProcess(
+		_In_ HINSTANCE hInstance,
+		CmdLineHolder&& cmdLineHolder
+	);
 
 	~CProcess() override = default;
 
@@ -156,7 +172,8 @@ public:
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
 
 private:
-	HINSTANCE	m_hInstance;
+	HINSTANCE		m_hInstance;
+	CmdLineHolder	m_CmdLineHolder;
 	HWND		m_hWnd = nullptr;
 	CShareData		m_cShareData;
 };

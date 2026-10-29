@@ -5,10 +5,13 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include "dlg/CDlgProfileMgr.h"
+
+#include "_main/CProcessFactory.h"
+
 #include <tchar.h>
 #include <Windows.h>
 
-#include "dlg/CDlgProfileMgr.h"
 
 #include <cstdlib>
 #include <filesystem>
@@ -45,8 +48,9 @@ protected:
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
-		// コマンドラインのインスタンスを用意する
-		CCommandLine cCommandLine;
+		// プロセスのインスタンスを用意する
+		constexpr auto profileName = L"";
+		const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 		// プロファイルマネージャ設定ファイルのパスを生成
 		profileMgrIniPath = GetProfileMgrFileName();
@@ -164,10 +168,9 @@ TEST_F( CDlgProfileMgrTest, TrySelectProfile_006 )
  */
 TEST(file, GetProfileMgrFileName_NoArg1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+	// プロセスのインスタンスを用意する
+	constexpr auto profileName = L"";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 	// iniファイルの拡張子を_prof.iniに変えたパスが返る
 	const auto profileMgrIniPath = GetIniFileName().replace_extension().concat(L"_prof.ini");
@@ -179,10 +182,9 @@ TEST(file, GetProfileMgrFileName_NoArg1)
  */
 TEST(file, GetProfileMgrFileName_NoArg2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+	// プロセスのインスタンスを用意する
+	constexpr auto profileName = L"profile1";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 	// iniファイルの拡張子を_prof.iniに変えたパスが返る
 	const auto profileMgrIniPath = GetIniFileName().parent_path().parent_path().append(GetIniFileName().replace_extension().concat(L"_prof.ini").filename().c_str());
@@ -194,10 +196,9 @@ TEST(file, GetProfileMgrFileName_NoArg2)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
+	// プロセスのインスタンスを用意する
+	constexpr auto profileName = L"";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 	// 設定フォルダーのパスが返る
 	const auto iniDir = GetExeFileName().replace_filename(L"").append("a.txt").remove_filename();
@@ -209,10 +210,9 @@ TEST(file, GetProfileMgrFileName_DefaultProfile1)
  */
 TEST(file, GetProfileMgrFileName_DefaultProfile2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
+	// プロセスのインスタンスを用意する
+	constexpr auto profileName = L"profile1";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
 
 	// 設定フォルダーのパスが返る
 	const auto iniDir = GetIniFileName().parent_path().parent_path().append("a.txt").remove_filename();
@@ -224,13 +224,9 @@ TEST(file, GetProfileMgrFileName_DefaultProfile2)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile1)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
-	// テスト用プロファイル名
+	// プロセスのインスタンスを用意する
 	constexpr auto profile = L"profile1";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profile));
 
 	// 指定したプロファイルの設定保存先フォルダーのパスが返る
 	const auto profileDir = GetExeFileName().replace_filename(profile).append("a.txt").remove_filename();
@@ -242,13 +238,9 @@ TEST(file, GetProfileMgrFileName_NamedProfile1)
  */
 TEST(file, GetProfileMgrFileName_NamedProfile2)
 {
-	// コマンドラインのインスタンスを用意する
-	CCommandLine cCommandLine;
-	auto pCommandLine = &cCommandLine;
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
-
-	// テスト用プロファイル名
+	// プロセスのインスタンスを用意する
 	constexpr auto profile = L"profile1";
+	const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profile));
 
 	// 指定したプロファイルの設定保存先フォルダーのパスが返る
 	const auto profileDir = GetIniFileName().parent_path().parent_path().append(profile).append("a.txt").remove_filename();

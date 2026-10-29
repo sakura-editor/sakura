@@ -5,6 +5,10 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
+#include "util/file.h"
+
+#include "_main/CProcessFactory.h"
+
 #include <tchar.h>
 #include <Windows.h>
 #include <Shlwapi.h>
@@ -19,11 +23,8 @@
 #include "io/CTextStream.h"
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 #include "dlg/CDlgTagJumpList.h"
 #include "env/CDataProfile.h"
-#include "util/file.h"
 #include "util/file/FileMapping.hpp"
 #include "util/file/NamedFilePointer.hpp"
 #include "util/os.h"
@@ -981,12 +982,8 @@ TEST(file, GetIniFileName_OutOfProcess)
  */
 TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
 	// exeファイルの拡張子をiniに変えたパスが返る
 	auto path = GetExeFileName().replace_extension(L".ini");
@@ -998,12 +995,8 @@ TEST(file, GetIniFileName_InProcessDefaultProfileUnInitialized)
  */
 TEST(file, GetIniFileName_InProcessNamedProfileUnInitialized)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
 	// exeファイルの拡張子をiniに変えたパスの最後のフォルダーにプロファイル名を加えたパスが返る
 	auto iniPath = GetExeFileName().replace_extension(L".ini");
@@ -1077,12 +1070,8 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateRoamingAppData)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
 	const auto iniPath = GetIniFileName();
 	profileDirPath = iniPath.parent_path();
@@ -1108,12 +1097,8 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDesktop)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
 	// 期待値を取得する
 	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\Desktop\sakura\)");
@@ -1136,12 +1121,8 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateProfile)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
 	// 期待値を取得する
 	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\sakura\)");
@@ -1164,12 +1145,8 @@ TEST_F(CExeIniTest, GetIniFileName_PrivateDocument)
 	// 実在チェック
 	EXPECT_TRUE(fexist(exeIniPath));
 
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
 
 	// 期待値を取得する
 	auto expected = ExpandEnvironmentStringsW(LR"(%USERPROFILE%\Documents\sakura\)");
@@ -1215,12 +1192,8 @@ TEST(file, Deprecated_GetInidir)
  */
 TEST(file, GetInidirOrExedir)
 {
-	// コマンドラインのインスタンスを用意する
-	auto pCommandLine = std::make_unique<CCommandLine>();
-	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
-
 	// プロセスのインスタンスを用意する
-	CControlProcess dummy(nullptr, LR"(-PROF="profile1")");
+	const auto dummy = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="profile1")");
 
 	std::wstring buf(_MAX_PATH, L'\0');
 
@@ -1230,6 +1203,7 @@ TEST(file, GetInidirOrExedir)
 	constexpr auto filename = L"test.txt";
 	auto exeBasePath = GetExeFileName().parent_path().append(filename);
 	auto iniBasePath = GetIniFileName().parent_path().append(filename);
+	ASSERT_NE(exeBasePath.parent_path(), iniBasePath.parent_path());
 
 	// EXE基準のファイルを作る
 	CProfile().WriteProfile(exeBasePath.c_str(), L"file, GetInidirOrExedirのテスト");
@@ -1261,7 +1235,7 @@ TEST(file, GetInidirOrExedir)
 
 	std::filesystem::remove(iniBasePath, ec);
 	std::filesystem::remove(exeBasePath, ec);
-	std::filesystem::remove_all(iniBasePath.parent_path(), ec);
+	std::filesystem::remove(iniBasePath.parent_path(), ec);
 }
 
 /*!
