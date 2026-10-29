@@ -374,7 +374,7 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence)
 		|| 0 == m_strCurSearchKey.size() ){
 		// 履歴の検索キーに更新
-		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// 検索文字列
+		m_strCurSearchKey = CRecentSearch().GetItemText(0);		// 検索文字列
 		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
 		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 		bChangeState = true;
