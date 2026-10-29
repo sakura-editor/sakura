@@ -8,11 +8,7 @@
 */
 
 #include "StdAfx.h"
-#include <vector>
-#include <string>
-#include <io.h>
-#include <shlwapi.h>
-#include "CPythonMacroManager.h"
+#include "macro/CPythonMacroManager.h"
 
 #include "cxx/ResourceHolder.hpp"
 #include "macro/CSMacroMgr.h"
@@ -26,7 +22,66 @@
 
 #include "python3_config.h"
 
+#include <string>
+#include <string_view>
+#include <system_error>
+#include <utility>
+#include <vector>
+
+#include <io.h>
+
+#include <Shlwapi.h>
+
 namespace {
+
+// ローカルマクロを定義するため、既存マクロを退避する
+#pragma push_macro("DECLARE_API_FUNCTION")
+
+/*!
+ * @brief API関数を宣言するためのマクロ
+ *
+ * @param name API関数名
+ */
+#define DECLARE_API_FUNCTION(name) \
+	#name
+
+/*!
+ * @brief 利用する DbgHelp APIの関数のリスト
+ */
+constexpr std::array g_PythonFunctions{
+	DECLARE_API_FUNCTION(Py_CompileString),
+	DECLARE_API_FUNCTION(Py_DecRef),
+	DECLARE_API_FUNCTION(Py_FinalizeEx),
+	DECLARE_API_FUNCTION(Py_GetConstant),
+	DECLARE_API_FUNCTION(Py_InitializeEx),
+	DECLARE_API_FUNCTION(Py_IsInitialized),
+	DECLARE_API_FUNCTION(PyCapsule_GetPointer),
+	DECLARE_API_FUNCTION(PyCapsule_New),
+	DECLARE_API_FUNCTION(PyCMethod_New),
+	DECLARE_API_FUNCTION(PyDict_New),
+	DECLARE_API_FUNCTION(PyErr_BadArgument),
+	DECLARE_API_FUNCTION(PyErr_Fetch),
+	DECLARE_API_FUNCTION(PyErr_NormalizeException),
+	DECLARE_API_FUNCTION(PyErr_Restore),
+	DECLARE_API_FUNCTION(PyEval_EvalCode),
+	DECLARE_API_FUNCTION(PyImport_AddModule),
+	DECLARE_API_FUNCTION(PyImport_AppendInittab),
+	DECLARE_API_FUNCTION(PyImport_ImportModule),
+	DECLARE_API_FUNCTION(PyLong_AsLong),
+	DECLARE_API_FUNCTION(PyLong_FromLong),
+	DECLARE_API_FUNCTION(PyMem_Free),
+	DECLARE_API_FUNCTION(PyModule_AddObject),
+	DECLARE_API_FUNCTION(PyModule_Create2),
+	DECLARE_API_FUNCTION(PyModule_GetDict),
+	DECLARE_API_FUNCTION(PyObject_Str),
+	DECLARE_API_FUNCTION(PyTuple_GetItem),
+	DECLARE_API_FUNCTION(PyTuple_Size),
+	DECLARE_API_FUNCTION(PyUnicode_AsWideCharString),
+	DECLARE_API_FUNCTION(PyUnicode_FromWideChar),
+};
+
+// 既存マクロを復元する
+#pragma pop_macro("DECLARE_API_FUNCTION")
 
 /*!
  * @brief Python APIの関数ポインタを保持するシングルトン
@@ -36,52 +91,12 @@ struct PythonApi final : public TSakuraSingleton<PythonApi> {
 
 	~PythonApi() override = default;
 
-	template<class Function>
-	void LoadSymbol(HMODULE hModule, Function& function, LPCSTR name, const std::filesystem::path& dllPath) const
-	{
-		const auto addr = ::GetProcAddress(hModule, name);
-
-		if (!addr) {
-			throw std::domain_error(std::format("missing symbol '{}' in '{}'", name, cxx::to_string(dllPath.native(), CP_UTF8)));
-		}
-
-		function = std::bit_cast<Function>(addr);
-	}
-
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
 	HMODULE	LoadModule(const A& pythonDir);
 
 	DllSearchPathHolder m_DllSearchPathHolder;
 
-	decltype(&::Py_CompileString) Py_CompileString = nullptr;
-	decltype(&::Py_DecRef) Py_DecRef = nullptr;
-	decltype(&::Py_FinalizeEx) Py_FinalizeEx = nullptr;
-	decltype(&::Py_GetConstant) Py_GetConstant = nullptr;
-	decltype(&::Py_InitializeEx) Py_InitializeEx = nullptr;
-	decltype(&::Py_IsInitialized) Py_IsInitialized = nullptr;
-	decltype(&::PyCapsule_GetPointer) PyCapsule_GetPointer = nullptr;
-	decltype(&::PyCapsule_New) PyCapsule_New = nullptr;
-	decltype(&::PyCMethod_New) PyCMethod_New = nullptr;
-	decltype(&::PyDict_New) PyDict_New = nullptr;
-	decltype(&::PyErr_BadArgument) PyErr_BadArgument = nullptr;
-	decltype(&::PyErr_Fetch) PyErr_Fetch = nullptr;
-	decltype(&::PyErr_NormalizeException) PyErr_NormalizeException = nullptr;
-	decltype(&::PyErr_Restore) PyErr_Restore = nullptr;
-	decltype(&::PyEval_EvalCode) PyEval_EvalCode = nullptr;
-	decltype(&::PyImport_AddModule) PyImport_AddModule = nullptr;
-	decltype(&::PyImport_AppendInittab) PyImport_AppendInittab = nullptr;
-	decltype(&::PyImport_ImportModule) PyImport_ImportModule = nullptr;
-	decltype(&::PyLong_AsLong) PyLong_AsLong = nullptr;
-	decltype(&::PyLong_FromLong) PyLong_FromLong = nullptr;
-	decltype(&::PyMem_Free) PyMem_Free = nullptr;
-	decltype(&::PyModule_AddObject) PyModule_AddObject = nullptr;
-	decltype(&::PyModule_Create2) PyModule_Create2 = nullptr;
-	decltype(&::PyModule_GetDict) PyModule_GetDict = nullptr;
-	decltype(&::PyObject_Str) PyObject_Str = nullptr;
-	decltype(&::PyTuple_GetItem) PyTuple_GetItem = nullptr;
-	decltype(&::PyTuple_Size) PyTuple_Size = nullptr;
-	decltype(&::PyUnicode_AsWideCharString) PyUnicode_AsWideCharString = nullptr;
-	decltype(&::PyUnicode_FromWideChar) PyUnicode_FromWideChar = nullptr;
+	std::map<std::string, FARPROC, std::less<>> m_Functions{};
 };
 
 template <basis::NullTerminatedStringConstructible<WCHAR> A>
@@ -143,43 +158,20 @@ HMODULE PythonApi::LoadModule(const A& arg)
 		throw std::domain_error(cxx::to_string(str, CP_UTF8));
 	}
 
-#pragma push_macro("LOAD_SYMBOL")
+	// Python APIの関数ポインタをロードする
+	std::ranges::for_each(
+		g_PythonFunctions,
+		[this, &hModule] (const auto& name)
+	{
+		const auto addr = ::GetProcAddress(
+			hModule.get(),
+			name
+		);
 
-#define LOAD_SYMBOL(name) \
-	LoadSymbol(hModule, name, #name, dllPath); \
-	0 /* ←セミコロンを付けないとエラーになるように。 */
+		if (!addr) throw std::system_error(std::make_error_code(std::errc::not_supported), std::format("missing symbol '{}'", name));
 
-	LOAD_SYMBOL(Py_CompileString);
-	LOAD_SYMBOL(Py_DecRef);
-	LOAD_SYMBOL(Py_FinalizeEx);
-	LOAD_SYMBOL(Py_GetConstant);
-	LOAD_SYMBOL(Py_InitializeEx);
-	LOAD_SYMBOL(Py_IsInitialized);
-	LOAD_SYMBOL(PyCapsule_GetPointer);
-	LOAD_SYMBOL(PyCapsule_New);
-	LOAD_SYMBOL(PyCMethod_New);
-	LOAD_SYMBOL(PyDict_New);
-	LOAD_SYMBOL(PyErr_BadArgument);
-	LOAD_SYMBOL(PyErr_Fetch);
-	LOAD_SYMBOL(PyErr_NormalizeException);
-	LOAD_SYMBOL(PyErr_Restore);
-	LOAD_SYMBOL(PyEval_EvalCode);
-	LOAD_SYMBOL(PyImport_AddModule);
-	LOAD_SYMBOL(PyImport_AppendInittab);
-	LOAD_SYMBOL(PyImport_ImportModule);
-	LOAD_SYMBOL(PyLong_AsLong);
-	LOAD_SYMBOL(PyLong_FromLong);
-	LOAD_SYMBOL(PyMem_Free);
-	LOAD_SYMBOL(PyModule_AddObject);
-	LOAD_SYMBOL(PyModule_Create2);
-	LOAD_SYMBOL(PyModule_GetDict);
-	LOAD_SYMBOL(PyObject_Str);
-	LOAD_SYMBOL(PyTuple_GetItem);
-	LOAD_SYMBOL(PyTuple_Size);
-	LOAD_SYMBOL(PyUnicode_AsWideCharString);
-	LOAD_SYMBOL(PyUnicode_FromWideChar);
-
-#pragma pop_macro("LOAD_SYMBOL")
+		m_Functions.try_emplace(name, addr);
+	});
 
 	return hModule.release();
 }
@@ -187,7 +179,7 @@ HMODULE PythonApi::LoadModule(const A& arg)
 #pragma push_macro("USE_PYTHON_API")
 
 #define USE_PYTHON_API(name) \
-	const auto& name = PythonApi::getInstance()->name; \
+	const auto name = std::bit_cast<decltype(&:: name )>( PythonApi::getInstance()->m_Functions.at( #name ) ); \
 	0 /* ←セミコロンを付けないとエラーになるように。 */
 
 /*
