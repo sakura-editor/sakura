@@ -23,19 +23,19 @@
 #include "StdAfx.h"
 #include "_main/CProcessFactory.h"
 
+#include "apiwrap/DarkMode.h"
 #include "basis/initialization_error.hpp"
-#include "util/os.h"
+#include "debug/CRunningTimer.h"
+#include "env/DLLSHAREDATA.h"
 #include "util/MessageBoxF.h"
 #include "util/module.h"
-#include "debug/CRunningTimer.h"
-#include "version.h"
-#include "util/std_macro.h"
-#include "env/DLLSHAREDATA.h"
-#include "apiwrap/DarkMode.h"
+#include "util/os.h"
 
 #include <clocale>
 
 #include <ole2.h>
+
+#include "version.h"
 
 #include "CSelectLang.h"
 
@@ -100,9 +100,6 @@ int WINAPI wWinMain(
 
 		// 言語環境を初期化する
 		CSelectLang::InitializeLanguageEnvironment();
-
-		//コマンドラインクラスのインスタンスを確保する
-		CCommandLine cCommandLine;
 
 		//プロセスの生成とメッセージループ
 		const auto process = CProcessFactory(hInstance).CreateInstance(lpCmdLine);

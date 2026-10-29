@@ -61,7 +61,10 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	// NUL終端文字列から文字列ポインターを取り出す
 	const auto lpCmdLine = _CommandLine.c_str();
 
-	auto& cCommandLine = *CCommandLine::getInstance();
+	//コマンドラインクラスのインスタンスを生成する
+	auto cmdLineHolder = std::make_unique<CCommandLine>();
+
+	auto& cCommandLine = *cmdLineHolder;
 
 	// 実行ファイル名を取得する
 	std::wstring exeFileName{ GetExeFileName() };
@@ -93,10 +96,10 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-		return std::make_unique<CControlProcess>(m_hInstance, lpCmdLine);
+		return std::make_unique<CControlProcess>(m_hInstance, std::move(cmdLineHolder));
 	}
 	else{
-		return std::make_unique<CNormalProcess>(m_hInstance, lpCmdLine);
+		return std::make_unique<CNormalProcess>(m_hInstance,  std::move(cmdLineHolder));
 	}
 }
 

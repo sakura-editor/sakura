@@ -37,6 +37,9 @@ CRecentSearch::CRecentSearch()
 */
 const WCHAR* CRecentSearch::GetItemText( int nIndex ) const
 {
+	// インデックスが範囲外でも0なら空を返す
+	if (GetItemCount() <= nIndex && 0 == nIndex) return L"";
+
 	return *GetItem(nIndex);
 }
 
