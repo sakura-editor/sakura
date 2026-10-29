@@ -184,12 +184,18 @@ HMODULE PythonApi::LoadModule(const A& arg)
 	return hModule.release();
 }
 
+#pragma push_macro("USE_PYTHON_API")
+
+#define USE_PYTHON_API(name) \
+	const auto& name = PythonApi::getInstance()->name; \
+	0 /* ←セミコロンを付けないとエラーになるように。 */
+
 /*
  * @note マクロ関数を独自定義したもの。
  */
 PyObject* PyXCFunctionNew(PyMethodDef* ml, PyObject* self)
 {
-	const auto& PyCMethod_New = PythonApi::getInstance()->PyCMethod_New;
+	USE_PYTHON_API(PyCMethod_New);
 	return PyCMethod_New(ml, self, nullptr, nullptr);
 }
 
@@ -200,7 +206,7 @@ void PyXDecRef(
 	PyObject* object
 ) noexcept
 {
-	const auto& Py_DecRef = PythonApi::getInstance()->Py_DecRef;
+	USE_PYTHON_API(Py_DecRef);
 	if (object != _Py_NULL) {
 		Py_DecRef(object);
 	}
@@ -222,7 +228,7 @@ PyModuleDef g_moduleDef = {
 
 PyObject* PyInit_SakuraEditor(void)
 {
-	const auto& PyModule_Create2 = PythonApi::getInstance()->PyModule_Create2;
+	USE_PYTHON_API(PyModule_Create2);
 	return PyModule_Create2(&g_moduleDef, PYTHON_API_VERSION);
 }
 
@@ -233,14 +239,14 @@ std::vector<PyMethodDef> g_functionDescs;
 
 PyObject* handleCommand(PyObject* self, PyObject* args)
 {
-	const auto& Py_GetConstant = PythonApi::getInstance()->Py_GetConstant;
-	const auto& PyCapsule_GetPointer = PythonApi::getInstance()->PyCapsule_GetPointer;
-	const auto& PyErr_BadArgument = PythonApi::getInstance()->PyErr_BadArgument;
-	const auto& PyLong_AsLong = PythonApi::getInstance()->PyLong_AsLong;
-	const auto& PyMem_Free = PythonApi::getInstance()->PyMem_Free;
-	const auto& PyTuple_GetItem = PythonApi::getInstance()->PyTuple_GetItem;
-	const auto& PyTuple_Size = PythonApi::getInstance()->PyTuple_Size;
-	const auto& PyUnicode_AsWideCharString = PythonApi::getInstance()->PyUnicode_AsWideCharString;
+	USE_PYTHON_API(Py_GetConstant);
+	USE_PYTHON_API(PyCapsule_GetPointer);
+	USE_PYTHON_API(PyErr_BadArgument);
+	USE_PYTHON_API(PyLong_AsLong);
+	USE_PYTHON_API(PyMem_Free);
+	USE_PYTHON_API(PyTuple_GetItem);
+	USE_PYTHON_API(PyTuple_Size);
+	USE_PYTHON_API(PyUnicode_AsWideCharString);
 
 	const PyMethodDef* pDesc = (const PyMethodDef*) PyCapsule_GetPointer(self, nullptr);
 	ptrdiff_t idx = pDesc - &g_commandDescs[0];
@@ -301,15 +307,15 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 
 PyObject* handleFunction(PyObject* self, PyObject* args)
 {
-	const auto& PyCapsule_GetPointer = PythonApi::getInstance()->PyCapsule_GetPointer;
-	const auto& PyErr_BadArgument = PythonApi::getInstance()->PyErr_BadArgument;
-	const auto& PyLong_AsLong = PythonApi::getInstance()->PyLong_AsLong;
-	const auto& PyLong_FromLong = PythonApi::getInstance()->PyLong_FromLong;
-	const auto& PyMem_Free = PythonApi::getInstance()->PyMem_Free;
-	const auto& PyTuple_GetItem = PythonApi::getInstance()->PyTuple_GetItem;
-	const auto& PyTuple_Size = PythonApi::getInstance()->PyTuple_Size;
-	const auto& PyUnicode_AsWideCharString = PythonApi::getInstance()->PyUnicode_AsWideCharString;
-	const auto& PyUnicode_FromWideChar = PythonApi::getInstance()->PyUnicode_FromWideChar;
+	USE_PYTHON_API(PyCapsule_GetPointer);
+	USE_PYTHON_API(PyErr_BadArgument);
+	USE_PYTHON_API(PyLong_AsLong);
+	USE_PYTHON_API(PyLong_FromLong);
+	USE_PYTHON_API(PyMem_Free);
+	USE_PYTHON_API(PyTuple_GetItem);
+	USE_PYTHON_API(PyTuple_Size);
+	USE_PYTHON_API(PyUnicode_AsWideCharString);
+	USE_PYTHON_API(PyUnicode_FromWideChar);
 
 	const PyMethodDef* pDesc = (const PyMethodDef*) PyCapsule_GetPointer(self, nullptr);
 	ptrdiff_t idx = pDesc - &g_functionDescs[0];
@@ -424,12 +430,12 @@ CPythonMacroManager::CPythonMacroManager()
 static
 void ShowError(HWND hWndMessageOwner, std::wstring_view caption)
 {
-	const auto& PyErr_Fetch = PythonApi::getInstance()->PyErr_Fetch;
-	const auto& PyErr_NormalizeException = PythonApi::getInstance()->PyErr_NormalizeException;
-	const auto& PyErr_Restore = PythonApi::getInstance()->PyErr_Restore;
-	const auto& PyMem_Free = PythonApi::getInstance()->PyMem_Free;
-	const auto& PyObject_Str = PythonApi::getInstance()->PyObject_Str;
-	const auto& PyUnicode_AsWideCharString = PythonApi::getInstance()->PyUnicode_AsWideCharString;
+	USE_PYTHON_API(PyErr_Fetch);
+	USE_PYTHON_API(PyErr_NormalizeException);
+	USE_PYTHON_API(PyErr_Restore);
+	USE_PYTHON_API(PyMem_Free);
+	USE_PYTHON_API(PyObject_Str);
+	USE_PYTHON_API(PyUnicode_AsWideCharString);
 
 	PyObject* ptype = nullptr;
 	PyObject* pvalue = nullptr;
@@ -473,16 +479,16 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 		return false;
 	}
 
-	const auto& Py_CompileString = PythonApi::getInstance()->Py_CompileString;
-	const auto& Py_FinalizeEx = PythonApi::getInstance()->Py_FinalizeEx;
-	const auto& Py_InitializeEx = PythonApi::getInstance()->Py_InitializeEx;
-	const auto& Py_IsInitialized = PythonApi::getInstance()->Py_IsInitialized;
-	const auto& PyCapsule_New = PythonApi::getInstance()->PyCapsule_New;
-	const auto& PyDict_New = PythonApi::getInstance()->PyDict_New;
-	const auto& PyEval_EvalCode = PythonApi::getInstance()->PyEval_EvalCode;
-	const auto& PyImport_AppendInittab = PythonApi::getInstance()->PyImport_AppendInittab;
-	const auto& PyImport_ImportModule = PythonApi::getInstance()->PyImport_ImportModule;
-	const auto& PyModule_AddObject = PythonApi::getInstance()->PyModule_AddObject;
+	USE_PYTHON_API(Py_CompileString);
+	USE_PYTHON_API(Py_FinalizeEx);
+	USE_PYTHON_API(Py_InitializeEx);
+	USE_PYTHON_API(Py_IsInitialized);
+	USE_PYTHON_API(PyCapsule_New);
+	USE_PYTHON_API(PyDict_New);
+	USE_PYTHON_API(PyEval_EvalCode);
+	USE_PYTHON_API(PyImport_AppendInittab);
+	USE_PYTHON_API(PyImport_ImportModule);
+	USE_PYTHON_API(PyModule_AddObject);
 
 	const auto& Py_XDECREF = PyXDecRef;
 
@@ -612,6 +618,8 @@ CMacroManagerBase* CPythonMacroManager::Creator(const WCHAR* FileExt)
 	}
 	return nullptr;
 }
+
+#pragma pop_macro("USE_PYTHON_API")
 
 // static
 void CPythonMacroManager::declare()
