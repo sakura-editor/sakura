@@ -176,6 +176,40 @@ TEST_F(GrepCommandLineTest, OutputStyles)
 	}
 }
 
+//! 空の検索キー: ベースフォルダー名・フォルダー名の見出しは、出力形式3(結果のみ)でも出す
+TEST_F(GrepCommandLineTest, EmptyKeyFolderHeadings)
+{
+	AddBasicFiles();
+	// 見出しの行(「◎」「■」で始まる行)を、印と何の見出しか(base・sub・空)にして、出た順に返す
+	const auto headings = [this](std::wstring_view opt) {
+		ResetDocument();
+		Grep(L"", L"*.txt", opt);
+		std::vector<std::wstring> result;
+		std::wistringstream lines(GetDocumentText());
+		for (std::wstring line; std::getline(lines, line); ) {
+			if (line.ends_with(L'\r')) {
+				line.pop_back();
+			}
+			if (!line.starts_with(L"◎") && !line.starts_with(L"■")) {
+				continue;
+			}
+			// 引用符を含む文字列はマクロの外で作る(C2017 の回避)
+			const std::wstring subEnd = LR"(sub")";
+			std::wstring kind = line.substr(0, 1);
+			if (1 < line.size()) {
+				kind += line.ends_with(subEnd) ? L"sub" : L"base";
+			}
+			result.push_back(kind);
+		}
+		return result;
+	};
+	EXPECT_THAT(headings(L"XS1B"), ::testing::ElementsAre(L"■base"));
+	EXPECT_THAT(headings(L"XS3B"), ::testing::ElementsAre(L"■base"));
+	EXPECT_THAT(headings(L"XS1BD"), ::testing::ElementsAre(L"◎base", L"■", L"■sub"));
+	EXPECT_THAT(headings(L"XS3BD"), ::testing::ElementsAre(L"◎base", L"■", L"■sub"));
+	EXPECT_THAT(headings(L"XS3D"), ::testing::ElementsAre(L"■base", L"■sub"));
+}
+
 //! 出力形式と行単位・ファイル名のみの組み合わせ
 TEST_F(GrepCommandLineTest, OutputStylesWithEmptyKey)
 {

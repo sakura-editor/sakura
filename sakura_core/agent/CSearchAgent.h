@@ -39,6 +39,7 @@ public:
 	bool GetLoHiCase() const{ return m_psSearchOption->bLoHiCase; }
 	const SSearchOption& GetSearchOption() const{ return *m_psSearchOption; }
 	CBregexp* GetRegexp() const{ return m_pRegexp; }
+	bool CompileRegexp( CBregexp& regexp ) const;
 #ifdef SEARCH_STRING_KMP
 	const int* GetKMPNextTable() const{ return m_pnNextPossArr; }
 #endif
@@ -49,10 +50,14 @@ public:
 #endif
 
 private:
+	int GetRegexpOption() const;
+
 	// 外部依存
 	const wchar_t*	m_pszKey = nullptr;
+	const wchar_t*	m_pszKey2 = nullptr;	//!< 正規表現の置換後文字列(置換でなければ nullptr)
 	const SSearchOption* m_psSearchOption = nullptr;
 	CBregexp* m_pRegexp = nullptr;
+	bool	m_bGlobal = false;				//!< 正規表現の全域オプション(/g)
 
 	const wchar_t* m_pszCaseKeyRef = nullptr;
 

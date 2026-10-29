@@ -53,7 +53,7 @@ public:
 		std::wstring		m_LangName;			//!< 言語名
 
 		SSelLangInfo(
-			WORD langId,
+			int langId,
 			std::wstring_view langName
 		);
 
@@ -86,8 +86,8 @@ private:
 	using Me = CSelectLang;
 
 	static inline std::mutex	gm_Mutex{};
-	static inline LangInfoArr	gm_Langs{};
-	static inline LangInfoIter	gm_Selected{};
+	static LangInfoArr			gm_Langs;
+	static LangInfoIter			gm_Selected;
 
 public:
 	static HMODULE	InitializeLanguageEnvironment();
@@ -124,7 +124,7 @@ public:
 		ChangeLang(_DllName.str());
 	}
 
-	static void TryEmplace(
+	static void TryEmplaceLangInfo(
 		std::wstring_view path,
 		WORD langId
 	);
@@ -150,6 +150,13 @@ private:
 	static void		ChangeLang(size_t newSelection);
 
 public:
+	/*!
+	 * @brief 文字列リソースを読み込む
+	 *
+	 * @param[in] id リソースID。
+	 * @returns 読み込んだ文字列。
+	 * @throw std::system_error リソースが見つからなかった場合
+	 */
 	static std::wstring_view LoadStringW(UINT id);
 };
 

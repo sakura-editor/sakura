@@ -96,10 +96,10 @@ bool ParseLangIdFromFileName(
 
 //! 本体リソース用コンストラクタ
 CSelectLang::SSelLangInfo::SSelLangInfo(
-	WORD langId,
+	int langId,
 	std::wstring_view langName
 )
-	: m_LangId(langId)
+	: m_LangId(static_cast<WORD>(langId))
 	, m_LangName(langName)
 {
 }
@@ -148,6 +148,17 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	m_Module = nullptr;
 }
 
+/* static */ CSelectLang::LangInfoArr	CSelectLang::gm_Langs = [] {
+	LangInfoArr langs;
+	langs.emplace_back(
+		MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN),
+		cxx::load_string(STR_SELLANG_NAME)
+	);
+	return langs;
+}();
+
+/* static */ CSelectLang::LangInfoIter	CSelectLang::gm_Selected{ gm_Langs.begin() };
+
 /*!
 	@brief メッセージリソースDLLのインスタンスハンドルを返す
 
@@ -159,7 +170,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 */
 /* static */ HMODULE CSelectLang::getLangRsrcInstance() noexcept
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	return gm_Selected->GetModule();
 }
@@ -175,7 +186,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 */
 /* static */ LPCWSTR CSelectLang::getDefaultLangString() noexcept
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	return gm_Selected->GetLangName();
 }
@@ -183,7 +194,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 // 言語IDを返す
 /* static */ WORD CSelectLang::getDefaultLangId() noexcept
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	return gm_Selected->m_LangId;
 }
@@ -202,10 +213,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 */
 /* static */ HMODULE CSelectLang::InitializeLanguageEnvironment()
 {
-	// 言語情報をクリアする
-	UninitializeLanguageEnvironment();
-
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	// 言語DLLの検索パターンを生成する
 	const auto searchPattern = GetExeFileName().replace_filename(L"sakura_lang_*.dll");
@@ -222,7 +230,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 				cxx::ParseLangIdFromFileName(w32fd.cFileName, lcid))
 			{
 				// バッファに登録する。
-				TryEmplace(
+				TryEmplaceLangInfo(
 					w32fd.cFileName,
 					LANGIDFROMLCID(lcid)
 				);
@@ -244,7 +252,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 
 /* static */ void CSelectLang::UninitializeLanguageEnvironment()
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	// 言語情報をクリアする
 	gm_Langs.clear();	// クリアを呼び出してよいのはここだけ
@@ -263,7 +271,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	std::wstring_view dllName
 )
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
 	size_t index;
 
@@ -295,7 +303,9 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	const auto oldSelected = std::distance(gm_Langs.begin(), gm_Selected);
 
 	// 変更がない、または、インデックスが範囲外なら何もせず抜ける
-	if (nIndex == oldSelected || std::size(gm_Langs) <= nIndex) {
+	if (nIndex == size_t(oldSelected) ||
+		std::size(gm_Langs) <= nIndex)
+	{
 		return;
 	}
 
@@ -323,7 +333,13 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	}
 }
 
-/* static */ void CSelectLang::TryEmplace(
+/*!
+ * @brief 言語リソースDLLの登録を試みる
+ *
+ * @param[in] path 言語リソースDLLのファイルパス
+ * @param[in] langId 言語ID
+ */
+/* static */ void CSelectLang::TryEmplaceLangInfo(
 	std::wstring_view path,
 	WORD langId
 )
@@ -347,11 +363,33 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	}
 }
 
+/*!
+ * @brief 文字列リソースを読み込む
+ *
+ * @param[in] id リソースID。
+ * @returns 読み込んだ文字列。
+ * @throw std::system_error リソースが見つからなかった場合
+ */
 /* static */ std::wstring_view CSelectLang::LoadStringW(UINT id)
 {
-	std::unique_lock lock( gm_Mutex );
+	std::lock_guard lock{ gm_Mutex };
 
-	return cxx::load_string(id, gm_Selected->GetModule());
+	auto ret = std::wstring_view{};
+
+	// 選択されたリソースDLLからの取得を試みる
+	try {
+		ret = cxx::load_string(id, gm_Selected->GetModule());
+	}
+	// 指定したIDの文字列リソースが存在しない場合
+	catch(const std::system_error&){
+		// 現在の選択がアプリリソースの場合、そのまま例外を投げる
+		if (gm_Selected == gm_Langs.begin()) throw;
+
+		// アプリからの取得を試みる
+		ret = cxx::load_string(id, std::nullopt);
+	}
+
+	return ret;
 }
 
 // CLoadString::LoadStringSt() が使用するスレッドごとのバッファ
@@ -445,19 +483,13 @@ size_t CLoadString::CLoadStrBuffer::LoadStringW(UINT uid)
 		m_ResString = L"";
 	}
 
+	// 選択されたリソースDLLからの取得を試みる
 	try {
-		// 選択されたリソースDLLからの取得を試みる
 		m_ResString = CSelectLang::LoadStringW(uid);
 	}
-	catch(const std::system_error&){
-		// 存在しない場合はアプリリソースから取得する
-		try {
-			m_ResString = cxx::load_string(uid);
-		}
-		catch(const std::system_error&){
-			// 本体にも存在しない場合はスルーする
-			m_ResString = L"";
-		}
+	// 本体にも存在しない場合
+	catch (const std::system_error&) {
+		m_ResString = L"";	// エラーを握りつぶす
 	}
 
 	m_String = m_ResString;

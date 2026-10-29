@@ -398,3 +398,176 @@ TEST_F(SetGrepResultTest, MatchedPartIsTruncated)
 	const std::wstring expected = std::wstring(2500, L'b') + L"\r\n";
 	ASSERT_STREQ(expected.c_str(), cmemMessage.GetStringPtr());
 }
+
+/*!
+ * CGrepResultWriter のテストのためのフィクスチャクラス
+ *
+ * CGrepResultWriter は SetGrepResult を使い、該当部分の出力では共有データを参照するため、共有データを用意する。
+ */
+class CGrepResultWriterTest : public SetGrepResultTest {
+protected:
+	CNativeW cmemMessage{ L"" };
+	GrepInfo gi;
+	bool bOutputBaseFolder = false;
+	bool bOutputFolderName = false;
+
+	//! 行 line(行末は CRLF)の pos から len 文字に一致したものとして、1 件足す
+	static void AddMatch(CGrepResultWriter& writer, LONGLONG nLine, std::wstring_view line, std::wstring_view::size_type pos, std::wstring_view::size_type len)
+	{
+		writer.AddMatch({
+			.nLine = nLine, .nColumn = static_cast<int>(pos) + 1,
+			.pLine = line.data(), .nLineLen = static_cast<int>(line.length()), .nEolLen = 2,
+			.pMatch = line.data() + pos, .nMatchLen = static_cast<int>(len)
+		});
+	}
+
+	//! C:\work の下のファイル(文字コード名は [SJIS])
+	static SGrepResultFile File(const wchar_t* pszFullPath, const wchar_t* pszFolder, const wchar_t* pszRelPath)
+	{
+		return { .pszFullPath = pszFullPath, .pszBaseFolder = L"C:\\work", .pszFolder = pszFolder, .pszRelPath = pszRelPath, .pszCodeName = L" [SJIS]" };
+	}
+};
+
+/*!
+ * @brief CGrepResultWriter のテスト
+ *  ノーマル・該当部分: 一致ごとにフルパス・行桁・文字コード名と一致した部分を出す
+ */
+TEST_F(CGrepResultWriterTest, NormalStyleMatchedPart)
+{
+	gi.nGrepOutputStyle = 1;
+	gi.nGrepOutputLineType = 0;
+	CGrepResultWriter writer(cmemMessage, gi, File(L"C:\\work\\a.txt", L"", L"a.txt"), bOutputBaseFolder, bOutputFolderName);
+
+	constexpr std::wstring_view line = L"x HIT HIT\r\n";
+	AddMatch(writer, 1, line, 2, 3);
+	AddMatch(writer, 1, line, 6, 3);
+
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"C:\\work\\a.txt(1,3) [SJIS]: HIT\r\nC:\\work\\a.txt(1,7) [SJIS]: HIT\r\n"));
+}
+
+/*!
+ * @brief CGrepResultWriter のテスト
+ *  WZ風・該当行: ファイル名の見出しは最初の一致の前に 1 回だけ出す
+ */
+TEST_F(CGrepResultWriterTest, WzStyleFileNameOnce)
+{
+	gi.nGrepOutputStyle = 2;
+	gi.nGrepOutputLineType = 1;
+	CGrepResultWriter writer(cmemMessage, gi, File(L"C:\\work\\a.txt", L"", L"a.txt"), bOutputBaseFolder, bOutputFolderName);
+
+	AddMatch(writer, 1, L"hello\r\n", 2, 3);
+	AddMatch(writer, 2, L"world\r\n", 0, 1);
+
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\\a.txt\" [SJIS]\r\n・(     1,3    ): hello\r\n・(     2,1    ): world\r\n"));
+}
+
+/*!
+ * @brief CGrepResultWriter のテスト
+ *  ベースフォルダー: 見出しはファイルをまたいで 1 回だけ出し、ファイル名は相対パスで出す
+ */
+TEST_F(CGrepResultWriterTest, BaseFolderOnceAcrossFiles)
+{
+	gi.nGrepOutputStyle = 1;
+	gi.nGrepOutputLineType = 1;
+	gi.bGrepOutputBaseFolder = true;
+
+	CGrepResultWriter writerA(cmemMessage, gi, File(L"C:\\work\\a.txt", L"", L"a.txt"), bOutputBaseFolder, bOutputFolderName);
+	AddMatch(writerA, 1, L"x\r\n", 0, 1);
+	CGrepResultWriter writerB(cmemMessage, gi, File(L"C:\\work\\b.txt", L"", L"b.txt"), bOutputBaseFolder, bOutputFolderName);
+	AddMatch(writerB, 1, L"y\r\n", 0, 1);
+
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\"\r\n・a.txt(1,1) [SJIS]: x\r\n・b.txt(1,1) [SJIS]: y\r\n"));
+	EXPECT_THAT(bOutputBaseFolder, ::testing::IsTrue());
+}
+
+/*!
+ * @brief CGrepResultWriter のテスト
+ *  フォルダー毎に表示: フォルダーの見出しは、同じフォルダーのファイルをまたいで 1 回だけ出し、ファイル名は相対パスで出す
+ */
+TEST_F(CGrepResultWriterTest, SeparateFolderOncePerFolder)
+{
+	gi.nGrepOutputStyle = 1;
+	gi.nGrepOutputLineType = 1;
+	gi.bGrepSeparateFolder = true;
+
+	CGrepResultWriter writerA(cmemMessage, gi, File(L"C:\\work\\sub\\a.txt", L"sub", L"a.txt"), bOutputBaseFolder, bOutputFolderName);
+	AddMatch(writerA, 1, L"x\r\n", 0, 1);
+	CGrepResultWriter writerB(cmemMessage, gi, File(L"C:\\work\\sub\\b.txt", L"sub", L"b.txt"), bOutputBaseFolder, bOutputFolderName);
+	AddMatch(writerB, 1, L"y\r\n", 0, 1);
+
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"sub\"\r\n・a.txt(1,1) [SJIS]: x\r\n・b.txt(1,1) [SJIS]: y\r\n"));
+	EXPECT_THAT(bOutputFolderName, ::testing::IsTrue());
+}
+
+/*!
+ * @brief CGrepResultWriter のテスト
+ *  結果のみ: 見出しは出さず、ベースフォルダーを出したかのフラグも変えない
+ */
+TEST_F(CGrepResultWriterTest, ResultOnlyStyleNoHeading)
+{
+	gi.nGrepOutputStyle = 3;
+	gi.nGrepOutputLineType = 1;
+	gi.bGrepOutputBaseFolder = true;
+
+	CGrepResultWriter writer(cmemMessage, gi, File(L"C:\\work\\a.txt", L"", L"a.txt"), bOutputBaseFolder, bOutputFolderName);
+	AddMatch(writer, 1, L"x\r\n", 0, 1);
+
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"x\r\n"));
+	EXPECT_THAT(bOutputBaseFolder, ::testing::IsFalse());
+}
+
+/*!
+ * @brief AppendFolderHeadings のテスト
+ *  フォルダー毎に表示しないとき、ベースフォルダー名の印は出力形式2(WZ風)だけ「◎」、ほかは「■」。出力形式3でも出す
+ */
+TEST(GrepMessageFormat, AppendFolderHeadingsBaseFolderMark)
+{
+	for (const auto& [style, expected] : { std::pair{ 1, L"■\"C:\\work\"\r\n" }, std::pair{ 2, L"◎\"C:\\work\"\r\n" }, std::pair{ 3, L"■\"C:\\work\"\r\n" } }) {
+		GrepInfo gi;
+		gi.nGrepOutputStyle = style;
+		gi.bGrepOutputBaseFolder = true;
+		CNativeW cmemMessage(L"");
+		bool bOutputBaseFolder = false;
+		bool bOutputFolderName = false;
+		AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"", bOutputBaseFolder, bOutputFolderName);
+		EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(expected)) << style;
+		EXPECT_THAT(bOutputBaseFolder, ::testing::IsTrue()) << style;
+		EXPECT_THAT(bOutputFolderName, ::testing::IsFalse()) << style;
+	}
+}
+
+/*!
+ * @brief AppendFolderHeadings のテスト
+ *  フォルダー毎に表示するときは、出力形式3でもベースフォルダー名(「◎」)とフォルダー名(「■」)を出す
+ */
+TEST(GrepMessageFormat, AppendFolderHeadingsSeparateFolderResultOnly)
+{
+	GrepInfo gi;
+	gi.nGrepOutputStyle = 3;
+	gi.bGrepOutputBaseFolder = true;
+	gi.bGrepSeparateFolder = true;
+	CNativeW cmemMessage(L"");
+	bool bOutputBaseFolder = false;
+	bool bOutputFolderName = false;
+	AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"sub", bOutputBaseFolder, bOutputFolderName);
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"◎\"C:\\work\"\r\n■\"sub\"\r\n"));
+	EXPECT_THAT(bOutputBaseFolder, ::testing::IsTrue());
+	EXPECT_THAT(bOutputFolderName, ::testing::IsTrue());
+}
+
+/*!
+ * @brief AppendFolderHeadings のテスト
+ *  出したものは出さない。ベースフォルダーそのもの(フォルダー名が空)は「■」だけの行
+ */
+TEST(GrepMessageFormat, AppendFolderHeadingsOnlyNotYetOutput)
+{
+	GrepInfo gi;
+	gi.bGrepOutputBaseFolder = true;
+	gi.bGrepSeparateFolder = true;
+	CNativeW cmemMessage(L"");
+	bool bOutputBaseFolder = true;
+	bool bOutputFolderName = false;
+	AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"", bOutputBaseFolder, bOutputFolderName);
+	AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"", bOutputBaseFolder, bOutputFolderName);
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\r\n"));
+}

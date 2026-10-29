@@ -7,9 +7,11 @@
 #include "pch.h"
 #include "CSelectLang.h"
 
-#include "util/os/MockKernel32.hpp"
-
 #include <thread>
+
+#include "config/app_constants.h"
+
+#include "util/os/MockKernel32.hpp"
 
 #include "tests1_rc.h"
 
@@ -182,7 +184,7 @@ TEST_F(CSelectLangTest, TryEmplace101)
 	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
 		.WillOnce(Return(nullptr));
 
-	CSelectLang::TryEmplace(L"sakura_lang_en_JP.dll", 0x411);
+	CSelectLang::TryEmplaceLangInfo(L"sakura_lang_en_JP.dll", 0x411);
 }
 
 TEST(CheckLangId, test101)
@@ -250,6 +252,24 @@ TEST(LoadStringW, LoadStringResource101)
 
 	// 対応する文字列リソースが存在しない機能IDを指定
 	EXPECT_THAT(LS(F_EXPANDPARAMETER), StrEq(L""));
+}
+
+/*!
+ * @brief 言語リソースDLLに存在しないIDを指定した場合、日本語リソースが取得されることの確認。
+ */
+TEST(LoadStringW, LoadStringResource102)
+{
+	// 日本語アプリ名を取得する
+	std::wstring appName{ GSTR_APPNAME };
+
+	// 言語を日本語以外にする
+	CSelectLang::ChangeLang(L"sakura_lang_en_US.dll");
+
+	// 日本語専用の文字列リソースIDを指定
+	EXPECT_THAT(LS(IDS_APPNAME_JP), StrEq(appName));
+
+	// 言語を日本語に戻す
+	CSelectLang::ChangeLang(L"");
 }
 
 /*!

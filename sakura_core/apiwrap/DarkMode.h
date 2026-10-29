@@ -1,4 +1,4 @@
-/*! @file
+﻿/*! @file
 	@brief ダークモード判定ヘルパー
 
 	darkmodelib の判定APIをラップし、ダークモードの有効判定を
@@ -8,7 +8,10 @@
 */
 #pragma once
 
-#include <DarkModeSubclass.h>
+#include <Darkmodelib.h>
+
+// 互換性のためエイリアスを切る（Darkmodelibが定義する名前空間が変更されてしまった。）
+namespace DarkMode = dmlib;
 
 /*! ダークモードが有効かつ実際にダーク表示すべきかを判定する
 

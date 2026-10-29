@@ -97,7 +97,7 @@ set_target_properties(darkmodelib
 )
 
 install(FILES
-  ${DARKMODELIB_ROOT}/include/DarkModeSubclass.h
+  ${DARKMODELIB_ROOT}/include/Darkmodelib.h
   DESTINATION include
 )
 

@@ -76,6 +76,9 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 			// 文字列の長さを取得
 			const auto length = size_t(resData.front());
 
+			// 文字列の長さがゼロな場合は例外を投げる
+			if (!length) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource entry is empty.");
+
 			// 残りデータが取得サイズに満たない場合は例外を投げる
 			if (std::size(resData) < 1 + length) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource entry is truncated.");
 
