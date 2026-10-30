@@ -37,7 +37,7 @@
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
 #include "charset/charset.h"
 #include "util/design_template.h"
-#include "charset/charset.h"
+#include "util/file/FileMapping.hpp"
 
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
@@ -62,6 +62,9 @@ struct STypeConfig;
 */
 class CShareData : public TSingleInstance<CShareData>
 {
+private:
+	using FileMapping = cxx::FileMapping;
+
 public:
 	CShareData();
 	~CShareData() override;
@@ -116,7 +119,9 @@ public:
 
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap = nullptr;
+
+	FileMapping		m_FileMapping{};
+
 	DLLSHAREDATA*	m_pShareData = nullptr;
 	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
 	HWND			m_hwndTraceOutSource = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）

@@ -27,6 +27,7 @@
 #include "StdAfx.h"
 #include "env/CShareData.h"
 
+#include "basis/make_initialization_error.hpp"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
 #include "env/CShareData_IO.h"
@@ -83,9 +84,6 @@ CShareData::~CShareData()
 		::UnmapViewOfFile( m_pShareData );
 		m_pShareData = nullptr;
 	}
-	if( m_hFileMap ){
-		CloseHandle( m_hFileMap );
-	}
 	if( m_pvTypeSettings ){
 		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
 			delete (*m_pvTypeSettings)[i];
@@ -121,35 +119,35 @@ bool CShareData::InitShareData()
 
 	m_hwndTraceOutSource = nullptr;	// 2006.06.26 ryoji
 
-	/* ファイルマッピングオブジェクト */
+	// ファイルマッピングオブジェクトを作成する
+	try
 	{
 		const auto pszProfileName = GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += pszProfileName;
-		m_hFileMap = ::CreateFileMapping(
+		m_FileMapping = FileMapping::CreateFileMappingW(
 			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
 			nullptr,
 			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
+			ULARGE_INTEGER{ sizeof( DLLSHAREDATA ) },
+			strShareDataName
 		);
 	}
-	if( nullptr == m_hFileMap ){
-		::MessageBox(
-			nullptr,
-			L"CreateFileMapping()に失敗しました",
-			L"予期せぬエラー",
-			MB_OK | MB_APPLMODAL | MB_ICONSTOP
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateFileMapping()に失敗しました"
+			LS(STR_ERR_CSHAREDATA01)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
 		);
-		return false;
 	}
 
 	if( GetLastError() != ERROR_ALREADY_EXISTS ){
 		/* オブジェクトが存在していなかった場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
 		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
+			m_FileMapping.get(),
 			FILE_MAP_ALL_ACCESS,
 			0,
 			0,
@@ -735,7 +733,7 @@ bool CShareData::InitShareData()
 		/* オブジェクトがすでに存在する場合 */
 		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
 		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
+			m_FileMapping.get(),
 			FILE_MAP_ALL_ACCESS,
 			0,
 			0,
