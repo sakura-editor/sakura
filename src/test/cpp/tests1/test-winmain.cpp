@@ -1440,6 +1440,58 @@ TEST_F(WinMainFuncTest, CreateControlProcess110)
 }
 
 /*!
+ * @brief 共有メモリビューのマッピングに失敗するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateControlProcess111)
+{
+	Kernel32::setInstance<MockKernel32>();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_CP)))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetSystemDirectoryW(_, _))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateFileMappingW(_, _, _, _, _, _))
+		.WillOnce(testing::DoDefault());
+
+	// NULLを返して失敗させる
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)));
+
+	// コントロールプロセスを起動する
+	const auto process = CProcessFactory().CreateInstance(LR"(-NOWIN -PROF="")");
+
+	EXPECT_THAT(([&process] {
+			process->InitializeProcess(SW_HIDE);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("MapViewOfFile"))
+	);
+
+	Kernel32::resetInstance();
+}
+
+/*!
  * @brief WinMainを起動してみるテスト
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  複数ファイルを開くパターンのテスト。
@@ -1592,6 +1644,104 @@ TEST_F(WinMainFuncTest, CreateEditorProcess110)
 			process->InitializeProcess(SW_SHOWDEFAULT);
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateFileMapping()"))
+	);
+
+	Kernel32::resetInstance();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+}
+
+/*!
+ * @brief 共有メモリビューのマッピングに失敗するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateEditorProcess111)
+{
+	Kernel32::setInstance<MockKernel32>();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_INIT)))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateFileMappingW(_, _, _, _, _, _))
+		.WillOnce(testing::DoDefault());
+
+	// NULLを返して失敗させる
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(Return(HANDLE(nullptr)));
+
+	// エディタプロセスを起動する
+	const auto process = CProcessFactory().CreateInstance(LR"(-PROF="")");
+
+	EXPECT_THAT(([&process] {
+			process->InitializeProcess(SW_SHOWDEFAULT);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("MapViewOfFile()"))
+	);
+
+	Kernel32::resetInstance();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+}
+
+/*!
+ * @brief マップされた共有データがおかしいパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateEditorProcess112)
+{
+	Kernel32::setInstance<MockKernel32>();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_INIT)))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateFileMappingW(_, _, _, _, _, _))
+		.WillOnce(testing::DoDefault());
+
+	// NULLを返して失敗させる
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(Invoke([] (
+			_In_ HANDLE hFileMappingObject,
+			_In_ DWORD dwDesiredAccess,
+			_In_ DWORD dwFileOffsetHigh,
+			_In_ DWORD dwFileOffsetLow,
+			_In_ SIZE_T dwNumberOfBytesToMap
+		) {
+			auto pSharedData = (DLLSHAREDATA*)::MapViewOfFile(hFileMappingObject, dwDesiredAccess, dwFileOffsetHigh, dwFileOffsetLow, dwNumberOfBytesToMap);
+			if (pSharedData) {
+				pSharedData->m_nSize = sizeof(DLLSHAREDATA) - 1;
+			}
+			return HANDLE(pSharedData);
+		}));
+
+	// エディタプロセスを起動する
+	const auto process = CProcessFactory().CreateInstance(LR"(-PROF="")");
+
+	EXPECT_THAT(([&process] {
+			process->InitializeProcess(SW_SHOWDEFAULT);
+		}),
+		ThrowsMessage<basis::initialization_error>(StartsWith("異なるバージョンの"))
 	);
 
 	Kernel32::resetInstance();

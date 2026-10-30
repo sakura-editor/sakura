@@ -64,6 +64,7 @@ class CShareData : public TSingleInstance<CShareData>
 {
 private:
 	using FileMapping = cxx::FileMapping;
+	using MappedShareData = cxx::MappedFileView<DLLSHAREDATA*>;
 
 public:
 	CShareData();
@@ -121,6 +122,7 @@ private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
 
 	FileMapping		m_FileMapping{};
+	MappedShareData	m_MappedData{};
 
 	DLLSHAREDATA*	m_pShareData = nullptr;
 	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
