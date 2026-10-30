@@ -150,6 +150,15 @@ struct MockKernel32 final : public Kernel32
 		_In_ HRSRC hResInfo
 	));
 
+	static HANDLE _CreateFileMappingW(
+		_In_ HANDLE hFile,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
+		_In_ DWORD flProtect,
+		_In_ DWORD dwMaximumSizeHigh,
+		_In_ DWORD dwMaximumSizeLow,
+		_In_opt_ LPCWSTR lpName
+	);
+
 	static HANDLE _CreateFileW(
 		_In_ LPCWSTR lpFileName,
 		_In_ DWORD dwDesiredAccess,
@@ -182,6 +191,12 @@ struct MockKernel32 final : public Kernel32
 		_In_ LPCVOID lpType
 	);
 
+	static DWORD _GetCurrentDirectoryW(
+		_In_ DWORD nBufferLength,
+		_Out_writes_to_opt_( nBufferLength, return +1 )
+		LPWSTR lpBuffer
+	);
+
 	static DWORD _GetModuleFileNameW(
 		_In_opt_ HMODULE hModule,
 		_Out_writes_to_( nSize, ((return < nSize) ? (return +1) : nSize) )
@@ -192,6 +207,12 @@ struct MockKernel32 final : public Kernel32
 	static FARPROC _GetProcAddress(
 		_In_ HMODULE hModule,
 		_In_ LPCSTR lpProcName
+	);
+
+	static UINT _GetSystemDirectoryW(
+		_Out_writes_to_opt_( uSize, return +1 )
+		LPWSTR lpBuffer,
+		_In_ UINT uSize
 	);
 
 	static HMODULE _LoadLibraryExW(
@@ -207,6 +228,18 @@ struct MockKernel32 final : public Kernel32
 
 	static LPVOID _LockResource(
 		_In_ HGLOBAL hResData
+	);
+
+	static LPVOID _MapViewOfFile(
+		_In_ HANDLE hFileMappingObject,
+		_In_ DWORD dwDesiredAccess,
+		_In_ DWORD dwFileOffsetHigh,
+		_In_ DWORD dwFileOffsetLow,
+		_In_ SIZE_T dwNumberOfBytesToMap
+	);
+
+	static BOOL _SetCurrentDirectoryW(
+		_In_ LPCWSTR lpPathName
 	);
 
 	static DWORD _SizeofResource(
