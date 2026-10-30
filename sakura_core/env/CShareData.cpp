@@ -841,9 +841,12 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 	assert( m_pvTypeSettings != nullptr );
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
-	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
+
+	// 注：コントロールプロセス専用
+	auto& types = CShareData::getInstance()->GetTypeSettings();
+	for( i = 0; i < (int)types.size(); i++ ){
 		index = indexBackup;
-		STypeConfig& type = *(GetTypeSettings()[i]);
+		auto& type = *(types[i]);
 		ConvertLangValue2( type.m_szTypeName, STR_TYPE_NAME_BASIS );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_RICHTEXT );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_TEXT );

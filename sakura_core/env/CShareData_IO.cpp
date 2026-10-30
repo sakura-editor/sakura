@@ -1318,8 +1318,9 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 		pShare->m_nTypesCount = 30; // 旧バージョン読み込み用
 	}
 	SetValueLimit( pShare->m_nTypesCount, 1, MAX_TYPES );
+
 	// 注：コントロールプロセス専用
-	std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
+	auto& types = CShareData::getInstance()->GetTypeSettings();
 	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
 		delete types[i];
 		types[i] = nullptr;
