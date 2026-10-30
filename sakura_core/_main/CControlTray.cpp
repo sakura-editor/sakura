@@ -974,7 +974,7 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 
 	const auto nInsert = (int)index;
 	auto& types = CShareData::getInstance()->GetTypeSettings();
-	auto type = new STypeConfig(*types[0]);	// 基本をコピー
+	auto type = std::make_unique<STypeConfig>(*types[0]);	// 基本をコピー
 	type->m_id = (::GetTickCount64() & 0x3fffffff) + nInsert * 0x10000;
 
 	// 同じ名前のものがあったらその次にする
@@ -994,12 +994,12 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
 	++m_pShareData->m_nTypesCount;
 	for (auto i = nTypeSizeOld; nInsert < i; --i) {
-		types[i] = types[i - 1];
+		types[i] = std::move(types[i - 1]);
 		types[i]->m_nIdx = i;
 		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i - 1];
 	}
 
-	types[nInsert] = type;
+	types[nInsert] = std::move(type);
 
 	return true;
 }
@@ -1018,10 +1018,8 @@ bool CControlTray::OnDelTypeSetting(size_t index)
 	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
 	auto& types = CShareData::getInstance()->GetTypeSettings();
 
-	delete types[nDelPos];
-
 	for (auto i = nDelPos; i < nTypeSizeOld - 1; ++i) {
-		types[i] = types[i + 1];
+		types[i] = std::move(types[i + 1]);
 		types[i]->m_nIdx = i;
 		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i + 1];
 	}

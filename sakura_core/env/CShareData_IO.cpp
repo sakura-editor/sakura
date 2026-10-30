@@ -1322,12 +1322,11 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 	// 注：コントロールプロセス専用
 	auto& types = CShareData::getInstance()->GetTypeSettings();
 	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
-		delete types[i];
 		types[i] = nullptr;
 	}
 	types.resize(pShare->m_nTypesCount);
 	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
-		types[i] = new STypeConfig();
+		types[i] = std::make_unique<STypeConfig>();
 		*types[i] = *types[0]; // 基本をコピー
 		auto_sprintf( types[i]->m_szTypeName, LS(STR_TRAY_TYPE_NAME), i );
 		types[i]->m_nIdx = i;

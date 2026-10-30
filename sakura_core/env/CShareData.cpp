@@ -78,15 +78,6 @@ CShareData::~CShareData()
 {
 	CFileNameManager::resetInstance();
 	CAppNodeManager::resetInstance();
-
-	if( m_pvTypeSettings ){
-		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
-			delete (*m_pvTypeSettings)[i];
-			(*m_pvTypeSettings)[i] = nullptr;
-		}
-		delete m_pvTypeSettings;
-		m_pvTypeSettings = nullptr;
-	}
 }
 
 static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
@@ -148,9 +139,6 @@ bool CShareData::InitShareData()
 	
 		// マップされたビューにDLLSHAREDATA構造体を配置します
 		m_pShareData = new (m_MappedData.get()) DLLSHAREDATA;
-
-		// タイプ別設定リストを生成します
-		CreateTypeSettings();
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -670,7 +658,7 @@ bool CShareData::InitShareData()
 		}
 
 		{
-			InitTypeConfigs( m_pShareData, *m_pvTypeSettings );
+			InitTypeConfigs( m_pShareData, GetTypeSettings() );
 		}
 
 		{
@@ -838,7 +826,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 			break;
 		}
 	}
-	assert( m_pvTypeSettings != nullptr );
+
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
 
@@ -1456,13 +1444,6 @@ void CShareData::InitPopupMenu([[maybe_unused]] DLLSHAREDATA* pShareData)
 void CShareData::RefreshString()
 {
 	RefreshKeyAssignString( m_pShareData );
-}
-
-void CShareData::CreateTypeSettings()
-{
-	if( nullptr == m_pvTypeSettings ){
-		m_pvTypeSettings = new std::vector<STypeConfig*>();
-	}
 }
 
 void CShareData::InitFileTree( SFileTree* setting )

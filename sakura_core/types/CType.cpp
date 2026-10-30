@@ -48,7 +48,10 @@ void CType::InitTypeConfig(int nIdx, STypeConfig& type)
 
 	@date 2005.01.30 genta CShareData::Init()から分離．
 */
-void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types )
+void CShareData::InitTypeConfigs(
+	DLLSHAREDATA* pShareData,
+	STypeConfigArr& types
+)
 {
 	CType* table[] = {
 		new CType_Basis(),	//基本
@@ -72,8 +75,7 @@ void CShareData::InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConf
 	types.clear();
 	static_assert( int(std::size(table)) <= MAX_TYPES );
 	for(int i = 0; i < int(std::size(table)) && i < MAX_TYPES; i++){
-		STypeConfig* type = new STypeConfig;
-		types.push_back(type);
+		const auto& type = types.emplace_back(std::make_unique<STypeConfig>());
 		table[i]->InitTypeConfig(i, *type);
 		wcscpy(pShareData->m_TypeMini[i].m_szTypeExts, type->m_szTypeExts);
 		wcscpy(pShareData->m_TypeMini[i].m_szTypeName, type->m_szTypeName);
