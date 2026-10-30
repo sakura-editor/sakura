@@ -39,6 +39,9 @@
 #include "util/design_template.h"
 #include "util/file/FileMapping.hpp"
 
+#include <span>
+#include <vector>
+
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
 class CMutex;
@@ -93,7 +96,28 @@ public:
 
 	//タイプ別設定(コントロールプロセス専用)
 	void CreateTypeSettings();
-	std::vector<STypeConfig*>& GetTypeSettings();
+
+	/*!
+	 * @brief タイプ別設定の配列(サイズ変更可能)を返す
+	 *
+	 * @note コントロールプロセス専用
+	 * @note 戻り値は auto& types で受けてください
+	 */
+	std::vector<STypeConfig*>& GetTypeSettings()
+	{
+		return *m_pvTypeSettings;
+	}
+
+	/*!
+	 * @brief タイプ別設定の配列(サイズ変更不可)を返す
+	 *
+	 * @note コントロールプロセス専用
+	 * @note 戻り値は auto types で受けて大丈夫です
+	 */
+	std::span<STypeConfig*> GetTypeSettingArr()
+	{
+		return GetTypeSettings();
+	}
 
 	// 国際化対応のための文字列を変更する(コントロールプロセス専用)
 	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);

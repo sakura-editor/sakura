@@ -936,7 +936,7 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 		m_pShareData->m_TypeBasis.m_nIdx = 0;
 	}
 
-	auto& types = CShareData::getInstance()->GetTypeSettings();
+	auto types = CShareData::getInstance()->GetTypeSettingArr();
 	*types[index] = type;
 	types[index]->m_nIdx = int(index);
 
@@ -955,7 +955,7 @@ bool CControlTray::OnGetTypeSetting(size_t index)
 		return false;
 	}
 
-	const auto& types = CShareData::getInstance()->GetTypeSettings();
+	const auto types = CShareData::getInstance()->GetTypeSettingArr();
 	m_pShareData->m_sWorkBuffer.m_TypeConfig = *(types[index]);
 
 	return true;

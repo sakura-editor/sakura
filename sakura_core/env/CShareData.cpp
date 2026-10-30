@@ -843,7 +843,7 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
 
 	// 注：コントロールプロセス専用
-	auto& types = CShareData::getInstance()->GetTypeSettings();
+	auto types = CShareData::getInstance()->GetTypeSettingArr();
 	for( i = 0; i < (int)types.size(); i++ ){
 		index = indexBackup;
 		auto& type = *(types[i]);
@@ -1463,11 +1463,6 @@ void CShareData::CreateTypeSettings()
 	if( nullptr == m_pvTypeSettings ){
 		m_pvTypeSettings = new std::vector<STypeConfig*>();
 	}
-}
-
-std::vector<STypeConfig*>& CShareData::GetTypeSettings()
-{
-	return *m_pvTypeSettings;
 }
 
 void CShareData::InitFileTree( SFileTree* setting )
