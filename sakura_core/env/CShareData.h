@@ -133,7 +133,7 @@ protected:
 
 	//	Jan. 30, 2005 genta 初期化関数の分割
 	void InitKeyword(DLLSHAREDATA* pShareData);
-	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
+	void	InitKeyAssign(DLLSHAREDATA& cShareData) const;
 	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
 	void	InitToolButtons(DLLSHAREDATA* pShareData) const;
 	void	InitTypeConfigs(DLLSHAREDATA* pShareData, STypeConfigArr& types);

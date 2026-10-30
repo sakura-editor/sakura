@@ -461,11 +461,7 @@ bool CShareData::InitShareData()
 
 		// [キー割り当て]タブ
 		{
-			//	Jan. 30, 2005 genta 関数として独立
-			//	2007.11.04 genta 戻り値チェック．falseなら起動中断．
-			if( ! InitKeyAssign( m_pShareData )){
-				return false;
-			}
+			InitKeyAssign(*m_pShareData);
 		}
 
 		// [カスタムメニュー]タブ
