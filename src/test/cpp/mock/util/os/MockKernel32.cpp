@@ -226,6 +226,17 @@
 	);
 }
 
+/* static */ DWORD MockKernel32::_WaitForSingleObject(
+	_In_ HANDLE hHandle,
+	_In_ DWORD dwMilliseconds
+)
+{
+	return ::WaitForSingleObject(
+		hHandle,
+		dwMilliseconds
+	);
+}
+
 MockKernel32::MockKernel32()
 {
 	// デフォルトの動作を設定する
@@ -243,4 +254,5 @@ MockKernel32::MockKernel32()
 	ON_CALL(*this, OpenFileMappingW(_, _, _)).WillByDefault(&_OpenFileMappingW);
 	ON_CALL(*this, SetCurrentDirectoryW(_)).WillByDefault(&_SetCurrentDirectoryW);
 	ON_CALL(*this, SizeofResource(_, _)).WillByDefault(&_SizeofResource);
+	ON_CALL(*this, WaitForSingleObject(_, _)).WillByDefault(&_WaitForSingleObject);
 }

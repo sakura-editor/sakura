@@ -82,6 +82,7 @@
 #include <array>
 #include <atomic>
 #include <cassert>
+#include <chrono>
 #include <climits>
 #include <clocale>
 #include <cmath>
