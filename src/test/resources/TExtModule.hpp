@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2022, Sakura Editor Organization
+	Copyright (C) 2022-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -8,6 +8,7 @@
 
 #include "extmodule/CDllHandler.h"
 
+#include <string_view>
 #include <type_traits>
 
 /*!
@@ -16,7 +17,8 @@
 	CDllImp派生クラスを指定して使う。
 	テストではロード処理後の挙動をチェックするので、コンストラクタでinitしてしまう。
  */
-template<class T, std::enable_if_t<std::is_base_of_v<CDllImp, T>, std::nullptr_t> = nullptr>
+template <class T>
+	requires std::is_base_of_v<CDllImp, T>
 class TExtModule : public T {
 private:
 	std::wstring_view dllName = L"";
@@ -24,10 +26,11 @@ private:
 protected:
 	//! DLLパスを返す
 	LPCWSTR GetDllNameImp(int index) override {
-		return dllName.empty() ? T::GetDllNameImp(index) : dllName.data();
+		return dllName.empty()
+			? T::GetDllNameImp(index)
+			: dllName.data();
 	}
 
-public:
 	//! コンストラクタ
 	explicit TExtModule(std::wstring_view path = L"")
 		: dllName(path) {
@@ -45,7 +48,7 @@ public:
 	DLL読み込み失敗をテストするために「あり得ないパス」を指定する。
  */
 template<class T>
-class TUnresolvedExtModule : public TExtModule<T> {
+class TUnresolvedExtModule final : public TExtModule<T> {
 private:
 	// あり得ないパス
 	static constexpr auto& BadDllName = LR"(>\(^o^)\<)";
