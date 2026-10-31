@@ -238,6 +238,12 @@ struct MockKernel32 final : public Kernel32
 		_In_ SIZE_T dwNumberOfBytesToMap
 	);
 
+	static HANDLE _OpenFileMappingW(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
+	);
+
 	static BOOL _SetCurrentDirectoryW(
 		_In_ LPCWSTR lpPathName
 	);
