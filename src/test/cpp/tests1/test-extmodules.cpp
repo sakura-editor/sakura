@@ -15,7 +15,7 @@
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
-#include "env/ShareDataTestSuite.hpp"
+#include "window/EditorTestSuite.hpp"
 
 #include "mem/CNativeW.h"
 #include "view/colors/EColorIndexType.h"
@@ -259,8 +259,24 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage, nOption, bKakomi), IsFalse());
 }
 
-struct CMigemoTest : public ExtModuleTest {
+struct CMigemoTest : public ExtModuleTest, public window::EditorTestSuite {
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
+
+	/*!
+	 * テストスイートの開始前に1回だけ呼ばれる関数
+	 */
+	static void SetUpTestSuite()
+	{
+		SetUpEditor();
+	}
+
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite()
+	{
+		TearDownEditor();
+	}
 
 	CMigemoHolder pcMigemo = nullptr;
 
@@ -303,68 +319,41 @@ struct CMigemoTest : public ExtModuleTest {
 
 TEST_F(CMigemoTest, test001)
 {
-	// 共有メモリを破棄して初期状態にする
-	pcShareData = nullptr;
-
-	// 初期状態では利用不可
-	EXPECT_THAT(pcMigemo->IsAvailable(), IsFalse());
-
-	// 初期状態では利用不可
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());
-
-	// ロード前は辞書ロードも利用不可
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
-
-	// 名前を指定しないロードは、共有メモリ初期化前にはできない
-	EXPECT_ANY_THROW(pcMigemo->InitDll());
-
-	// 名前を指定してロードする
-	pcMigemo->InitDll(L"migemo.dll");
-
-	// ロードされたら利用可能になる
-	EXPECT_THAT(pcMigemo->IsAvailable(), IsTrue());
-
-	// テストクラスのインスタンスを破棄する
-	pcMigemo = nullptr;
-
-	// テストクラスをインスタンス化する
-	pcMigemo = std::make_unique<CMigemo>();
-
-	// 共有メモリを初期化する
-	pcShareData = std::make_unique<CShareData>();
-	EXPECT_THAT(pcShareData->InitShareData(), IsTrue());
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
 	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, L"", _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"", _TRUNCATE);
+	sHelper.m_szMigemoDll = L"";
+	sHelper.m_szMigemoDict = L"";
 
 	// 名前を指定せずにロードする
 	pcMigemo->InitDll();
 
-	// ロードされたら辞書ロードも利用可能になるが辞書がないのでロードに失敗する
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
+	// 辞書がないのでロードに失敗する
+	EXPECT_FALSE(pcMigemo->migemo_load_all());
 
 	// 辞書がないので結局利用不可
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());
+	EXPECT_FALSE(pcMigemo->migemo_is_enable());
 }
 
 TEST_F(CMigemoTest, test002)
 {
-	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, L"migemo.dll", _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"dict", _TRUNCATE);
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
-	// 名前を指定せずにロードする
-	pcMigemo->InitDll();
+	// C/Migemo設定に値を入れる
+	sHelper.m_szMigemoDll = L"migemo.dll";	// 相対パス
+	sHelper.m_szMigemoDict = L"dict";
 
 	// 辞書ファイルを展開する
 	extract_zip_resource(IDR_ZIPRES2, dictPath);
 
+	// 名前を指定せずにロードする
+	pcMigemo->InitDll();
+
 	// ロードされたら辞書ロードも利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_load_all());
 
 	// 辞書が見付かるので利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_is_enable());
 
 	// 与えた文字列に対する正規表現が返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"さくらえでぃt"), StrEq(L"(ｻｸﾗｴﾃﾞｨ[ﾄﾃﾂﾁﾀ]|サクラエディ[トテツチタ]|さくらえでぃ[とてつちたｔt])"));
@@ -372,21 +361,23 @@ TEST_F(CMigemoTest, test002)
 
 TEST_F(CMigemoTest, test003)
 {
-	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, GetIniFileName().replace_filename( L"migemo.dll" ).c_str(), _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, dictPath.c_str(), _TRUNCATE);
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
-	// 名前を指定せずにロードする
-	pcMigemo->InitDll();
+	// C/Migemo設定に値を入れる
+	sHelper.m_szMigemoDll = GetIniFileName().replace_filename(L"migemo.dll");	// 絶対パス
+	sHelper.m_szMigemoDict = dictPath;
 
 	// 辞書ファイルを展開する
 	extract_zip_resource(IDR_ZIPRES3, dictPath);
 
+	// 名前を指定せずにロードする
+	pcMigemo->InitDll();
+
 	// ロードされたら辞書ロードも利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_load_all());
 
 	// 辞書が見付かるので利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_is_enable());
 
 	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));
