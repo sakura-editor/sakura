@@ -1130,35 +1130,52 @@ TEST_F(WinMainFuncTest, CreateControlProcess103)
 }
 
 /*!
+ * @brief エラーメッセージの取得が通るようにモックを設定する
+ */
+static void SetUpLoadString()
+{
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+}
+
+/*!
  * @brief CSelectLangの初期化が通るようにモックを設定する
- *
- * この時点では最後まで初期化を完了させず、エラー終了をエミュレートできるようにしている。
  */
 static void SetUpSelectLang()
 {
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
 
-	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
-		.WillRepeatedly(testing::DoDefault());
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
 
-	EXPECT_CALL(*pKernel32, LoadResource(_, _))
-		.WillRepeatedly(testing::DoDefault());
-
-	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
-		.WillRepeatedly(testing::DoDefault());
-
-	EXPECT_CALL(*pKernel32, LockResource(_))
-		.WillRepeatedly(testing::DoDefault());
-
-	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
-		.WillRepeatedly(testing::DoDefault());
-
+	// デフォルト処理を呼んで成功させる
 	EXPECT_CALL(*pKernel32, FindFirstFileW(_, _))
 		.WillRepeatedly(testing::DoDefault());
 
+	// デフォルト処理を呼んで成功させる
 	EXPECT_CALL(*pKernel32, FindNextFileW(_, _))
 		.WillRepeatedly(testing::DoDefault());
 
+	// デフォルト処理を呼んで成功させる
 	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
 		.WillRepeatedly(testing::DoDefault());
 }
@@ -1321,6 +1338,9 @@ TEST_F(WinMainFuncTest, CreateControlProcess108)
 
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
 
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
+
 	// NULLを返して失敗させる
 	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
 		.WillOnce(Return(nullptr));
@@ -1345,6 +1365,9 @@ TEST_F(WinMainFuncTest, CreateControlProcess109)
 	Kernel32::setInstance<MockKernel32>();
 
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
 
 	// デフォルト処理を呼んで成功させる
 	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA)))
