@@ -197,13 +197,7 @@ bool CProcess::InitializeProcess(
 	int nCmdShow [[maybe_unused]]
 )
 {
-	/* 共有データ構造体のアドレスを返す */
-	if( !GetShareData().InitShareData() ){
-		//	適切なデータを得られなかった
-		::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONERROR,
-			GSTR_APPNAME, L"異なるバージョンのエディタを同時に起動することはできません。" );
-		return false;
-	}
+	GetShareData().InitShareData();
 
 	/* リソースから製品バージョンの取得 */
 	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
