@@ -161,16 +161,8 @@ bool CControlProcess::InitializeProcess(
 		m_hMutexCP = MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
 	}
 	// エラーが発生した場合
-	catch (const std::system_error& e)
+	catch (const std::system_error&)
 	{
-		if (ERROR_ALREADY_EXISTS == e.code().value())
-		{
-			throw basis::make_initialization_error(
-				L"",
-				static_cast<int>(EAppExitCode::Exited)
-			);
-		}
-
 		throw basis::make_initialization_error(
 			// L"CreateMutex()失敗。\n終了します。"
 			LS(STR_ERR_CTRLMTX1)
@@ -178,6 +170,14 @@ bool CControlProcess::InitializeProcess(
 		);
 	}
 	
+	if (ERROR_ALREADY_EXISTS == ::GetLastError())
+	{
+		throw basis::make_initialization_error(
+			L"",
+			static_cast<int>(EAppExitCode::Exited)
+		);
+	}
+
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 	const auto sysDir = cxx::GetSystemDirectoryW();
 	if (const auto curDir = cxx::GetCurrentDirectoryW();

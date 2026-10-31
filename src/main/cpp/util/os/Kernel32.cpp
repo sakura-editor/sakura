@@ -269,3 +269,14 @@ DWORD Kernel32::SizeofResource(
 		hResInfo
 	);
 }
+
+DWORD Kernel32::WaitForSingleObject(
+	_In_ HANDLE hHandle,
+	_In_ DWORD dwMilliseconds
+) const
+{
+	return ::WaitForSingleObject(
+		hHandle,
+		dwMilliseconds
+	);
+}

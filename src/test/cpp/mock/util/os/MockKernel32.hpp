@@ -150,6 +150,11 @@ struct MockKernel32 final : public Kernel32
 		_In_ HRSRC hResInfo
 	));
 
+	MOCK_CONST_METHOD2(WaitForSingleObject, DWORD(
+		_In_ HANDLE hHandle,
+		_In_ DWORD dwMilliseconds
+	));
+
 	static HANDLE _CreateFileMappingW(
 		_In_ HANDLE hFile,
 		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
@@ -238,6 +243,12 @@ struct MockKernel32 final : public Kernel32
 		_In_ SIZE_T dwNumberOfBytesToMap
 	);
 
+	static HANDLE _OpenFileMappingW(
+		_In_ DWORD dwDesiredAccess,
+		_In_ BOOL bInheritHandle,
+		_In_ LPCWSTR lpName
+	);
+
 	static BOOL _SetCurrentDirectoryW(
 		_In_ LPCWSTR lpPathName
 	);
@@ -245,6 +256,11 @@ struct MockKernel32 final : public Kernel32
 	static DWORD _SizeofResource(
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
+	);
+
+	static DWORD _WaitForSingleObject(
+		_In_ HANDLE hHandle,
+		_In_ DWORD dwMilliseconds
 	);
 
 	MockKernel32();

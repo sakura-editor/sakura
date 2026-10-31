@@ -44,18 +44,7 @@ namespace cxx {
 		throw cxx::make_system_error("CreateMutexW() failed");
 	}
 
-	auto ret = MutexHandle{ hMutex };
-
-	if (bInitialOwner && ERROR_ALREADY_EXISTS == ::GetLastError()) {
-		// システムエラー例外を発生させる
-		throw std::system_error(
-			ERROR_ALREADY_EXISTS,
-			std::system_category(),
-			"CreateMutexW() failed"
-		);
-	}
-
-	return ret;
+	return hMutex;
 }
 
 } // namespace cxx

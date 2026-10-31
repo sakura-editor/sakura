@@ -142,4 +142,9 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
 	) const;
+
+	virtual DWORD WaitForSingleObject(
+		_In_ HANDLE hHandle,
+		_In_ DWORD dwMilliseconds
+	) const;
 };

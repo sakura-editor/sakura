@@ -18,6 +18,8 @@
 #include "cxx/ResourceHolder.hpp"
 #include "util/sync/MutexHandle.hpp"
 
+#include <chrono>
+
 #include <Windows.h>
 
 /*!
@@ -51,6 +53,15 @@ public:
 
 	void lock();
 	void unlock() noexcept;
+
+	template <class Rep, class Period>
+	bool try_lock_for(
+		const std::chrono::duration<Rep, Period>& timeout
+	)
+	{
+		const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeout);
+		return Lock(static_cast<DWORD>(milliseconds.count()));
+	}
 
 	bool Lock(
 		DWORD dwTimeout = INFINITE

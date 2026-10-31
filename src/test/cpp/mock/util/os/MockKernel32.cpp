@@ -193,6 +193,19 @@
 	);
 }
 
+/* static */ HANDLE MockKernel32::_OpenFileMappingW(
+	_In_ DWORD dwDesiredAccess,
+	_In_ BOOL bInheritHandle,
+	_In_ LPCWSTR lpName
+)
+{
+	return ::OpenFileMappingW(
+		dwDesiredAccess,
+		bInheritHandle,
+		lpName
+	);
+}
+
 /* static */ BOOL MockKernel32::_SetCurrentDirectoryW(
 	_In_ LPCWSTR lpPathName
 )
@@ -213,6 +226,17 @@
 	);
 }
 
+/* static */ DWORD MockKernel32::_WaitForSingleObject(
+	_In_ HANDLE hHandle,
+	_In_ DWORD dwMilliseconds
+)
+{
+	return ::WaitForSingleObject(
+		hHandle,
+		dwMilliseconds
+	);
+}
+
 MockKernel32::MockKernel32()
 {
 	// デフォルトの動作を設定する
@@ -227,6 +251,8 @@ MockKernel32::MockKernel32()
 	ON_CALL(*this, LoadResource(_, _)).WillByDefault(&_LoadResource);
 	ON_CALL(*this, LockResource(_)).WillByDefault(&_LockResource);
 	ON_CALL(*this, MapViewOfFile(_, _, _, _, _)).WillByDefault(&_MapViewOfFile);
+	ON_CALL(*this, OpenFileMappingW(_, _, _)).WillByDefault(&_OpenFileMappingW);
 	ON_CALL(*this, SetCurrentDirectoryW(_)).WillByDefault(&_SetCurrentDirectoryW);
 	ON_CALL(*this, SizeofResource(_, _)).WillByDefault(&_SizeofResource);
+	ON_CALL(*this, WaitForSingleObject(_, _)).WillByDefault(&_WaitForSingleObject);
 }

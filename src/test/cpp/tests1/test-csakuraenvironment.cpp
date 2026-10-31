@@ -946,9 +946,14 @@ TEST_F(Kernel32, MutexHandleCreateMutexW101)
 
 	// ミューテックス作成
 	auto m1 = MutexHandle::CreateMutexW(nullptr, TRUE, L"test_mutex");
+	EXPECT_TRUE(m1);
 
-	// 同名を指定して失敗させる
-	EXPECT_ANY_THROW(MutexHandle::CreateMutexW(nullptr, TRUE, L"test_mutex"));
+	// 同名を指定して失敗させる（戻り値は正常が返り、GetLastErrorにエラーコードが設定される）
+	auto m2 = MutexHandle::CreateMutexW(nullptr, TRUE, L"test_mutex");
+	EXPECT_TRUE(m2);
+
+	// 想定されたエラーコードが設定されていること
+	EXPECT_THAT(::GetLastError(), ERROR_ALREADY_EXISTS);
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)
