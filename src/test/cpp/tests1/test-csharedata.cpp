@@ -5,7 +5,7 @@
 	SPDX-License-Identifier: Zlib
  */
 #include "pch.h"
-#include "env/ShareDataTestSuite.hpp"
+#include "env/CShareData.h"
 
 #include "config/system_constants.h"
 #include "dlg/CDialog.h"	//仮置き、本来は不要。
@@ -14,6 +14,9 @@
 #include "uiparts/CMenuDrawer.h"
 #include "util/window.h"
 #include "util/file.h"
+
+#include "window/TrayWndTestSuite.hpp"
+
 #include "version.h"
 #include "sakura_rc.h"
 
@@ -1712,7 +1715,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		&& true;
 }
 
-struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CShareDataTest : public ::testing::Test, public window::TrayWndTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -1736,7 +1739,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 #pragma endregion CanBeMove
 
 		// 共有データを生成して初期化する
-		SetUpShareData();
+		SetUpTrayWnd();
 
 		// 共有データがあるので値を返す
 		EXPECT_THAT(GetDllShareDataPtr(), pcShareData->GetDllShareDataPtr());
@@ -1757,7 +1760,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 	static void TearDownTestSuite()
 	{
 		// 共有データを破棄する
-		TearDownShareData();
+		TearDownTrayWnd();
 
 		// 共有データがなくなってもエラーにならない
 		EXPECT_THAT(GetDllShareDataPtr(), IsNull());

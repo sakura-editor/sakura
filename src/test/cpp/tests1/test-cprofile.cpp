@@ -19,7 +19,7 @@
 #include "util/file.h"
 #include "view/colors/EColorIndexType.h"
 
-#include "env/ShareDataTestSuite.hpp"
+#include "window/TrayWndTestSuite.hpp"
 
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
@@ -805,7 +805,7 @@ TEST(ShareData_IO, ShareData_IO_2)
 	fos.close();
 
 	// 共有データを生成して初期化する
-	env::ShareDataTestSuite::SetUpShareData();
+	window::TrayWndTestSuite::SetUpTrayWnd();
 
 	// テスト対象を呼び出す
 	CShareData_IO::LoadShareData();
@@ -813,7 +813,7 @@ TEST(ShareData_IO, ShareData_IO_2)
 	EXPECT_THAT(fexist(bakPath), IsTrue());
 
 	// 共有データを破棄する
-	env::ShareDataTestSuite::TearDownShareData();
+	window::TrayWndTestSuite::TearDownTrayWnd();
 
 	std::error_code ec;
 	std::filesystem::remove(bakPath, ec);
@@ -1126,7 +1126,7 @@ TEST(ShareData_IO, ShareData_IO_Plugin)
 	sPlugin.m_PluginTable[0].m_nCmdNum = 2;
 
 	// 共有データを生成して初期化する
-	env::ShareDataTestSuite::SetUpShareData();
+	window::TrayWndTestSuite::SetUpTrayWnd();
 
 	auto pcMenuDrawer = std::make_unique<CMenuDrawer>();
 
@@ -1139,7 +1139,7 @@ TEST(ShareData_IO, ShareData_IO_Plugin)
 	pcMenuDrawer = nullptr;
 
 	// 共有データを破棄する
-	env::ShareDataTestSuite::TearDownShareData();
+	window::TrayWndTestSuite::TearDownTrayWnd();
 }
 
 /*!

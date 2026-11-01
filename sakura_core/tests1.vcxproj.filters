@@ -273,6 +273,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\window\EditorTestSuite.cpp">
       <Filter>Other Files\window</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\window\TrayWndTestSuite.cpp">
+      <Filter>Other Files\window</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\window\UiaTestSuite.cpp">
       <Filter>Other Files\window</Filter>
     </ClCompile>
@@ -328,6 +331,9 @@
       <Filter>Other Files\grep</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp">
+      <Filter>Other Files\window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\test\cpp\tests1\window\TrayWndTestSuite.hpp">
       <Filter>Other Files\window</Filter>
     </ClInclude>
     <ClInclude Include="..\src\test\cpp\tests1\window\UiaTestSuite.hpp">

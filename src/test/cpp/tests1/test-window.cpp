@@ -10,6 +10,7 @@
 #include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
 #include "window/EditorTestSuite.hpp"
+#include "window/TrayWndTestSuite.hpp"
 
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgCancel.h"
@@ -37,8 +38,6 @@
 #include "typeprop/CDlgTypeAscertain.h"
 #include "typeprop/CDlgTypeList.h"
 
-#include "_main/CCommandLine.h"
-#include "_main/CControlTray.h"
 #include "dlg/MockCDlgInput1.hpp"
 #include "dlg/MockCDlgOpenFile.hpp"
 #include "plugin/CJackManager.h"
@@ -478,14 +477,8 @@ void RequestForeignWindowClose(HWND hWnd);
 
 namespace window {
 
-struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, public window::UiaTestSuite {
-	using CControlTrayHolder = std::unique_ptr<CControlTray>;
-
+struct TrayWndTest : public ::testing::Test, public window::TrayWndTestSuite, public window::UiaTestSuite {
 	static inline std::filesystem::path dummyPath{};
-
-	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
-
-	static inline CControlTrayHolder pcTrayWnd = nullptr;
 
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
@@ -494,32 +487,9 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 	{
 		dummyPath = GetIniFileName().replace_filename(L"dummy.txt");
 
-		// コマンドラインオブジェクトを用意する
-		pCommandLine = std::make_unique<CCommandLine>();
-		pCommandLine->ParseCommandLine(L"-PROF=", false);
-
 		SetUpUiaTestSuite();
 
-		SetUpShareData();
-
-		// トレイウィンドウをインスタンス化する
-		pcTrayWnd = std::make_unique<CControlTray>();
-
-		pcTrayWnd->m_hIcons.Create(G_AppInstance());
-
-		pcTrayWnd->m_cMenuDrawer.Create(
-			CSelectLang::getLangRsrcInstance(),
-			pcTrayWnd->GetTrayHwnd(),
-			&pcTrayWnd->m_hIcons
-		);
-
-		//プロパティ管理
-		pcTrayWnd->m_pcPropertyManager = new CPropertyManager();
-		pcTrayWnd->m_pcPropertyManager->Create(
-			pcTrayWnd->GetTrayHwnd(),
-			&pcTrayWnd->m_hIcons,
-			&pcTrayWnd->m_cMenuDrawer
-		);
+		SetUpTrayWnd();
 
 		std::error_code ec;
 		std::filesystem::remove(dummyPath, ec);
@@ -538,10 +508,7 @@ struct TrayWndTest : public ::testing::Test, public env::ShareDataTestSuite, pub
 		std::error_code ec;
 		std::filesystem::remove(dummyPath, ec);
 
-		// トレイウィンドウのインスタンスを破棄する
-		pcTrayWnd = nullptr;
-
-		TearDownShareData();
+		TearDownTrayWnd();
 
 		TearDownUiaTestSuite();
 
