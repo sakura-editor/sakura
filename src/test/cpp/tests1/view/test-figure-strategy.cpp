@@ -18,15 +18,8 @@ namespace view::figure {
 
 class FigureStrategyTest : public ::testing::Test, public window::EditorTestSuite {
 public:
-	static void SetUpTestSuite()
-	{
-		SetUpEditor();
-	}
-
-	static void TearDownTestSuite()
-	{
-		TearDownEditor();
-	}
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 
 	void SetUp() override
 	{
