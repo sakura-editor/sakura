@@ -15,6 +15,7 @@
 #include "_main/CCommandLine.h"
 #include "agent/CGrepAgent.h"
 #include "basis/GrepInfo.h"
+#include "basis/primitive.h"
 #include "charset/charset.h"
 #include "doc/CEditDoc.h"
 #include "util/os/MockUser32.hpp"
@@ -255,18 +256,6 @@ inline std::wstring ResourcePrefix(UINT id)
 }
 
 /*!
-	@brief コマンドライン文字列を解析して GrepInfo を得る
-
-	-GREPMODE で起動したときと同じ CCommandLine::ParseCommandLine() を通す。
-*/
-inline GrepInfo ParseGrepCommandLine(const std::wstring& args)
-{
-	CCommandLine cCommandLine;
-	cCommandLine.ParseCommandLine(args.c_str(), false);
-	return cCommandLine.GetGrepInfoRef();
-}
-
-/*!
 	@brief Grep のテストの共通基盤
 
 	編集ウィンドウを 1 つ作り、その中で Grep を実行する。
@@ -275,6 +264,26 @@ inline GrepInfo ParseGrepCommandLine(const std::wstring& args)
 */
 struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
 	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
+
+	/*!
+		@brief コマンドライン文字列を解析して GrepInfo を得る
+
+		-GREPMODE で起動したときと同じ CCommandLine::ParseCommandLine() を通す。
+	*/
+	static GrepInfo ParseGrepCommandLine(
+		std::wstring_view args
+	)
+	{
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Args{ args };
+
+		CCommandLine cCommandLine;
+		auto pCommandLine = &cCommandLine;
+
+		pCommandLine->ParseCommandLine(_Args.c_str(), false);
+
+		return pCommandLine->GetGrepInfoRef();
+	}
 
 	static void SetUpTestSuite()
 	{
