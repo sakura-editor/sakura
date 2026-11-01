@@ -293,8 +293,6 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 	{
 		TearDownEditor();
 
-		User32::resetInstance();
-
 		TearDownUiaTestSuite();
 	}
 
@@ -327,6 +325,8 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 		ResetDocument();
 
 		TearDownUia();
+
+		User32::resetInstance();
 	}
 
 	//! 文書を空・未編集・無題に戻す
