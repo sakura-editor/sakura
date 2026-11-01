@@ -188,9 +188,7 @@ bool CControlProcess::InitializeProcess(
 	}
 
 	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess(SW_HIDE) ){
-		return false;
-	}
+	GetShareData().InitShareData();
 
 	/* 共有データのロード */
 	if( !CShareData_IO::LoadShareData() ){

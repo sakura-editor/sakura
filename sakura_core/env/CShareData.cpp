@@ -27,6 +27,7 @@
 #include "StdAfx.h"
 #include "env/CShareData.h"
 
+#include "basis/make_initialization_error.hpp"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
 #include "env/CShareData_IO.h"
@@ -77,23 +78,6 @@ CShareData::~CShareData()
 {
 	CFileNameManager::resetInstance();
 	CAppNodeManager::resetInstance();
-
-	if( m_pShareData ){
-		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		::UnmapViewOfFile( m_pShareData );
-		m_pShareData = nullptr;
-	}
-	if( m_hFileMap ){
-		CloseHandle( m_hFileMap );
-	}
-	if( m_pvTypeSettings ){
-		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
-			delete (*m_pvTypeSettings)[i];
-			(*m_pvTypeSettings)[i] = nullptr;
-		}
-		delete m_pvTypeSettings;
-		m_pvTypeSettings = nullptr;
-	}
 }
 
 static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
@@ -121,41 +105,40 @@ bool CShareData::InitShareData()
 
 	m_hwndTraceOutSource = nullptr;	// 2006.06.26 ryoji
 
-	/* ファイルマッピングオブジェクト */
+	// ファイルマッピングオブジェクトを作成する
+	try
 	{
 		const auto pszProfileName = GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += pszProfileName;
-		m_hFileMap = ::CreateFileMapping(
+		m_FileMapping = FileMapping::CreateFileMappingW(
 			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
 			nullptr,
 			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
+			ULARGE_INTEGER{ sizeof( DLLSHAREDATA ) },
+			strShareDataName
 		);
 	}
-	if( nullptr == m_hFileMap ){
-		::MessageBox(
-			nullptr,
-			L"CreateFileMapping()に失敗しました",
-			L"予期せぬエラー",
-			MB_OK | MB_APPLMODAL | MB_ICONSTOP
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateFileMapping()に失敗しました"
+			LS(STR_ERR_CSHAREDATA01)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
 		);
-		return false;
 	}
 
 	if( GetLastError() != ERROR_ALREADY_EXISTS ){
 		/* オブジェクトが存在していなかった場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
+
+		// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+		m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
 		);
-		CreateTypeSettings();
+	
+		// マップされたビューにDLLSHAREDATA構造体を配置します
+		m_pShareData = new (m_MappedData.get()) DLLSHAREDATA;
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -478,11 +461,7 @@ bool CShareData::InitShareData()
 
 		// [キー割り当て]タブ
 		{
-			//	Jan. 30, 2005 genta 関数として独立
-			//	2007.11.04 genta 戻り値チェック．falseなら起動中断．
-			if( ! InitKeyAssign( m_pShareData )){
-				return false;
-			}
+			InitKeyAssign(*m_pShareData);
 		}
 
 		// [カスタムメニュー]タブ
@@ -675,7 +654,7 @@ bool CShareData::InitShareData()
 		}
 
 		{
-			InitTypeConfigs( m_pShareData, *m_pvTypeSettings );
+			InitTypeConfigs( m_pShareData, GetTypeSettings() );
 		}
 
 		{
@@ -733,24 +712,24 @@ bool CShareData::InitShareData()
 		}
 	}else{
 		/* オブジェクトがすでに存在する場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
+		// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+		m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+			FILE_MAP_ALL_ACCESS
 		);
+	
+		// マップされたビューに配置されたDLLSHAREDATA構造体を参照します
+		m_pShareData = m_MappedData.get();
 
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
-			//	ハンドルを解放する
-			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = nullptr;
-			return false;
+			throw basis::make_initialization_error(
+				// L"異なるバージョンのエディタを同時に起動することはできません。"
+				LS(STR_ERR_DLGPROCESS1)
+				, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+			);
 		}
 		//	To Here Oct. 27, 2000 genta
 
@@ -843,12 +822,15 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 			break;
 		}
 	}
-	assert( m_pvTypeSettings != nullptr );
+
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
-	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
+
+	// 注：コントロールプロセス専用
+	auto types = CShareData::getInstance()->GetTypeSettingArr();
+	for( i = 0; i < (int)types.size(); i++ ){
 		index = indexBackup;
-		STypeConfig& type = *(GetTypeSettings()[i]);
+		auto& type = *(types[i]);
 		ConvertLangValue2( type.m_szTypeName, STR_TYPE_NAME_BASIS );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_RICHTEXT );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_TEXT );
@@ -1458,18 +1440,6 @@ void CShareData::InitPopupMenu([[maybe_unused]] DLLSHAREDATA* pShareData)
 void CShareData::RefreshString()
 {
 	RefreshKeyAssignString( m_pShareData );
-}
-
-void CShareData::CreateTypeSettings()
-{
-	if( nullptr == m_pvTypeSettings ){
-		m_pvTypeSettings = new std::vector<STypeConfig*>();
-	}
-}
-
-std::vector<STypeConfig*>& CShareData::GetTypeSettings()
-{
-	return *m_pvTypeSettings;
 }
 
 void CShareData::InitFileTree( SFileTree* setting )

@@ -19,7 +19,7 @@ namespace env {
 
 	pcShareData = std::make_unique<CShareData>();
 
-	EXPECT_THAT(pcShareData->InitShareData(), IsTrue());
+	pcShareData->InitShareData();
 }
 
 /*!

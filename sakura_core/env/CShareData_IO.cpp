@@ -1318,15 +1318,15 @@ void CShareData_IO::ShareData_IO_Types( CDataProfile& cProfile )
 		pShare->m_nTypesCount = 30; // 旧バージョン読み込み用
 	}
 	SetValueLimit( pShare->m_nTypesCount, 1, MAX_TYPES );
+
 	// 注：コントロールプロセス専用
-	std::vector<STypeConfig*>& types = CShareData::getInstance()->GetTypeSettings();
+	auto& types = CShareData::getInstance()->GetTypeSettings();
 	for( i = GetDllShareData().m_nTypesCount; i < nCountOld; i++ ){
-		delete types[i];
 		types[i] = nullptr;
 	}
 	types.resize(pShare->m_nTypesCount);
 	for( i = nCountOld; i < pShare->m_nTypesCount; i++ ){
-		types[i] = new STypeConfig();
+		types[i] = std::make_unique<STypeConfig>();
 		*types[i] = *types[0]; // 基本をコピー
 		auto_sprintf( types[i]->m_szTypeName, LS(STR_TRAY_TYPE_NAME), i );
 		types[i]->m_nIdx = i;
