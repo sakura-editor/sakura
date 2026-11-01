@@ -1,17 +1,22 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include "CType.h"
+#include "types/CType.h"
+
 #include "view/colors/EColorIndexType.h"
 #include "env/CDocTypeManager.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
+
+#include <array>
+#include <memory>
+
 #include "config/app_constants.h"
 
 void _DefaultConfig(STypeConfig* pType);
@@ -53,36 +58,36 @@ void CShareData::InitTypeConfigs(
 	STypeConfigArr& types
 )
 {
-	CType* table[] = {
-		new CType_Basis(),	//基本
-		new CType_Text(),	//テキスト
-		new CType_Cpp(),	//C/C++
-		new CType_Html(),	//HTML
-		new CType_Sql(),	//PL/SQL
-		new CType_Cobol(),	//COBOL
-		new CType_Java(),	//Java
-		new CType_Asm(),	//アセンブラ
-		new CType_Awk(),	//awk
-		new CType_Dos(),	//MS-DOSバッチファイル
-		new CType_Pascal(),	//Pascal
-		new CType_Tex(),	//TeX
-		new CType_Perl(),	//Perl
-		new CType_Python(),	//Python
-		new CType_Vb(),		//Visual Basic
-		new CType_Rich(),	//リッチテキスト
-		new CType_Ini(),	//設定ファイル
+	const std::array<std::unique_ptr<CType>, 17> table = {
+		std::make_unique<CType_Basis>(),	//基本
+		std::make_unique<CType_Text>(),		//テキスト
+		std::make_unique<CType_Cpp>(),		//C/C++
+		std::make_unique<CType_Html>(),		//HTML
+		std::make_unique<CType_Sql>(),		//PL/SQL
+		std::make_unique<CType_Cobol>(),	//COBOL
+		std::make_unique<CType_Java>(),		//Java
+		std::make_unique<CType_Asm>(),		//アセンブラ
+		std::make_unique<CType_Awk>(),		//awk
+		std::make_unique<CType_Dos>(),		//MS-DOSバッチファイル
+		std::make_unique<CType_Pascal>(),	//Pascal
+		std::make_unique<CType_Tex>(),		//TeX
+		std::make_unique<CType_Perl>(),		//Perl
+		std::make_unique<CType_Python>(),	//Python
+		std::make_unique<CType_Vb>(),		//Visual Basic
+		std::make_unique<CType_Rich>(),		//リッチテキスト
+		std::make_unique<CType_Ini>(),		//設定ファイル
 	};
 	types.clear();
 	static_assert( int(std::size(table)) <= MAX_TYPES );
 	for(int i = 0; i < int(std::size(table)) && i < MAX_TYPES; i++){
 		const auto& type = types.emplace_back(std::make_unique<STypeConfig>());
 		table[i]->InitTypeConfig(i, *type);
-		wcscpy(pShareData->m_TypeMini[i].m_szTypeExts, type->m_szTypeExts);
-		wcscpy(pShareData->m_TypeMini[i].m_szTypeName, type->m_szTypeName);
+		pShareData->m_TypeMini[i].m_szTypeExts = type->m_szTypeExts;
+		pShareData->m_TypeMini[i].m_szTypeName = type->m_szTypeName;
 		pShareData->m_TypeMini[i].m_encoding = type->m_encoding;
 		pShareData->m_TypeMini[i].m_id = type->m_id;
-		SAFE_DELETE(table[i]);
 	}
+
 	pShareData->m_TypeBasis = *types[0];
 	pShareData->m_nTypesCount = (int)types.size();
 }
@@ -101,11 +106,15 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 
 	int nSetCount = -1;
 
-#define PopulateKeyword(name,case_sensitive,aryname) \
+// ローカルマクロを定義するため、既存マクロを退避する
+#pragma push_macro("PopulateKeyword")
+
+#define PopulateKeyword(name, case_sensitive, aryname) \
 	extern const wchar_t* g_ppszKeywords##aryname[]; \
 	extern int g_nKeywords##aryname; \
 	pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
-	pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, g_nKeywords##aryname, g_ppszKeywords##aryname );
+	pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, g_nKeywords##aryname, g_ppszKeywords##aryname ); \
+	0 /* ←セミコロンを付けないとエラーになるように。 */
 	
 	PopulateKeyword( L"C/C++",			true,	CPP );			/* セット 0の追加 */
 	PopulateKeyword( L"HTML",			false,	HTML );			/* セット 1の追加 */
@@ -125,7 +134,8 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 	PopulateKeyword( L"Rich Text",		true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
 	PopulateKeyword( L"Python",			true,	Python);		/* セット16の追加 */
 
-#undef PopulateKeyword
+// 既存マクロを復元する
+#pragma pop_macro("PopulateKeyword")
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

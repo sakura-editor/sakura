@@ -331,30 +331,36 @@ protected:
 	) = 0;
 };
 
-#define GEN_CTYPE(CLASS_NAME) \
+// ローカルマクロを定義するため、既存マクロを退避する
+#pragma push_macro("GEN_CTYPE")
+
+#define GEN_CTYPE(CLASS_NAME); \
 	class CLASS_NAME final : public CType{ \
 	protected: \
 		void InitTypeConfigImp(STypeConfig* pType) override; \
-	};
+	} /* ←セミコロンを付けないとエラーになるように。 */
 
-GEN_CTYPE(CType_Asm)
-GEN_CTYPE(CType_Awk)
-GEN_CTYPE(CType_Basis)
-GEN_CTYPE(CType_Cobol)
-GEN_CTYPE(CType_Cpp)
-GEN_CTYPE(CType_Dos)
-GEN_CTYPE(CType_Html)
-GEN_CTYPE(CType_Ini)
-GEN_CTYPE(CType_Java)
-GEN_CTYPE(CType_Pascal)
-GEN_CTYPE(CType_Perl)
-GEN_CTYPE(CType_Python)
-GEN_CTYPE(CType_Rich)
-GEN_CTYPE(CType_Sql)
-GEN_CTYPE(CType_Tex)
-GEN_CTYPE(CType_Text)
-GEN_CTYPE(CType_Vb)
-GEN_CTYPE(CType_Other)
+GEN_CTYPE(CType_Asm);
+GEN_CTYPE(CType_Awk);
+GEN_CTYPE(CType_Basis);
+GEN_CTYPE(CType_Cobol);
+GEN_CTYPE(CType_Cpp);
+GEN_CTYPE(CType_Dos);
+GEN_CTYPE(CType_Html);
+GEN_CTYPE(CType_Ini);
+GEN_CTYPE(CType_Java);
+GEN_CTYPE(CType_Pascal);
+GEN_CTYPE(CType_Perl);
+GEN_CTYPE(CType_Python);
+GEN_CTYPE(CType_Rich);
+GEN_CTYPE(CType_Sql);
+GEN_CTYPE(CType_Tex);
+GEN_CTYPE(CType_Text);
+GEN_CTYPE(CType_Vb);
+GEN_CTYPE(CType_Other);
+
+// 既存マクロを復元する
+#pragma pop_macro("GEN_CTYPE")
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
