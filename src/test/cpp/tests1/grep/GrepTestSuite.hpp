@@ -27,6 +27,7 @@
 #include <format>
 #include <fstream>
 #include <functional>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <cstdio>
@@ -263,8 +264,6 @@ inline std::wstring ResourcePrefix(UINT id)
 	メッセージボックスは MockUser32 で止まらずに返る。
 */
 struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
-	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
-
 	/*!
 		@brief コマンドライン文字列を解析して GrepInfo を得る
 
@@ -277,9 +276,7 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 		// 引数はNUL終端文字列として扱う
 		cxx::NullTerminatedString<WCHAR> _Args{ args };
 
-		CCommandLine cCommandLine;
-		auto pCommandLine = &cCommandLine;
-
+		pCommandLine = std::make_unique<CCommandLine>();
 		pCommandLine->ParseCommandLine(_Args.c_str(), false);
 
 		return pCommandLine->GetGrepInfoRef();
@@ -287,9 +284,6 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 
 	static void SetUpTestSuite()
 	{
-		pCommandLine = std::make_unique<CCommandLine>();
-		pCommandLine->ParseCommandLine(L"-PROF=", false);
-
 		SetUpUiaTestSuite();
 
 		SetUpEditor();
@@ -302,8 +296,6 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 		User32::resetInstance();
 
 		TearDownUiaTestSuite();
-
-		pCommandLine = nullptr;
 	}
 
 	void SetUp() override

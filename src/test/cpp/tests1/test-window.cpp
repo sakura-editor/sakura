@@ -1378,8 +1378,6 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	static inline std::filesystem::path tagsPath{};
 	static inline std::filesystem::path typeConfigExportPath{};
 
-	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
-
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -1401,10 +1399,6 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		regexKeywordExportPath = GetIniFileName().replace_filename(L"テキスト.rkw");
 		tagsPath = GetIniFileName().replace_filename(L"tags");
 		typeConfigExportPath = GetIniFileName().replace_filename(L"基本.ini");
-
-		// コマンドラインオブジェクトを用意する
-		pCommandLine = std::make_unique<CCommandLine>();
-		pCommandLine->ParseCommandLine(L"-PROF=", false);
 
 		SetUpUiaTestSuite();
 
@@ -1481,8 +1475,6 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 		TearDownEditor();
 
 		TearDownUiaTestSuite();
-
-		pCommandLine = nullptr;
 	}
 
 	std::unique_ptr<CMacroManagerBase> mgr = nullptr;

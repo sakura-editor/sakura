@@ -16,6 +16,10 @@ namespace window {
  */
 /* static */ void EditorTestSuite::SetUpEditor()
 {
+	// コマンドラインオブジェクトを用意する
+	pCommandLine = std::make_unique<CCommandLine>();
+	pCommandLine->ParseCommandLine(L"-PROF=", false);
+
 	SetUpShareData();
 
 	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
@@ -142,6 +146,8 @@ namespace window {
 	pcEditDoc = nullptr;
 
 	TearDownShareData();
+
+	pCommandLine = nullptr;
 }
 
 } // namespace window
