@@ -73,7 +73,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
-			std::wstring szForeViewString = m_pTypeData->m_szTabViewString;
+			std::wstring szForeViewString{ m_pTypeData->m_szTabViewString };
 			if (szForeViewString.length() < nTabDispWidth) {
 				szForeViewString.append(nTabDispWidth - szForeViewString.length(), L' ');
 			}

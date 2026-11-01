@@ -85,10 +85,10 @@ enum EBackgroundImagePos {
 
 //! エンコードオプション
 struct SEncodingConfig{
-	bool				m_bPriorCesu8;					//!< 自動判別時に CESU-8 を優先するかどうか
-	ECodeType			m_eDefaultCodetype;				//!< デフォルト文字コード
-	EEolType			m_eDefaultEoltype;				//!< デフォルト改行コード	// 2011.01.24 ryoji
-	bool				m_bDefaultBom;					//!< デフォルトBOM			// 2011.01.24 ryoji
+	bool				m_bPriorCesu8 = false;						//!< 自動判別時に CESU-8 を優先するかどうか
+	ECodeType			m_eDefaultCodetype = CODE_UTF8;				//!< デフォルト文字コード
+	EEolType			m_eDefaultEoltype = EEolType::cr_and_lf;	//!< デフォルト改行コード	// 2011.01.24 ryoji
+	bool				m_bDefaultBom = true;						//!< デフォルトBOM			// 2011.01.24 ryoji
 };
 
 //! 文字列区切り記号エスケープ方法
@@ -113,18 +113,25 @@ enum EKeyHelpRMenuType{
 
 //! タイプ別設定
 struct STypeConfig{
+	using SIndentChars = StaticString<64>;
+	using SKinsokuChars = StaticString<200>;
+	using SRegexKeywords = StaticString<MAX_REGEX_KEYWORDLISTLEN>;
+	using STabViewString = StaticString<8 + 1>;
+	using STypeExts = StaticString<MAX_TYPES_EXTS>;
+	using STypeName = StaticString<MAX_TYPES_NAME>;
+
 	//2007.09.07 変数名変更: m_nMaxLineSize→m_nMaxLineKetas
 	int					m_nIdx;
 	int					m_id;
-	WCHAR				m_szTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
-	WCHAR				m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
+	STypeName			m_szTypeName{};					//!< タイプ属性：名称
+	STypeExts			m_szTypeExts{};					//!< タイプ属性：拡張子リスト
 	int					m_nTextWrapMethod;				//!< テキストの折り返し方法		// 2008.05.30 nasukoji
 	CKetaXInt			m_nMaxLineKetas;				//!< 折り返し桁数
 	int					m_nColumnSpace;					//!< 文字と文字の隙間
 	int					m_nLineSpace;					//!< 行間のすきま
 	CKetaXInt			m_nTabSpace;					//!< TABの文字数
 	ETabArrow			m_bTabArrow;					//!< タブ矢印表示		//@@@ 2003.03.26 MIK
-	EDIT_CHAR			m_szTabViewString[8+1];			//!< TAB表示文字列	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
+	STabViewString		m_szTabViewString{};			//!< TAB表示文字列	// 2003.1.26 aroka サイズ拡張	// 2009.02.11 ryoji サイズ戻し(17->8+1)
 	bool				m_bInsSpace;					//!< スペースの挿入	// 2001.12.03 hor
 	int					m_nTsvMode;						//!< TSVモード	// 2015.05.02 syat
 	// 2005.01.13 MIK 配列化
@@ -137,7 +144,7 @@ struct STypeConfig{
 	bool				m_bStringLineOnly;				//!< 文字列は行内のみ
 	bool				m_bStringEndLine;				//!< (終了文字列がない場合)行末まで色分け
 	int					m_nHeredocType;
-	wchar_t				m_szIndentChars[64];			//!< その他のインデント対象文字
+	SIndentChars		m_szIndentChars{};			//!< その他のインデント対象文字
 
 	int					m_nColorInfoArrNum;				//!< 色設定配列の有効数
 	ColorInfo			m_ColorInfoArr[64];				//!< 色設定配列
@@ -163,9 +170,9 @@ struct STypeConfig{
 	bool				m_bKinsokuRet;					//!< 改行文字のぶら下げ	//@@@ 2002.04.13 MIK
 	bool				m_bKinsokuKuto;					//!< 句読点のぶらさげ	//@@@ 2002.04.17 MIK
 	bool				m_bKinsokuHide;					//!< ぶら下げを隠す		// 2011/11/30 Uchi
-	wchar_t				m_szKinsokuHead[200];			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
-	wchar_t				m_szKinsokuTail[200];			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
-	wchar_t				m_szKinsokuKuto[200];			//!< 句読点ぶらさげ文字	// 2009.08.07 ryoji
+	SKinsokuChars		m_szKinsokuHead{};			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	SKinsokuChars		m_szKinsokuTail{};			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	SKinsokuChars		m_szKinsokuKuto{};			//!< 句読点ぶらさげ文字	// 2009.08.07 ryoji
 
 	int					m_nCurrentPrintSetting;			//!< 現在選択している印刷設定
 
@@ -214,7 +221,7 @@ struct STypeConfig{
 	bool				m_bUseRegexKeyword;								//!< 正規表現キーワードを使うか
 	DWORD				m_nRegexKeyMagicNumber;							//!< 正規表現キーワード更新マジックナンバー
 	RegexKeywordInfo	m_RegexKeywordArr[MAX_REGEX_KEYWORD]{};			//!< 正規表現キーワード
-	wchar_t				m_RegexKeywordList[MAX_REGEX_KEYWORDLISTLEN]{};	//!< 正規表現キーワード
+	SRegexKeywords		m_RegexKeywordList{};							//!< 正規表現キーワード
 //@@@ 2001.11.17 add end MIK
 
 //@@@ 2006.04.10 fon ADD-start
@@ -251,10 +258,13 @@ struct STypeConfig{
 //! タイプ別設定(mini)
 struct STypeConfigMini
 {
-	int					m_id;
-	WCHAR				m_szTypeName[MAX_TYPES_NAME];	//!< タイプ属性：名称
-	WCHAR				m_szTypeExts[MAX_TYPES_EXTS];	//!< タイプ属性：拡張子リスト
-	SEncodingConfig		m_encoding;						//!< エンコードオプション
+	using STypeExts = STypeConfig::STypeExts;
+	using STypeName = STypeConfig::STypeName;
+
+	int					m_id = 0;
+	STypeName			m_szTypeName{};		//!< タイプ属性：名称
+	STypeExts			m_szTypeExts{};		//!< タイプ属性：拡張子リスト
+	SEncodingConfig		m_encoding{};		//!< エンコードオプション
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
