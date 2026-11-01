@@ -18,8 +18,9 @@
 #include "doc/logic/CDocLineMgr.h"
 #include "agent/CSearchAgent.h"
 #include "docplus/CBookmarkManager.h"
-#include "env/ShareDataTestSuite.hpp"
 #include "extmodule/CBregexp.h"
+
+#include "window/EditorTestSuite.hpp"
 
 using ::testing::ElementsAre;	// pch.h に using が無いのでここで宣言する
 
@@ -468,16 +469,9 @@ TEST(CSearchAgent, ReplaceData10)
 	CSearchAgent::SearchWord() と CBookmarkManager::MarkSearchWord() の今の動きを固定する。
 	単語単位は共有データの設定を読み、正規表現は bregonig.dll を読み込むので、共有データを用意する。
  */
-struct CSearchAgentSearchTest : public ::testing::Test, public env::ShareDataTestSuite {
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
+struct CSearchAgentSearchTest : public ::testing::Test, public window::EditorTestSuite {
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 
 	CDocLineMgr m_cDocLineMgr;
 	CBregexp m_cRegexp;

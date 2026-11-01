@@ -12,7 +12,8 @@
 #include <string_view>
 
 #include "grep/GrepMessageFormat.h"
-#include "env/ShareDataTestSuite.hpp"
+
+#include "window/EditorTestSuite.hpp"
 
 /*!
  * @brief lineColumnToString のテスト
@@ -233,10 +234,10 @@ TEST(GrepMessageFormat, OutputPathInfoExpandsBuffer)
  *
  * SetGrepResult は GetDllShareData() を参照するため、共有データの用意が必要。
  */
-class SetGrepResultTest : public ::testing::Test {
+class SetGrepResultTest : public ::testing::Test, public window::EditorTestSuite {
 protected:
-	static void SetUpTestSuite() { env::ShareDataTestSuite::SetUpShareData(); }
-	static void TearDownTestSuite() { env::ShareDataTestSuite::TearDownShareData(); }
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 };
 
 /*!

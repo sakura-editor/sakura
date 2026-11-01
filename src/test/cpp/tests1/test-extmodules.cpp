@@ -15,10 +15,10 @@
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
-#include "window/EditorTestSuite.hpp"
-
 #include "mem/CNativeW.h"
 #include "view/colors/EColorIndexType.h"
+
+#include "window/EditorTestSuite.hpp"
 
 #include "tests1_rc.h"
 
@@ -114,22 +114,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 
 namespace extmodule {
 
-struct ExtModuleTest : public ::testing::Test, public env::ShareDataTestSuite {
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
+struct ExtModuleTest : public ::testing::Test, public window::EditorTestSuite {
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 };
 
 struct CBregexpTest : public ExtModuleTest {
@@ -259,24 +246,8 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage, nOption, bKakomi), IsFalse());
 }
 
-struct CMigemoTest : public ExtModuleTest, public window::EditorTestSuite {
+struct CMigemoTest : public ExtModuleTest {
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
-
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpTestSuite()
-	{
-		SetUpEditor();
-	}
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownTestSuite()
-	{
-		TearDownEditor();
-	}
 
 	CMigemoHolder pcMigemo = nullptr;
 
