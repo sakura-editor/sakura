@@ -50,12 +50,38 @@ struct MacroFuncInfoEx
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	int				m_nFuncID;
-	const WCHAR*	m_pszFuncName;
-	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
-	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
-	MacroFuncInfoEx*	m_pData;
+	static constexpr auto MaxArgs = 4;
+
+	MacroFuncInfo() = default;
+
+	constexpr MacroFuncInfo(
+		int funcID,
+		const WCHAR* funcName,
+		std::initializer_list<VARTYPE> arguments,
+		VARTYPE result,
+		MacroFuncInfoEx* data = nullptr
+	)
+		: m_nFuncID{ funcID }
+		, m_pszFuncName{ funcName }
+		, m_varResult{ result }
+		, m_pData{ data }
+	{
+		if (std::size(m_varArguments) < arguments.size()) throw std::overflow_error("Too many arguments for MacroFuncInfo");
+
+		std::copy_n(
+			arguments.begin(),
+			std::min(arguments.size(), std::size(m_varArguments)),
+			m_varArguments
+		);
+	}
+
+	int				m_nFuncID = 0;
+	LPCWSTR			m_pszFuncName = nullptr;
+	VARTYPE			m_varArguments[MaxArgs]{};	//!< 引数型の配列
+	VARTYPE			m_varResult = VT_EMPTY;		//!< 戻り値の型 VT_EMPTYならprocedureということで
+	MacroFuncInfoEx*	m_pData = nullptr;
 };
+
 //マクロ関数情報構造体配列
 typedef MacroFuncInfo* MacroFuncInfoArray;
 
