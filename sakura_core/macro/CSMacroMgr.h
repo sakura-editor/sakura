@@ -44,6 +44,7 @@ enum class EMacroResult {
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
 	static constexpr auto MaxArgs = 8;
+	using SVarTypeArr = std::array<VARTYPE, MaxArgs>;
 
 	MacroFuncInfo() = default;
 
@@ -63,13 +64,13 @@ struct MacroFuncInfo {
 		std::copy_n(
 			arguments.begin(),
 			std::min(arguments.size(), std::size(m_varArguments)),
-			m_varArguments
+			m_varArguments.begin()
 		);
 	}
 
 	int				m_nFuncID = 0;
 	LPCWSTR			m_pszFuncName = nullptr;
-	VARTYPE			m_varArguments[MaxArgs]{};	//!< 引数型の配列
+	SVarTypeArr		m_varArguments{};			//!< 引数型の配列
 	VARTYPE			m_varResult = VT_EMPTY;		//!< 戻り値の型 VT_EMPTYならprocedureということで
 };
 

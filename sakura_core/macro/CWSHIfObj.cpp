@@ -47,12 +47,12 @@ void CWSHIfObj::ReadyCommands(
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
 		const auto found = std::ranges::find_if(Info->m_varArguments, [] (const auto &varType) { return varType == VT_EMPTY; });
-		const auto ArgCount = std::distance(Info->m_varArguments, found);
+		const auto ArgCount = std::distance(Info->m_varArguments.begin(), found);
 
 		AddMethod(
 			Info->m_pszFuncName,
 			(Info->m_nFuncID | flags),
-			Info->m_varArguments,
+			Info->m_varArguments.data(),
 			static_cast<int>(ArgCount),
 			Info->m_varResult,
 			reinterpret_cast<CIfObjMethod>(&CWSHIfObj::MacroCommand)
