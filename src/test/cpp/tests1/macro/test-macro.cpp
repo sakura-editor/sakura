@@ -49,7 +49,7 @@ std::filesystem::path find_dll_in_the_path(const std::filesystem::path& dllname)
 		std::wcout << L"dll found: '" << (p / dllname) << L"'" << std::endl;
 
 		using DllHolder = cxx::ResourceHolder<&::FreeLibrary>;
-		if (DllHolder dllHolder = LoadLibraryExedir((p / dllname).c_str()); !dllHolder) {
+		if (DllHolder dllHolder = ::LoadLibraryW((p / dllname).c_str()); !dllHolder) {
 			//エラーコード取得
 			const auto err = ::GetLastError();
 

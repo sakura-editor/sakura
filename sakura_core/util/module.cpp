@@ -34,17 +34,6 @@ void ChangeCurrentDirectoryToExeDir()
 	}
 }
 
-/*! 
-	@date 2010.08.28 Moca 新規作成
-*/
-HMODULE LoadLibraryExedir(LPCWSTR pszDll)
-{
-	CCurrentDirectoryBackupPoint dirBack;
-	// DLL インジェクション対策としてEXEのフォルダーに移動する
-	ChangeCurrentDirectoryToExeDir();
-	return ::LoadLibrary( pszDll );
-}
-
 /*!	シェルやコモンコントロール DLL のバージョン番号を取得
 
 	@param[in] lpszDllName DLL ファイルのパス
@@ -61,7 +50,9 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
-	hinstDll = LoadLibraryExedir(lpszDllName);
+	// Comctl32.dll などシステムの DLL を名前のまま読み込む。
+	// カレントディレクトリは wWinMain() の SetDllDirectory(L"") で DLL の検索から外してある。
+	hinstDll = ::LoadLibraryW(lpszDllName);
 
 	if(hinstDll)
 	{
