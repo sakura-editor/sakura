@@ -40,13 +40,6 @@ enum class EMacroResult {
 	EncodingError,
 };
 
-struct MacroFuncInfoEx
-{
-	int			m_nArgMinSize;
-	int			m_nArgMaxSize;
-	VARTYPE*	m_pVarArgEx;
-};
-
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
@@ -59,12 +52,11 @@ struct MacroFuncInfo {
 		const WCHAR* funcName,
 		std::initializer_list<VARTYPE> arguments,
 		VARTYPE result,
-		MacroFuncInfoEx* data = nullptr
+		std::nullptr_t = nullptr
 	)
 		: m_nFuncID{ funcID }
 		, m_pszFuncName{ funcName }
 		, m_varResult{ result }
-		, m_pData{ data }
 	{
 		if (std::size(m_varArguments) < arguments.size()) throw std::overflow_error("Too many arguments for MacroFuncInfo");
 
@@ -79,7 +71,6 @@ struct MacroFuncInfo {
 	LPCWSTR			m_pszFuncName = nullptr;
 	VARTYPE			m_varArguments[MaxArgs]{};	//!< 引数型の配列
 	VARTYPE			m_varResult = VT_EMPTY;		//!< 戻り値の型 VT_EMPTYならprocedureということで
-	MacroFuncInfoEx*	m_pData = nullptr;
 };
 
 //マクロ関数情報構造体配列
