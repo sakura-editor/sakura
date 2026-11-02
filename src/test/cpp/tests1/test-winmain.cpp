@@ -1024,6 +1024,40 @@ INSTANTIATE_TEST_SUITE_P(WinMain
  * テスト実行後に設定ファイルを残しておく意味はないので終了後も削除している。
  */
 struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
+	/*!
+	 * テストスイートの終了後に1回だけ呼ばれる関数
+	 */
+	static void TearDownTestSuite() {
+		// コントロールプロセスに終了指示を出して終了を待つ
+		testing::TerminateControlProcess(L"");
+	}
+
+	/*!
+	 * トレイウインドウのクラス名
+	 */
+	std::wstring trayWndClassName{ GSTR_CEDITAPP };
+
+	/*!
+	 * テストが起動される直前に毎回呼ばれる関数
+	 */
+	void SetUp() override {
+		// トレイウインドウを検索する
+		if (const auto hTrayWnd = cxx::FindWindowW(trayWndClassName, trayWndClassName);
+			!hTrayWnd)
+		{
+			// コントロールプロセスを起動する
+			const auto cp = testing::CreateControlProcess(L"");
+			ASSERT_THAT(cp, NotNull());
+		}
+	}
+
+	/*!
+	 * テストが実行された直後に毎回呼ばれる関数
+	 */
+	void TearDown() override {
+		Kernel32::resetInstance();
+	}
+
 	std::wstring_view GetProfileName() const override {
 		return L"";
 	}
@@ -1036,6 +1070,9 @@ struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
  */
 TEST_F(WinMainFuncTest, CreateControlProcess101)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
 
@@ -1112,6 +1149,9 @@ TEST_F(WinMainFuncTest, CreateControlProcess102)
  */
 TEST_F(WinMainFuncTest, CreateControlProcess103)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
 
@@ -1355,8 +1395,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess108)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateMutex()"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1387,8 +1425,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess109)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateMutex()"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1396,6 +1432,9 @@ TEST_F(WinMainFuncTest, CreateControlProcess109)
  */
 TEST_F(WinMainFuncTest, CreateControlProcess110)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	Kernel32::setInstance<MockKernel32>();
 
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
@@ -1435,8 +1474,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess110)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateFileMapping()"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1444,6 +1481,9 @@ TEST_F(WinMainFuncTest, CreateControlProcess110)
  */
 TEST_F(WinMainFuncTest, CreateControlProcess111)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	Kernel32::setInstance<MockKernel32>();
 
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
@@ -1487,8 +1527,6 @@ TEST_F(WinMainFuncTest, CreateControlProcess111)
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("MapViewOfFile"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1518,9 +1556,6 @@ TEST_F(WinMainFuncTest, DISABLED_CreateEditorProcess001)	// 安定しないの�
 
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	ep.lock();
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName);
 }
 
 /*!
@@ -1547,8 +1582,6 @@ TEST_F(WinMainFuncTest, CreateEditorProcess101)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateMutex()"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1582,8 +1615,6 @@ TEST_F(WinMainFuncTest, CreateEditorProcess102)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("エディタまたはシステムがビジー"))
 	);
-
-	Kernel32::resetInstance();
 }
 
 /*!
@@ -1645,11 +1676,6 @@ TEST_F(WinMainFuncTest, CreateEditorProcess110)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("CreateFileMapping()"))
 	);
-
-	Kernel32::resetInstance();
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(L"");
 }
 
 /*!
@@ -1688,11 +1714,6 @@ TEST_F(WinMainFuncTest, CreateEditorProcess111)
 		}),
 		ThrowsMessage<std::system_error>(StartsWith("MapViewOfFile()"))
 	);
-
-	Kernel32::resetInstance();
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(L"");
 }
 
 /*!
@@ -1743,11 +1764,6 @@ TEST_F(WinMainFuncTest, CreateEditorProcess112)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("異なるバージョンの"))
 	);
-
-	Kernel32::resetInstance();
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(L"");
 }
 
 /*!
@@ -1757,8 +1773,14 @@ TEST_F(WinMainFuncTest, CreateEditorProcess112)
  */
 TEST_F(WinMainFuncTest, DoGrep001)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
+
+	// INIファイルのパスを組み立てる
+	iniPath = GetIniFileName();
 
 	// ケース独自の設定ファイルを使うので、一旦削除する
 	std::filesystem::remove(iniPath);
@@ -1797,7 +1819,10 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	ep.lock();
 
 	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName, cp.dwProcessId);
+	testing::TerminateControlProcess(profileName);
+
+	// 後続テストに影響させないよう削除しておく
+	std::filesystem::remove(iniPath);
 }
 
 /*!
@@ -1820,9 +1845,6 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
 
 	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
 	ep.lock();
-
-	// コントロールプロセスに終了指示を出して終了を待つ
-	testing::TerminateControlProcess(profileName);
 }
 
 /*!
@@ -1832,8 +1854,15 @@ TEST_F(WinMainFuncTest, OpenDebugWindow001)
  */
 TEST_F(WinMainFuncTest, ShowDlgGrep101)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
+
+	// コントロールプロセスを起動する
+	auto cp = testing::CreateControlProcess(profileName);
+	ASSERT_THAT(cp, NotNull());
 
 	// 表示されたGrepダイアログを閉じるためのスレッドを起動する
 	auto t = StartDialogCloser(L"Grep", [] (IUIAutomation* pUIAutomation, HWND hWndDlg, std::stop_token st) {

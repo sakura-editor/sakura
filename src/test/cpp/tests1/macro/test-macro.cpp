@@ -112,8 +112,6 @@ TEST_F(MacroMgrTest, CKeyMacroMgr001)
 
 	auto mgr = std::unique_ptr<CMacroManagerBase>(CMacroFactory::getInstance()->Create(L"mac"));
 
-	const HINSTANCE unusedArg1 = nullptr;
-
 	EXPECT_THAT(mgr->LoadKeyMacroStr(unusedArg1, L""), IsTrue());
 
 	EXPECT_THAT(mgr->ExecKeyMacro(&pcEditWnd->GetActiveView(), 0), IsTrue());

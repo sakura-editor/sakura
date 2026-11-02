@@ -1359,8 +1359,6 @@ TEST_F(TrayWndTest, ShowContextMenu001)
 }
 
 struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, public window::UiaTestSuite {
-	static constexpr HINSTANCE unusedArg1 = nullptr;
-
 	static inline std::filesystem::path backupAgentTargetPath{};
 	static inline std::filesystem::path backupPath{};
 	static inline std::filesystem::path backupPathB00{};
