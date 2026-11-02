@@ -132,13 +132,15 @@ bool CNormalProcess::InitializeProcess(
 	// スコープを抜けるときシグナル状態になるようにする
 	EventHolder grepEvent;
 
-	/* 共有メモリを初期化する */
+	// コントロールプロセスが起動している状態にする
 	if (!CProcessFactory::IsExistControlProcess() &&
-		!CProcessFactory::StartControlProcess() ||
-		!CProcess::InitializeProcess(nCmdShow))
+		!CProcessFactory::StartControlProcess())
 	{
 		return false;
 	}
+
+	// 共有メモリを初期化する
+	GetShareData().OpenShareData();
 
 	/* ダークモード設定を反映する */
 	ApplyDarkModeSetting(GetDllShareData().m_Common.m_sWindow.m_bDarkMode);
@@ -209,6 +211,9 @@ bool CNormalProcess::InitializeProcess(
 	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
 		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
 	}
+
+	(void)nCmdShow;	//TODO: CEditWndのCreate()に渡すようにする
+
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);

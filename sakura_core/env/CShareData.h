@@ -79,7 +79,9 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	bool InitShareData();	/* CShareDataクラスの初期化処理 */
+	void	InitShareData();
+	void	OpenShareData();
+
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
