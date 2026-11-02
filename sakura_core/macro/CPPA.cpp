@@ -501,7 +501,8 @@ void __stdcall CPPA::stdIntFunc(
 
 	*ResultValue = 0;
 	*Err_CD = 0;
-	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
+
+	if (CallHandleFunction(Index, std::span(Argument, ArgSize), &Ret)) {
 		switch( Ret.vt ){
 		case VT_I4:
 			*ResultValue = Ret.lVal;
@@ -569,7 +570,7 @@ void __stdcall CPPA::stdStrFunc(
 	::VariantInit(&Ret);
 	*Err_CD = 0;
 
-	if (CallHandleFunction(Index, Argument, ArgSize, &Ret) &&
+	if (CallHandleFunction(Index, std::span(Argument, ArgSize), &Ret) &&
 		VT_BSTR == Ret.vt) {
 			int len;
 			char* buf;
@@ -591,69 +592,58 @@ void __stdcall CPPA::stdStrFunc(
 
 	文字列で与えられた引数をVARIANT/BSTRに変換してCMacro::HandleFunction()を呼びだす
 	@author Moca
-*/
+ * @date 2002.02.24 Moca
+ */
 bool CPPA::CallHandleFunction(
-	const int Index, const char* Arg[],
-	int ArgSize, VARIANT* Result )
+	const int Index,
+	std::span<LPCSTR> Args,
+	VARIANT* Result
+)
 {
-	int i, ArgCnt;
-	const int maxArgSize = 8;
-	VARIANT vtArg[maxArgSize];
-	const MacroFuncInfo* mfi;
-	bool Ret;
+	if (Index < F_FUNCTION_FIRST) return false;
 
-	mfi = CSMacroMgr::GetFuncInfoByID(Index);
-	for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-		::VariantInit( &vtArg[i] );
-	}
-	for(i=0, ArgCnt=0; i<maxArgSize && i<ArgSize; i++ ){
-		VARTYPE type = VT_EMPTY;
-		if( i < 4 ){
-			type = mfi->m_varArguments[i];
-		}else{
-			if( mfi->m_pData && i < mfi->m_pData->m_nArgMinSize ){
-				type = mfi->m_pData->m_pVarArgEx[i - 4];
-			}
-		}
-		if(VT_EMPTY == type){
+	const auto mfi = CSMacroMgr::GetFuncInfoByID(Index);
+
+	const auto nArgSizeMax = mfi->m_pData
+		? size_t(mfi->m_pData->m_nArgMaxSize)
+		: std::size(mfi->m_varArguments);
+
+	std::vector<_variant_t> varArgs{};
+	varArgs.reserve(nArgSizeMax);
+
+	for (size_t i = 0; i < std::min(std::size(Args), nArgSizeMax); ++i)
+	{
+		const VARTYPE varType = mfi->m_varArguments[i];
+		if (VT_EMPTY == varType) {
 			break;
 		}
 
-		switch( type ){
+		switch (varType) {
 		case VT_I4:
-		{
-			vtArg[i].vt = VT_I4;
-			vtArg[i].lVal = atoi( Arg[i] );
+			varArgs.emplace_back(
+				atol(Args[i]),
+				static_cast<VARTYPE>(VT_I4)
+			);
 			break;
-		}
+
 		case VT_BSTR:
-		{
-			SysString S(Arg[i],lstrlenA(Arg[i]));
-			Wrap(&vtArg[i])->Receive(S);
+			varArgs.emplace_back(
+				Args[i]
+			);
 			break;
-		}
+
 		default:
-			for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-				::VariantClear( &vtArg[i] );
-			}
 			return false;
 		}
-		ArgCnt++;
 	}
 
-	if(Index >= F_FUNCTION_FIRST)
-	{
-		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, (EFunctionCode)Index, vtArg, ArgCnt, *Result);
-		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-			::VariantClear( &vtArg[i] );
-		}
-		return Ret;
-	}else{
-		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-			::VariantClear( &vtArg[i] );
-		}
-		return false;
-	}
+	return CMacro::HandleFunction(
+		m_CurInstance->m_pcEditView,
+		static_cast<EFunctionCode>(Index),
+		varArgs.data(),
+		static_cast<int>(varArgs.size()),
+		*Result
+	);
 }
 
 #if PPADLL_VER >= 123
