@@ -50,7 +50,7 @@ struct MacroFuncInfoEx
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	static constexpr auto MaxArgs = 4;
+	static constexpr auto MaxArgs = 8;
 
 	MacroFuncInfo() = default;
 

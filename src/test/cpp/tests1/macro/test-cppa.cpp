@@ -152,9 +152,7 @@ TEST_F(CPpaTest, GetDeclarations)
 	EXPECT_THAT(CPPA::GetDeclarations(funcInfo7), StrEq("function S_Func3; index 7;"));
 
 	// 引数をたくさん指定する
-	VARTYPE varArgEx8[] = { VT_I4, VT_BSTR, VT_I4, VT_BSTR };
-	MacroFuncInfoEx funcInfoEx8 = { 8, 8, varArgEx8 };
-	MacroFuncInfo funcInfo8 = { 8, L"Func4", { VT_I4, VT_BSTR, VT_I4, VT_BSTR }, VT_BSTR, &funcInfoEx8 };
+	MacroFuncInfo funcInfo8 = { 8, L"Func4", { VT_I4, VT_BSTR, VT_I4, VT_BSTR, VT_I4, VT_BSTR, VT_I4, VT_BSTR }, VT_BSTR };
 	EXPECT_THAT(CPPA::GetDeclarations(funcInfo8), StrEq("function S_Func4(i0: Integer; s1: string; i2: Integer; s3: string; i4: Integer; s5: string; i6: Integer; s7: string): string; index 8;"));
 }
 

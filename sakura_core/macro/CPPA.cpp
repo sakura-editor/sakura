@@ -211,17 +211,10 @@ std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 
 	//	引数用バッファ
 	std::vector<std::string> args{};
-	args.reserve(8);
+	args.reserve(MacroFuncInfo::MaxArgs);
 
-	for (int i = 0; i < 8; ++i) {
-		VARTYPE vt = VT_EMPTY;
-		if( i < 4 ){
-			vt = cMacroFuncInfo.m_varArguments[i];
-		}else{
-			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
-				vt = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
-			}
-		}
+	for (size_t i = 0; i < std::size(cMacroFuncInfo.m_varArguments); ++i) {
+		const auto vt = cMacroFuncInfo.m_varArguments[i];
 		if ( vt == VT_EMPTY ){
 			break;
 		}
@@ -604,9 +597,7 @@ bool CPPA::CallHandleFunction(
 
 	const auto mfi = CSMacroMgr::GetFuncInfoByID(Index);
 
-	const auto nArgSizeMax = mfi->m_pData
-		? size_t(mfi->m_pData->m_nArgMaxSize)
-		: std::size(mfi->m_varArguments);
+	const auto nArgSizeMax = std::size(mfi->m_varArguments);
 
 	std::vector<_variant_t> varArgs{};
 	varArgs.reserve(nArgSizeMax);

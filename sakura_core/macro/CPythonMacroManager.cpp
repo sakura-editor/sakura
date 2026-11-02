@@ -255,20 +255,13 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		if (!arg) {
 			break;
 		}
-		VARTYPE varType;
-		if (i < 4) {
-			varType = info->m_varArguments[i];
-		}else {
-			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= (int)i) {
-				varType = VT_EMPTY;
-			}else {
-				varType = info->m_pData->m_pVarArgEx[i - 4];
-			}
-		}
-		if (varType == VT_EMPTY) {
+
+		if (std::size(info->m_varArguments) <= i) {
 			PyErr_BadArgument();
 			return nullptr;
 		}
+
+		const VARTYPE varType = info->m_varArguments[i];
 
 		if (varType == VT_BSTR) {
 			Py_ssize_t sz = 0;
@@ -324,20 +317,13 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		PyObject* arg = PyTuple_GetItem(args, i);
 		if (!arg)
 			break;
-		VARTYPE varType;
-		if (i < 4) {
-			varType = info->m_varArguments[i];
-		}else {
-			if (!info->m_pData || info->m_pData->m_nArgMaxSize >= (int)i) {
-				varType = VT_EMPTY;
-			}else {
-				varType = info->m_pData->m_pVarArgEx[i - 4];
-			}
-		}
-		if (varType == VT_EMPTY) {
+
+		if (std::size(info->m_varArguments) <= i) {
 			PyErr_BadArgument();
 			break;
 		}
+
+		const VARTYPE varType = info->m_varArguments[i];
 
 		::VariantInit(&vtArgs[i]);
 		if (varType == VT_BSTR) {

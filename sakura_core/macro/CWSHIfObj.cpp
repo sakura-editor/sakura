@@ -43,26 +43,12 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 		wcscpy(FuncName, Info->m_pszFuncName);
 
 		int ArgCount = 0;
-		if( Info->m_pData ){
-			ArgCount = Info->m_pData->m_nArgMinSize;
-		}else{
-			for(int i = 0; i < 4; ++i){
-				if(Info->m_varArguments[i] != VT_EMPTY) 
-					++ArgCount;
-			}
+		for(const auto argument : Info->m_varArguments){
+			if(argument == VT_EMPTY)
+				break;
+			++ArgCount;
 		}
-		VARTYPE* varArgTmp = nullptr;
 		VARTYPE* varArg = Info->m_varArguments;
-		if( 4 < ArgCount ){
-			varArgTmp = varArg = new VARTYPE[ArgCount];
-			for( int i = 0; i < ArgCount; i++ ){
-				if( i < 4 ){
-					varArg[i] = Info->m_varArguments[i];
-				}else{
-					varArg[i] = Info->m_pData->m_pVarArgEx[i-4];
-				}
-			}
-		}
 		//	2007.07.21 genta : flagを加えた値を登録する
 		this->AddMethod(
 			FuncName,
@@ -74,7 +60,6 @@ void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
 			/* CWSHIfObjを継承したサブクラスからReadyCommandsを呼び出した場合、
 			 * サブクラスのMacroCommandが呼び出される。 */
 		);
-		delete [] varArgTmp;
 		++Info;
 	}
 }
