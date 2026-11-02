@@ -38,6 +38,8 @@
 
 #include <fstream>
 
+#include "window/UiaTestSuite.hpp"	//COleInit
+
 using namespace std::literals::string_literals;
 
 std::filesystem::path GetTempFilePathWithExt(std::wstring_view prefix, std::wstring_view extension);
@@ -351,6 +353,9 @@ TEST_F(CSakuraEnvironmentTest, GetDlgInitialDir001)
  */
 TEST_F(CSakuraEnvironmentTest, ResolvePath001)
 {
+	// OLEを初期化する
+	const auto pcOleInit = std::make_unique<cxx::COleInit>();
+
 	// ショートカットのターゲットとなるファイルを作成する
 	const auto target = GetTempFilePathWithExt(L"lnk", L"txt");
 	std::wofstream fs(target);
