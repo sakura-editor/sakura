@@ -9,6 +9,7 @@
 #include "env/ShareDataTestSuite.hpp"
 #include "window/UiaTestSuite.hpp"
 
+#include "_main/CCommandLine.h"
 #include "doc/CEditDoc.h"
 #include "window/CEditWnd.h"
 
@@ -26,6 +27,8 @@ namespace window {
 
 struct EditorTestSuite : public env::ShareDataTestSuite
 {
+	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
+
 	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
 	static inline std::unique_ptr<CEditWnd> pcEditWnd = nullptr;
 	static inline std::unique_ptr<CSMacroMgr> pcSMacroMgr = nullptr;

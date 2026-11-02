@@ -12,7 +12,8 @@
 #include "_main/CCommandLine.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "grep/CGrepEnumKeys.h"
-#include "env/ShareDataTestSuite.hpp"
+
+#include "window/EditorTestSuite.hpp"
 
 /*!
  * 同型との等価比較
@@ -375,10 +376,10 @@ TEST(GrepInfo, MakeCommandLineOptions_OutputStyleOutOfRange)
  * CDlgGrep のコンストラクタはウィンドウを作らずメンバを初期化するだけだが、
  * 基底の CDialog が共有データの取得を検証するため、先に用意しておく必要がある。
  */
-class CDlgGrepTest : public ::testing::Test {
+class CDlgGrepTest : public ::testing::Test, public window::EditorTestSuite {
 protected:
-	static void SetUpTestSuite() { env::ShareDataTestSuite::SetUpShareData(); }
-	static void TearDownTestSuite() { env::ShareDataTestSuite::TearDownShareData(); }
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 };
 
 /*!

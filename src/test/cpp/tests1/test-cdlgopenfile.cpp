@@ -49,8 +49,6 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 		SetUpUiaTestSuite();
 
 		SetUpEditor();
-
-		Comdlg32::setInstance<MockComdlg32>();
 	}
 
 	/*!
@@ -58,8 +56,6 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	 */
 	static void TearDownTestSuite()
 	{
-		Comdlg32::resetInstance();
-
 		TearDownEditor();
 
 		TearDownUiaTestSuite();
@@ -70,6 +66,7 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 	 */
 	void SetUp() override
 	{
+		Comdlg32::setInstance<MockComdlg32>();
 		MockComdlg32::gm_Files.clear();
 
 		// テスト設定を反映する
@@ -97,6 +94,8 @@ struct FileDialogTest : public ::testing::TestWithParam<FileDialogTestParam>, pu
 		GetDllShareData().m_Common.m_sEdit.m_bVistaStyleFileDialog = true;
 
 		TearDownUia();
+
+		Comdlg32::resetInstance();
 	}
 };
 
@@ -668,9 +667,9 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 	 */
 	void TearDown() override
 	{
-		CDlgOpenFile::resetInstance();
-
 		TearDownUia();
+
+		CDlgOpenFile::resetInstance();
 	}
 };
 

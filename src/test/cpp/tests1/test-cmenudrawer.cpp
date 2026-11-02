@@ -5,9 +5,9 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include "env/ShareDataTestSuite.hpp"
-
 #include "uiparts/CMenuDrawer.h"
+
+#include "window/TrayWndTestSuite.hpp"
 
 /*!
  * @brief CMenuDrawerのテスト
@@ -16,20 +16,13 @@
  * ただしコンストラクタはツールバーボタンの配列を組み立てるだけでGDIには触れないため、
  * ウィンドウやデバイスコンテキストは不要（それらを使うのはCreate）。
  */
-struct CMenuDrawerTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CMenuDrawerTest : public ::testing::Test, public window::TrayWndTestSuite {
 	//! ツールバー番号の最大値。CMenuDrawerのコンストラクタが持つtbd[]の要素数と一致する。
 	//! 0番はセパレータで、1番以降がtbd[]の各要素に対応する。
 	static constexpr int TOOLBAR_NO_MAX = 481;
 
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
+	static void SetUpTestSuite() { SetUpTrayWnd(); }
+	static void TearDownTestSuite() { TearDownShareData(); }
 };
 
 /*!

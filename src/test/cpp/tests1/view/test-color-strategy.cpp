@@ -34,15 +34,8 @@ struct TestCase {
 };
 
 struct ColorStrategyTest : public ::testing::Test, public window::EditorTestSuite {
-	static void SetUpTestSuite()
-	{
-		SetUpEditor();
-	}
-
-	static void TearDownTestSuite()
-	{
-		TearDownEditor();
-	}
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 
 	void SetUp() override
 	{

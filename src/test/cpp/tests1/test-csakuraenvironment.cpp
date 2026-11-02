@@ -201,7 +201,6 @@ TEST_F(CSakuraEnvironmentTest, ExpandParameter_ProfileName)
 	EXPECT_THAT(ExpandParameter(L"$<profile>"), StrEq(L""));
 
 	// コマンドラインを書き替える
-	auto pCommandLine = std::make_unique<CCommandLine>();
 	pCommandLine->ParseCommandLine(LR"(-PROF="profile1")", false);
 
 	EXPECT_THAT(ExpandParameter(L"$<profile>"), StrEq(L"profile1"));

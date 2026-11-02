@@ -5,15 +5,16 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "pch.h"
-#include "env/ShareDataTestSuite.hpp"
+#include "uiparts/CImageListMgr.h"
+
+#include "env/CommonSetting.h"
+#include "uiparts/CMenuDrawer.h"
 
 #include <filesystem>
 #include <fstream>
 #include <vector>
 
-#include "env/CommonSetting.h"
-#include "uiparts/CImageListMgr.h"
-#include "uiparts/CMenuDrawer.h"
+#include "window/TrayWndTestSuite.hpp"
 
 /*!
  * @brief アイコンビットマップを差し替えたCImageListMgr
@@ -161,18 +162,11 @@ TEST(CImageListMgr, DrawToolIconToDcRejectsIconNumberOutOfRange)
  * 16x16の赤いBMPを用意する。左上の1画素だけ白にして、透過色として扱わせる。
  * CMenuDrawerが共有メモリを使うのでShareDataTestSuiteを継承する。
  */
-struct PluginIconTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct PluginIconTest : public ::testing::Test, public window::TrayWndTestSuite {
 	static constexpr uint32_t RED = 0xFFFF0000;
 
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
+	static void SetUpTestSuite() { SetUpTrayWnd(); }
+	static void TearDownTestSuite() { TearDownShareData(); }
 
 	void SetUp() override
 	{
