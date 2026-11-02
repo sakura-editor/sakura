@@ -663,14 +663,14 @@ void CShareData::InitShareData()
 				/*
 					2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 				*/
-				WCHAR szSettingName[64];
-				int i = 0;
-				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
+				using SPrintSettingName = StaticString<64>;
+				SPrintSettingName szSettingName{};
+				szSettingName = strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), 1);
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+				auto_sprintf_s( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"%s %d", LS(STR_PRINT_SET_NAME), i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 

@@ -420,7 +420,7 @@ INSTANTIATE_TEST_SUITE_P(ExpandParamCases
 		ExpandParamTestParam{ L"$E",           STR_NO_TITLE1          },
 		ExpandParamTestParam{ L"$e",           STR_NO_TITLE1          },
 		ExpandParamTestParam{ L"$B",           L""s                   },
-		ExpandParamTestParam{ L"$Q",           L"印刷設定 1"s         },
+		ExpandParamTestParam{ L"$Q",           strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), 1) },
 		ExpandParamTestParam{ L"$C",           L""s                   },
 		ExpandParamTestParam{ L"$x",           L"1"s                  },
 		ExpandParamTestParam{ L"$y",           L"1"s                  },
