@@ -9,15 +9,19 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include <memory>
 #include "macro/CWSHIfObj.h"
+
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
+
+#include <memory>
+#include <ranges>
+
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO
 
 //コマンド・関数を準備する
@@ -35,26 +39,21 @@ void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
 
 	@date 2007.07.20 genta flags追加．flagはコマンド登録段階で混ぜておく．
 */
-void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
+void CWSHIfObj::ReadyCommands(
+	MacroFuncInfo *Info,
+	int flags
+)
 {
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
-		wchar_t FuncName[256];
-		wcscpy(FuncName, Info->m_pszFuncName);
+		const auto found = std::ranges::find_if(Info->m_varArguments, [] (const auto &varType) { return varType == VT_EMPTY; });
+		const auto ArgCount = std::distance(Info->m_varArguments, found);
 
-		int ArgCount = 0;
-		for(const auto argument : Info->m_varArguments){
-			if(argument == VT_EMPTY)
-				break;
-			++ArgCount;
-		}
-		VARTYPE* varArg = Info->m_varArguments;
-		//	2007.07.21 genta : flagを加えた値を登録する
-		this->AddMethod(
-			FuncName,
+		AddMethod(
+			Info->m_pszFuncName,
 			(Info->m_nFuncID | flags),
-			varArg,
-			ArgCount,
+			Info->m_varArguments,
+			static_cast<int>(ArgCount),
 			Info->m_varResult,
 			reinterpret_cast<CIfObjMethod>(&CWSHIfObj::MacroCommand)
 			/* CWSHIfObjを継承したサブクラスからReadyCommandsを呼び出した場合、
