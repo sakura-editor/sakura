@@ -210,8 +210,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				}else{
 					::EnableWindow( GetItemHwnd( IDC_CHECK_EXT_RMENU ), TRUE );
 					if( !m_bRegistryChecked[ nIdx ] ){
-						WCHAR exts[std::size(type->m_szTypeExts)] = {0};
-						wcscpy( exts, type->m_szTypeExts );
+						decltype(type->m_szTypeExts) exts{};
+						wcscpy_s(exts, type->m_szTypeExts);
 						WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 
 						m_bExtRMenu[ nIdx ] = true;
@@ -244,8 +244,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndRMenu, !checked );
 				break;
 			}
-			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
-			wcscpy( exts, type->m_szTypeExts );
+			decltype(type->m_szTypeExts) exts{};
+			wcscpy_s(exts, type->m_szTypeExts);
 			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( nullptr != ext ){
@@ -283,8 +283,8 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 				ApiWrap::BtnCtl_SetCheck( hwndDblClick, !checked );
 				break;
 			}
-			WCHAR exts[std::size(type->m_szTypeExts)] = {0};
-			wcscpy( exts, type->m_szTypeExts );
+			decltype(type->m_szTypeExts) exts{};
+			wcscpy_s(exts, type->m_szTypeExts);
 			WCHAR *ext = _wcstok( exts, CDocTypeManager::m_typeExtSeps );
 			int nRet;
 			while( nullptr != ext ){

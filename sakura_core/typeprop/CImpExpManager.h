@@ -15,6 +15,7 @@
 #define SAKURA_CIMPEXPMANAGER_12EC6C8E_1661_485E_8972_A7A9AE419BC8_H_
 #pragma once
 
+#include "basis/primitive.h"
 #include "env/CDataProfile.h"
 #include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/DLLSHAREDATA.h"
@@ -29,8 +30,24 @@ public:
 	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg);
 	virtual bool Import(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
 	virtual bool Export(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
+
 	// ファイル名の初期値を設定
 	void SetBaseName(const std::wstring& sBase);
+
+	// ファイル名の初期値を設定
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<std::remove_cvref_t<A>, std::wstring>)
+	void SetBaseName(A baseName)
+	{
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _BaseName{ baseName };
+
+		// 文字列を渡すバージョンを呼び出す
+		return SetBaseName(
+			std::wstring{ _BaseName.str() }
+		);
+	}
+
 	// フルパス名を取得
 	inline std::wstring GetFullPath() const
 	{
