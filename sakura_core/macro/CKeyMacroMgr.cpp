@@ -210,10 +210,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 			// Jun. 16, 2002 genta プロトタイプチェック用に追加
 			int nArgs;
 			const MacroFuncInfo* mInfo= CSMacroMgr::GetFuncInfoByID( nFuncID );
-			auto nArgSizeMax = int(std::size(mInfo->m_varArguments));
-			if( mInfo->m_pData  ){
-				nArgSizeMax = mInfo->m_pData->m_nArgMaxSize;
-			}
+			const auto nArgSizeMax = int(std::size(mInfo->m_varArguments));
 			for(nArgs = 0; szLine[i] ; ++nArgs ) {
 				// Jun. 16, 2002 genta プロトタイプチェック
 				if( nArgs >= nArgSizeMax ){
@@ -227,14 +224,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 					);
 					ResetReady();
 				}
-				VARTYPE type = VT_EMPTY;
-				if( nArgs < 4 ){
-					type = mInfo->m_varArguments[nArgs];
-				}else{
-					if(  mInfo->m_pData && nArgs < mInfo->m_pData->m_nArgMinSize ){
-						type = mInfo->m_pData->m_pVarArgEx[nArgs - 4];
-					}
-				}
+				const VARTYPE type = mInfo->m_varArguments[nArgs];
 
 				//	Skip Space
 				while( szLine[i] == L' ' || szLine[i] == L'\t' )

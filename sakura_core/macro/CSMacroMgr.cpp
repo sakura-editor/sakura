@@ -34,15 +34,6 @@
 #include "view/CEditView.h"
 #include "debug/CRunningTimer.h"
 
-VARTYPE s_MacroArgEx_i[] = {VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_i = {5, 5, s_MacroArgEx_i};
-VARTYPE s_MacroArgEx_ii[] = {VT_I4, VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_ii = {6, 6, s_MacroArgEx_ii};
-#if 0
-VARTYPE s_MacroArgEx_s[] = {VT_BSTR};
-MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
-#endif
-
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
 //	機能番号			関数名			引数				作業用バッファ
@@ -271,8 +262,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_REPLACE_ALL,				L"ReplaceAll",		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	nullptr}, //すべて置換(実行)
 	{F_SEARCH_CLEARMARK,		L"SearchClearMark",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //検索マークのクリア
 	{F_JUMP_SRCHSTARTPOS,		L"SearchStartPos",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //検索開始位置へ戻る			// 02/06/26 ai
-	{F_GREP,					L"Grep",				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	&s_MacroInfoEx_i}, //Grep
-	{F_GREP_REPLACE,			L"GrepReplace",		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR },	VT_EMPTY,	&s_MacroInfoEx_ii}, //Grep置換
+	{F_GREP,					L"Grep",			{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4,   VT_I4 },		VT_EMPTY }, //Grep
+	{F_GREP_REPLACE,			L"GrepReplace",		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR, VT_I4, VT_I4 },	VT_EMPTY }, //Grep置換
 	{F_JUMP,					L"Jump",				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //指定行ヘジャンプ
 	{F_OUTLINE,					L"Outline",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //アウトライン解析
 	{F_TAGJUMP,					L"TagJump",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //タグジャンプ機能

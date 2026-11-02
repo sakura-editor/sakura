@@ -121,9 +121,6 @@ private:
 	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
 };
 
-VARTYPE g_OutlineIfObj_MacroArgEx_s[] = {VT_BSTR};
-MacroFuncInfoEx g_OutlineIfObj_FuncInfoEx_s = {5, 5, g_OutlineIfObj_MacroArgEx_s};
-
 //コマンド情報
 MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = 
 {
@@ -133,8 +130,8 @@ MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] =
 	{EFunctionCode(F_OL_SETTITLE),			L"SetTitle",				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr },	//アウトラインダイアログタイトルを指定
 	{EFunctionCode(F_OL_SETLISTTYPE),		L"SetListType",				{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //アウトラインリスト種別を指定
 	{EFunctionCode(F_OL_SETLABEL),			L"SetLabel",				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //ラベル文字列を指定
-	{EFunctionCode(F_OL_ADDFUNCINFO3),		L"AddFuncInfo3",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名）
-	{EFunctionCode(F_OL_ADDFUNCINFO4),		L"AddFuncInfo4",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	&g_OutlineIfObj_FuncInfoEx_s }, //アウトライン解析に追加する（ファイル名、深さ指定）
+	{EFunctionCode(F_OL_ADDFUNCINFO3),		L"AddFuncInfo3",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名）
+	{EFunctionCode(F_OL_ADDFUNCINFO4),		L"AddFuncInfo4",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名、深さ指定）
 
 	//	終端
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
