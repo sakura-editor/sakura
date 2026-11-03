@@ -216,26 +216,11 @@ bool CControlProcess::InitializeProcess(
 		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
-	SetMainWindow(hwnd);
+	SetMainWindow(*m_pcTray);
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
 	if (hEvent) ::SetEvent(hEvent);
 
 	return true;
-}
-
-/*!
-	@brief コントロールプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CControlProcess::MainLoop()
-{
-	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
 }
