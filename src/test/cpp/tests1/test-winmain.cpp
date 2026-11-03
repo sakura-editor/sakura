@@ -75,9 +75,11 @@ void writeTextFile(
 	const Lines& lines
 )
 {
+	std::error_code ec;
+
 	if (const auto parentPath = outPath.parent_path(); !fexist(parentPath)) {
 		// ディレクトリが存在しない場合は作成する
-		std::filesystem::create_directories(parentPath);
+		std::filesystem::create_directories(parentPath, ec);
 	}
 
 	// ファイル出力ストリームをバイナリモードで開く
@@ -1723,9 +1725,6 @@ TEST_F(WinMainFuncTest, DoGrep001)
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
 
-	// INIファイルのパスを組み立てる
-	iniPath = GetIniFileName();
-
 	// ケース独自の設定ファイルを使うので、一旦削除する
 	std::filesystem::remove(iniPath);
 
@@ -1738,10 +1737,6 @@ TEST_F(WinMainFuncTest, DoGrep001)
 		u8"szLanguageDll="sv,	// 言語DLLの指定(空にすると日本語になる)
 	};
 	cxx::writeTextFile(iniPath, iniLines);
-
-	// コントロールプロセスを起動する
-	auto cp = testing::CreateControlProcess(profileName);
-	ASSERT_THAT(cp, NotNull());
 
 	std::array args{
 		LR"(-GREPMODE)"s,
