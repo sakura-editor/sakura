@@ -157,7 +157,7 @@ public:
 
 	virtual bool InitializeProcess(
 		int nCmdShow [[maybe_unused]]
-	);
+	) = 0;
 
 protected:
 	virtual bool MainLoop() = 0;

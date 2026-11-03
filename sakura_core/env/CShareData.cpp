@@ -86,20 +86,19 @@ CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;
 }
 
-//! CShareDataクラスの初期化処理
 /*!
-	CShareDataクラスを利用する前に必ず呼び出すこと。
-
-	@retval true 初期化成功
-	@retval false 初期化失敗
-
-	@note 既に存在する共有メモリのバージョンがこのエディタが使うものと
-	異なる場合は致命的エラーを防ぐためにfalseを返します。CProcess::Initialize()
-	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
-
-	@date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
-*/
-bool CShareData::InitShareData()
+ * @brief CShareDataクラスの初期化処理
+ *
+ * 共有メモリを新規作成して初期化する。
+ * 他プロセスが作成した共有メモリが残っていても上書きする。
+ *
+ * コントロールプロセス専用。
+ *
+ * @note ここで初期化した共有メモリは、後続のINI設定ファイルの読み込み処理で上書きされる。
+ *
+ * @date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
+ */
+void CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
@@ -129,14 +128,12 @@ bool CShareData::InitShareData()
 		);
 	}
 
-	if( GetLastError() != ERROR_ALREADY_EXISTS ){
-		/* オブジェクトが存在していなかった場合 */
+	// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+	m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
 
-		// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
-		m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
-			FILE_MAP_ALL_ACCESS
-		);
-	
+	{
 		// マップされたビューにDLLSHAREDATA構造体を配置します
 		m_pShareData = new (m_MappedData.get()) DLLSHAREDATA;
 
@@ -666,14 +663,14 @@ bool CShareData::InitShareData()
 				/*
 					2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 				*/
-				WCHAR szSettingName[64];
-				int i = 0;
-				auto_sprintf( szSettingName, L"印刷設定 %d", i + 1 );
+				using SPrintSettingName = StaticString<64>;
+				SPrintSettingName szSettingName{};
+				szSettingName = strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), 1);
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_sprintf( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"印刷設定 %d", i + 1 );	/* 印刷設定の名前 */
+				auto_sprintf_s( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"%s %d", LS(STR_PRINT_SET_NAME), i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 
@@ -710,13 +707,46 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}else{
-		/* オブジェクトがすでに存在する場合 */
-		// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
-		m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
-			FILE_MAP_ALL_ACCESS
+	}
+}
+
+/*!
+ * @brief CShareDataクラスの初期化処理
+ *
+ * 他プロセスが作成した共有メモリを開き、自プロセスに取り込む。
+ *
+ * エディタープロセス用。
+ */
+void CShareData::OpenShareData()
+{
+	// ファイルマッピングオブジェクト
+	try
+	{
+		const auto pszProfileName = GetProfileName();
+		std::wstring strShareDataName = GSTR_SHAREDATA;
+		strShareDataName += pszProfileName;
+		m_FileMapping = FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			strShareDataName
 		);
-	
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateFileMapping()に失敗しました"
+			LS(STR_ERR_CSHAREDATA01)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
+	}
+
+	// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+	m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
+
+	{
 		// マップされたビューに配置されたDLLSHAREDATA構造体を参照します
 		m_pShareData = m_MappedData.get();
 
@@ -736,7 +766,6 @@ bool CShareData::InitShareData()
 		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);
 	}
-	return true;
 }
 
 static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& org, std::wstring& to )

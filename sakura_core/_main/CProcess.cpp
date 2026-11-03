@@ -189,24 +189,6 @@ std::filesystem::path CProcess::GetIniFileName() const
 }
 
 /*!
-	@brief プロセスを初期化する
-
-	共有メモリを初期化する
-*/
-bool CProcess::InitializeProcess(
-	int nCmdShow [[maybe_unused]]
-)
-{
-	GetShareData().InitShareData();
-
-	/* リソースから製品バージョンの取得 */
-	//	2004.05.13 Moca 共有データのバージョン情報はコントロールプロセスだけが
-	//	ShareDataで設定するように変更したのでここからは削除
-
-	return true;
-}
-
-/*!
  * @brief プロセス実行
  *
  * @param[in] nCmdShow コマンドラインから渡されたウィンドウ表示フラグ

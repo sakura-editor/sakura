@@ -619,7 +619,6 @@ struct SelectFileTest : public ::testing::Test, public window::EditorTestSuite, 
 		std::ofstream ofs{ path };
 		ofs.close();
 
-		constexpr HINSTANCE unusedArg1 = nullptr;
 		hWnd = pcEditWnd->GetHwnd();
 
 		// テスト用ダミーダイアログを作る

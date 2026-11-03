@@ -1648,7 +1648,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	}
 
 	for (int i = 0; i < std::ssize(shareData.m_PrintSettingArr); ++i) {
-		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(std::format(L"{:s} {:d}", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
+		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceHan, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceZen, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_bColorPrint, IsFalse());

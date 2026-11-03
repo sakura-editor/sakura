@@ -27,6 +27,12 @@ namespace window {
 
 struct EditorTestSuite : public env::ShareDataTestSuite
 {
+	static constexpr HINSTANCE unusedArg1 = nullptr;
+
+	static inline std::filesystem::path dmpPath{};
+	static inline std::filesystem::path iniBkPath{};
+	static inline std::filesystem::path profIniPath{};
+
 	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
 
 	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
