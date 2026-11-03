@@ -40,7 +40,6 @@
 #include "io/CTextStream.h"
 #include "util/module.h"
 #include "util/os.h"
-#include "util/os/make_system_error.hpp"
 #include "util/os/User32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
@@ -471,38 +470,6 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 		}
 		break;
 	}
-}
-
-/*!
- * @brief トレイウィンドウのメッセージループ
- *
- * @returns 終了コード
- *
- * @date 2004/02/17 Moca GetMessageのエラーチェックを追加
- */
-EAppExitCode CControlTray::MessageLoop() const
-{
-	// メッセージを受け取るためのMSG構造体
-	MSG	msg{};
-	
-	// メッセージループ
-	for (;;)
-	{
-		// 次のメッセージが来るまで無限に待機する
-		const auto result = ::GetMessageW(&msg, nullptr, 0, 0);
-
-		//WM_QUITが来たらループを抜ける
-		if (0 == result) break;
-
-		//GetMessageW処理中のエラーを検出したら例外を投げる
-		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
-
-		::TranslateMessage(&msg);
-		::DispatchMessageW(&msg);
-	}
-
-	// PostQuitMessageに指定された終了コードを返す
-	return static_cast<EAppExitCode>(msg.wParam);
 }
 
 /* タスクトレイのアイコンに関する処理 */

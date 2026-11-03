@@ -73,8 +73,6 @@ public:
 
 	void	ExecCommand(HWND hWnd, EFunctionCode funcCode);
 
-	EAppExitCode MessageLoop() const override;
-
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */

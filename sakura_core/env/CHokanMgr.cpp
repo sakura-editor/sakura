@@ -17,14 +17,16 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <memory>
 #include "env/CHokanMgr.h"
+
 #include "env/CShareData.h"
 #include "view/CEditView.h"
 #include "plugin/CJackManager.h"
 #include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "window/CEditWnd.h"
+
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
@@ -618,8 +620,18 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //		return -1;
 //	}
 
-int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
+int CHokanMgr::KeyProc(
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
 {
+	if (WM_KEYDOWN == uMsg ||
+		GetEditWnd().GetActiveView().m_bHokan)
+	{
+		return -2;
+	}
+
 	WORD vkey;
 	vkey = LOWORD(wParam);		// virtual-key code
 //	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );

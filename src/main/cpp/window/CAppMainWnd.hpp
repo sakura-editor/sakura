@@ -36,7 +36,7 @@ public:
 
 	virtual ~CAppMainWnd() = default;
 
-	virtual EAppExitCode MessageLoop() const = 0;
+	virtual EAppExitCode MessageLoop() const;
 
 	HINSTANCE		GetAppInstance() const noexcept { return m_hInstance; }
 

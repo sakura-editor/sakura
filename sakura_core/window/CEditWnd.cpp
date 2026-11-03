@@ -1051,12 +1051,6 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 	}
 }
 
-static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
-{
-	if(hwnd==nullptr)return FALSE;
-	return ::IsDialogMessage(hwnd, msg);
-}
-
 /*!
  * @brief 編集ウィンドウのメッセージループ
  *
@@ -1090,36 +1084,19 @@ EAppExitCode CEditWnd::MessageLoop() const
 		//GetMessageW処理中のエラーを検出したら例外を投げる
 		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
 
-		//・前半部分、モードレスダイアログへのメッセージ配送にモーダル専用のCDlgGrepが混じっている
-		//・中盤のEatMessageはメッセージフックで実装すべき。
-		//・中盤のKeyProcはメッセージフックで実装すべき。
-		//・後半のTranslateAccelerator前のNULLチェックは無駄。（アクセラレータの作成に失敗したら異常終了すべき。）
-		//・後半のインデントが無駄。
-
-		//ダイアログメッセージ
-		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),	&msg ) ){}	//!< 印刷プレビュー 操作バー
-		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgGrep.GetHwnd(),								&msg ) ){}	//!<「Grep」ダイアログ
-		else if( MyIsDialogMessage( m_cHokanMgr.GetHwnd(),								&msg ) ){}	//!<「入力補完」
-		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
-		//アクセラレータ
-		else{
+		if (m_cToolbar.EatMessage(&msg) ||
+			// モードレスダイアログ
+			msg.hwnd && ::IsDialogMessageW(msg.hwnd, &msg) ||
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			if (WM_KEYDOWN == msg.message &&
-				GetActiveView().m_bHokan &&
-				-1 == m_cHokanMgr.KeyProc(msg.wParam, msg.lParam)) {
-						continue;	// 補完ウィンドウが処理を実行した
-			}
+			-1 == m_cHokanMgr.KeyProc(msg.message, msg.wParam, msg.lParam) ||
+			//アクセラレータ
+			msg.hwnd && m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
+		{
+			continue;
+		}
 
-			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
-			//通常メッセージ
-			else{
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
-			}
-		}
 	}
 
 	// PostQuitMessageに指定された終了コードを返す
