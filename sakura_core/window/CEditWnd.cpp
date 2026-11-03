@@ -42,6 +42,7 @@
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED
+#include "util/os/make_system_error.hpp"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
@@ -212,6 +213,7 @@ LRESULT CALLBACK CEditWndProc(
 }
 
 CEditWnd::CEditWnd()
+	: CAppMainWnd(G_AppInstance())
 {
 	const auto& cTypeConfig = GetEditDoc().m_cDocType.GetDocumentAttribute();
 	auto& cLayoutMgr = GetEditDoc().m_cLayoutMgr;
@@ -1055,23 +1057,44 @@ static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
 	return ::IsDialogMessage(hwnd, msg);
 }
 
-//複数プロセス版
-/* メッセージループ */
-//2004.02.17 Moca GetMessageのエラーチェック
-void CEditWnd::MessageLoop( void )
+/*!
+ * @brief 編集ウィンドウのメッセージループ
+ *
+ * @returns 終了コード
+ *
+ * @date 2004/02/17 Moca GetMessageのエラーチェックを追加
+ */
+EAppExitCode CEditWnd::MessageLoop() const
 {
-	MSG	msg;
-	int ret;
+	const auto hWnd = GetHwnd();
+	DarkMode::setDarkWndNotifySafeEx(hWnd, false, true);
 
-	auto hWndDM = GetHwnd();
-	DarkMode::setDarkWndNotifySafeEx(hWndDM, false, true);
+	// constメソッド内では非const参照できないので無理矢理ローカル定義する
+	auto& m_cHokanMgr = GetEditWnd().m_cHokanMgr;
 
-	while(GetHwnd())
+	// constメソッド内では非const参照できないので無理矢理ローカル定義する
+	auto& m_cToolbar = GetEditWnd().m_cToolbar;
+
+	// メッセージを受け取るためのMSG構造体
+	MSG	msg{};
+
+	// メッセージループ
+	for (;;)
 	{
-		//メッセージ取得
-		ret = GetMessage(&msg,nullptr,0,0);
-		if(ret== 0)break; //WM_QUIT
-		if(ret==-1)break; //GetMessage失敗
+		// 次のメッセージが来るまで無限に待機する
+		const auto result = ::GetMessageW(&msg, nullptr, 0, 0);
+
+		//WM_QUITが来たらループを抜ける
+		if (0 == result) break;
+
+		//GetMessageW処理中のエラーを検出したら例外を投げる
+		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
+
+		//・前半部分、モードレスダイアログへのメッセージ配送にモーダル専用のCDlgGrepが混じっている
+		//・中盤のEatMessageはメッセージフックで実装すべき。
+		//・中盤のKeyProcはメッセージフックで実装すべき。
+		//・後半のTranslateAccelerator前のNULLチェックは無駄。（アクセラレータの作成に失敗したら異常終了すべき。）
+		//・後半のインデントが無駄。
 
 		//ダイアログメッセージ
 		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),	&msg ) ){}	//!< 印刷プレビュー 操作バー
@@ -1098,6 +1121,9 @@ void CEditWnd::MessageLoop( void )
 			}
 		}
 	}
+
+	// PostQuitMessageに指定された終了コードを返す
+	return static_cast<EAppExitCode>(msg.wParam);
 }
 
 LRESULT CEditWnd::DispatchEvent(

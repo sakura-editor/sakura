@@ -40,6 +40,7 @@
 #include "io/CTextStream.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "util/os/make_system_error.hpp"
 #include "util/os/User32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
@@ -216,16 +217,13 @@ static LRESULT CALLBACK CControlTrayWndProc(
 // CControlTray
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
+	: CAppMainWnd(G_AppInstance())
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	return;
 }
 
 CControlTray::~CControlTray()
 {
-	delete m_pcPropertyManager;
 	return;
 }
 
@@ -288,13 +286,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
 	// タスクトレイアイコン作成
-	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
-	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
 
-	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
 	m_szLanguageDll = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
@@ -478,22 +473,36 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 	}
 }
 
-/* メッセージループ */
-void CControlTray::MessageLoop() const
+/*!
+ * @brief トレイウィンドウのメッセージループ
+ *
+ * @returns 終了コード
+ *
+ * @date 2004/02/17 Moca GetMessageのエラーチェックを追加
+ */
+EAppExitCode CControlTray::MessageLoop() const
 {
-//複数プロセス版
-	MSG	msg;
-	int ret;
+	// メッセージを受け取るためのMSG構造体
+	MSG	msg{};
 	
-	//2004.02.17 Moca GetMessageのエラーチェック
-	while ( GetTrayHwnd() != nullptr && (ret = ::GetMessage(&msg, nullptr, 0, 0 )) != 0 ){
-		if( ret == -1 ){
-			break;
-		}
-		::TranslateMessage( &msg );
-		::DispatchMessage( &msg );
+	// メッセージループ
+	for (;;)
+	{
+		// 次のメッセージが来るまで無限に待機する
+		const auto result = ::GetMessageW(&msg, nullptr, 0, 0);
+
+		//WM_QUITが来たらループを抜ける
+		if (0 == result) break;
+
+		//GetMessageW処理中のエラーを検出したら例外を投げる
+		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
+
+		::TranslateMessage(&msg);
+		::DispatchMessageW(&msg);
 	}
-	return;
+
+	// PostQuitMessageに指定された終了コードを返す
+	return static_cast<EAppExitCode>(msg.wParam);
 }
 
 /* タスクトレイのアイコンに関する処理 */

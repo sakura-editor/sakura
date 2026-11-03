@@ -74,9 +74,6 @@ namespace window {
 
 	CEditApp::getInstance()->m_hInst = hInst;
 
-	//ヘルパ作成
-	CEditApp::getInstance()->m_cIcons.Create(hInst);
-
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	pcEditDoc = std::make_unique<CEditDoc>(nullptr);
 	CEditApp::getInstance()->m_pcEditDoc = pcEditDoc.get();
@@ -139,11 +136,10 @@ namespace window {
 	CEditApp::getInstance()->m_pcMruListener = pcMruListener.get();
 
 	//プロパティ管理
-	pcPropertyManager = std::make_unique<CPropertyManager>();
-	CEditApp::getInstance()->m_pcPropertyManager = pcPropertyManager.get();
+	CEditApp::getInstance()->m_pcPropertyManager = pcEditWnd->m_pcPropertyManager.get();
 	CEditApp::getInstance()->m_pcPropertyManager->Create(
 		pcEditWnd->GetHwnd(),
-		&CEditApp::getInstance()->m_cIcons,
+		&pcEditWnd->GetIcons(),
 		&pcEditWnd->GetMenuDrawer()
 	);
 }
@@ -165,7 +161,6 @@ namespace window {
 
 	CEditApp::resetInstance();
 
-	pcPropertyManager = nullptr;
 	pcMruListener = nullptr;
 	pcGrepAgent = nullptr;
 	pcVisualProgress = nullptr;
