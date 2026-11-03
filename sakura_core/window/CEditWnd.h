@@ -97,6 +97,8 @@ private:
 	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
 	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
 
+	using Base = CAppMainWnd;
+
 public:
 	CEditWnd();
 	~CEditWnd() override;
@@ -136,7 +138,7 @@ public:
 	//管理
 	EAppExitCode MessageLoop() const override;
 
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */

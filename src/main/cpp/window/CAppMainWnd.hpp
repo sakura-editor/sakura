@@ -38,6 +38,8 @@ public:
 
 	virtual EAppExitCode MessageLoop() const;
 
+	virtual LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 	HINSTANCE		GetAppInstance() const noexcept { return m_hInstance; }
 
 	HWND			GetHwnd() const noexcept { return m_hWnd; }

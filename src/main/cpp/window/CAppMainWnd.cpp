@@ -59,3 +59,23 @@ EAppExitCode CAppMainWnd::MessageLoop() const
 	// PostQuitMessageに指定された終了コードを返す
 	return static_cast<EAppExitCode>(msg.wParam);
 }
+
+/*!
+ * @brief メインウィンドウのメッセージ配送
+ *
+ * @param hWnd [in] 宛先ウインドウのハンドル
+ * @param uMsg [in] メッセージコード
+ * @param wParam [in, opt] 第1パラメーター
+ * @param lParam [in, opt] 第2パラメーター
+ * @returns 処理結果 メッセージコードにより意味が異なる。（おおむね、0を返したら「処理済み」を示す。）
+ */
+LRESULT CAppMainWnd::DispatchEvent(
+	HWND hWnd,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
+{
+	//あとはデフォルトに任せる
+	return ::DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}

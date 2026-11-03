@@ -884,7 +884,7 @@ LRESULT CControlTray::DispatchEvent(
 	}
 
 	//あとはデフォルトに任せる
-	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /* WM_COMMANDメッセージ処理 */

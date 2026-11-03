@@ -1131,7 +1131,7 @@ LRESULT CEditWnd::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-	const auto hWnd = GetHwnd();
+	const auto hWnd = hwnd;
 
 	int					nRet;
 	LPNMHDR				pnmh;
@@ -1328,7 +1328,8 @@ LRESULT CEditWnd::DispatchEvent(
 				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
+
 	//To here 2003.05.31 MIK
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
@@ -2066,12 +2067,12 @@ LRESULT CEditWnd::DispatchEvent(
 			return 0L;
 		}
 		::KillTimer( GetHwnd(), IDT_CAPTION );	// タイマーが残っていたら削除する（遅延タイトルを破棄）
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	case WM_TIMER:
 		if( !OnTimer(wParam, lParam) )
 			return 0L;
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	default:
 #if 0
@@ -2081,8 +2082,11 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 // >> by aroka
 #endif
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 	}
+
+	//あとはデフォルトに任せる
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理

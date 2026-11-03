@@ -44,6 +44,8 @@ struct EditInfo;
 class CControlTray final : public CAppMainWnd
 {
 private:
+	using Base = CAppMainWnd;
+
 	/*!
 	 * トレイアイコン再登録要求のメッセージID。
 	 *
@@ -69,9 +71,10 @@ public:
 	*/
 	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	void	ExecCommand(HWND hWnd, EFunctionCode funcCode);
+
+	LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
