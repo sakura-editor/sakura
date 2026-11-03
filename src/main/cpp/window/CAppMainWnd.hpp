@@ -55,3 +55,5 @@ public:
 
 	PropMgrHolder	m_pcPropertyManager = std::make_unique<CPropertyManager>();
 };
+
+CAppMainWnd* GetAppMainWndPtr() noexcept;

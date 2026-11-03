@@ -33,6 +33,12 @@ namespace window {
 	// 言語環境を初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
+#pragma region CanBeMove
+	// 共有メモリ初期化前にメインウィンドウの取得はできない
+	EXPECT_THAT(GetAppMainWndPtr(), IsNull());
+
+#pragma endregion CanBeMove
+
 	// コントロールプロセスが起動している状態にする
 	CProcessFactory::StartControlProcess();
 
@@ -128,6 +134,9 @@ namespace window {
 
 	// 編集ウインドウがあるのでエラーにならない
 	EXPECT_NO_THROW([] { GetEditWnd(); });
+
+	// 編集ウィンドウ生成後にメインウィンドウ取得を試みると、編集ウィンドウがとれる
+	EXPECT_THAT(GetAppMainWndPtr(), pcEditWnd.get());
 
 #pragma endregion CanBeMove
 

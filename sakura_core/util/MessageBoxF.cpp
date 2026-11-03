@@ -17,13 +17,11 @@
 #include "StdAfx.h"
 #include "MessageBoxF.h"
 
-#include "_main/CProcess.h"
-
 #include "config/app_constants.h"
 #include "util/os.h"
 #include "util/os/User32.hpp"
 #include "util/tchar_convert.h"
-#include "window/CEditWnd.h"
+#include "window/CAppMainWnd.hpp"
 
 #include "CSelectLang.h"
 
@@ -157,9 +155,9 @@ HWND GetMessageBoxOwner(HWND hWndOwner)
 {
 	if( !hWndOwner || !::IsWindow(hWndOwner) )
 	{
-		if( const auto pcProcess = CProcess::getInstance() )
+		if (const auto pcMainWnd = GetAppMainWndPtr())
 		{
-			hWndOwner = pcProcess->GetMainWindow();
+			hWndOwner = pcMainWnd->GetHwnd();
 		}
 	}
 	return hWndOwner;

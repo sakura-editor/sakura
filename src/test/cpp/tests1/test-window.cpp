@@ -498,6 +498,9 @@ struct TrayWndTest : public ::testing::Test, public window::TrayWndTestSuite, pu
 			std::wofstream fos(dummyPath);
 			fos << L"ダミーファイルです" << std::endl;
 		}
+
+		// 呼ぶだけ
+		GetAppMainWndPtr();
 	}
 
 	/*!

@@ -27,9 +27,10 @@
 #include <ShlObj.h>
 
 #include "window/CEditWnd.h"
-#include "_main/CControlTray.h"
-#include "_main/CCommandLine.h"	/// 2003/1/26 aroka
+
 #include "_main/CAppMode.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
 #include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
@@ -163,6 +164,26 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 			}
 		}
 	}
+}
+
+/*!
+ * メインウィンドウのアドレスを取得します。
+ */
+CAppMainWnd* GetAppMainWndPtr() noexcept
+{
+	// 編集ウィンドウのアドレスを取得する
+	CAppMainWnd* pcAppMainWnd = GetEditWndPtr();
+
+	// 取得できなかった場合
+	if (!pcAppMainWnd)
+	{
+		if (const auto pcProcess = CProcess::getInstance())
+		{
+			pcAppMainWnd = pcProcess->GetMainWindow();
+		}
+	}
+
+	return pcAppMainWnd;
 }
 
 /*!
