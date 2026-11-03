@@ -47,8 +47,6 @@ private:
 		int nCmdShow
 	) override;
 
-	bool MainLoop() override;
-
 	//実装補助
 	void	OpenFiles(HWND hEditWnd) const;
 

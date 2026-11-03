@@ -27,9 +27,10 @@
 #include <ShlObj.h>
 
 #include "window/CEditWnd.h"
-#include "_main/CControlTray.h"
-#include "_main/CCommandLine.h"	/// 2003/1/26 aroka
+
 #include "_main/CAppMode.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
 #include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
@@ -42,6 +43,7 @@
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED
+#include "util/os/make_system_error.hpp"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
@@ -165,6 +167,26 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 }
 
 /*!
+ * メインウィンドウのアドレスを取得します。
+ */
+CAppMainWnd* GetAppMainWndPtr() noexcept
+{
+	// 編集ウィンドウのアドレスを取得する
+	CAppMainWnd* pcAppMainWnd = GetEditWndPtr();
+
+	// 取得できなかった場合
+	if (!pcAppMainWnd)
+	{
+		if (const auto pcProcess = CProcess::getInstance())
+		{
+			pcAppMainWnd = pcProcess->GetMainWindow();
+		}
+	}
+
+	return pcAppMainWnd;
+}
+
+/*!
  * 編集ウインドウのアドレスを取得します。
  */
 CEditWnd* GetEditWndPtr() noexcept
@@ -212,6 +234,7 @@ LRESULT CALLBACK CEditWndProc(
 }
 
 CEditWnd::CEditWnd()
+	: CAppMainWnd(G_AppInstance())
 {
 	const auto& cTypeConfig = GetEditDoc().m_cDocType.GetDocumentAttribute();
 	auto& cLayoutMgr = GetEditDoc().m_cLayoutMgr;
@@ -1049,55 +1072,56 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 	}
 }
 
-static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
+/*!
+ * @brief 編集ウィンドウのメッセージループ
+ *
+ * @returns 終了コード
+ *
+ * @date 2004/02/17 Moca GetMessageのエラーチェックを追加
+ */
+EAppExitCode CEditWnd::MessageLoop() const
 {
-	if(hwnd==nullptr)return FALSE;
-	return ::IsDialogMessage(hwnd, msg);
-}
+	const auto hWnd = GetHwnd();
+	DarkMode::setDarkWndNotifySafeEx(hWnd, false, true);
 
-//複数プロセス版
-/* メッセージループ */
-//2004.02.17 Moca GetMessageのエラーチェック
-void CEditWnd::MessageLoop( void )
-{
-	MSG	msg;
-	int ret;
+	// constメソッド内では非const参照できないので無理矢理ローカル定義する
+	auto& m_cHokanMgr = GetEditWnd().m_cHokanMgr;
 
-	auto hWndDM = GetHwnd();
-	DarkMode::setDarkWndNotifySafeEx(hWndDM, false, true);
+	// constメソッド内では非const参照できないので無理矢理ローカル定義する
+	auto& m_cToolbar = GetEditWnd().m_cToolbar;
 
-	while(GetHwnd())
+	// メッセージを受け取るためのMSG構造体
+	MSG	msg{};
+
+	// メッセージループ
+	for (;;)
 	{
-		//メッセージ取得
-		ret = GetMessage(&msg,nullptr,0,0);
-		if(ret== 0)break; //WM_QUIT
-		if(ret==-1)break; //GetMessage失敗
+		// 次のメッセージが来るまで無限に待機する
+		const auto result = ::GetMessageW(&msg, nullptr, 0, 0);
 
-		//ダイアログメッセージ
-		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),	&msg ) ){}	//!< 印刷プレビュー 操作バー
-		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgGrep.GetHwnd(),								&msg ) ){}	//!<「Grep」ダイアログ
-		else if( MyIsDialogMessage( m_cHokanMgr.GetHwnd(),								&msg ) ){}	//!<「入力補完」
-		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
-		//アクセラレータ
-		else{
+		//WM_QUITが来たらループを抜ける
+		if (0 == result) break;
+
+		//GetMessageW処理中のエラーを検出したら例外を投げる
+		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
+
+		if (m_cToolbar.EatMessage(&msg) ||
+			// モードレスダイアログ
+			msg.hwnd && ::IsDialogMessageW(msg.hwnd, &msg) ||
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			if (WM_KEYDOWN == msg.message &&
-				GetActiveView().m_bHokan &&
-				-1 == m_cHokanMgr.KeyProc(msg.wParam, msg.lParam)) {
-						continue;	// 補完ウィンドウが処理を実行した
-			}
+			-1 == m_cHokanMgr.KeyProc(msg.message, msg.wParam, msg.lParam) ||
+			//アクセラレータ
+			msg.hwnd && m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
+		{
+			continue;
+		}
 
-			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
-			//通常メッセージ
-			else{
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
-			}
-		}
 	}
+
+	// PostQuitMessageに指定された終了コードを返す
+	return static_cast<EAppExitCode>(msg.wParam);
 }
 
 LRESULT CEditWnd::DispatchEvent(
@@ -1107,7 +1131,7 @@ LRESULT CEditWnd::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-	const auto hWnd = GetHwnd();
+	const auto hWnd = hwnd;
 
 	int					nRet;
 	LPNMHDR				pnmh;
@@ -1304,7 +1328,8 @@ LRESULT CEditWnd::DispatchEvent(
 				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
+
 	//To here 2003.05.31 MIK
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
@@ -2042,12 +2067,12 @@ LRESULT CEditWnd::DispatchEvent(
 			return 0L;
 		}
 		::KillTimer( GetHwnd(), IDT_CAPTION );	// タイマーが残っていたら削除する（遅延タイトルを破棄）
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	case WM_TIMER:
 		if( !OnTimer(wParam, lParam) )
 			return 0L;
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	default:
 #if 0
@@ -2057,8 +2082,11 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 // >> by aroka
 #endif
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 	}
+
+	//あとはデフォルトに任せる
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理

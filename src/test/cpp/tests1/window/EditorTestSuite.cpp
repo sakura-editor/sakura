@@ -33,6 +33,12 @@ namespace window {
 	// 言語環境を初期化する
 	CSelectLang::InitializeLanguageEnvironment();
 
+#pragma region CanBeMove
+	// 共有メモリ初期化前にメインウィンドウの取得はできない
+	EXPECT_THAT(GetAppMainWndPtr(), IsNull());
+
+#pragma endregion CanBeMove
+
 	// コントロールプロセスが起動している状態にする
 	CProcessFactory::StartControlProcess();
 
@@ -73,9 +79,6 @@ namespace window {
 	const auto hInst = G_AppInstance();
 
 	CEditApp::getInstance()->m_hInst = hInst;
-
-	//ヘルパ作成
-	CEditApp::getInstance()->m_cIcons.Create(hInst);
 
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	pcEditDoc = std::make_unique<CEditDoc>(nullptr);
@@ -132,6 +135,9 @@ namespace window {
 	// 編集ウインドウがあるのでエラーにならない
 	EXPECT_NO_THROW([] { GetEditWnd(); });
 
+	// 編集ウィンドウ生成後にメインウィンドウ取得を試みると、編集ウィンドウがとれる
+	EXPECT_THAT(GetAppMainWndPtr(), pcEditWnd.get());
+
 #pragma endregion CanBeMove
 
 	//MRU管理
@@ -139,11 +145,10 @@ namespace window {
 	CEditApp::getInstance()->m_pcMruListener = pcMruListener.get();
 
 	//プロパティ管理
-	pcPropertyManager = std::make_unique<CPropertyManager>();
-	CEditApp::getInstance()->m_pcPropertyManager = pcPropertyManager.get();
+	CEditApp::getInstance()->m_pcPropertyManager = pcEditWnd->m_pcPropertyManager.get();
 	CEditApp::getInstance()->m_pcPropertyManager->Create(
 		pcEditWnd->GetHwnd(),
-		&CEditApp::getInstance()->m_cIcons,
+		&pcEditWnd->GetIcons(),
 		&pcEditWnd->GetMenuDrawer()
 	);
 }
@@ -165,7 +170,6 @@ namespace window {
 
 	CEditApp::resetInstance();
 
-	pcPropertyManager = nullptr;
 	pcMruListener = nullptr;
 	pcGrepAgent = nullptr;
 	pcVisualProgress = nullptr;

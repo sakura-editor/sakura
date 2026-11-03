@@ -224,6 +224,8 @@ bool CNormalProcess::InitializeProcess(
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
 
+	SetMainWindow(*pEditWnd);
+
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
@@ -274,8 +276,6 @@ bool CNormalProcess::InitializeProcess(
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
-
 			hMutex.unlock();
 
 			initEvent = nullptr;
@@ -311,8 +311,6 @@ bool CNormalProcess::InitializeProcess(
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
-
 			hMutex.unlock();
 
 			initEvent = nullptr;
@@ -437,8 +435,6 @@ bool CNormalProcess::InitializeProcess(
 		}
 	}
 
-	SetMainWindow( pEditWnd->GetHwnd() );
-
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	pEditWnd->GetActiveView().SetIMECompFormPos();
 
@@ -482,21 +478,6 @@ bool CNormalProcess::InitializeProcess(
 	OpenFiles( pEditWnd->GetHwnd() );
 
 	return pEditWnd->GetHwnd() ? true : false;
-}
-
-/*!
-	@brief エディタプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CNormalProcess::MainLoop()
-{
-	if( GetMainWindow() ){
-		m_pcEditApp->GetEditWindow()->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

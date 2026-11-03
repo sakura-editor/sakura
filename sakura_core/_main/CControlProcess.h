@@ -54,8 +54,6 @@ private:
 		int nCmdShow [[maybe_unused]]
 	) override;
 
-	bool MainLoop() override;
-
 	std::filesystem::path GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const;
 
 	MutexHandle			m_hMutex{};		//!< アプリケーション実行検出用ミューテックス

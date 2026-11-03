@@ -19,6 +19,7 @@
 
 #include "_main/CCommandLine.h"
 #include "basis/primitive.h"
+#include "window/CAppMainWnd.hpp"
 
 #include <filesystem>
 #include <memory>
@@ -159,23 +160,18 @@ public:
 		int nCmdShow [[maybe_unused]]
 	) = 0;
 
-protected:
-	virtual bool MainLoop() = 0;
-
-	void			SetMainWindow(HWND hwnd){ m_hWnd = hwnd; }
-
-public:
 	HINSTANCE		GetProcessInstance() const{ return m_hInstance; }
 	CShareData&		GetShareData()   { return m_cShareData; }
-	HWND			GetMainWindow() const{ return m_hWnd; }
+	CAppMainWnd*	GetMainWindow() const noexcept { return m_pcAppMainWnd; }
+	void			SetMainWindow(CAppMainWnd& cMainWnd) noexcept { m_pcAppMainWnd = &cMainWnd; }
 
 	[[nodiscard]] const CShareData* GetShareDataPtr() const { return &m_cShareData; }
 
 private:
 	HINSTANCE		m_hInstance;
 	CmdLineHolder	m_CmdLineHolder;
-	HWND		m_hWnd = nullptr;
 	CShareData		m_cShareData;
+	CAppMainWnd*	m_pcAppMainWnd = nullptr;
 };
 
 #endif /* SAKURA_CPROCESS_FECC5450_9096_4EAD_A6DA_C8B12C3A31B5_H_ */

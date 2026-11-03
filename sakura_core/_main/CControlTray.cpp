@@ -216,16 +216,13 @@ static LRESULT CALLBACK CControlTrayWndProc(
 // CControlTray
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
+	: CAppMainWnd(G_AppInstance())
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	return;
 }
 
 CControlTray::~CControlTray()
 {
-	delete m_pcPropertyManager;
 	return;
 }
 
@@ -288,13 +285,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
 	// タスクトレイアイコン作成
-	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
-	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
 
-	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
 	m_szLanguageDll = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
@@ -476,24 +470,6 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 		}
 		break;
 	}
-}
-
-/* メッセージループ */
-void CControlTray::MessageLoop() const
-{
-//複数プロセス版
-	MSG	msg;
-	int ret;
-	
-	//2004.02.17 Moca GetMessageのエラーチェック
-	while ( GetTrayHwnd() != nullptr && (ret = ::GetMessage(&msg, nullptr, 0, 0 )) != 0 ){
-		if( ret == -1 ){
-			break;
-		}
-		::TranslateMessage( &msg );
-		::DispatchMessage( &msg );
-	}
-	return;
 }
 
 /* タスクトレイのアイコンに関する処理 */
@@ -908,7 +884,7 @@ LRESULT CControlTray::DispatchEvent(
 	}
 
 	//あとはデフォルトに任せる
-	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /* WM_COMMANDメッセージ処理 */

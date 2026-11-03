@@ -25,20 +25,11 @@ namespace window {
 	// トレイウィンドウをインスタンス化する
 	pcTrayWnd = std::make_unique<CControlTray>();
 
-	pcTrayWnd->m_hIcons.Create(G_AppInstance());
-
-	pcTrayWnd->m_cMenuDrawer.Create(
-		CSelectLang::getLangRsrcInstance(),
-		pcTrayWnd->GetTrayHwnd(),
-		&pcTrayWnd->m_hIcons
-	);
-
 	//プロパティ管理
-	pcTrayWnd->m_pcPropertyManager = new CPropertyManager();
 	pcTrayWnd->m_pcPropertyManager->Create(
-		pcTrayWnd->GetTrayHwnd(),
-		&pcTrayWnd->m_hIcons,
-		&pcTrayWnd->m_cMenuDrawer
+		pcTrayWnd->GetHwnd(),
+		&pcTrayWnd->GetIcons(),
+		&pcTrayWnd->GetMenuDrawer()
 	);
 }
 

@@ -498,6 +498,9 @@ struct TrayWndTest : public ::testing::Test, public window::TrayWndTestSuite, pu
 			std::wofstream fos(dummyPath);
 			fos << L"ダミーファイルです" << std::endl;
 		}
+
+		// 呼ぶだけ
+		GetAppMainWndPtr();
 	}
 
 	/*!
@@ -4194,7 +4197,7 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
 
 	using target = CHokanMgr;
-	const auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
+	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
 	const auto hWnd = pcEditWnd->GetHwnd();
 
 	// データなしだとスカる
@@ -4215,6 +4218,8 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 
 	// 非表示ウィンドウはModalDialogCloserに拾われないので強制的に表示させる
 	::ShowWindow(cHokanMgr.GetHwnd(), SW_SHOW);
+
+	EXPECT_THAT(cHokanMgr.KeyProc(WM_KEYUP, 0L, 0L), Eq(-2));
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();

@@ -26,9 +26,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 {
 	m_hInst = hInst;
 
-	//ヘルパ作成
-	m_cIcons.Create( m_hInst );	//	CreateImage List
-
 	//ドキュメントの作成
 	m_pcEditDoc = new CEditDoc(this);
 
@@ -51,13 +48,13 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
-	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
+	m_pcEditWnd->Create(GetDocument(), &GetIcons(), nGroupId);
 
 	//MRU管理
 	m_pcMruListener = new CMruListener();
 
 	//プロパティ管理
-	m_pcPropertyManager = new CPropertyManager();
+	m_pcPropertyManager = m_pcEditWnd->m_pcPropertyManager.get();
 	m_pcPropertyManager->Create(
 		m_pcEditWnd->GetHwnd(),
 		&GetIcons(),
@@ -68,7 +65,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 CEditApp::~CEditApp() noexcept
 {
 	delete m_pcSMacroMgr;
-	delete m_pcPropertyManager;
 	delete m_pcMruListener;
 	delete m_pcGrepAgent;
 	delete m_pcVisualProgress;

@@ -211,12 +211,14 @@ EAppExitCode CProcess::Run(
 
 #endif
 
-	if( InitializeProcess(nCmdShow) )
+	// 共有メモリを初期化してメインウィンドウを作る
+	InitializeProcess(nCmdShow);
+
+	// メインウィンドウを作れた場合
+	if (m_pcAppMainWnd && m_pcAppMainWnd->GetHwnd())
 	{
-
-			MainLoop() ;
-
-		exitCode = EAppExitCode::Exited;	//TODO: MainLoopの戻り値を返すように変える
+		// メッセージループを開始する。（終わるまで制御は戻らない。）
+		exitCode = m_pcAppMainWnd->MessageLoop();
 	}
 
 #if defined(_MSC_VER)	//SEH（構造化例外処理）はMSVC固有機能

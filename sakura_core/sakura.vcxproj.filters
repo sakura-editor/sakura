@@ -286,6 +286,9 @@
     <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp">
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\window\CAppMainWnd.hpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -1395,6 +1398,9 @@
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\sync\MutexHandle.cpp">
       <Filter>Cpp Source Files\util\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\window\CAppMainWnd.cpp">
+      <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
     <ClCompile Include="agent\CAutoReloadAgent.cpp">
       <Filter>Cpp Source Files\agent</Filter>

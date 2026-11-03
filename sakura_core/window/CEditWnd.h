@@ -45,9 +45,9 @@
 #include "env/CHokanMgr.h"
 #include "util/design_template.h"
 #include "doc/CDocListener.h"
-#include "uiparts/CMenuDrawer.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
+#include "window/CAppMainWnd.hpp"
 
 #include "cxx/ResourceHolder.hpp"
 
@@ -57,7 +57,6 @@ static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
 class CPlug;
 class CEditDoc;
-struct DLLSHAREDATA;
 
 //メインウィンドウ内コントロールID
 #define IDT_EDIT		455  // 20060128 aroka
@@ -82,6 +81,7 @@ struct STabGroupInfo {
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
 	: public TSingleInstance<CEditWnd>
+	, public CAppMainWnd
 , public CDocListenerEx
 {
 private:
@@ -96,6 +96,8 @@ private:
 	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
 	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
 	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
+
+	using Base = CAppMainWnd;
 
 public:
 	CEditWnd();
@@ -134,8 +136,9 @@ public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//管理
-	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	EAppExitCode MessageLoop() const override;
+
+	LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
@@ -263,8 +266,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return m_hWnd; }
-	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
@@ -349,14 +350,8 @@ public:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//共有データ
-	DLLSHAREDATA*	m_pShareData = &GetDllShareData();
-
 	//ドキュメント
 	CEditDoc* 		m_pcEditDoc = &GetEditDoc();
-
-	//自ウィンドウ
-	HWND			m_hWnd = nullptr;
 
 public:
 	//子ウィンドウ
@@ -389,9 +384,6 @@ private:
 	int				m_nActivePaneIndex = 0;	//!< 有効なビューのindex
 	int				m_nEditViewCount = 1;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount = int(std::size(m_pcEditViewArr));//!< ビューの最大数=4
-
-	//ヘルパ
-	CMenuDrawer		m_cMenuDrawer;
 
 	//状態
 	bool			m_bIsActiveApp = false;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji

@@ -7,7 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, asa-o
 	Copyright (C) 2003, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,10 +17,13 @@
 #define SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
 #pragma once
 
-#include <Windows.h>
 #include "dlg/CDialog.h"
-#include "util/container.h"
 #include "mem/CNativeW.h"
+#include "util/container.h"
+
+#include <memory>
+
+#include <Windows.h>
 
 /*! @brief キーワード補完
 
@@ -28,14 +31,22 @@
 */
 class CHokanMgr final : public CDialog
 {
+private:
+	using Base = CDialog;
+	using Me = CHokanMgr;
+
+	// 親クラスのメソッドを隠す
+	using Base::DoModeless;
+
 public:
 	/*
 	||  Constructors
 	*/
 	CHokanMgr();
-	~CHokanMgr();
+	~CHokanMgr() override;
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
+
 	void Hide( void );
 	/* 初期化 */
 	size_t Search(
@@ -65,7 +76,7 @@ public:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnLbnSelChange( HWND hwndCtl, int wID ) override;
 
-	int KeyProc(WPARAM wParam, LPARAM lParam);
+	int KeyProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
@@ -89,4 +100,5 @@ protected:
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 };
+
 #endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */

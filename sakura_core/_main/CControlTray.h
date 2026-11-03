@@ -28,14 +28,11 @@
 #pragma once
 
 #include <Windows.h>
-#include "uiparts/CMenuDrawer.h"
-#include "uiparts/CImageListMgr.h" // 2002/2/10 aroka
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
+#include "window/CAppMainWnd.hpp"
 
 struct SLoadInfo;
 struct EditInfo;
-struct DLLSHAREDATA;
-class CPropertyManager;
 
 //!	常駐部の管理
 /*!
@@ -44,9 +41,11 @@ class CPropertyManager;
 	
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
-class CControlTray
+class CControlTray final : public CAppMainWnd
 {
 private:
+	using Base = CAppMainWnd;
+
 	/*!
 	 * トレイアイコン再登録要求のメッセージID。
 	 *
@@ -65,18 +64,18 @@ public:
 	||  Constructors
 	*/
 	CControlTray();
-	~CControlTray();
+	~CControlTray() override;
 
 	/*
 	|| メンバ関数
 	*/
 	HWND Create(HINSTANCE hInstance);	/* 作成 */
 	bool CreateTrayIcon(HWND hWnd);	// 20010412 by aroka
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
 
 	void	ExecCommand(HWND hWnd, EFunctionCode funcCode);
 
-	void	MessageLoop() const;	/* メッセージループ */
+	LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
 	void OnDestroy( void );		/* WM_DESTROY 処理 */	// 2006.07.09 ryoji
 	int	CreatePopUpMenu_L( void );	/* ポップアップメニュー(トレイ左ボタン) */
 	int	CreatePopUpMenu_R( void );	/* ポップアップメニュー(トレイ右ボタン) */
@@ -112,7 +111,8 @@ public:
 	|| 実装ヘルパ系
 	*/
 	static void DoGrepCreateWindow(HINSTANCE hinst, HWND, CDlgGrep& cDlgGrep);
-protected:
+
+private:
 	void	DoGrep();	//Stonee, 2001/03/21
 	BOOL	TrayMessage(HWND hDlg, DWORD dwMessage, UINT uID, HICON hIcon, const WCHAR* pszTip) const;	/*!< タスクトレイのアイコンに関する処理 */
 	void	OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) const;	/*!< WM_COMMANDメッセージ処理 */
@@ -125,7 +125,6 @@ protected:
 		LPARAM	lParam		// second message parameter
 	);
 
-private:
 	bool	OnSetTypeSetting(size_t index);
 	bool	OnGetTypeSetting(size_t index);
 	bool	OnAddTypeSetting(size_t index);
@@ -135,18 +134,11 @@ public:	// テストできないのでアクセス権変更
 	/*
 	|| メンバ変数
 	*/
-	CMenuDrawer		m_cMenuDrawer;
-	CPropertyManager*	m_pcPropertyManager = nullptr;
 	bool			m_bUseTrayMenu = false;			//トレイメニュー表示中
-	HINSTANCE		m_hInstance = nullptr;
-	HWND			m_hWnd = nullptr;
 	BOOL			m_bCreatedTrayIcon = FALSE;		//!< トレイにアイコンを作った
 
-	DLLSHAREDATA*	m_pShareData;
 	CDlgGrep		m_cDlgGrep;				// Jul. 2, 2001 genta
 	int				m_nCurSearchKeySequence = -1;
-
-	CImageListMgr	m_hIcons;
 
 	SFilePath		m_szLanguageDll;
 };
