@@ -756,6 +756,14 @@ HWND CEditWnd::Create(
 	//デフォルトのIMEモード設定
 	GetDocument()->m_cDocEditor.SetImeMode( GetDocument()->m_cDocType.GetDocumentAttribute().m_nImeState );
 
+	//プロパティ管理
+	CEditApp::getInstance()->m_pcPropertyManager = m_pcPropertyManager.get();
+	m_pcPropertyManager->Create(
+		hWnd,
+		&GetIcons(),
+		&GetMenuDrawer()
+	);
+
 	return GetHwnd();
 }
 

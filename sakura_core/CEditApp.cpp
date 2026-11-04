@@ -48,14 +48,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create(GetDocument(), &GetIcons(), nGroupId);
-
-	//プロパティ管理
-	m_pcPropertyManager = m_pcEditWnd->m_pcPropertyManager.get();
-	m_pcPropertyManager->Create(
-		m_pcEditWnd->GetHwnd(),
-		&GetIcons(),
-		&m_pcEditWnd->GetMenuDrawer()
-	);
 }
 
 CEditApp::~CEditApp() noexcept
