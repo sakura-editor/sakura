@@ -657,15 +657,18 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 		// テスト用プロファイル名
 		const std::wstring_view profileName{ GetProfileName() };
 
-		// プロセスのインスタンスを用意する
-		const auto dummy = CProcessFactory().CreateInstance(std::format(LR"(-NOWIN -PROF="{}")", profileName));
+		// 実行ファイルのパスを取得
+		const auto exePath = GetExeFileName();
 
-		// INIファイルのパスを取得
-		iniPath = GetIniFileName();
+		// INIファイルのパスを構築
+		iniPath = profileName.empty()
+			? exePath.parent_path() / exePath.filename().replace_extension(L".ini")
+			: exePath.parent_path() / profileName / exePath.filename().replace_extension(L".ini");
+
+		std::error_code ec;
 
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::error_code ec;
 			std::filesystem::remove(iniPath, ec);
 		}
 
@@ -683,14 +686,17 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	 * テストが実行された直後に毎回呼ばれる関数
 	 */
 	void TearDown() override {
+		std::error_code ec;
+
 		// INIファイルを削除する
 		if (fexist(iniPath)) {
-			std::error_code ec;
 			std::filesystem::remove(iniPath, ec);
 		}
 
 		// プロファイル指定がある場合、フォルダーも削除しておく
-		if (const std::wstring_view profileName{ GetProfileName() }; !profileName.empty()) {
+		if (const std::wstring_view profileName{ GetProfileName() };
+			!profileName.empty())
+		{
 			std::filesystem::remove_all(iniPath.parent_path());
 		}
 
@@ -1710,6 +1716,94 @@ TEST_F(WinMainFuncTest, CreateEditorProcess112)
 		}),
 		ThrowsMessage<basis::initialization_error>(StartsWith("異なるバージョンの"))
 	);
+}
+
+/*!
+ * @brief エディタの初期化が通るようにモックを設定する
+ */
+static void SetUpCreateEditorStartup()
+{
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// エラーメッセージの取得を成功させる
+	SetUpLoadString();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, TRUE, StrEq(GSTR_MUTEX_SAKURA_INIT)))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, OpenFileMappingW(_, _, _))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, MapViewOfFile(_, _, _, _, _))
+		.WillOnce(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, CreateMutexW(nullptr, FALSE, StrEq(GSTR_MUTEX_SAKURA_EDITARR)))
+		.WillRepeatedly(testing::DoDefault());
+}
+
+/*!
+ * @brief エディタ初期化後、オープン済みを検出して終了するパターンのテスト
+ */
+TEST_F(WinMainFuncTest, CreateEditorProcess120)
+{
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
+	// エディタープロセスを起動する
+	auto ep = testing::CreateEditorProcess(
+		std::array{
+			gm_TestDataPath.c_str(),
+			L"-CODE=4"
+		},
+		L""
+	);
+	ASSERT_THAT(ep, NotNull());
+	ASSERT_THAT(ep.hWnd, NotNull());
+
+	// モックをセットアップする
+	Kernel32::setInstance<MockKernel32>();
+
+	// エディタ初期化を成功させる
+	SetUpCreateEditorStartup();
+
+	// エディタプロセスのコマンドラインを用意する
+	const auto process = CProcessFactory().CreateInstance(
+		std::format(LR"("{}" -CODE=4 -Y=3 -PROF="")", gm_TestDataPath.c_str())
+	);
+
+	// エディタ初期化を実行する（オープン済みなので失敗する。）
+	EXPECT_THAT(
+		process->InitializeProcess(SW_SHOWDEFAULT),
+		IsFalse()
+	);
+
+	// モックを解除する
+	Kernel32::resetInstance();
+
+	// 編集ウインドウにクローズを要求する
+	testing::RequestForeignWindowClose(ep.hWnd);
+
+	// 編集ウインドウが閉じられた後、プロセスが完全に終了するまで待つ
+	ep.lock();
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
 }
 
 /*!

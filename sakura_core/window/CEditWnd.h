@@ -35,16 +35,18 @@
 #include "CMainStatusBar.h"
 #include "view/CEditView.h"
 #include "window/CSplitterWnd.h"
+#include "basis/CMyRect.h"
 #include "dlg/CDlgFind.h"
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
+#include "doc/CDocListener.h"
 #include "outline/CDlgFuncList.h"
 #include "env/CHokanMgr.h"
+#include "recent/CMruListener.h"
 #include "util/design_template.h"
-#include "doc/CDocListener.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 #include "window/CAppMainWnd.hpp"
@@ -52,6 +54,8 @@
 #include "cxx/ResourceHolder.hpp"
 
 #include "print/CPrintPreview.h"
+
+#include <memory>
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
@@ -89,6 +93,7 @@ private:
 	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
 	using CEditViewHolder = std::unique_ptr<CEditView>;
 	using CEditViewsArray = std::array<CEditViewHolder, 4>;
+	using CMruListenerHolder = std::unique_ptr<CMruListener>;
 	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
 	using CViewFontHolder = std::unique_ptr<CViewFont>;
 	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
@@ -106,17 +111,14 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//	Mar. 7, 2002 genta 文書タイプ用引数追加
-	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
-	HWND Create(
-		const CEditDoc*	pcEditDoc,
-		CImageListMgr*	pcIcons,
-		int				nGroup
+	HWND CreateMainWnd(
+		int nCmdShow
 	);
+
 	void	_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const;
-	void	_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo) const;	//!< ウィンドウ生成用の矩形を取得
-	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
+	bool	_GetWindowRectForInit(CMyRect& rectForInit, const STabGroupInfo& sTabGroupInfo, int nCmdShow) const;	//!< ウィンドウ生成用の矩形を取得
+	HWND	_CreateMainWindow(const CMyRect& rectForInit);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
 	void OpenDocumentWhenStart(
@@ -411,6 +413,8 @@ private:
 
 	//その他フラグ
 	EIconClickStatus	m_IconClicked = icNone;
+
+	CMruListenerHolder	m_pcMruListener = std::make_unique<CMruListener>();	//!< MRUリスナ
 
 public:
 	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法

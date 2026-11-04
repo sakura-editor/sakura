@@ -21,7 +21,6 @@ class CEditDoc;
 class CLoadAgent;
 class CSaveAgent;
 class CVisualProgress;
-class CMruListener;
 class CSMacroMgr;
 class CGrepAgent;
 enum EFunctionCode;
@@ -32,7 +31,7 @@ public:
 	CEditApp() = default;
 	~CEditApp() noexcept override;
 
-	void Create(HINSTANCE hInst, int);
+	void Create(HINSTANCE hInst);
 
 	//モジュール情報
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
@@ -61,7 +60,6 @@ public:
 	CVisualProgress*	m_pcVisualProgress = nullptr;
 
 	//その他ヘルパ
-	CMruListener*		m_pcMruListener = nullptr;		//!< MRU管理
 	CSMacroMgr*			m_pcSMacroMgr = nullptr;		//!< マクロ管理
 
 	CPropertyManager*	m_pcPropertyManager = nullptr;	//!< プロパティ管理

@@ -140,10 +140,6 @@ namespace window {
 
 #pragma endregion CanBeMove
 
-	//MRU管理
-	pcMruListener = std::make_unique<CMruListener>();
-	CEditApp::getInstance()->m_pcMruListener = pcMruListener.get();
-
 	//プロパティ管理
 	CEditApp::getInstance()->m_pcPropertyManager = pcEditWnd->m_pcPropertyManager.get();
 	CEditApp::getInstance()->m_pcPropertyManager->Create(
@@ -160,7 +156,6 @@ namespace window {
 {
 	CEditApp::getInstance()->m_pcSMacroMgr = nullptr;
 	CEditApp::getInstance()->m_pcPropertyManager = nullptr;
-	CEditApp::getInstance()->m_pcMruListener = nullptr;
 	CEditApp::getInstance()->m_pcGrepAgent = nullptr;
 	CEditApp::getInstance()->m_pcVisualProgress = nullptr;
 	CEditApp::getInstance()->m_pcSaveAgent = nullptr;
@@ -170,7 +165,6 @@ namespace window {
 
 	CEditApp::resetInstance();
 
-	pcMruListener = nullptr;
 	pcGrepAgent = nullptr;
 	pcVisualProgress = nullptr;
 	pcSaveAgent = nullptr;
