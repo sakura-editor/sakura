@@ -1044,12 +1044,8 @@ int CGrepAgent::DoGrepFiles(
 	const WCHAR*			pszBasePath			//!< [in] 検索対象パス(ベースフォルダー)
 )
 {
-	IGrepOutputTarget* const	pOutput = out.pOutput;
 	IGrepProgress* const	pProgress = out.pProgress;
-	const wchar_t* const	pszKey = cond.pszKey;
 	const GrepInfo&			sGrepOption = cond.sGrepOption;
-	const int* const		pnHitCount = out.pnHitCount;
-	CNativeW&				cmemMessage = out.cmemMessage;
 	int			nWork = 0;
 	int			nHitCountOld = -100;
 	const auto	nBasePathLen = int(std::wstring_view(pszBasePath).size());
@@ -1086,29 +1082,46 @@ int CGrepAgent::DoGrepFiles(
 			nRet = DoGrepFile( cond, pRegexp, out, nullptr, path );
 		}
 
-		// 2003.06.23 Moca リアルタイム表示のときは早めに表示
-		// データ検索のときファイルの合計が最大10MBを超えたら表示
-		if( pOutput->IsDrawing() && L'\0' != pszKey[0] ){
-			nWork += ( target.dwFileSizeLow + 1023 ) / 1024;
-		}
-		if( pOutput->IsDrawing() && 10000 < nWork ){
-			nHitCountOld = -100; // 即表示
-		}
-		/* 結果出力 */
-		if( 0 < cmemMessage.GetStringLength() &&
-		   (*pnHitCount - nHitCountOld) >= 10 &&
-		   (::GetTickCount64() - m_lastAddTailTime) > ADDTAIL_INTERVAL_MILLISEC
-		){
-			AppendResult( *pOutput, cmemMessage );
-			cmemMessage._SetStringLength(0);
-			nWork = 0;
-			nHitCountOld = *pnHitCount;
-		}
+		AppendResultIfDue( out, cond.pszKey, target.dwFileSizeLow, nWork, nHitCountOld );
 		if( -1 == nRet ){
 			return -1;
 		}
 	}
 	return 0;
+}
+
+/*!
+	@brief ファイル 1 つを検索した後、たまった結果を出力する時機なら出力する
+
+	ヒット数の合計が前回の出力から 10 以上増え、前回の出力から ADDTAIL_INTERVAL_MILLISEC を過ぎていたら出力する。
+	リアルタイム表示のときは、データ検索でファイルの合計が 10MB を超えたら、ヒット数によらず出力する。
+
+	@param[in,out]	out				結果の出力先と出力の状態
+	@param[in]		pszKey			検索キー(空ならファイル検索)
+	@param[in]		dwFileSizeLow	検索したファイルのサイズの下位 32 ビット
+	@param[in,out]	nWork			前回の出力から検索したファイルの合計(KB)。出力したら 0 にする
+	@param[in,out]	nHitCountOld	前回の出力のときのヒット数の合計。出力したら今の合計にする
+*/
+void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, DWORD dwFileSizeLow, int& nWork, int& nHitCountOld )
+{
+	// 2003.06.23 Moca リアルタイム表示のときは早めに表示
+	// データ検索のときファイルの合計が最大10MBを超えたら表示
+	if( out.pOutput->IsDrawing() && L'\0' != pszKey[0] ){
+		nWork += ( dwFileSizeLow + 1023 ) / 1024;
+	}
+	if( out.pOutput->IsDrawing() && 10000 < nWork ){
+		nHitCountOld = -100; // 即表示
+	}
+	/* 結果出力 */
+	if( 0 < out.cmemMessage.GetStringLength() &&
+	   (*out.pnHitCount - nHitCountOld) >= 10 &&
+	   (::GetTickCount64() - m_lastAddTailTime) > ADDTAIL_INTERVAL_MILLISEC
+	){
+		AppendResult( *out.pOutput, out.cmemMessage );
+		out.cmemMessage._SetStringLength(0);
+		nWork = 0;
+		nHitCountOld = *out.pnHitCount;
+	}
 }
 
 /*! @brief Grep実行

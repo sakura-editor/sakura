@@ -445,18 +445,18 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 int skr_towupper( int c )
 {
 #ifdef _MSC_VER
-	static wchar_t szMap[256];	// c < 256 用の変換テーブル
-	static bool bInit = false;
-	if( !bInit ){
+	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
+	static const auto szMap = []{
+		std::array<wchar_t, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towupper( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 255; i++ ) szMap[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
-		szMap[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
+		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towupper( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 255; i++ ) map[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
+		map[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
 		_free_locale( locale );
-		bInit = true;
-	}
+		return map;
+	}();
 
 	if( c < 256 ) return szMap[c];
 #endif
@@ -466,17 +466,17 @@ int skr_towupper( int c )
 int skr_towlower( int c )
 {
 #ifdef _MSC_VER
-	static wchar_t szMap[256];	// c < 256 用の変換テーブル
-	static bool bInit = false;
-	if( !bInit ){
+	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
+	static const auto szMap = []{
+		std::array<wchar_t, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towlower( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 256; i++ ) szMap[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towlower( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) map[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
 		_free_locale( locale );
-		bInit = true;
-	}
+		return map;
+	}();
 
 	if( c < 256 ) return szMap[c];
 #endif

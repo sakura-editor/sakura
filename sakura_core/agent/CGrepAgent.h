@@ -162,6 +162,9 @@ private:
 		const WCHAR*			pszBasePath
 	);
 
+	// ファイル 1 つを検索した後、たまった結果を出力する時機なら出力する
+	void AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, DWORD dwFileSizeLow, int& nWork, int& nHitCountOld );
+
 	// Grep実行
 	int DoGrepFile(
 		const SGrepSearchCond&	cond,

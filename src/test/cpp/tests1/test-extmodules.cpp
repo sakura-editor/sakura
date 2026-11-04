@@ -142,6 +142,39 @@ struct CBregexpTest : public ExtModuleTest {
 	}
 };
 
+/*!
+ * @brief 照合器が別々なら、別のスレッドから同時に Match() できる
+ *
+ * Grep でファイルを並列に検索するときは、スレッドごとに照合器を持つ。
+ */
+TEST_F(CBregexpTest, MatchConcurrentlyWithSeparateObjects)
+{
+	constexpr size_t threadCount = 4;
+	constexpr int loopCount = 2000;
+	std::array<CBregexp, threadCount> regexps;
+	for (auto& regexp : regexps) {
+		ASSERT_THAT(regexp.InitDll(L"bregonig.dll"), Eq(DLL_SUCCESS));
+		ASSERT_THAT(regexp.Compile(L"H.T", CBregexp::optCaseSensitive), IsTrue());
+	}
+
+	std::array<int, threadCount> hitCounts{};
+	{
+		std::vector<std::jthread> threads;
+		for (size_t i = 0; i < threadCount; ++i) {
+			threads.emplace_back([&regexp = regexps[i], &hitCount = hitCounts[i]] {
+				constexpr std::wstring_view line = L"xx HIT yy hat";
+				for (int n = 0; n < loopCount; ++n) {
+					if (regexp.Match(line.data(), int(line.size())) && regexp.GetIndex() == CLogicInt(3)) {
+						++hitCount;
+					}
+				}
+			});
+		}
+	}	// ここで全スレッドの終わりを待つ
+
+	EXPECT_THAT(hitCounts, ::testing::Each(Eq(loopCount)));
+}
+
 TEST_F(CBregexpTest, test001)
 {
 	// 初期状態では利用不可
