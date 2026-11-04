@@ -41,10 +41,11 @@
 #include "dlg/CDlgGrep.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
+#include "doc/CDocListener.h"
 #include "outline/CDlgFuncList.h"
 #include "env/CHokanMgr.h"
+#include "recent/CMruListener.h"
 #include "util/design_template.h"
-#include "doc/CDocListener.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 #include "window/CAppMainWnd.hpp"
@@ -52,6 +53,8 @@
 #include "cxx/ResourceHolder.hpp"
 
 #include "print/CPrintPreview.h"
+
+#include <memory>
 
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
@@ -89,6 +92,7 @@ private:
 	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
 	using CEditViewHolder = std::unique_ptr<CEditView>;
 	using CEditViewsArray = std::array<CEditViewHolder, 4>;
+	using CMruListenerHolder = std::unique_ptr<CMruListener>;
 	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
 	using CViewFontHolder = std::unique_ptr<CViewFont>;
 	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
@@ -411,6 +415,8 @@ private:
 
 	//その他フラグ
 	EIconClickStatus	m_IconClicked = icNone;
+
+	CMruListenerHolder	m_pcMruListener = std::make_unique<CMruListener>();	//!< MRUリスナ
 
 public:
 	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法

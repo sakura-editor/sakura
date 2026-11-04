@@ -13,7 +13,6 @@
 #include "agent/CLoadAgent.h"
 #include "agent/CSaveAgent.h"
 #include "uiparts/CVisualProgress.h"
-#include "recent/CMruListener.h"
 #include "macro/CSMacroMgr.h"
 #include "env/CPropertyManager.h"
 #include "agent/CGrepAgent.h"
@@ -50,9 +49,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 	m_pcEditWnd = new CEditWnd();
 	m_pcEditWnd->Create(GetDocument(), &GetIcons(), nGroupId);
 
-	//MRU管理
-	m_pcMruListener = new CMruListener();
-
 	//プロパティ管理
 	m_pcPropertyManager = m_pcEditWnd->m_pcPropertyManager.get();
 	m_pcPropertyManager->Create(
@@ -65,7 +61,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 CEditApp::~CEditApp() noexcept
 {
 	delete m_pcSMacroMgr;
-	delete m_pcMruListener;
 	delete m_pcGrepAgent;
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;

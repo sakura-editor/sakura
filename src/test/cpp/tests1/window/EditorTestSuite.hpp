@@ -19,7 +19,6 @@
 #include "agent/CLoadAgent.h"
 #include "agent/CSaveAgent.h"
 #include "macro/CSMacroMgr.h"
-#include "recent/CMruListener.h"
 #include "uiparts/CVisualProgress.h"
 
 namespace window {
@@ -42,7 +41,6 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	static inline std::unique_ptr<CSaveAgent> pcSaveAgent = nullptr;
 	static inline std::unique_ptr<CVisualProgress> pcVisualProgress = nullptr;
 	static inline std::unique_ptr<CGrepAgent> pcGrepAgent = nullptr;
-	static inline std::unique_ptr<CMruListener> pcMruListener = nullptr;
 
 	static void SetUpEditor();
 	static void TearDownEditor();
