@@ -35,6 +35,7 @@
 #include "CMainStatusBar.h"
 #include "view/CEditView.h"
 #include "window/CSplitterWnd.h"
+#include "basis/CMyRect.h"
 #include "dlg/CDlgFind.h"
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
@@ -117,7 +118,7 @@ public:
 
 	void	_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const;
 	void	_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo) const;	//!< ウィンドウ生成用の矩形を取得
-	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
+	HWND	_CreateMainWindow(const CMyRect& rectForInit);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
 	void OpenDocumentWhenStart(

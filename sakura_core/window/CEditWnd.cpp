@@ -361,54 +361,62 @@ void CEditWnd::_GetWindowRectForInit(
 	rcResult->SetXYWH(nWinOX,nWinOY,nWinCX,nWinCY);
 }
 
-HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
+/*!
+ * @brief ウィンドウ作成
+ *
+ * @param[in] rectForInit ウィンドウ作成時の矩形
+ * @return 作成したウィンドウのハンドル
+ */
+HWND CEditWnd::_CreateMainWindow(
+	const CMyRect& rectForInit
+)
 {
+	// アイコンを読み込む
+	HICON hIcon = nullptr;
+	HICON hIconSm = nullptr;
+	GetDefaultIcon(&hIcon, &hIconSm);
+
 	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
-	WNDCLASSEX	wc;
+	WNDCLASSEXW wc{ sizeof(WNDCLASSEX) };
+	wc.cbSize			= sizeof(wc);
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;                                  //拡張領域を1個確保。
-	wc.hInstance		= G_AppInstance();
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
-
+	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;	//拡張領域を1個確保。
+	wc.hInstance		= GetAppInstance();
+	wc.hIcon			= hIcon;
 	wc.hCursor			= nullptr/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)nullptr/*(COLOR_3DSHADOW + 1)*/;
 	wc.lpszMenuName		= nullptr;	// MAKEINTRESOURCE( IDR_MENU1 );	2010/5/16 Uchi
 	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
+	wc.hIconSm			= hIconSm;
 
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
-	ATOM	atom = RegisterClassEx( &wc );
-	if( 0 == atom ){
-		//	2004.05.13 Moca return NULLを有効にした
-		return nullptr;
-	}
+	const auto atom = ::RegisterClassExW(&wc);
 
-	//矩形取得
-	CMyRect rc;
-	_GetWindowRectForInit(&rc, nGroup, sTabGroupInfo);
+	if (!atom) throw cxx::make_system_error("RegisterClassExW() failed");
 
-	//作成
-	HWND hwndResult = ::CreateWindowEx(
-		0,				 	// extended window style
-		GSTR_EDITWINDOWNAME,		// pointer to registered class name
-		GSTR_EDITWINDOWNAME,		// pointer to window name
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
-		rc.left,			// horizontal position of window
-		rc.top,				// vertical position of window
-		rc.Width(),			// window width
-		rc.Height(),		// window height
+	const auto hwndResult = ::CreateWindowExW(
+		0L,					 	// extended window style
+		MAKEINTATOM(atom),		// class atom or pointer to registered class name
+		GSTR_EDITWINDOWNAME,	// pointer to window name
+		WS_OVERLAPPEDWINDOW
+		| WS_CLIPCHILDREN,		// window style
+		rectForInit.left,		// horizontal position of window
+		rectForInit.top,		// vertical position of window
+		rectForInit.Width(),	// window width
+		rectForInit.Height(),	// window height
 		nullptr,				// handle to parent or owner window
 		nullptr,				// handle to menu or child-window identifier
-		G_AppInstance(),		// handle to application instance
+		GetAppInstance(),		// handle to application instance
+		
+		//TODO: thisを渡す
 		nullptr				// pointer to window-creation data
 	);
+
+	if (!hwndResult) throw cxx::make_system_error("CreateWindowExW() failed");
+
 	return hwndResult;
 }
 
@@ -628,9 +636,13 @@ HWND CEditWnd::CreateMainWnd(
 	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
 
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
+	//矩形取得
+	CMyRect rectForInit{};
 	(void)nCmdShow;	//TODO: 初期サイズ算出関数に渡すようにする
+	_GetWindowRectForInit(&rectForInit, nGroup, sTabGroupInfo);
 
-	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
+	//作成
+	auto hWnd = _CreateMainWindow(rectForInit);
 	if(!hWnd)return nullptr;
 	m_hWnd = hWnd;
 
