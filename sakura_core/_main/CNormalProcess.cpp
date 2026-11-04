@@ -216,7 +216,7 @@ bool CNormalProcess::InitializeProcess(
 
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
-	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
+	m_pcEditApp->Create(GetProcessInstance());
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 
 	const auto hEditWnd = pEditWnd->Create(GetDocument(), &pEditWnd->GetIcons(), nGroupId);

@@ -31,7 +31,7 @@ public:
 	CEditApp() = default;
 	~CEditApp() noexcept override;
 
-	void Create(HINSTANCE hInst, int);
+	void Create(HINSTANCE hInst);
 
 	//モジュール情報
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
