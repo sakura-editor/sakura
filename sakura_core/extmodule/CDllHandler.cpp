@@ -13,7 +13,25 @@
 
 #include "StdAfx.h"
 #include "CDllHandler.h"
-#include "util/module.h"
+#include "util/file.h"
+
+namespace {
+
+/*!
+	@brief DLLを読み込むパスを決める
+	@param[in] pszName DLLの名前。フルパスか、実行ファイルのフォルダーからの相対パス
+	@return 相対パスなら実行ファイルのフォルダーを前に付けたパス。フルパスならそのまま
+*/
+std::filesystem::path GetDllLoadPath( LPCWSTR pszName )
+{
+	std::filesystem::path dllPath{ pszName };
+	if( dllPath.is_relative() ){
+		dllPath = GetExeFileName().parent_path() / dllPath;
+	}
+	return dllPath;
+}
+
+} // namespace
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
@@ -71,8 +89,9 @@ EDllResult CDllImp::InitDll(LPCWSTR pszSpecifiedDllName)
 		//名前が無効の場合は、次の名前候補を試す。
 		if(!pszName || !pszName[0])continue;
 
-		//DLLロード。ロードできなかったら次の名前候補を試す。
-		m_hInstance = LoadLibraryExedir(pszName);
+		//DLLロード。相対パスは実行ファイルのフォルダーにあるものとして読み込む(カレントディレクトリは変えない)。
+		//ロードできなかったら次の名前候補を試す。
+		m_hInstance = ::LoadLibraryW( GetDllLoadPath( pszName ).c_str() );
 		if(!m_hInstance)continue;
 
 		//初期処理

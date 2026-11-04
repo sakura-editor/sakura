@@ -16,6 +16,7 @@
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
 #include "mem/CNativeW.h"
+#include "util/file.h"
 #include "view/colors/EColorIndexType.h"
 
 #include "window/EditorTestSuite.hpp"
@@ -244,6 +245,66 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	constexpr auto nOption = -1;
 	constexpr auto bKakomi = true;
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage, nOption, bKakomi), IsFalse());
+}
+
+/*!
+ * DLL の読み込み先のテスト
+ *
+ * カレントディレクトリを一時フォルダーに移してから読み込み、終わったら戻す。
+ */
+struct CDllImpLoadPathTest : public CBregexpTest {
+	std::filesystem::path originalDir;
+	std::filesystem::path workDir;
+
+	void SetUp() override
+	{
+		CBregexpTest::SetUp();
+		originalDir = std::filesystem::current_path();
+		workDir = std::filesystem::temp_directory_path() / L"CDllImpLoadPathTest";
+		std::filesystem::create_directories(workDir);
+		std::filesystem::current_path(workDir);
+	}
+
+	void TearDown() override
+	{
+		pcBregexp = nullptr;	// DLL を解放してから一時フォルダーを消す
+		std::filesystem::current_path(originalDir);
+		std::error_code ec;
+		std::filesystem::remove_all(workDir, ec);
+		CBregexpTest::TearDown();
+	}
+};
+
+/*!
+ * @brief 相対パスは実行ファイルのフォルダーから読み込み、カレントディレクトリは変えない
+ *
+ * bregonig.dll は、ビルドで tests1.exe と同じフォルダーにコピーされる。
+ */
+TEST_F(CDllImpLoadPathTest, RelativePathFromExeDir)
+{
+	EXPECT_THAT(pcBregexp->InitDll(L"bregonig.dll"), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(L"bregonig.dll"));
+	EXPECT_THAT(std::filesystem::equivalent(std::filesystem::current_path(), workDir), IsTrue());
+}
+
+/*!
+ * @brief フルパスはそのまま読み込む
+ */
+TEST_F(CDllImpLoadPathTest, FullPath)
+{
+	const auto fullPath = (GetExeFileName().parent_path() / L"bregonig.dll").native();
+	EXPECT_THAT(pcBregexp->InitDll(fullPath.c_str()), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(fullPath));
+}
+
+/*!
+ * @brief カレントディレクトリにだけある DLL は読み込まず、次の名前候補(クラスが定義している DLL 名)を読み込む
+ */
+TEST_F(CDllImpLoadPathTest, NotFromCurrentDirectory)
+{
+	std::filesystem::copy_file(GetExeFileName().parent_path() / L"bregonig.dll", workDir / L"skr_cwd_only.dll", std::filesystem::copy_options::overwrite_existing);
+	EXPECT_THAT(pcBregexp->InitDll(L"skr_cwd_only.dll"), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(L"bregonig.dll"));
 }
 
 struct CMigemoTest : public ExtModuleTest {
