@@ -589,10 +589,8 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2007.06.26 ryoji nGroup追加
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
-HWND CEditWnd::Create(
-	[[maybe_unused]] const CEditDoc* pcEditDoc,
-	CImageListMgr*	pcIcons,	//!< [in] Image List
-	int				nGroup		//!< [in] グループID
+HWND CEditWnd::CreateMainWnd(
+	int nCmdShow
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
@@ -614,11 +612,24 @@ HWND CEditWnd::Create(
 		return nullptr;
 	}
 
+	// グループIDを取得
+	int nGroup = CCommandLine::getInstance()->GetGroupId();
+	if (-1 == nGroup &&
+		m_pShareData->m_Common.m_sTabBar.m_bNewWindow)
+	{
+		// どうやってもテストが通らない。
+		// この条件が妥当か、検証要。
+		// タブ表示が有効でなければグループIDを取得する意味はないはず。
+		nGroup = CAppNodeManager::getInstance()->GetFreeGroupId();
+	}
+
 	//タブグループ情報取得
 	STabGroupInfo sTabGroupInfo;
 	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
 
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
+	(void)nCmdShow;	//TODO: 初期サイズ算出関数に渡すようにする
+
 	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
 	if(!hWnd)return nullptr;
 	m_hWnd = hWnd;
@@ -643,6 +654,8 @@ HWND CEditWnd::Create(
 
 	//コモンコントロール初期化
 	MyInitCommonControls();
+
+	auto pcIcons = &GetIcons();
 
 	//イメージ、ヘルパなどの作成
 	m_cMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );

@@ -110,14 +110,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//	Mar. 7, 2002 genta 文書タイプ用引数追加
-	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
-	HWND Create(
-		const CEditDoc*	pcEditDoc,
-		CImageListMgr*	pcIcons,
-		int				nGroup
+	HWND CreateMainWnd(
+		int nCmdShow
 	);
+
 	void	_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const;
 	void	_GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo) const;	//!< ウィンドウ生成用の矩形を取得
 	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);

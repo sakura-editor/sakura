@@ -206,20 +206,13 @@ bool CNormalProcess::InitializeProcess(
 	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
-	// グループIDを取得
-	int nGroupId = CCommandLine::getInstance()->GetGroupId();
-	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
-		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
-	}
-
-	(void)nCmdShow;	//TODO: CEditWndのCreate()に渡すようにする
-
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
 	m_pcEditApp->Create(GetProcessInstance());
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 
-	const auto hEditWnd = pEditWnd->Create(GetDocument(), &pEditWnd->GetIcons(), nGroupId);
+	// 編集ウィンドウの作成
+	const auto hEditWnd = pEditWnd->CreateMainWnd(nCmdShow);
 	if (!hEditWnd) {
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
