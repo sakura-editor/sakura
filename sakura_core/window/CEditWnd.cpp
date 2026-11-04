@@ -655,11 +655,9 @@ HWND CEditWnd::CreateMainWnd(
 	//コモンコントロール初期化
 	MyInitCommonControls();
 
-	auto pcIcons = &GetIcons();
-
 	//イメージ、ヘルパなどの作成
-	m_cMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );
-	m_cToolbar.Create( pcIcons );
+	m_cMenuDrawer.Create(GetAppInstance(), hWnd, &GetIcons());
+	m_cToolbar.Create(&GetIcons());
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
