@@ -18,6 +18,4 @@ DWORD GetDllVersion( LPCWSTR lpszDllName );	// シェルやコモンコントロ
 
 void ChangeCurrentDirectoryToExeDir();
 
-//! カレントディレクトリ移動機能付LoadLibrary
-HMODULE LoadLibraryExedir( LPCWSTR pszDll);
 #endif /* SAKURA_MODULE_865764F5_F6C8_4B99_B2DB_A29F375539FE_H_ */
