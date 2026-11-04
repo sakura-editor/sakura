@@ -297,27 +297,31 @@ void CEditWnd::UpdateCaption()
 		CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ); // 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 }
 
-//!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(
-	CMyRect* rcResult,
-	int nGroup [[maybe_unused]],
-	const STabGroupInfo& sTabGroupInfo
+/*!
+ * @brief ウィンドウ生成用の矩形を取得
+ *
+ * @retval true  ウィンドウ作成後にShowWindowを呼び出す必要がある
+ * @retval false ウィンドウ作成後にShowWindowを呼び出す必要がない
+ */
+bool CEditWnd::_GetWindowRectForInit(
+	CMyRect& rectForInit,
+	const STabGroupInfo& sTabGroupInfo,
+	int nCmdShow
 ) const
 {
+	bool needShowWindow = true;
+
 	/* ウィンドウサイズ継承 */
-	int	nWinCX, nWinCY;
+	auto nWinCX = CW_USEDEFAULT;
+	auto nWinCY = 0;
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_sWindow.m_nWinSizeCX;
 		nWinCY = m_pShareData->m_Common.m_sWindow.m_nWinSizeCY;
-	}else{
-		nWinCX = CW_USEDEFAULT;
-		nWinCY = 0;
 	}
 
 	/* ウィンドウサイズ指定 */
-	EditInfo fi;
-	CCommandLine::getInstance()->GetEditInfo(&fi);
+	const auto& fi = CCommandLine::getInstance()->GetEditInfoRef();
 	if( fi.m_nWindowSizeX >= 0 ){
 		nWinCX = fi.m_nWindowSizeX;
 	}
@@ -326,9 +330,8 @@ void CEditWnd::_GetWindowRectForInit(
 	}
 
 	/* ウィンドウ位置指定 */
-	int nWinOX, nWinOY;
-	nWinOX = CW_USEDEFAULT;
-	nWinOY = 0;
+	auto nWinOX = CW_USEDEFAULT;
+	auto nWinOY = 0;
 	// ウィンドウ位置固定
 	//	2004.05.13 Moca 保存したウィンドウ位置を使う場合は共有メモリからセット
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
@@ -356,9 +359,26 @@ void CEditWnd::_GetWindowRectForInit(
 		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
 		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
 	}
+	// ウィンドウ位置やサイズが指定されなかった場合
+	else if (CW_USEDEFAULT == nWinOX &&
+		SW_HIDE == nWinOY &&
+		CW_USEDEFAULT == nWinCX &&
+		0 == nWinCY)
+	{
+		// CreateWindow関数には
+		//   スタイルにWS_OVERLAPPEDWINDOWを含み、
+		//   xにCW_USEDEFAULTが指定されている場合、
+		//   ウィンドウ作成後にyの値でShowWindowを呼び出す
+		// という仕様がある。
+		nWinOY = nCmdShow;
+
+		needShowWindow = false;
+	}
 
 	//結果
-	rcResult->SetXYWH(nWinOX,nWinOY,nWinCX,nWinCY);
+	rectForInit.SetXYWH(nWinOX, nWinOY, nWinCX, nWinCY);
+
+	return needShowWindow;
 }
 
 /*!
@@ -638,8 +658,7 @@ HWND CEditWnd::CreateMainWnd(
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
 	//矩形取得
 	CMyRect rectForInit{};
-	(void)nCmdShow;	//TODO: 初期サイズ算出関数に渡すようにする
-	_GetWindowRectForInit(&rectForInit, nGroup, sTabGroupInfo);
+	const auto needShowWindow = _GetWindowRectForInit(rectForInit, sTabGroupInfo, nCmdShow);
 
 	//作成
 	auto hWnd = _CreateMainWindow(rectForInit);
@@ -725,9 +744,13 @@ HWND CEditWnd::CreateMainWnd(
 
 	// -- -- -- -- その他調整など -- -- -- -- //
 
+	//TODO: いつか削除する
 	// 画面表示直前にDispatchEventを有効化する
 	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
+	//TODO: 処理内容を精査する
+	// 内部でウィンドウを表示しているが、このタイミングはまだ初期処理が終わってない。
+	// CreateWindowExの仕様的にShowWindow不要な場合にもShowWindowしている。
 	// デスクトップからはみ出さないようにする
 	_AdjustInMonitor(sTabGroupInfo);
 
@@ -786,6 +809,9 @@ HWND CEditWnd::CreateMainWnd(
 		&GetIcons(),
 		&GetMenuDrawer()
 	);
+
+	// ウィンドウサイズを独自指定した場合、自前でShowWindowする。
+	if (needShowWindow) ::ShowWindow(hWnd, SW_SHOW);
 
 	return GetHwnd();
 }
