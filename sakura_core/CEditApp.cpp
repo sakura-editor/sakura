@@ -47,7 +47,6 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
-	m_pcEditWnd->Create(GetDocument(), &GetIcons(), nGroupId);
 }
 
 CEditApp::~CEditApp() noexcept

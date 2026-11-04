@@ -219,7 +219,7 @@ bool CNormalProcess::InitializeProcess(
 	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 
-	const auto hEditWnd = pEditWnd->GetHwnd();
+	const auto hEditWnd = pEditWnd->Create(GetDocument(), &pEditWnd->GetIcons(), nGroupId);
 	if (!hEditWnd) {
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
