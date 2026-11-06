@@ -169,6 +169,7 @@
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp" />
     <ClInclude Include="..\src\main\cpp\window\CAppMainWnd.hpp" />
+    <ClInclude Include="..\src\main\cpp\window\CDropTargetWnd.hpp" />
     <ClInclude Include="apiwrap\CommonControl.h" />
     <ClInclude Include="apiwrap\DarkMode.h" />
     <ClInclude Include="apiwrap\StdApi.h" />
@@ -552,6 +553,7 @@
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\sync\MutexHandle.cpp" />
     <ClCompile Include="..\src\main\cpp\window\CAppMainWnd.cpp" />
+    <ClCompile Include="..\src\main\cpp\window\CDropTargetWnd.cpp" />
     <ClCompile Include="apiwrap\StdApi.cpp" />
     <ClCompile Include="apiwrap\StdControl.cpp" />
     <ClCompile Include="basis\CErrorInfo.cpp" />

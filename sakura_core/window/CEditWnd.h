@@ -50,6 +50,7 @@
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
 #include "window/CAppMainWnd.hpp"
+#include "window/CDropTargetWnd.hpp"
 
 #include "cxx/ResourceHolder.hpp"
 
@@ -90,12 +91,12 @@ class CEditWnd
 {
 private:
 	using AccelHolder = cxx::ResourceHolder<&::DestroyAcceleratorTable>;
-	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
 	using CEditViewHolder = std::unique_ptr<CEditView>;
 	using CEditViewsArray = std::array<CEditViewHolder, 4>;
 	using CMruListenerHolder = std::unique_ptr<CMruListener>;
 	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
 	using CViewFontHolder = std::unique_ptr<CViewFont>;
+	using DropTargetWndHolder = std::unique_ptr<CDropTargetWnd>;
 	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
 	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
 	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
@@ -409,7 +410,7 @@ private:
 	//D&Dフラグ
 	bool			m_bDragMode = false;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTargetHolder	m_pcDropTarget = std::make_unique<CDropTarget>(this);	//!< 右ボタンドロップ用
+	DropTargetWndHolder	m_DropTargetWnd = std::make_unique<CDropTargetWnd>();	//!< 右ボタンドロップ用
 
 	//その他フラグ
 	EIconClickStatus	m_IconClicked = icNone;
