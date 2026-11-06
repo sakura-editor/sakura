@@ -1162,13 +1162,28 @@ EAppExitCode CEditWnd::MessageLoop() const
 		//GetMessageW処理中のエラーを検出したら例外を投げる
 		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
 
-		if (m_cToolbar.EatMessage(&msg) ||
-			// モードレスダイアログ
-			msg.hwnd && ::IsDialogMessageW(msg.hwnd, &msg) ||
+		// モードレスダイアログのハンドルを取得する
+		const std::array modelessDlgs = {
+			CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),
+			m_cDlgFind.GetHwnd(),
+			m_cDlgFuncList.GetHwnd(),
+			m_cDlgReplace.GetHwnd(),
+			m_cHokanMgr.GetHwnd(),
+		};
+
+		if (const auto handled = std::ranges::any_of(modelessDlgs, [&msg] (HWND hWndDlg) {
+				return
+					hWndDlg &&
+					hWndDlg == msg.hwnd &&
+					::IsDialogMessageW(hWndDlg, &msg);
+			});
+			handled ||
+			// ツールバーの検索ボックス
+			m_cToolbar.EatMessage(&msg) ||
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
 			-1 == m_cHokanMgr.KeyProc(msg.message, msg.wParam, msg.lParam) ||
 			//アクセラレータ
-			msg.hwnd && m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
+			m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
 		{
 			continue;
 		}
