@@ -103,29 +103,9 @@ CDropTarget::CDropTarget( CEditView* pCEditView )
 
 CDropTarget::~CDropTarget()
 {
-	Revoke_DropTarget();
 	return;
 }
 
-BOOL CDropTarget::Register_DropTarget( HWND hWnd )
-{
-	if( FAILED( ::RegisterDragDrop( hWnd, this ) ) ){
-		TopWarningMessage( hWnd, LS(STR_ERR_DLGDRPTGT1) );
-		return FALSE;
-	}
-	m_hWnd_DropTarget = hWnd;
-	return TRUE;
-}
-
-BOOL CDropTarget::Revoke_DropTarget( void )
-{
-	BOOL bResult = TRUE;
-	if( m_hWnd_DropTarget != nullptr ){
-		bResult = SUCCEEDED( ::RevokeDragDrop( m_hWnd_DropTarget ) );
-		m_hWnd_DropTarget = nullptr;
-	}
-	return bResult;
-}
 STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
 	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );

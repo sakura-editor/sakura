@@ -289,6 +289,9 @@
     <ClInclude Include="..\src\main\cpp\window\CAppMainWnd.hpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\window\CDropTargetWnd.hpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\resources\sakura_rc.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
@@ -1400,6 +1403,9 @@
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\window\CAppMainWnd.cpp">
+      <Filter>Cpp Source Files\window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\window\CDropTargetWnd.cpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClCompile>
     <ClCompile Include="agent\CAutoReloadAgent.cpp">

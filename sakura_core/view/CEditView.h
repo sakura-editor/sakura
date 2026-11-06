@@ -54,10 +54,11 @@
 #include "util/container.h"		// vector_ex
 #include "util/design_template.h"
 #include "_os/CClipboard.h"
+#include "window/CDropTargetWnd.hpp"
 
+#include <memory>
 #include <string_view>
 
-class CDropTarget; /// 2002/2/3 aroka ヘッダー軽量化
 class COpeBlk;///
 class CSplitBoxWnd;///
 class CRegexKeyword;///
@@ -108,6 +109,7 @@ private:
 	using CCaretHolder = std::unique_ptr<CCaret>;
 	using CRulerHolder = std::unique_ptr<CRuler>;
 	using CTextAreaHolder = std::unique_ptr<CTextArea>;
+	using DropTargetWndHolder = std::unique_ptr<CDropTargetWnd>;
 
 public:
 	const CEditDoc* GetDocument() const
@@ -684,7 +686,7 @@ public:
 
 public:
 	//D&D
-	CDropTarget*	m_pcDropTarget = nullptr;
+	DropTargetWndHolder	m_DropTargetWnd = std::make_unique<CDropTargetWnd>();
 	BOOL			m_bDragMode = FALSE;	/* 選択テキストのドラッグ中か */
 	CLIPFORMAT		m_cfDragData = 0;	/* ドラッグデータのクリップ形式 */	// 2008.06.20 ryoji
 	BOOL			m_bDragBoxData = FALSE;	/* ドラッグデータは矩形か */
