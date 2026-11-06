@@ -20,6 +20,7 @@
 #include "cmd/COpeBlk.h"
 #include "window/CEditWnd.h"
 #include "charset/CCodeMediator.h"
+#include "extmodule/CUchardet.h"
 #include "view/colors/CColorStrategy.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
@@ -38,6 +39,7 @@
 #include "config/system_constants.h"
 
 #include <filesystem>
+#include <numeric>
 
 #define UICHECK_INTERVAL_MILLISEC 100	// UI確認の時間間隔
 #define ADDTAIL_INTERVAL_MILLISEC 50	// 結果出力の時間間隔
@@ -190,6 +192,65 @@ bool IsGrepCanceled( IGrepProgress* pProgress )
 	/* 表示設定をチェック */
 	pProgress->ApplyRealTimeView();
 	return false;
+}
+
+/*!
+	@brief スコープを抜けるときに、中断のフラグを立てる
+
+	ワーカーの終わりを待つ前に立てて、ワーカーを早く止める。
+*/
+class CCancelOnExit {
+public:
+	/*!
+		@param[in,out]	bCancel	スコープを抜けるときに立てる中断のフラグ(このオブジェクトより長く残す)
+	*/
+	explicit CCancelOnExit( std::atomic<bool>& bCancel )
+		: m_bCancel( bCancel )
+	{
+	}
+
+	CCancelOnExit( const CCancelOnExit& ) = delete;
+	CCancelOnExit& operator = ( const CCancelOnExit& ) = delete;
+
+	//! 中断のフラグを立てる
+	~CCancelOnExit()
+	{
+		m_bCancel = true;
+	}
+
+private:
+	std::atomic<bool>&	m_bCancel;	//!< 中断のフラグ
+};
+
+/*!
+	@brief 1 つのフォルダーの中のファイルを並列に検索するときの、ワーカーごとの正規表現を作る
+
+	編集中のテキストの検索(:HWND:)・Grep置換・単語単位は直列のままにする(空を返す)。
+	単語単位は、文字の種類の判定が文字幅のキャッシュ(スレッドセーフでない)を使うため。
+	正規表現でなければコンパイルはしない(数だけ作る)。
+
+	@param[in]	pattern		検索パターン(SetPattern() でコンパイル済み)
+	@param[in]	gi			Grep実行の入力一式
+	@param[in]	bHwnd		編集中のテキストを検索するか
+	@param[in]	nMaxThreads	スレッドの数の上限(コア数でも抑える)
+	@return ワーカーごとの正規表現。並列にしないとき・作れなかったときは空
+*/
+std::vector<std::unique_ptr<CBregexp>> CreateWorkerRegexps( const CSearchStringPattern& pattern, const GrepInfo& gi, bool bHwnd, size_t nMaxThreads )
+{
+	std::vector<std::unique_ptr<CBregexp>> vRegexps;
+	if( bHwnd || gi.bGrepReplace || gi.sGrepSearchOption.bWordOnly ){
+		return vRegexps;
+	}
+	const size_t nThreads = std::min<size_t>( nMaxThreads, std::thread::hardware_concurrency() );
+	for( size_t i = 0; 1 < nThreads && i < nThreads; ++i ){
+		auto pRegexp = std::make_unique<CBregexp>();
+		if( !pattern.CompileRegexp( *pRegexp ) ){
+			vRegexps.clear();
+			break;
+		}
+		vRegexps.push_back( std::move( pRegexp ) );
+	}
+	return vRegexps;
 }
 
 } // namespace grep
@@ -890,8 +951,19 @@ DWORD CGrepAgent::DoGrep(
 	CGrepEnumFolders cGrepExceptAbsFolders;
 	cGrepExceptAbsFolders.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
+	// 文字コードの自動判別に使う uchardet.dll を、Grep の間はメインスレッドでも読み込んでおく。
+	// ワーカーのスレッドはファイルごとに作られ、終わるときに DLL を解放するので、
+	// メインスレッドが持っていないと、ファイルごとに DLL が外れては読み込み直すことになる
+	CUchardet cUchardet;
+	cUchardet.InitDll();
+
+	// 1 つのフォルダーの中のファイルを並列に検索するときの、ワーカーごとの正規表現(DoGrep() の間、使い回す)
+	const auto vWorkerRegexpHolders = grep::CreateWorkerRegexps( pattern, gi, nullptr != hWndTarget, m_nMaxGrepThreads );
+	std::vector<CBregexp*> vWorkerRegexps;
+	std::ranges::transform( vWorkerRegexpHolders, std::back_inserter( vWorkerRegexps ), []( const auto& pRegexp ){ return pRegexp.get(); } );
+
 	// 検索の条件と列挙の条件(全ファイル・全フォルダーで共通)
-	const SGrepSearchCond cond{ gi.cmGrepKey.GetStringPtr(), cmemReplace, gi.sGrepSearchOption, sGrepOption, pattern };
+	const SGrepSearchCond cond{ gi.cmGrepKey.GetStringPtr(), cmemReplace, gi.sGrepSearchOption, sGrepOption, pattern, vWorkerRegexps };
 	const SGrepEnumCond enumCond{ cGrepEnumKeys, cGrepExceptAbsFiles, cGrepExceptAbsFolders };
 
 	int nGrepTreeResult = 0;
@@ -1024,7 +1096,7 @@ std::vector<CGrepAgent::SGrepTargetFile> CGrepAgent::EnumerateGrepTargetFiles(
 	const int count = cGrepEnumFilterFiles.GetCount();
 	vFiles.reserve( count );
 	for( int i = 0; i < count; i++ ){
-		vFiles.emplace_back( cGrepEnumFilterFiles.GetFileName( i ), cGrepEnumFilterFiles.GetFileSizeLow( i ) );
+		vFiles.emplace_back( cGrepEnumFilterFiles.GetFileName( i ), cGrepEnumFilterFiles.GetFileSize( i ) );
 	}
 	return vFiles;
 }
@@ -1056,38 +1128,60 @@ int CGrepAgent::DoGrepFiles(
 	// フォルダー名の見出しは、フォルダーごとに 1 回出す
 	out.heading.bFolderName = false;
 
-	for( const auto& target : vFiles ){
-		const LPCWSTR lpFileName = target.strFileName.c_str();
+	// ワーカーごとの正規表現があり、対象ファイルが 2 つ以上なら並列に検索する
+	if( 2 <= std::min( cond.workerRegexps.size(), vFiles.size() ) ){
+		return DoGrepFilesParallel( cond, pRegexp, out, vFiles, { pszPath, pszBasePath, pszFolder } );
+	}
 
+	for( const auto& target : vFiles ){
 		if( grep::IsGrepCanceled( pProgress ) ){
 			return -1;
 		}
 
 		// 定期的に grep 中のファイル名表示を更新
 		if( pProgress->IsFileNameTime() ){
-			pProgress->SetFileName( lpFileName );
+			pProgress->SetFileName( target.strFileName );
 		}
 
-		std::wstring currentFile = pszPath;
-		currentFile += L"\\";
-		currentFile += lpFileName;
-		const WCHAR* pszRelPath = (sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1);
-
-		/* ファイル内の検索 */
-		const SGrepFilePath path{ lpFileName, currentFile.c_str(), pszBasePath, pszFolder, pszRelPath };
-		int nRet;
-		if( sGrepOption.bGrepReplace ){
-			nRet = DoGrepReplaceFile( cond, pRegexp, out, path );
-		}else{
-			nRet = DoGrepFile( cond, pRegexp, out, nullptr, path );
-		}
-
-		AppendResultIfDue( out, cond.pszKey, target.dwFileSizeLow, nWork, nHitCountOld );
+		const int nRet = DoGrepTargetFile( cond, pRegexp, out, target, { pszPath, pszBasePath, pszFolder } );
+		AppendResultIfDue( out, cond.pszKey, target.nFileSize, nWork, nHitCountOld );
 		if( -1 == nRet ){
 			return -1;
 		}
 	}
 	return 0;
+}
+
+/*!
+	@brief 対象ファイル 1 つを、このスレッドで検索する(Grep置換なら置換する)
+
+	@param[in]		cond	検索の条件(全ファイルで共通)
+	@param[in]		pRegexp	正規表現コンパイルデータ。既にコンパイルされている必要がある
+	@param[in,out]	out		結果の出力先と出力の状態
+	@param[in]		target	検索するファイル
+	@param[in]		folder	検索するフォルダーのパス一式
+	@retval -1	中断した
+*/
+int CGrepAgent::DoGrepTargetFile(
+	const SGrepSearchCond&	cond,
+	CBregexp*				pRegexp,
+	SGrepOutput&			out,
+	const SGrepTargetFile&	target,
+	const SGrepFolderPath&	folder
+)
+{
+	const GrepInfo&	sGrepOption = cond.sGrepOption;
+	const LPCWSTR	lpFileName = target.strFileName.c_str();
+	const std::wstring currentFile = std::format( L"{}\\{}", folder.pszPath, target.strFileName );
+	const size_t	nBasePathLen = std::wstring_view( folder.pszBasePath ).size();
+	const WCHAR* pszRelPath = (sGrepOption.bGrepSeparateFolder ? lpFileName : currentFile.c_str() + nBasePathLen + 1);
+
+	/* ファイル内の検索 */
+	const SGrepFilePath path{ lpFileName, currentFile.c_str(), folder.pszBasePath, folder.pszFolder, pszRelPath };
+	if( sGrepOption.bGrepReplace ){
+		return DoGrepReplaceFile( cond, pRegexp, out, path );
+	}
+	return DoGrepFile( cond, pRegexp, out, nullptr, path );
 }
 
 /*!
@@ -1098,16 +1192,16 @@ int CGrepAgent::DoGrepFiles(
 
 	@param[in,out]	out				結果の出力先と出力の状態
 	@param[in]		pszKey			検索キー(空ならファイル検索)
-	@param[in]		dwFileSizeLow	検索したファイルのサイズの下位 32 ビット
+	@param[in]		nFileSize		検索したファイルの大きさ(バイト)
 	@param[in,out]	nWork			前回の出力から検索したファイルの合計(KB)。出力したら 0 にする
 	@param[in,out]	nHitCountOld	前回の出力のときのヒット数の合計。出力したら今の合計にする
 */
-void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, DWORD dwFileSizeLow, int& nWork, int& nHitCountOld )
+void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, ULONGLONG nFileSize, int& nWork, int& nHitCountOld )
 {
 	// 2003.06.23 Moca リアルタイム表示のときは早めに表示
 	// データ検索のときファイルの合計が最大10MBを超えたら表示
 	if( out.pOutput->IsDrawing() && L'\0' != pszKey[0] ){
-		nWork += ( dwFileSizeLow + 1023 ) / 1024;
+		nWork += static_cast<int>( ( nFileSize + 1023 ) / 1024 );
 	}
 	if( out.pOutput->IsDrawing() && 10000 < nWork ){
 		nHitCountOld = -100; // 即表示
@@ -1122,6 +1216,248 @@ void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, DWO
 		nWork = 0;
 		nHitCountOld = *out.pnHitCount;
 	}
+}
+
+/*!
+	@brief フォルダー 1 つぶんの対象ファイルを並列に検索し、列挙した順に出力する
+
+	ワーカーごとの正規表現の数だけ、ファイルをワーカーのスレッドで同時に検索する。
+	メインスレッドは列挙した順に結果を待ち、出力していない結果の末尾に足す。
+	先頭のファイルの結果を待つ間も、検索が終わったワーカーの正規表現で次のファイルを検索する
+	(先に終わったファイルの結果は、受け取るまでためておく。ためる数はワーカーの数の 4 倍まで)。
+	中断の確認と進み具合の表示はメインスレッドだけが行い、ファイルの途中の進み具合(大きいファイルの読んだ割合など)は表示しない。
+	m_nMaxParallelFileSize を超えるファイルは、前のファイルの結果を全部受け取ってから、メインスレッドで検索する。
+	ワーカーはファイル全体をメモリに割り当てて読み、結果もファイルの終わりまでためるので、
+	大きいファイルを同時に割り当てない(32 ビット版でアドレス空間が足りなくなる)ためと、途中で結果を出すため。
+
+	@param[in]		cond		検索の条件(全ファイルで共通)
+	@param[in]		pRegexp		メインスレッドで検索するときの正規表現コンパイルデータ
+	@param[in,out]	out			結果の出力先と出力の状態
+	@param[in]		vFiles		対象ファイル(EnumerateGrepTargetFiles() の結果)
+	@param[in]		folder		検索するフォルダーのパス一式
+	@retval 0	正常
+	@retval -1	中断した。出力していない結果は out.cmemMessage に残っている
+*/
+int CGrepAgent::DoGrepFilesParallel(
+	const SGrepSearchCond&	cond,
+	CBregexp*				pRegexp,
+	SGrepOutput&			out,
+	const std::vector<SGrepTargetFile>& vFiles,
+	const SGrepFolderPath&	folder
+)
+{
+	IGrepProgress* const	pProgress = out.pProgress;
+	const size_t			nWorkers = std::min( cond.workerRegexps.size(), vFiles.size() );
+	int			nWork = 0;
+	int			nHitCountOld = -100;
+
+	// 結果を受け取っていないワーカーは、ワーカーの数の 4 倍まで(先に終わったファイルの結果をためすぎない)
+	constexpr size_t PENDING_PER_WORKER = 4;
+
+	// 中断のフラグはワーカーより長く残す。抜けるときは、フラグを立ててからワーカーの終わりを待つ(ワーカーを消すときに待つ)
+	std::atomic			bCancel{ false };
+	SGrepWorkerQueue	queue;
+	const grep::CCancelOnExit	cancelOnExit( bCancel );
+	queue.freeRegexps.resize( nWorkers );
+	std::iota( queue.freeRegexps.begin(), queue.freeRegexps.end(), size_t{ 0 } );
+	queue.nMaxPending = nWorkers * PENDING_PER_WORKER;
+
+	for( const auto& target : vFiles ){
+		// 中断されたら、新しいファイルはワーカーに渡さない
+		if( bCancel || grep::IsGrepCanceled( pProgress ) ){
+			return -1;
+		}
+
+		LaunchGrepFiles( queue, cond, bCancel, vFiles, folder );
+		if( pProgress->IsFileNameTime() ){
+			pProgress->SetFileName( target.strFileName );
+		}
+
+		// ワーカーに渡さなかったファイル(大きいファイルか、スレッドを作れなかったとき)は、メインスレッドで検索する
+		// (前のファイルの結果は受け取り済みで、ワーカーは動いていない)
+		if( queue.workers.empty() ){
+			const int nRet = DoGrepTargetFile( cond, pRegexp, out, target, folder );
+			++queue.nNext;
+			AppendResultIfDue( out, cond.pszKey, target.nFileSize, nWork, nHitCountOld );
+			if( -1 == nRet ){
+				return -1;
+			}
+			continue;
+		}
+
+		// 結果を待つ間も、処理中のユーザー操作を受け付け、検索が終わったワーカーの分だけ次のファイルを渡す(待つ前に 1 回は確かめる)
+		do{
+			if( grep::IsGrepCanceled( pProgress ) ){
+				bCancel = true;
+			}
+			LaunchGrepFiles( queue, cond, bCancel, vFiles, folder );
+		}while( !WaitFrontWorker( queue ) );
+		SGrepFileWorker& worker = queue.workers.front();
+		const SGrepFileResult result = worker.result.get();
+		// 待っている間に終わったときは、正規表現をまだ空けていない
+		if( !worker.bReleased ){
+			queue.freeRegexps.push_back( worker.nRegexp );
+		}
+		queue.workers.pop_front();
+
+		MergeGrepFileResult( out, cond.sGrepOption, folder.pszBasePath, folder.pszFolder, result );
+		pProgress->SetHitCount( *out.pnHitCount );
+		AppendResultIfDue( out, cond.pszKey, target.nFileSize, nWork, nHitCountOld );
+		// ワーカーがやめたら(-1)、直列と同じく次のファイルに進まない(次の確認で抜ける)
+		bCancel = bCancel || ( -1 == result.nRet );
+	}
+	// 最後のファイルを待つ間に中断されたときも、中断したことを返す
+	return bCancel ? -1 : 0;
+}
+
+/*!
+	@brief ファイル 1 つの検索を、ワーカーのスレッドで始める
+
+	ワーカーは、見出しを出していない状態から検索し、結果をファイル 1 つぶんの文字列にためる(途中で出力先には足さない)。
+	中断は、メインスレッドが立てるフラグで受け取る。
+
+	@param[in,out]	queue	ワーカーの列(末尾に足す)
+	@param[in]	cond		検索の条件(全ファイルで共通。ワーカーは読むだけ)
+	@param[in]	nRegexp		このワーカーの正規表現(cond.workerRegexps の添字。ほかのワーカーと同時には使わない)
+	@param[in]	bCancel		中断のフラグ(結果を受け取るまで残す)
+	@param[in]	target		検索するファイル(結果を受け取るまで残す)
+	@param[in]	folder		検索するフォルダーのパス一式(指す文字列は結果を受け取るまで残す)
+	@retval false	スレッドを作れなかった(列には足さない。このファイルはメインスレッドで検索する)
+*/
+bool CGrepAgent::LaunchGrepFile(
+	SGrepWorkerQueue&		queue,
+	const SGrepSearchCond&	cond,
+	size_t					nRegexp,
+	const std::atomic<bool>&	bCancel,
+	const SGrepTargetFile&	target,
+	const SGrepFolderPath&	folder
+)
+{
+	CBregexp* const pRegexp = cond.workerRegexps[nRegexp];
+	std::wstring currentFile = std::format( L"{}\\{}", folder.pszPath, target.strFileName );
+	const WCHAR* const pszBasePath = folder.pszBasePath;
+	const WCHAR* const pszFolder = folder.pszFolder;
+	const size_t nBasePathLen = std::wstring_view( pszBasePath ).size();
+	std::packaged_task<SGrepFileResult()> task( [this, &cond, pRegexp, &bCancel, &target, currentFile = std::move( currentFile ), pszBasePath, pszFolder, nBasePathLen]{
+		const WCHAR* pszRelPath = (cond.sGrepOption.bGrepSeparateFolder ? target.strFileName.c_str() : currentFile.c_str() + nBasePathLen + 1);
+		SGrepFileResult result;
+		grep::CGrepWorkerProgress progress( bCancel );
+		CNativeW cUnicodeBuffer;
+		// ワーカーは出力先に足さない(結果は result.cmemMessage にためる)ので、出力先は無い
+		SGrepOutput out{ nullptr, &progress, &result.nHitCount, result.cmemMessage, cUnicodeBuffer, {}, true };
+		result.nRet = DoGrepFile( cond, pRegexp, out, nullptr, { target.strFileName.c_str(), currentFile.c_str(), pszBasePath, pszFolder, pszRelPath } );
+		result.heading = out.heading;
+		return result;
+	} );
+	SGrepFileWorker& worker = queue.workers.emplace_back();
+	worker.result = task.get_future();
+	worker.nRegexp = nRegexp;
+	try{
+		// 結果ができてから知らせる(知らせを受けたメインスレッドが、結果を見て次のファイルを渡せるように)
+		worker.thread = std::jthread( [fileTask = std::move( task ), &done = queue.done]() mutable {
+			fileTask();
+			done.Notify();
+		} );
+	}catch( const std::system_error& ){
+		queue.workers.pop_back();
+		return false;
+	}
+	return true;
+}
+
+/*!
+	@brief 先頭のワーカーの検索が終わったかを返す
+
+	終わっていなければ、どれかのワーカーが終わるか 10ms たつまで待ってから、もう一度確かめる。
+	ほかのワーカーが終わったときは、呼び出し元がすぐに次のファイルを渡せる。
+
+	@param[in,out]	queue	ワーカーの列(空でないこと)
+	@retval true	先頭のワーカーの検索が終わった
+*/
+bool CGrepAgent::WaitFrontWorker( SGrepWorkerQueue& queue )
+{
+	const auto IsFrontReady = [&queue]{
+		return std::future_status::ready == queue.workers.front().result.wait_for( std::chrono::seconds( 0 ) );
+	};
+	if( IsFrontReady() ){
+		return true;
+	}
+	queue.done.WaitFor( std::chrono::milliseconds( 10 ) );
+	return IsFrontReady();
+}
+
+/*!
+	@brief 検索が終わったワーカーの正規表現を空け、空いた数だけ次のファイルをワーカーに渡す
+
+	正規表現は、ワーカーの検索が終わったら、結果を受け取る前でも次のファイルに使ってよい
+	(検索が終わった後は、そのワーカーは正規表現を使わない)。
+	中断されたとき、結果を受け取っていないワーカーが queue.nMaxPending 個のとき、
+	次のファイルが大きいとき(m_nMaxParallelFileSize を超える。メインスレッドで検索する)、
+	スレッドを作れなかったとき(そのファイルはメインスレッドで検索する)は渡さない。
+
+	@param[in,out]	queue	ワーカーの列と空いている正規表現
+	@param[in]		cond	検索の条件(全ファイルで共通)
+	@param[in]		bCancel	中断のフラグ(結果を受け取るまで残す)
+	@param[in]		vFiles	対象ファイル(結果を受け取るまで残す)
+	@param[in]		folder	検索するフォルダーのパス一式(指す文字列は結果を受け取るまで残す)
+*/
+void CGrepAgent::LaunchGrepFiles(
+	SGrepWorkerQueue&		queue,
+	const SGrepSearchCond&	cond,
+	const std::atomic<bool>&	bCancel,
+	const std::vector<SGrepTargetFile>& vFiles,
+	const SGrepFolderPath&	folder
+)
+{
+	for( auto& worker : queue.workers ){
+		if( !worker.bReleased && std::future_status::ready == worker.result.wait_for( std::chrono::seconds( 0 ) ) ){
+			queue.freeRegexps.push_back( worker.nRegexp );
+			worker.bReleased = true;
+		}
+	}
+	while( !bCancel && !queue.freeRegexps.empty() && queue.workers.size() < queue.nMaxPending
+		&& queue.nNext < vFiles.size() && vFiles[queue.nNext].nFileSize <= m_nMaxParallelFileSize ){
+		if( !LaunchGrepFile( queue, cond, queue.freeRegexps.back(), bCancel, vFiles[queue.nNext], folder ) ){
+			return;
+		}
+		queue.freeRegexps.pop_back();
+		++queue.nNext;
+	}
+}
+
+/*!
+	@brief ワーカーが検索したファイル 1 つぶんの結果を、出力していない結果の末尾に足す
+
+	ワーカーは見出しを出していない状態から検索するので、見出しを出していれば結果の先頭にある。
+	その見出しを除き、まだ出していない見出しだけを出してから、残りを足す。ヒット数の合計も足す。
+
+	@param[in,out]	out			結果の出力先と出力の状態
+	@param[in]		gi			Grep実行の入力一式(正規化済み)
+	@param[in]		baseFolder	検索対象パス(ベースフォルダー)
+	@param[in]		folder		結果に表示するフォルダー
+	@param[in]		result		ワーカーが検索したファイル 1 つぶんの結果(中断していても、途中までの結果を足す)
+*/
+void CGrepAgent::MergeGrepFileResult(
+	SGrepOutput&			out,
+	const GrepInfo&			gi,
+	std::wstring_view		baseFolder,
+	std::wstring_view		folder,
+	const SGrepFileResult&	result
+)
+{
+	int nHeadingLen = 0;
+	if( result.heading.bBaseFolder || result.heading.bFolderName ){
+		// ワーカーが出した見出しの長さ(見出しを出していない状態から出したもの)
+		CNativeW cmemHeading;
+		SGrepHeading heading;
+		AppendFolderHeadings( cmemHeading, gi, baseFolder, folder, heading.bBaseFolder, heading.bFolderName );
+		nHeadingLen = cmemHeading.GetStringLength();
+		AppendFolderHeadings( out.cmemMessage, gi, baseFolder, folder, out.heading.bBaseFolder, out.heading.bFolderName );
+	}
+	if( const int nLen = result.cmemMessage.GetStringLength(); nHeadingLen < nLen ){
+		out.cmemMessage.AppendString( result.cmemMessage.GetStringPtr() + nHeadingLen, size_t( nLen - nHeadingLen ) );
+	}
+	*out.pnHitCount += result.nHitCount;
 }
 
 /*! @brief Grep実行
@@ -1217,8 +1553,8 @@ int CGrepAgent::DoGrepFile(
 )
 {
 	// 構造体にまとめた引数を、本体で使ってきた名前で受ける(置換後文字列は使わない)
-	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
-	auto& [pOutput, pProgress, pnHitCount, cmemMessage, cUnicodeBuffer, heading] = out;
+	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern, workerRegexps] = cond;
+	auto& [pOutput, pProgress, pnHitCount, cmemMessage, cUnicodeBuffer, heading, bWorker] = out;
 	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	int		nHitCount;
 	LONGLONG	nLine;
@@ -1413,7 +1749,7 @@ int CGrepAgent::DoGrepFile(
 					} );
 				}
 			}
-			if( 0 < cmemMessage.GetStringLength() &&
+			if( !bWorker && 0 < cmemMessage.GetStringLength() &&
 				(nHitCount - nOutputHitCount >= 10) &&
 				(::GetTickCount64() - m_lastAddTailTime) >= ADDTAIL_INTERVAL_MILLISEC
 			){
@@ -1577,8 +1913,8 @@ int CGrepAgent::DoGrepReplaceFile(
 )
 {
 	// 構造体にまとめた引数を、本体で使ってきた名前で受ける(検索語は使わない)
-	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern] = cond;
-	auto& [pOutput, pProgress, pnHitCount, cmemMessage, cUnicodeBuffer, heading] = out;
+	[[maybe_unused]] const auto& [pszKey, cmGrepReplace, sSearchOption, sGrepOption, pattern, workerRegexps] = cond;
+	[[maybe_unused]] auto& [pOutput, pProgress, pnHitCount, cmemMessage, cUnicodeBuffer, heading, bWorker] = out;
 	const auto& [pszFile, pszFullPath, pszBaseFolder, pszFolder, pszRelPath] = path;
 	LONGLONG	nLine = 0;
 	int		nHitCount = 0;
