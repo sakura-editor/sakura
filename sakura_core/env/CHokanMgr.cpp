@@ -626,8 +626,8 @@ int CHokanMgr::KeyProc(
 	LPARAM lParam
 )
 {
-	if (WM_KEYDOWN == uMsg ||
-		GetEditWnd().GetActiveView().m_bHokan)
+	if (WM_KEYDOWN != uMsg ||
+		!GetEditWnd().GetActiveView().m_bHokan)
 	{
 		return -2;
 	}
