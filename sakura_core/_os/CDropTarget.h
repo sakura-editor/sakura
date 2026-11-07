@@ -81,21 +81,34 @@ public:
 	{return 0;}
 };
 
-class CDropTarget : public CYbInterfaceImpl<IDropTarget>
+/*!
+ * @brief D&Dターゲットクラス
+ *
+ * D&Dターゲット(IDropTarget)の実装です。
+ */
+class CDropTarget : public cxx::TComImpl<IDropTarget>
 {
+private:
+	using Base = cxx::TComImpl<IDropTarget>;
 	using Me = CDropTarget;
 
 public:
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<Me, Args...>
+	{
+		return Base::template make_instance<Me>(std::forward<Args>(args)...);
+	}
+	
 	/*
 	||  Constructors
 	*/
-	CDropTarget( CEditWnd* );	// 2008.06.20 ryoji
-	CDropTarget( CEditView* );
-	CDropTarget(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	CDropTarget(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CDropTarget();
+	explicit CDropTarget(CEditWnd* pcEditWnd);	// 2008.06.20 ryoji
+	explicit CDropTarget(CEditView* pcEditView);
+
+	~CDropTarget() override;
+
 	/*
 	||  Attributes & Operations
 	*/

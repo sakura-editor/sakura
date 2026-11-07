@@ -86,17 +86,15 @@ void COleLibrary::UnInitialize()
 #define DECLARE_YB_INTERFACEIMPL( BASEINTERFACE ) \
 template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
 
-DECLARE_YB_INTERFACEIMPL( IDropTarget )
-
-CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
+CDropTarget::CDropTarget(CEditWnd* pCEditWnd)
+	: m_pcEditWnd{ pCEditWnd }
 {
-	m_pcEditWnd = pCEditWnd;	// 2008.06.20 ryoji
 	return;
 }
 
-CDropTarget::CDropTarget( CEditView* pCEditView )
+CDropTarget::CDropTarget(CEditView* pCEditView)
+	: m_pcEditView{ pCEditView }
 {
-	m_pcEditView = pCEditView;
 	return;
 }
 
@@ -105,7 +103,12 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
-STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
@@ -113,14 +116,20 @@ STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState,
 	}
 	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
-STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+
+IFACEMETHODIMP CDropTarget::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragOver( dwKeyState, pt, pdwEffect );
 	}
 	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
-STDMETHODIMP CDropTarget::DragLeave( void )
+
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragLeave();
@@ -128,7 +137,12 @@ STDMETHODIMP CDropTarget::DragLeave( void )
 	return m_pcEditView->DragLeave();
 }
 
-STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
