@@ -163,9 +163,9 @@ TEST_F(GrepDialogTest, Basic)
 	AddBasicFiles();
 	AcceptGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", L"*.txt"); });
 	const auto text = GetDocumentText();
-	EXPECT_TRUE(Contains(text, MatchCountText(4)));
-	EXPECT_TRUE(Contains(text, L"d.txt"));
-	EXPECT_FALSE(Contains(text, L"c.log"));
+	EXPECT_THAT(Contains(text, MatchCountText(4)), IsTrue());
+	EXPECT_THAT(Contains(text, L"d.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"c.log"), IsFalse());
 }
 
 //! 結果出力: 該当行 / 否該当行
@@ -176,14 +176,14 @@ TEST_F(GrepDialogTest, OutputLineTypes)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SelectOutputLineType(hDlg, IDC_RADIO_OUTPUTLINE);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(3)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(3)), IsTrue());
 
 	ResetDocument();
 	AcceptGrepDialog([this](HWND hDlg) {
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SelectOutputLineType(hDlg, IDC_RADIO_NOHIT);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(2)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(2)), IsTrue());
 }
 
 //! ファイル毎最初のみ・出力形式・フォルダー毎・ベースフォルダー
@@ -194,7 +194,7 @@ TEST_F(GrepDialogTest, OutputOptions)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		Check(hDlg, IDC_CHECK_FILE_ONLY, true);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(2)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(2)), IsTrue());
 
 	for (const auto style : { IDC_RADIO_OUTPUTSTYLE2, IDC_RADIO_OUTPUTSTYLE3 }) {
 		ResetDocument();
@@ -204,7 +204,7 @@ TEST_F(GrepDialogTest, OutputOptions)
 			Check(hDlg, IDC_CHECK_SEP_FOLDER, true);
 			Check(hDlg, IDC_CHECK_BASE_PATH, true);
 		});
-		EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(4))) << style;
+		EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(4)), IsTrue()) << style;
 	}
 }
 
@@ -217,7 +217,7 @@ TEST_F(GrepDialogTest, SearchOptions)
 		Check(hDlg, IDC_CHK_WORD, true);
 		Check(hDlg, IDC_CHK_LOHICASE, true);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(2)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(2)), IsTrue());
 
 	ResetDocument();
 	AcceptGrepDialog([this](HWND hDlg) {
@@ -226,7 +226,7 @@ TEST_F(GrepDialogTest, SearchOptions)
 		SendDlgCommand(hDlg, IDC_CHK_REGULAREXP);	// 正規表現のバージョン表示と「単語単位」の無効化
 		Check(hDlg, IDC_CHK_LOHICASE, true);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(4)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(4)), IsTrue());
 }
 
 /*!
@@ -248,15 +248,15 @@ TEST_F(GrepDialogTest, ExcludePatternsWithComma)
 	const auto text = GetDocumentText();
 
 	// 結果: 除外したものがヒットせず、除外していない obj\x.txt はヒットする
-	EXPECT_TRUE(Contains(text, MatchCountText(4)));
-	EXPECT_TRUE(LineContaining(text, L"a,b.txt(").empty());
-	EXPECT_TRUE(LineContaining(text, LR"(obj,old\x.txt()").empty());
-	EXPECT_FALSE(LineContaining(text, LR"(\obj\x.txt()").empty());
-	EXPECT_FALSE(LineContaining(text, LR"(\old\x.txt()").empty());
+	EXPECT_THAT(Contains(text, MatchCountText(4)), IsTrue());
+	EXPECT_THAT(LineContaining(text, L"a,b.txt(").empty(), IsTrue());
+	EXPECT_THAT(LineContaining(text, LR"(obj,old\x.txt()").empty(), IsTrue());
+	EXPECT_THAT(LineContaining(text, LR"(\obj\x.txt()").empty(), IsFalse());
+	EXPECT_THAT(LineContaining(text, LR"(\old\x.txt()").empty(), IsFalse());
 
 	// 条件の表示: 除外が分割されずに 1 つずつ表示される
-	EXPECT_TRUE(Contains(LineContaining(text, LS(STR_GREP_EXCLUDE_FILE)), L"a,b.txt"));
-	EXPECT_TRUE(Contains(LineContaining(text, LS(STR_GREP_EXCLUDE_FOLDER)), L"obj,old"));
+	EXPECT_THAT(Contains(LineContaining(text, LS(STR_GREP_EXCLUDE_FILE)), L"a,b.txt"), IsTrue());
+	EXPECT_THAT(Contains(LineContaining(text, LS(STR_GREP_EXCLUDE_FOLDER)), L"obj,old"), IsTrue());
 }
 
 /*!
@@ -271,7 +271,7 @@ TEST_F(GrepDialogTest, ExcludeFields)
 		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"(a.txt "a,b.txt")");
 		SetText(hDlg, IDC_COMBO_EXCLUDE_FOLDER, L"sub");
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(0)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(0)), IsTrue());
 }
 
 //! ファイルの欄が空なら「*.*」になる
@@ -279,7 +279,7 @@ TEST_F(GrepDialogTest, EmptyFileMeansAll)
 {
 	AddBasicFiles();
 	AcceptGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", L""); });
-	EXPECT_TRUE(Contains(GetDocumentText(), L"c.log"));
+	EXPECT_THAT(Contains(GetDocumentText(), L"c.log"), IsTrue());
 }
 
 //! 複数のフォルダー
@@ -291,7 +291,7 @@ TEST_F(GrepDialogTest, MultipleFolders)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SetText(hDlg, IDC_COMBO_FOLDER, std::format(L"{};{}", (folder.Path() / L"p").native(), (folder.Path() / L"q").native()));
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(2)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(2)), IsTrue());
 }
 
 //! 入力した条件が履歴に残る
@@ -300,9 +300,9 @@ TEST_F(GrepDialogTest, History)
 	AddBasicFiles();
 	AcceptGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HISTORY_KEY", L"*.hist.txt"); });
 	const auto& keywords = GetDllShareData().m_sSearchKeywords;
-	ASSERT_LT(0, int(keywords.m_aGrepFiles.size()));
-	EXPECT_STREQ(L"*.hist.txt", keywords.m_aGrepFiles[0]);
-	ASSERT_LT(0, int(keywords.m_aGrepFolders.size()));
+	ASSERT_THAT(int(keywords.m_aGrepFiles.size()), Gt(0));
+	EXPECT_THAT(keywords.m_aGrepFiles[0], StrEq(L"*.hist.txt"));
+	ASSERT_THAT(int(keywords.m_aGrepFolders.size()), Gt(0));
 
 	// %TEMP% が 8.3 形式の短い名前(CI の C:\Users\RUNNER~1\...)だと、表記が履歴と違うことがあるので、
 	// 両方を長い名前に直して比べる
@@ -313,8 +313,8 @@ TEST_F(GrepDialogTest, History)
 	};
 	const std::wstring expected = longPath(folder.Path().c_str());
 	const std::wstring actual = longPath(keywords.m_aGrepFolders[0]);
-	ASSERT_FALSE(expected.empty());
-	EXPECT_EQ(expected, actual);
+	ASSERT_THAT(expected.empty(), IsFalse());
+	EXPECT_THAT(actual, Eq(expected));
 }
 
 // ---------------------------------------------------------------------------
@@ -328,7 +328,7 @@ TEST_F(GrepDialogTest, RejectsEmptyFolder)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SetText(hDlg, IDC_COMBO_FOLDER, L"");
 	});
-	EXPECT_EQ(std::wstring(LS(STR_DLGGREP4)), shown);
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP4))));
 }
 
 //! フォルダーが存在しない
@@ -338,21 +338,21 @@ TEST_F(GrepDialogTest, RejectsNonexistentFolder)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SetText(hDlg, IDC_COMBO_FOLDER, (folder.Path() / L"none").native());
 	});
-	EXPECT_EQ(std::wstring(LS(STR_DLGGREP5)), shown);
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP5))));
 }
 
 //! ファイルの欄: フォルダー部分のワイルドカード
 TEST_F(GrepDialogTest, RejectsWildcardInFolderPart)
 {
 	const auto shown = RejectGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", LR"(sub*\a.txt)"); });
-	EXPECT_EQ(std::wstring(LS(STR_DLGGREP2)), shown);
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP2))));
 }
 
 //! ファイルの欄: 絶対パス
 TEST_F(GrepDialogTest, RejectsAbsoluteFile)
 {
 	const auto shown = RejectGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", LR"(C:\x\*.txt)"); });
-	EXPECT_EQ(std::wstring(LS(STR_DLGGREP3)), shown);
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP3))));
 }
 
 //! 引用符の閉じ忘れ(C0 で追加した入力チェック)
@@ -362,7 +362,7 @@ TEST_F(GrepDialogTest, RejectsUnclosedQuote)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"("a,b.txt)");
 	});
-	EXPECT_EQ(std::wstring(LS(STR_DLGGREP_QUOTE_ERROR)), shown);
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP_QUOTE_ERROR))));
 }
 
 /*!
@@ -389,9 +389,9 @@ TEST_F(GrepDialogTest, RejectsInvalidRegularExpression)
 	});
 	FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 
-	EXPECT_EQ(std::wstring(LS(STR_BREGONIG_TITLE)), shownCaption);
-	EXPECT_TRUE(shownText.starts_with(LS(STR_REGEX_COMPILE_ERR_PREAMBLE)));
-	EXPECT_FALSE(Contains(GetDocumentText(), L"a.txt"));
+	EXPECT_THAT(shownCaption, Eq(std::wstring(LS(STR_BREGONIG_TITLE))));
+	EXPECT_THAT(shownText.starts_with(LS(STR_REGEX_COMPILE_ERR_PREAMBLE)), IsTrue());
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsFalse());
 }
 
 // ---------------------------------------------------------------------------
@@ -413,8 +413,8 @@ TEST_F(GrepDialogTest, FolderUpButton)
 		SendDlgCommand(hDlg, IDC_BUTTON_FOLDER_UP);
 		multiple = GetText(hDlg, IDC_COMBO_FOLDER);
 	});
-	EXPECT_EQ(folder.Path().native(), single);
-	EXPECT_EQ(std::format(LR"({};"{}")", p, qr), multiple);
+	EXPECT_THAT(single, Eq(folder.Path().native()));
+	EXPECT_THAT(multiple, Eq(std::format(LR"({};"{}")", p, qr)));
 }
 
 //! 「現フォルダー」: 無題ならカレントディレクトリ、ファイルを開いていればそのフォルダー
@@ -427,7 +427,7 @@ TEST_F(GrepDialogTest, CurrentFolderButton)
 		SendDlgCommand(hDlg, IDC_BUTTON_CURRENTFOLDER);
 		untitled = GetText(hDlg, IDC_COMBO_FOLDER);
 	});
-	EXPECT_EQ((folder.Path() / L"sub").native(), untitled);
+	EXPECT_THAT(untitled, Eq((folder.Path() / L"sub").native()));
 
 	pcEditDoc->m_cDocFile.SetFilePath((folder.Path() / L"a.txt").c_str());
 	std::wstring opened;
@@ -435,7 +435,7 @@ TEST_F(GrepDialogTest, CurrentFolderButton)
 		SendDlgCommand(hDlg, IDC_BUTTON_CURRENTFOLDER);
 		opened = GetText(hDlg, IDC_COMBO_FOLDER);
 	});
-	EXPECT_EQ(folder.Path().native(), opened);
+	EXPECT_THAT(opened, Eq(folder.Path().native()));
 }
 
 //! 「編集中のテキストから検索」: オン・オフで入力欄が切り替わる(ファイルを開いているときだけ有効)
@@ -455,9 +455,9 @@ TEST_F(GrepDialogTest, FromThisTextCheckbox)
 		SendDlgCommand(hDlg, IDC_CHK_FROMTHISTEXT);
 		folderEnabledWhenOff = ::IsWindowEnabled(::GetDlgItem(hDlg, IDC_COMBO_FOLDER)) != FALSE;
 	});
-	EXPECT_TRUE(enabled);
-	EXPECT_FALSE(folderEnabledWhenOn);
-	EXPECT_TRUE(folderEnabledWhenOff);
+	EXPECT_THAT(enabled, IsTrue());
+	EXPECT_THAT(folderEnabledWhenOn, IsFalse());
+	EXPECT_THAT(folderEnabledWhenOff, IsTrue());
 }
 
 //! 「現在編集中のファイルから検索」では、除外ファイルの正規表現のチェックボックスも使えない
@@ -491,7 +491,7 @@ TEST_F(GrepDialogTest, CodePageCheckbox)
 		SendDlgCommand(hDlg, IDC_CHECK_CP);
 		after = int(::SendMessageW(hCombo, CB_GETCOUNT, 0, 0));
 	});
-	EXPECT_LT(before, after);
+	EXPECT_THAT(before, Lt(after));
 }
 
 // ---------------------------------------------------------------------------
@@ -519,7 +519,7 @@ TEST_F(GrepDialogTest, MaxWindowsWhenDocumentModified)
 	});
 
 	nodes.m_nEditArrNum = savedCount;
-	EXPECT_FALSE(Contains(GetDocumentText(), L"a.txt"));
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsFalse());
 }
 
 // ---------------------------------------------------------------------------
@@ -539,8 +539,8 @@ TEST_F(GrepDialogTest, ReplaceWithBackup)
 	});
 	FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 
-	EXPECT_EQ("REP x REP\r\nnone\r\nREP\r\n", folder.ReadFile(L"a.txt"));
-	EXPECT_EQ("HIT x HIT\r\nnone\r\nHIT\r\n", folder.ReadFile(L"a.txt.skrold"));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP x REP\r\nnone\r\nREP\r\n"));
+	EXPECT_THAT(folder.ReadFile(L"a.txt.skrold"), Eq("HIT x HIT\r\nnone\r\nHIT\r\n"));
 }
 
 // ---------------------------------------------------------------------------
@@ -555,9 +555,9 @@ TEST_F(GrepDialogTest, CharsetAutoDetect)
 	folder.AddFile(L"utf8.txt", Encode(text, CP_UTF8));
 	AcceptGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"テスト", L"*.txt"); });
 	const auto result = GetDocumentText();
-	EXPECT_TRUE(Contains(result, MatchCountText(6)));
-	EXPECT_TRUE(Contains(LineContaining(result, L"sjis.txt"), CodeBracket(CODE_SJIS)));
-	EXPECT_TRUE(Contains(LineContaining(result, L"utf8.txt"), CodeBracket(CODE_UTF8)));
+	EXPECT_THAT(Contains(result, MatchCountText(6)), IsTrue());
+	EXPECT_THAT(Contains(LineContaining(result, L"sjis.txt"), CodeBracket(CODE_SJIS)), IsTrue());
+	EXPECT_THAT(Contains(LineContaining(result, L"utf8.txt"), CodeBracket(CODE_UTF8)), IsTrue());
 }
 
 //! 文字コードを固定する(UTF-8 なら SJIS のファイルは見つからない)
@@ -570,7 +570,7 @@ TEST_F(GrepDialogTest, CharsetFixed)
 		SetConditions(hDlg, L"テスト", L"*.txt");
 		SelectCharset(hDlg, CODE_UTF8);
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(3)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(3)), IsTrue());
 }
 
 //! 「CP」をオンにしてコードページ(932)を選ぶ
@@ -583,7 +583,7 @@ TEST_F(GrepDialogTest, CharsetCodePage)
 		SendDlgCommand(hDlg, IDC_CHECK_CP);
 		SelectCharset(hDlg, ECodeType(932));
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(3)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(3)), IsTrue());
 }
 
 //! 検索文字列が空: ファイル名の一覧(自動判別の文字コード名付き)
@@ -592,8 +592,8 @@ TEST_F(GrepDialogTest, EmptyKeyListsFiles)
 	AddBasicFiles();
 	AcceptGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"", L"*.txt"); });
 	const auto result = GetDocumentText();
-	EXPECT_FALSE(LineContaining(result, L"d.txt").empty());
-	EXPECT_TRUE(LineContaining(result, L"c.log").empty());
+	EXPECT_THAT(LineContaining(result, L"d.txt").empty(), IsFalse());
+	EXPECT_THAT(LineContaining(result, L"c.log").empty(), IsTrue());
 }
 
 //! 「;」を含むフォルダー名は引用符で囲めば 1 つのフォルダーとして扱われる
@@ -604,7 +604,7 @@ TEST_F(GrepDialogTest, FolderWithSemicolon)
 		SetConditions(hDlg, L"HIT", L"*.txt");
 		SetText(hDlg, IDC_COMBO_FOLDER, std::format(LR"("{}")", (folder.Path() / L"q;r").native()));
 	});
-	EXPECT_TRUE(Contains(GetDocumentText(), MatchCountText(1)));
+	EXPECT_THAT(Contains(GetDocumentText(), MatchCountText(1)), IsTrue());
 }
 
 //! キャンセルでは何も実行しない
@@ -612,15 +612,15 @@ TEST_F(GrepDialogTest, CancelDoesNothing)
 {
 	AddBasicFiles();
 	CancelGrepDialog([this](HWND hDlg) { SetConditions(hDlg, L"HIT", L"*.txt"); });
-	EXPECT_TRUE(GetDocumentText().empty());
-	EXPECT_FALSE(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode);
+	EXPECT_THAT(GetDocumentText().empty(), IsTrue());
+	EXPECT_THAT(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode, IsFalse());
 }
 
 //! Grep 置換: 「クリップボードから貼り付け」でクリップボードが空なら OK を受け付けない
 TEST_F(GrepDialogTest, ReplacePasteWithEmptyClipboard)
 {
 	AddBasicFiles();
-	ASSERT_TRUE(::OpenClipboard(pcEditWnd->GetHwnd()));
+	ASSERT_THAT(::OpenClipboard(pcEditWnd->GetHwnd()), IsTrue());
 	::EmptyClipboard();
 	::CloseClipboard();
 
@@ -642,8 +642,8 @@ TEST_F(GrepDialogTest, ReplacePasteWithEmptyClipboard)
 	});
 	FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 
-	EXPECT_EQ(std::wstring(LS(STR_DLGREPLC_CLIPBOARD)), shown);
-	EXPECT_EQ("HIT x HIT\r\nnone\r\nHIT\r\n", folder.ReadFile(L"a.txt"));
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGREPLC_CLIPBOARD))));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("HIT x HIT\r\nnone\r\nHIT\r\n"));
 }
 
 //! Grep 置換: 自動判別で UTF-16(BOM 付き)のファイルを置換しても文字コードが保たれる
@@ -665,7 +665,7 @@ TEST_F(GrepDialogTest, ReplaceKeepsUtf16)
 	});
 	FORWARD_WM_COMMAND(pcEditWnd->GetHwnd(), F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 
-	EXPECT_EQ(EncodeUtf16(replaced, false, true), folder.ReadFile(L"u16.txt"));
+	EXPECT_THAT(folder.ReadFile(L"u16.txt"), Eq(EncodeUtf16(replaced, false, true)));
 }
 
 // ---------------------------------------------------------------------------

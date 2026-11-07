@@ -75,79 +75,79 @@ struct GrepCommandLineTest : public GrepTestSuite {
 TEST_F(GrepCommandLineTest, CountsEachMatch)
 {
 	AddBasicFiles();
-	EXPECT_EQ(3u, Grep(L"HIT", L"*.txt", L"X"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"X"), Eq(3u));
 	const auto text = GetDocumentText();
-	EXPECT_TRUE(Contains(text, L"a.txt"));
-	EXPECT_FALSE(Contains(text, L"d.txt"));
-	EXPECT_FALSE(Contains(text, L"c.log"));
-	EXPECT_TRUE(Contains(text, MatchCountText(3)));
+	EXPECT_THAT(Contains(text, L"a.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"d.txt"), IsFalse());
+	EXPECT_THAT(Contains(text, L"c.log"), IsFalse());
+	EXPECT_THAT(Contains(text, MatchCountText(3)), IsTrue());
 }
 
 //! S: サブフォルダーも探す
 TEST_F(GrepCommandLineTest, SubFolder)
 {
 	AddBasicFiles();
-	EXPECT_EQ(4u, Grep(L"HIT", L"*.txt", L"XS"));
-	EXPECT_TRUE(Contains(GetDocumentText(), L"d.txt"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XS"), Eq(4u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"d.txt"), IsTrue());
 }
 
 //! P: 行単位で数える
 TEST_F(GrepCommandLineTest, OutputLine)
 {
 	AddBasicFiles();
-	EXPECT_EQ(3u, Grep(L"HIT", L"*.txt", L"XSP"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSP"), Eq(3u));
 }
 
 //! N: 一致しなかった行を数える
 TEST_F(GrepCommandLineTest, OutputNoHitLine)
 {
 	AddBasicFiles();
-	EXPECT_EQ(2u, Grep(L"HIT", L"*.txt", L"XSN"));
-	EXPECT_TRUE(Contains(GetDocumentText(), L"none"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSN"), Eq(2u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"none"), IsTrue());
 }
 
 //! F: ファイルごとに最初の 1 件だけ
 TEST_F(GrepCommandLineTest, FileOnly)
 {
 	AddBasicFiles();
-	EXPECT_EQ(2u, Grep(L"HIT", L"*.txt", L"XSF"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSF"), Eq(2u));
 }
 
 //! L: 英大文字小文字を区別する
 TEST_F(GrepCommandLineTest, CaseSensitive)
 {
 	AddBasicFiles();
-	EXPECT_EQ(3u, Grep(L"hit", L"*.txt", L"X"));
+	EXPECT_THAT(Grep(L"hit", L"*.txt", L"X"), Eq(3u));
 	ResetDocument();
-	EXPECT_EQ(0u, Grep(L"hit", L"*.txt", L"XL"));
+	EXPECT_THAT(Grep(L"hit", L"*.txt", L"XL"), Eq(0u));
 }
 
 //! W: 単語単位
 TEST_F(GrepCommandLineTest, WordOnly)
 {
 	folder.AddFile(L"w.txt", "HIT HITS xHIT HIT.\r\n");
-	EXPECT_EQ(4u, Grep(L"HIT", L"*.txt", L"X"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"X"), Eq(4u));
 	ResetDocument();
-	EXPECT_EQ(2u, Grep(L"HIT", L"*.txt", L"XW"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XW"), Eq(2u));
 }
 
 //! R: 正規表現(該当部分・行単位・否該当行)
 TEST_F(GrepCommandLineTest, RegularExpression)
 {
 	AddBasicFiles();
-	EXPECT_EQ(3u, Grep(L"H.T", L"*.txt", L"XR"));
+	EXPECT_THAT(Grep(L"H.T", L"*.txt", L"XR"), Eq(3u));
 	ResetDocument();
-	EXPECT_EQ(2u, Grep(L"H.T", L"*.txt", L"XRP"));
+	EXPECT_THAT(Grep(L"H.T", L"*.txt", L"XRP"), Eq(2u));
 	ResetDocument();
-	EXPECT_EQ(2u, Grep(L"H.T", L"*.txt", L"XRN"));
+	EXPECT_THAT(Grep(L"H.T", L"*.txt", L"XRN"), Eq(2u));
 }
 
 //! R: 正しくない正規表現では何もしない(CSearchStringPattern::SetPattern() はメッセージを出さない)
 TEST_F(GrepCommandLineTest, InvalidRegularExpression)
 {
 	AddBasicFiles();
-	EXPECT_EQ(0u, Grep(L"(", L"*.txt", L"XR"));
-	EXPECT_FALSE(Contains(GetDocumentText(), L"a.txt"));
+	EXPECT_THAT(Grep(L"(", L"*.txt", L"XR"), Eq(0u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsFalse());
 }
 
 //! 空の検索キー: ファイル名の一覧になる
@@ -156,10 +156,10 @@ TEST_F(GrepCommandLineTest, EmptyKeyListsFiles)
 	AddBasicFiles();
 	Grep(L"", L"*.txt", L"XS");
 	const auto text = GetDocumentText();
-	EXPECT_TRUE(Contains(text, L"a.txt"));
-	EXPECT_TRUE(Contains(text, L"b.txt"));
-	EXPECT_TRUE(Contains(text, L"d.txt"));
-	EXPECT_FALSE(Contains(text, L"c.log"));
+	EXPECT_THAT(Contains(text, L"a.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"b.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"d.txt"), IsTrue());
+	EXPECT_THAT(Contains(text, L"c.log"), IsFalse());
 }
 
 // ---------------------------------------------------------------------------
@@ -172,7 +172,7 @@ TEST_F(GrepCommandLineTest, OutputStyles)
 	AddBasicFiles();
 	for (const auto opt : { L"XS1", L"XS2", L"XS3", L"XS2B", L"XS2D", L"XS1BD", L"XS3BD" }) {
 		ResetDocument();
-		EXPECT_EQ(4u, Grep(L"HIT", L"*.txt", opt)) << opt;
+		EXPECT_THAT(Grep(L"HIT", L"*.txt", opt), Eq(4u)) << opt;
 	}
 }
 
@@ -217,7 +217,7 @@ TEST_F(GrepCommandLineTest, OutputStylesWithEmptyKey)
 	for (const auto opt : { L"XS1", L"XS2", L"XS3", L"XS2B", L"XS2D", L"XS3BD" }) {
 		ResetDocument();
 		Grep(L"", L"*.txt", opt);
-		EXPECT_TRUE(Contains(GetDocumentText(), L"d.txt")) << opt;
+		EXPECT_THAT(Contains(GetDocumentText(), L"d.txt"), IsTrue()) << opt;
 	}
 }
 
@@ -226,13 +226,13 @@ TEST_F(GrepCommandLineTest, NoHeader)
 {
 	AddBasicFiles();
 	Grep(L"HIT", L"*.txt", L"X");
-	EXPECT_TRUE(Contains(GetDocumentText(), LS(STR_GREP_EXCLUDE_FILE)));
+	EXPECT_THAT(Contains(GetDocumentText(), LS(STR_GREP_EXCLUDE_FILE)), IsTrue());
 	ResetDocument();
 	Grep(L"HIT", L"*.txt", L"XH");
 	const auto text = GetDocumentText();
-	EXPECT_FALSE(Contains(text, LS(STR_GREP_EXCLUDE_FILE)));
-	EXPECT_FALSE(Contains(text, MatchCountText(3)));
-	EXPECT_TRUE(Contains(text, L"a.txt"));
+	EXPECT_THAT(Contains(text, LS(STR_GREP_EXCLUDE_FILE)), IsFalse());
+	EXPECT_THAT(Contains(text, MatchCountText(3)), IsFalse());
+	EXPECT_THAT(Contains(text, L"a.txt"), IsTrue());
 }
 
 //! U: 標準出力に出し、文書には出さない
@@ -240,12 +240,12 @@ TEST_F(GrepCommandLineTest, Stdout)
 {
 	AddBasicFiles();
 	StdoutCapture capture(folder.Path() / L"out.stdout");	// *.txt に一致しない名前にする
-	ASSERT_TRUE(capture.IsOpen());
+	ASSERT_THAT(capture.IsOpen(), IsTrue());
 	Grep(L"HIT", L"*.txt", L"XU");
 	const auto output = capture.Read();
-	EXPECT_NE(std::string::npos, output.find("a.txt"));
-	EXPECT_NE(std::string::npos, output.find("HIT"));
-	EXPECT_FALSE(Contains(GetDocumentText(), L"a.txt"));
+	EXPECT_THAT(output.find("a.txt"), Ne(std::string::npos));
+	EXPECT_THAT(output.find("HIT"), Ne(std::string::npos));
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsFalse());
 }
 
 //! 10 件ごとにまとめて出力する経路(同じファイルで 12 件)
@@ -256,7 +256,7 @@ TEST_F(GrepCommandLineTest, ManyHits)
 		lines += "HIT\r\n";
 	}
 	folder.AddFile(L"many.txt", lines);
-	EXPECT_EQ(12u, Grep(L"HIT", L"*.txt", L"XP"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XP"), Eq(12u));
 }
 
 //! リアルタイム表示: 結果を早めに出す経路を通っても、件数と結果は変わらない
@@ -281,9 +281,9 @@ TEST_F(GrepCommandLineTest, RealTimeView)
 TEST_F(GrepCommandLineTest, ExcludeFileAndFolder)
 {
 	AddBasicFiles();
-	EXPECT_EQ(1u, Grep(L"HIT", L"*.txt;!a.txt", L"XS"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt;!a.txt", L"XS"), Eq(1u));
 	ResetDocument();
-	EXPECT_EQ(3u, Grep(L"HIT", L"*.txt;#sub", L"XS"));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt;#sub", L"XS"), Eq(3u));
 }
 
 /*!
@@ -296,11 +296,11 @@ TEST_F(GrepCommandLineTest, ExcludePatternsWithComma)
 	for (const auto name : { L"a,b.txt", L"b.txt", L"keep.txt", LR"(obj,old\x.txt)", LR"(obj\x.txt)", LR"(old\x.txt)" }) {
 		folder.AddFile(name, "HIT\r\n");
 	}
-	EXPECT_EQ(4u, Grep(L"HIT", LR"(*.txt;#""obj,old"";!""a,b.txt"")", L"XS"));
+	EXPECT_THAT(Grep(L"HIT", LR"(*.txt;#""obj,old"";!""a,b.txt"")", L"XS"), Eq(4u));
 	const auto text = GetDocumentText();
-	EXPECT_TRUE(LineContaining(text, L"a,b.txt(").empty());
-	EXPECT_TRUE(LineContaining(text, LR"(obj,old\x.txt()").empty());
-	EXPECT_FALSE(LineContaining(text, LR"(\obj\x.txt()").empty());
+	EXPECT_THAT(LineContaining(text, L"a,b.txt(").empty(), IsTrue());
+	EXPECT_THAT(LineContaining(text, LR"(obj,old\x.txt()").empty(), IsTrue());
+	EXPECT_THAT(LineContaining(text, LR"(\obj\x.txt()").empty(), IsFalse());
 }
 
 //! 複数のフォルダー(; 区切り)と、; を含むフォルダー名(引用符付き)
@@ -311,7 +311,7 @@ TEST_F(GrepCommandLineTest, MultipleFolders)
 	const auto p = (folder.Path() / L"p").native();
 	const auto qr = (folder.Path() / L"q;r").native();
 	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{};""{}""" -GOPT=X)", p, qr);
-	EXPECT_EQ(2u, RunGrep(ParseGrepCommandLine(args)));
+	EXPECT_THAT(RunGrep(ParseGrepCommandLine(args)), Eq(2u));
 }
 
 /*!
@@ -395,9 +395,9 @@ TEST_F(GrepCommandLineTest, InvalidFileKeys)
 	AddBasicFiles();
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).Times(2).WillRepeatedly(Return(IDOK));
-	EXPECT_EQ(0u, Grep(L"HIT", LR"(sub*\a.txt)", L"X"));
+	EXPECT_THAT(Grep(L"HIT", LR"(sub*\a.txt)", L"X"), Eq(0u));
 	ResetDocument();
-	EXPECT_EQ(0u, Grep(L"HIT", LR"(C:\x\*.txt)", L"X"));
+	EXPECT_THAT(Grep(L"HIT", LR"(C:\x\*.txt)", L"X"), Eq(0u));
 }
 
 //! 開けないファイルはメッセージを結果に出して続ける
@@ -406,10 +406,10 @@ TEST_F(GrepCommandLineTest, FileOpenError)
 	AddBasicFiles();
 	const auto locked = folder.Path() / L"a.txt";
 	HANDLE hLocked = ::CreateFileW(locked.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-	ASSERT_NE(INVALID_HANDLE_VALUE, hLocked);
-	EXPECT_EQ(1u, Grep(L"HIT", L"*.txt", L"XS"));
+	ASSERT_THAT(hLocked, Ne(INVALID_HANDLE_VALUE));
+	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XS"), Eq(1u));
 	::CloseHandle(hLocked);
-	EXPECT_TRUE(Contains(GetDocumentText(), ResourcePrefix(STR_GREP_ERR_FILEOPEN)));
+	EXPECT_THAT(Contains(GetDocumentText(), ResourcePrefix(STR_GREP_ERR_FILEOPEN)), IsTrue());
 }
 
 //! X が無いと、カレントディレクトリが検索したフォルダーに移る
@@ -417,7 +417,7 @@ TEST_F(GrepCommandLineTest, ChangesCurrentDirectoryWithoutX)
 {
 	AddBasicFiles();
 	Grep(L"HIT", L"*.txt", L"");
-	EXPECT_TRUE(std::filesystem::equivalent(std::filesystem::current_path(), folder.Path()));
+	EXPECT_THAT(std::filesystem::equivalent(std::filesystem::current_path(), folder.Path()), IsTrue());
 }
 
 // ---------------------------------------------------------------------------
@@ -430,7 +430,7 @@ TEST_F(GrepCommandLineTest, CharsetAutoDetect)
 	// 「テストの文章です。日本語のファイル」: 判別しやすいよう長めにする
 	folder.AddFile(L"sjis.txt", "\x83\x65\x83\x58\x83\x67\x82\xCC\x95\xB6\x8F\xCD\x82\xC5\x82\xB7\x81\x42\x93\xFA\x96\x7B\x8C\xEA\x82\xCC\x83\x74\x83\x40\x83\x43\x83\x8B\r\n");
 	folder.AddFile(L"utf8.txt", "\xE3\x83\x86\xE3\x82\xB9\xE3\x83\x88\xE3\x81\xAE\xE6\x96\x87\xE7\xAB\xA0\xE3\x81\xA7\xE3\x81\x99\xE3\x80\x82\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E\xE3\x81\xAE\xE3\x83\x95\xE3\x82\xA1\xE3\x82\xA4\xE3\x83\xAB\r\n");
-	EXPECT_EQ(2u, Grep(L"テスト", L"*.txt", L"XK"));
+	EXPECT_THAT(Grep(L"テスト", L"*.txt", L"XK"), Eq(2u));
 }
 
 //! -GCODE で文字コードを固定する(UTF-8 固定なら SJIS のファイルは見つからない)
