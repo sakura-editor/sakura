@@ -460,3 +460,42 @@ TEST(string_ex, wcsnicmp_literal)
 	ASSERT_GT(0, wcsnicmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, wcsnicmp_literal(test_data3, test_data1));
 }
+
+/*!
+	@brief skr_towupper は 256 未満の文字を "English"(Windows-1252) の表で大文字にする
+
+	U+0080～U+009F(制御文字)は変えない。U+00FF は U+0178 にする。
+	空白(U+0020)と U+00E0 を同じ文字にしない(BugReport/64)。
+	表を使うのは MSVC のときだけ(ほかのコンパイラーでは実行時ライブラリの towupper に任せる)なので、表の値は MSVC のときだけ確かめる。
+ */
+TEST(string_ex, skr_towupper)
+{
+	EXPECT_THAT(skr_towupper(L'a'), Eq(L'A'));
+	EXPECT_THAT(skr_towupper(L'Z'), Eq(L'Z'));
+	EXPECT_THAT(skr_towupper(L' '), Eq(L' '));
+#ifdef _MSC_VER
+	EXPECT_THAT(skr_towupper(0x009A), Eq(0x009A));
+	EXPECT_THAT(skr_towupper(0x00E0), Eq(0x00C0));
+	EXPECT_THAT(skr_towupper(0x00FE), Eq(0x00DE));
+	EXPECT_THAT(skr_towupper(0x00FF), Eq(0x0178));
+#endif // ifdef _MSC_VER
+}
+
+/*!
+	@brief skr_towlower は 256 未満の文字を "English"(Windows-1252) の表で小文字にする
+
+	U+0080～U+009F(制御文字)は変えない。
+	表を使うのは MSVC のときだけ(ほかのコンパイラーでは実行時ライブラリの towlower に任せる)なので、表の値は MSVC のときだけ確かめる。
+ */
+TEST(string_ex, skr_towlower)
+{
+	EXPECT_THAT(skr_towlower(L'A'), Eq(L'a'));
+	EXPECT_THAT(skr_towlower(L'z'), Eq(L'z'));
+	EXPECT_THAT(skr_towlower(L' '), Eq(L' '));
+#ifdef _MSC_VER
+	EXPECT_THAT(skr_towlower(0x008A), Eq(0x008A));
+	EXPECT_THAT(skr_towlower(0x00C0), Eq(0x00E0));
+	EXPECT_THAT(skr_towlower(0x00DE), Eq(0x00FE));
+	EXPECT_THAT(skr_towlower(0x00FF), Eq(0x00FF));
+#endif // ifdef _MSC_VER
+}

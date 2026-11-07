@@ -2121,6 +2121,7 @@ TEST_F(GrepProgressTest, ShowsFolderAfterSubFolder)
 	@brief テスト用の結果の出力先
 
 	足された文字列を、足された順にためる。
+	IsDrawing() は drawing を返す(既定はリアルタイム表示でない)。
 */
 class FakeGrepOutput : public IGrepOutputTarget {
 public:
@@ -2131,7 +2132,7 @@ public:
 
 	bool IsDrawing() const override
 	{
-		return false;
+		return drawing;
 	}
 
 	//! 足された文字列をつないだもの
@@ -2145,6 +2146,7 @@ public:
 	}
 
 	std::vector<std::wstring> chunks;	//!< 足された文字列
+	bool drawing = false;				//!< IsDrawing() が返す値
 };
 
 /*!
@@ -2181,6 +2183,32 @@ TEST_F(GrepOutputTargetTest, SameTextAsDocument)
 	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XSP"))), Eq(3u));
 	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"XSP"), Eq(3u));
 	EXPECT_THAT(output.Text(), StrEq(GetDocumentText()));
+}
+
+/*!
+	リアルタイム表示で、検索したファイルの合計が 10000KB を超えて早めに出力しても、出力される文字列は変わらない
+
+	ファイルの大きさだけを 10000KB より大きくし、開けないようにしておく(中身を読ませず、時間をかけない)。
+	早めに出力するかは前回の出力からの時間にもよるので、出力が分かれたかは確かめない。
+*/
+TEST_F(GrepOutputTargetTest, SameTextWhenDrawingLargeFile)
+{
+	folder.AddFile(L"big.txt", "HIT\r\n");
+	const auto path = folder.Path() / L"big.txt";
+	std::filesystem::resize_file(path, 10001 * 1024);
+	const HANDLE hLocked = ::CreateFileW(path.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	ASSERT_THAT(hLocked, Ne(INVALID_HANDLE_VALUE));
+
+	const auto gi = ParseGrepCommandLine(Args(L"HIT", L"big.txt", L"X"));
+	FakeGrepOutput notDrawing;
+	EXPECT_THAT(GrepTo(notDrawing, gi), Eq(0u));
+	FakeGrepOutput drawing;
+	drawing.drawing = true;
+	EXPECT_THAT(GrepTo(drawing, gi), Eq(0u));
+	::CloseHandle(hLocked);
+
+	EXPECT_THAT(Contains(drawing.Text(), ResourcePrefix(STR_GREP_ERR_FILEOPEN)), IsTrue());
+	EXPECT_THAT(drawing.Text(), StrEq(notDrawing.Text()));
 }
 
 //! 中断したときの「中断しました」も出力先に足される
