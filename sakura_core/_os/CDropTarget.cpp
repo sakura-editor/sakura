@@ -24,68 +24,6 @@
 #include "CClipboard.h"
 #include "CSelectLang.h"
 
-COleLibrary CYbInterfaceBase::m_olelib;
-
-CYbInterfaceBase::CYbInterfaceBase()
-{
-	m_olelib.Initialize();
-	return;
-}
-CYbInterfaceBase::~CYbInterfaceBase()
-{
-	m_olelib.UnInitialize();
-	return;
-}
-
-HRESULT CYbInterfaceBase::QueryInterfaceImpl(
-	IUnknown*	pThis,
-	REFIID		owniid,
-	REFIID		riid,
-	void**		ppvObj
-)
-{
-	if( riid == IID_IUnknown || riid == owniid ){
-		pThis->AddRef();
-		*ppvObj = pThis;
-		return S_OK;
-	}
-	*ppvObj = nullptr;
-	return E_NOINTERFACE;
-}
-
-/////////////////////////////////////////
-
-COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCount削除
-{
-	return;
-}
-COleLibrary::~COleLibrary()
-{
-// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount > 0 )
-//		::OleUninitialize();
-	return;
-}
-
-void COleLibrary::Initialize()
-{
-// 2009.01.08 ryoji OleInitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount++ == 0 )
-//		::OleInitialize( NULL );
-	return;
-}
-
-void COleLibrary::UnInitialize()
-{
-// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount > 0 && --m_dwCount == 0 )
-//		::OleUninitialize();
-	return;
-}
-
-#define DECLARE_YB_INTERFACEIMPL( BASEINTERFACE ) \
-template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
-
 CDropTarget::CDropTarget(CEditWnd* pCEditWnd)
 	: m_pcEditWnd{ pCEditWnd }
 {

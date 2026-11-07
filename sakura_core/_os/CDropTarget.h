@@ -25,61 +25,12 @@
 #include "util/os.h"
 
 class CDropTarget;
-class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class COleLibrary
-{
-	using Me = COleLibrary;
-
-	friend class CYbInterfaceBase;
-private:
-//	DWORD m_dwCount;	// 2009.01.08 ryoji m_dwCount削除
-	COleLibrary();
-public:
-	COleLibrary(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	COleLibrary(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~COleLibrary();
-private:
-	void Initialize();
-	void UnInitialize();
-};
-
-class CYbInterfaceBase
-{
-	using Me = CYbInterfaceBase;
-
-	static COleLibrary m_olelib;
-protected:
-	CYbInterfaceBase();
-	CYbInterfaceBase(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	CYbInterfaceBase(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CYbInterfaceBase();
-	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
-};
-
-template<class BASEINTERFACE>
-class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
-{
-private:
-	static REFIID m_owniid;
-public:
-	CYbInterfaceImpl(){AddRef();}
-	STDMETHOD( QueryInterface )( REFIID riid, void** ppvObj )
-	{return QueryInterfaceImpl( this, m_owniid, riid, ppvObj );}
-	STDMETHOD_( ULONG, AddRef )( void )
-	{return 1;}
-	STDMETHOD_( ULONG, Release )( void )
-	{return 0;}
-};
 
 /*!
  * @brief D&Dターゲットクラス
