@@ -626,16 +626,23 @@ int CHokanMgr::KeyProc(
 	LPARAM lParam
 )
 {
-	if (WM_KEYDOWN != uMsg ||
-		!GetEditWnd().GetActiveView().m_bHokan)
+	constexpr auto handled		= -1;	//「KeyProcが-1を返したら処理された」とみなすコードがある。
+	constexpr auto notHandled	= -2;	//「-1以外の値を返したら処理されなかった」とみなせそう。
+
+	// 補完ウィンドウのハンドル。非表示ならNULL。
+	const auto hWnd = GetHwnd();
+
+	// 非表示、WM_KEYDOWN以外、補完中でない場合、処理せず抜ける。
+	if (const auto& view = GetEditWnd().GetActiveView();
+		!hWnd ||
+		WM_KEYDOWN != uMsg ||
+		!view.m_bHokan)
 	{
-		return -2;
+		return notHandled;
 	}
 
-	WORD vkey;
-	vkey = LOWORD(wParam);		// virtual-key code
-//	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
-	switch( vkey ){
+	// 仮想キーコードで分岐する
+	switch (const auto vkey = LOWORD(wParam)) {
 	case VK_HOME:
 	case VK_END:
 	case VK_UP:
@@ -644,7 +651,8 @@ int CHokanMgr::KeyProc(
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
 		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, GetItemHwnd( IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
-		return -1;
+		return handled;
+
 	case VK_RETURN:
 	case VK_TAB:
 	case VK_RIGHT:
@@ -652,18 +660,21 @@ int CHokanMgr::KeyProc(
 	case VK_SPACE:
 #endif
 		/* 補完実行 */
-		if( DoHokan( vkey ) ){
-			return -1;
-		}else{
-			return -2;
-		}
+		if (DoHokan(vkey)) return handled;
+
+		break;
+
+#if 0
 	case VK_ESCAPE:
 	case VK_LEFT:
-		return -2;
+		return notHandled;
+#endif
+
 	default:
 		break;
 	}
-	return -2;
+
+	return notHandled;
 }
 
 //	2001/06/18 Start by asa-o: 補完ウィンドウで選択中の単語にキーワードヘルプを表示
