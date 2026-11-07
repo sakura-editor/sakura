@@ -22,7 +22,7 @@
 TEST(GrepMessageFormat, lineColumnToStringMinimum)
 {
 	wchar_t strWork[64];
-	ASSERT_STREQ(L"(1,1)", lineColumnToString(strWork, 1, 1));
+	ASSERT_THAT(lineColumnToString(strWork, 1, 1), StrEq(L"(1,1)"));
 }
 
 /*!
@@ -32,7 +32,7 @@ TEST(GrepMessageFormat, lineColumnToStringMinimum)
 TEST(GrepMessageFormat, lineColumnToStringMultipleDigits)
 {
 	wchar_t strWork[64];
-	ASSERT_STREQ(L"(1234,56)", lineColumnToString(strWork, 1234, 56));
+	ASSERT_THAT(lineColumnToString(strWork, 1234, 56), StrEq(L"(1234,56)"));
 }
 
 /*!
@@ -42,7 +42,7 @@ TEST(GrepMessageFormat, lineColumnToStringMultipleDigits)
 TEST(GrepMessageFormat, lineColumnToStringLargeLineNumber)
 {
 	wchar_t strWork[64];
-	ASSERT_STREQ(L"(4294967296,1)", lineColumnToString(strWork, 4294967296LL, 1));
+	ASSERT_THAT(lineColumnToString(strWork, 4294967296LL, 1), StrEq(L"(4294967296,1)"));
 }
 
 /*!
@@ -65,9 +65,9 @@ TEST(GrepMessageFormat, OutputPathInfoResultOnlyOutputsNothing)
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	EXPECT_THAT(cmemMessage.GetStringLength(), 0);
-	EXPECT_FALSE(bOutputBaseFolder);
-	EXPECT_FALSE(bOutputFolderName);
-	EXPECT_FALSE(bOutFileName);
+	EXPECT_THAT(bOutputBaseFolder, IsFalse());
+	EXPECT_THAT(bOutputFolderName, IsFalse());
+	EXPECT_THAT(bOutFileName, IsFalse());
 }
 
 /*!
@@ -88,8 +88,8 @@ TEST(GrepMessageFormat, OutputPathInfoBaseFolderNormalStyle)
 		L"", L"a.txt", L" [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_STREQ(L"■\"C:\\work\"\r\n", cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutputBaseFolder);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\"C:\\work\"\r\n"));
+	EXPECT_THAT(bOutputBaseFolder, IsTrue());
 }
 
 /*!
@@ -111,9 +111,9 @@ TEST(GrepMessageFormat, OutputPathInfoBaseFolderSeparateFolder)
 		L"sub", L"sub\\a.txt", L" [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_STREQ(L"◎\"C:\\work\"\r\n■\"sub\"\r\n", cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutputBaseFolder);
-	EXPECT_TRUE(bOutputFolderName);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"◎\"C:\\work\"\r\n■\"sub\"\r\n"));
+	EXPECT_THAT(bOutputBaseFolder, IsTrue());
+	EXPECT_THAT(bOutputFolderName, IsTrue());
 }
 
 /*!
@@ -134,8 +134,8 @@ TEST(GrepMessageFormat, OutputPathInfoEmptyFolderName)
 		L"", L"a.txt", L" [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_STREQ(L"■\r\n", cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutputFolderName);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\r\n"));
+	EXPECT_THAT(bOutputFolderName, IsTrue());
 }
 
 /*!
@@ -155,8 +155,8 @@ TEST(GrepMessageFormat, OutputPathInfoWzStyleFileName)
 		L"", L"a.txt", L" [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_STREQ(L"■\"C:\\work\\a.txt\" [SJIS]\r\n", cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutFileName);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\"C:\\work\\a.txt\" [SJIS]\r\n"));
+	EXPECT_THAT(bOutFileName, IsTrue());
 }
 
 /*!
@@ -200,8 +200,8 @@ TEST(GrepMessageFormat, OutputPathInfoWzStyleSeparateFolder)
 		L"sub", L"sub\\a.txt", L" [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_STREQ(L"◆\"sub\\a.txt\" [SJIS]\r\n", cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutFileName);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"◆\"sub\\a.txt\" [SJIS]\r\n"));
+	EXPECT_THAT(bOutFileName, IsTrue());
 }
 
 /*!
@@ -225,8 +225,8 @@ TEST(GrepMessageFormat, OutputPathInfoExpandsBuffer)
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	const std::wstring expected = prefix + L"■\"C:\\work\"\r\n";
-	ASSERT_STREQ(expected.c_str(), cmemMessage.GetStringPtr());
-	EXPECT_TRUE(bOutputBaseFolder);
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(expected.c_str()));
+	EXPECT_THAT(bOutputBaseFolder, IsTrue());
 }
 
 /*!
@@ -256,7 +256,7 @@ TEST_F(SetGrepResultTest, NormalStyleHitLine)
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_STREQ(L"a.txt(12,3) [SJIS]: hello\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"a.txt(12,3) [SJIS]: hello\r\n"));
 }
 
 /*!
@@ -276,7 +276,7 @@ TEST_F(SetGrepResultTest, NormalStyleWithBaseFolderMark)
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_STREQ(L"・a.txt(1,1) [SJIS]: hello\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"・a.txt(1,1) [SJIS]: hello\r\n"));
 }
 
 /*!
@@ -295,7 +295,7 @@ TEST_F(SetGrepResultTest, WzStyleHitLine)
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_STREQ(L"・(    12,3    ): hello\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"・(    12,3    ): hello\r\n"));
 }
 
 /*!
@@ -314,7 +314,7 @@ TEST_F(SetGrepResultTest, ResultOnlyStyleHitLine)
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_STREQ(L"hello\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"hello\r\n"));
 }
 
 /*!
@@ -334,7 +334,7 @@ TEST_F(SetGrepResultTest, MatchedPartOnly)
 		line.data(), static_cast<int>(line.length()), 2,
 		match.data(), static_cast<int>(match.length()), gi );
 
-	ASSERT_STREQ(L"world\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"world\r\n"));
 }
 
 /*!
@@ -354,7 +354,7 @@ TEST_F(SetGrepResultTest, MatchedPartEndingWithEol)
 		line.data(), static_cast<int>(line.length()), 2,
 		match.data(), static_cast<int>(match.length()), gi );
 
-	ASSERT_STREQ(L"hello\r\n", cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"hello\r\n"));
 }
 
 /*!
@@ -376,7 +376,7 @@ TEST_F(SetGrepResultTest, HitLineIsTruncated)
 
 	const std::wstring expected =
 		std::wstring(L"a.txt(1,1) [SJIS]: ") + std::wstring(2000, L'a') + L"\r\n";
-	ASSERT_STREQ(expected.c_str(), cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(expected.c_str()));
 }
 
 /*!
@@ -397,7 +397,7 @@ TEST_F(SetGrepResultTest, MatchedPartIsTruncated)
 		line.data(), 2600, gi );
 
 	const std::wstring expected = std::wstring(2500, L'b') + L"\r\n";
-	ASSERT_STREQ(expected.c_str(), cmemMessage.GetStringPtr());
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(expected.c_str()));
 }
 
 /*!

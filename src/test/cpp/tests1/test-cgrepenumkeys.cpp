@@ -23,7 +23,7 @@ static std::vector<std::wstring> ToStrings(const VGrepEnumKeys& keys)
 TEST(CGrepEnumKeys, SplitPattern_Delimiters)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"*.cpp *.h;*.txt,*.md");
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.cpp", L"*.h", L"*.txt", L"*.md" }), patterns);
+	EXPECT_THAT(patterns, Eq(std::vector<std::wstring>({ L"*.cpp", L"*.h", L"*.txt", L"*.md" })));
 }
 
 /*!
@@ -32,7 +32,7 @@ TEST(CGrepEnumKeys, SplitPattern_Delimiters)
 TEST(CGrepEnumKeys, SplitPattern_DoubleQuotes)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"\"a b;c.txt\";*.h");
-	EXPECT_EQ(std::vector<std::wstring>({ L"a b;c.txt", L"*.h" }), patterns);
+	EXPECT_THAT(patterns, Eq(std::vector<std::wstring>({ L"a b;c.txt", L"*.h" })));
 }
 
 /*!
@@ -41,7 +41,7 @@ TEST(CGrepEnumKeys, SplitPattern_DoubleQuotes)
 TEST(CGrepEnumKeys, SplitPattern_Empty)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"");
-	EXPECT_TRUE(patterns.empty());
+	EXPECT_THAT(patterns.empty(), IsTrue());
 }
 
 /*!
@@ -50,7 +50,7 @@ TEST(CGrepEnumKeys, SplitPattern_Empty)
 TEST(CGrepEnumKeys, SplitPattern_DelimitersOnly)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L" ;,");
-	EXPECT_TRUE(patterns.empty());
+	EXPECT_THAT(patterns.empty(), IsTrue());
 }
 
 /*!
@@ -62,7 +62,7 @@ TEST(CGrepEnumKeys, SplitPattern_DelimitersOnly)
 TEST(CGrepEnumKeys, SplitPattern_UnclosedDoubleQuote)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"\"*.cpp;*.h");
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.cpp;*.h" }), patterns);
+	EXPECT_THAT(patterns, Eq(std::vector<std::wstring>({ L"*.cpp;*.h" })));
 }
 
 /*!
@@ -73,7 +73,7 @@ TEST(CGrepEnumKeys, SplitPattern_UnclosedDoubleQuote)
 TEST(CGrepEnumKeys, SplitPattern_QuoteInsideToken)
 {
 	const auto patterns = CGrepEnumKeys::SplitPattern(L"a\"b c\"d;*.h");
-	EXPECT_EQ(std::vector<std::wstring>({ L"ab cd", L"*.h" }), patterns);
+	EXPECT_THAT(patterns, Eq(std::vector<std::wstring>({ L"ab cd", L"*.h" })));
 }
 
 /*!
@@ -82,7 +82,7 @@ TEST(CGrepEnumKeys, SplitPattern_QuoteInsideToken)
 TEST(CGrepEnumKeys, SplitPatternKeepQuotes_KeepsQuotes)
 {
 	const auto patterns = CGrepEnumKeys::SplitPatternKeepQuotes(L"\"a,b.txt\" *.h;a\"b c\"d,\"x y\"");
-	EXPECT_EQ(std::vector<std::wstring_view>({ L"\"a,b.txt\"", L"*.h", L"a\"b c\"d", L"\"x y\"" }), patterns);
+	EXPECT_THAT(patterns, Eq(std::vector<std::wstring_view>({ L"\"a,b.txt\"", L"*.h", L"a\"b c\"d", L"\"x y\"" })));
 }
 
 /*!
@@ -90,8 +90,8 @@ TEST(CGrepEnumKeys, SplitPatternKeepQuotes_KeepsQuotes)
 */
 TEST(CGrepEnumKeys, SplitPatternKeepQuotes_Empty)
 {
-	EXPECT_TRUE(CGrepEnumKeys::SplitPatternKeepQuotes(L"").empty());
-	EXPECT_TRUE(CGrepEnumKeys::SplitPatternKeepQuotes(L" ;, ;").empty());
+	EXPECT_THAT(CGrepEnumKeys::SplitPatternKeepQuotes(L"").empty(), IsTrue());
+	EXPECT_THAT(CGrepEnumKeys::SplitPatternKeepQuotes(L" ;, ;").empty(), IsTrue());
 }
 
 /*!
@@ -99,11 +99,11 @@ TEST(CGrepEnumKeys, SplitPatternKeepQuotes_Empty)
 */
 TEST(CGrepEnumKeys, HasUnclosedQuote)
 {
-	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L""));
-	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L"*.cpp;*.h"));
-	EXPECT_FALSE(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt\";\"x y\""));
-	EXPECT_TRUE(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt"));
-	EXPECT_TRUE(CGrepEnumKeys::HasUnclosedQuote(L"\"a\" \"b"));
+	EXPECT_THAT(CGrepEnumKeys::HasUnclosedQuote(L""), IsFalse());
+	EXPECT_THAT(CGrepEnumKeys::HasUnclosedQuote(L"*.cpp;*.h"), IsFalse());
+	EXPECT_THAT(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt\";\"x y\""), IsFalse());
+	EXPECT_THAT(CGrepEnumKeys::HasUnclosedQuote(L"\"a,b.txt"), IsTrue());
+	EXPECT_THAT(CGrepEnumKeys::HasUnclosedQuote(L"\"a\" \"b"), IsTrue());
 }
 
 /*!
@@ -112,9 +112,9 @@ TEST(CGrepEnumKeys, HasUnclosedQuote)
 TEST(CGrepEnumKeys, SetFileKeys_DefaultWildcard)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L""));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.*" }), ToStrings(keys.m_vecSearchFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.*" }), ToStrings(keys.m_vecSearchFolderKeys));
+	EXPECT_THAT(keys.SetFileKeys(L""), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecSearchFileKeys), Eq(std::vector<std::wstring>({ L"*.*" })));
+	EXPECT_THAT(ToStrings(keys.m_vecSearchFolderKeys), Eq(std::vector<std::wstring>({ L"*.*" })));
 }
 
 /*!
@@ -123,11 +123,11 @@ TEST(CGrepEnumKeys, SetFileKeys_DefaultWildcard)
 TEST(CGrepEnumKeys, SetFileKeys_Classify)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !*.bak #obj"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.cpp" }), ToStrings(keys.m_vecSearchFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.bak" }), ToStrings(keys.m_vecExceptFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"obj" }), ToStrings(keys.m_vecExceptFolderKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.*" }), ToStrings(keys.m_vecSearchFolderKeys));
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !*.bak #obj"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecSearchFileKeys), Eq(std::vector<std::wstring>({ L"*.cpp" })));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptFileKeys), Eq(std::vector<std::wstring>({ L"*.bak" })));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptFolderKeys), Eq(std::vector<std::wstring>({ L"obj" })));
+	EXPECT_THAT(ToStrings(keys.m_vecSearchFolderKeys), Eq(std::vector<std::wstring>({ L"*.*" })));
 }
 
 /*!
@@ -136,11 +136,11 @@ TEST(CGrepEnumKeys, SetFileKeys_Classify)
 TEST(CGrepEnumKeys, SetFileKeys_AbsoluteExcept)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !C:\\work\\*.bak #C:\\work\\obj"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"C:\\work\\*.bak" }), ToStrings(keys.m_vecExceptAbsFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"C:\\work\\obj" }), ToStrings(keys.m_vecExceptAbsFolderKeys));
-	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());
-	EXPECT_TRUE(keys.m_vecExceptFolderKeys.empty());
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !C:\\work\\*.bak #C:\\work\\obj"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptAbsFileKeys), Eq(std::vector<std::wstring>({ L"C:\\work\\*.bak" })));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptAbsFolderKeys), Eq(std::vector<std::wstring>({ L"C:\\work\\obj" })));
+	EXPECT_THAT(keys.m_vecExceptFileKeys.empty(), IsTrue());
+	EXPECT_THAT(keys.m_vecExceptFolderKeys.empty(), IsTrue());
 }
 
 /*!
@@ -149,9 +149,9 @@ TEST(CGrepEnumKeys, SetFileKeys_AbsoluteExcept)
 TEST(CGrepEnumKeys, SetFileKeys_UncPathExcept)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !\\\\server\\share\\*.bak"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"\\\\server\\share\\*.bak" }), ToStrings(keys.m_vecExceptAbsFileKeys));
-	EXPECT_TRUE(keys.m_vecExceptFileKeys.empty());
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !\\\\server\\share\\*.bak"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptAbsFileKeys), Eq(std::vector<std::wstring>({ L"\\\\server\\share\\*.bak" })));
+	EXPECT_THAT(keys.m_vecExceptFileKeys.empty(), IsTrue());
 }
 
 /*!
@@ -160,8 +160,8 @@ TEST(CGrepEnumKeys, SetFileKeys_UncPathExcept)
 TEST(CGrepEnumKeys, SetFileKeys_Unique)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp *.cpp"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.cpp" }), ToStrings(keys.m_vecSearchFileKeys));
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp *.cpp"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecSearchFileKeys), Eq(std::vector<std::wstring>({ L"*.cpp" })));
 }
 
 /*!
@@ -170,7 +170,7 @@ TEST(CGrepEnumKeys, SetFileKeys_Unique)
 TEST(CGrepEnumKeys, SetFileKeys_WildcardInFolderIsError)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(1, keys.SetFileKeys(L"*\\file.exe"));
+	EXPECT_THAT(keys.SetFileKeys(L"*\\file.exe"), Eq(1));
 }
 
 /*!
@@ -179,7 +179,7 @@ TEST(CGrepEnumKeys, SetFileKeys_WildcardInFolderIsError)
 TEST(CGrepEnumKeys, SetFileKeys_QuestionMarkInFolderIsError)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(1, keys.SetFileKeys(L"?\\file.exe"));
+	EXPECT_THAT(keys.SetFileKeys(L"?\\file.exe"), Eq(1));
 }
 
 /*!
@@ -188,7 +188,7 @@ TEST(CGrepEnumKeys, SetFileKeys_QuestionMarkInFolderIsError)
 TEST(CGrepEnumKeys, SetFileKeys_AbsoluteSearchIsError)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(2, keys.SetFileKeys(L"C:\\work\\*.cpp"));
+	EXPECT_THAT(keys.SetFileKeys(L"C:\\work\\*.cpp"), Eq(2));
 }
 
 /*!
@@ -199,13 +199,13 @@ TEST(CGrepEnumKeys, SetFileKeys_AbsoluteSearchIsError)
 TEST(CGrepEnumKeys, SetFileKeys_ClearsAbsoluteExceptOnReentry)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !C:\\work\\*.bak #C:\\work\\obj"));
-	ASSERT_EQ(1u, keys.m_vecExceptAbsFileKeys.size());
-	ASSERT_EQ(1u, keys.m_vecExceptAbsFolderKeys.size());
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !C:\\work\\*.bak #C:\\work\\obj"), Eq(0));
+	ASSERT_THAT(keys.m_vecExceptAbsFileKeys.size(), Eq(1u));
+	ASSERT_THAT(keys.m_vecExceptAbsFolderKeys.size(), Eq(1u));
 
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp"));
-	EXPECT_TRUE(keys.m_vecExceptAbsFileKeys.empty());
-	EXPECT_TRUE(keys.m_vecExceptAbsFolderKeys.empty());
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp"), Eq(0));
+	EXPECT_THAT(keys.m_vecExceptAbsFileKeys.empty(), IsTrue());
+	EXPECT_THAT(keys.m_vecExceptAbsFolderKeys.empty(), IsTrue());
 }
 
 /*!
@@ -214,9 +214,9 @@ TEST(CGrepEnumKeys, SetFileKeys_ClearsAbsoluteExceptOnReentry)
 TEST(CGrepEnumKeys, GetExcludeFilesAndFolders)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !*.bak !C:\\work\\*.tmp #obj #C:\\work\\bin"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.bak", L"C:\\work\\*.tmp" }), ToStrings(keys.GetExcludeFiles()));
-	EXPECT_EQ(std::vector<std::wstring>({ L"obj", L"C:\\work\\bin" }), ToStrings(keys.GetExcludeFolders()));
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !*.bak !C:\\work\\*.tmp #obj #C:\\work\\bin"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.GetExcludeFiles()), Eq(std::vector<std::wstring>({ L"*.bak", L"C:\\work\\*.tmp" })));
+	EXPECT_THAT(ToStrings(keys.GetExcludeFolders()), Eq(std::vector<std::wstring>({ L"obj", L"C:\\work\\bin" })));
 }
 
 /*!
@@ -225,10 +225,10 @@ TEST(CGrepEnumKeys, GetExcludeFilesAndFolders)
 TEST(CGrepEnumKeys, AddExceptFileAndFolder)
 {
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(L"*.cpp !*.bak"));
-	EXPECT_EQ(0, keys.AddExceptFile(L"*.tmp;C:\\work\\*.log"));
-	EXPECT_EQ(0, keys.AddExceptFolder(L"obj"));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.bak", L"*.tmp" }), ToStrings(keys.m_vecExceptFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"C:\\work\\*.log" }), ToStrings(keys.m_vecExceptAbsFileKeys));
-	EXPECT_EQ(std::vector<std::wstring>({ L"obj" }), ToStrings(keys.m_vecExceptFolderKeys));
+	EXPECT_THAT(keys.SetFileKeys(L"*.cpp !*.bak"), Eq(0));
+	EXPECT_THAT(keys.AddExceptFile(L"*.tmp;C:\\work\\*.log"), Eq(0));
+	EXPECT_THAT(keys.AddExceptFolder(L"obj"), Eq(0));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptFileKeys), Eq(std::vector<std::wstring>({ L"*.bak", L"*.tmp" })));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptAbsFileKeys), Eq(std::vector<std::wstring>({ L"C:\\work\\*.log" })));
+	EXPECT_THAT(ToStrings(keys.m_vecExceptFolderKeys), Eq(std::vector<std::wstring>({ L"obj" })));
 }
