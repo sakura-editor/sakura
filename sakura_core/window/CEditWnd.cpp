@@ -1147,9 +1147,6 @@ EAppExitCode CEditWnd::MessageLoop() const
 	DarkMode::setDarkWndNotifySafeEx(hWnd, false, true);
 
 	// constメソッド内では非const参照できないので無理矢理ローカル定義する
-	auto& m_cHokanMgr = GetEditWnd().m_cHokanMgr;
-
-	// constメソッド内では非const参照できないので無理矢理ローカル定義する
 	auto& m_cToolbar = GetEditWnd().m_cToolbar;
 
 	// メッセージを受け取るためのMSG構造体
@@ -1179,14 +1176,13 @@ EAppExitCode CEditWnd::MessageLoop() const
 		if (const auto handled = std::ranges::any_of(modelessDlgs, [&msg] (HWND hWndDlg) {
 				return
 					hWndDlg &&
-					hWndDlg == msg.hwnd &&
 					::IsDialogMessageW(hWndDlg, &msg);
 			});
 			handled ||
 			// ツールバーの検索ボックス
 			m_cToolbar.EatMessage(&msg) ||
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			-1 == m_cHokanMgr.KeyProc(msg.message, msg.wParam, msg.lParam) ||
+			CHokanMgr::EatMessage(msg) ||
 			//アクセラレータ
 			m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
 		{
