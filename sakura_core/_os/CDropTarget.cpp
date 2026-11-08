@@ -8,96 +8,31 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CDropTarget.h"
+#include "_os/CDropTarget.h"
+
+#include "basis/primitive.h"
 #include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
 #include "CClipboard.h"
 #include "CSelectLang.h"
 
-COleLibrary CYbInterfaceBase::m_olelib;
-
-CYbInterfaceBase::CYbInterfaceBase()
-{
-	m_olelib.Initialize();
-	return;
-}
-CYbInterfaceBase::~CYbInterfaceBase()
-{
-	m_olelib.UnInitialize();
-	return;
-}
-
-HRESULT CYbInterfaceBase::QueryInterfaceImpl(
-	IUnknown*	pThis,
-	REFIID		owniid,
-	REFIID		riid,
-	void**		ppvObj
-)
-{
-	if( riid == IID_IUnknown || riid == owniid ){
-		pThis->AddRef();
-		*ppvObj = pThis;
-		return S_OK;
-	}
-	*ppvObj = nullptr;
-	return E_NOINTERFACE;
-}
-
-/////////////////////////////////////////
-
-COleLibrary::COleLibrary()//:m_dwCount(0)	// 2009.01.08 ryoji m_dwCount削除
+CDropTarget::CDropTarget(CEditWnd* pCEditWnd)
+	: m_pcEditWnd{ pCEditWnd }
 {
 	return;
 }
-COleLibrary::~COleLibrary()
+
+CDropTarget::CDropTarget(CEditView* pCEditView)
+	: m_pcEditView{ pCEditView }
 {
-// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount > 0 )
-//		::OleUninitialize();
-	return;
-}
-
-void COleLibrary::Initialize()
-{
-// 2009.01.08 ryoji OleInitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount++ == 0 )
-//		::OleInitialize( NULL );
-	return;
-}
-
-void COleLibrary::UnInitialize()
-{
-// 2009.01.08 ryoji OleUninitialize削除（WinMainにOleInitialize/OleUninitialize追加）
-//	if( m_dwCount > 0 && --m_dwCount == 0 )
-//		::OleUninitialize();
-	return;
-}
-
-#define DECLARE_YB_INTERFACEIMPL( BASEINTERFACE ) \
-template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
-
-DECLARE_YB_INTERFACEIMPL( IDataObject )
-DECLARE_YB_INTERFACEIMPL( IDropSource )
-DECLARE_YB_INTERFACEIMPL( IDropTarget )
-DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
-
-CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
-{
-	m_pcEditWnd = pCEditWnd;	// 2008.06.20 ryoji
-	return;
-}
-
-CDropTarget::CDropTarget( CEditView* pCEditView )
-{
-	m_pcEditView = pCEditView;
 	return;
 }
 
@@ -106,7 +41,12 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
-STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
@@ -114,14 +54,20 @@ STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState,
 	}
 	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
-STDMETHODIMP CDropTarget::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+
+IFACEMETHODIMP CDropTarget::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragOver( dwKeyState, pt, pdwEffect );
 	}
 	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
-STDMETHODIMP CDropTarget::DragLeave( void )
+
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragLeave();
@@ -129,7 +75,12 @@ STDMETHODIMP CDropTarget::DragLeave( void )
 	return m_pcEditView->DragLeave();
 }
 
-STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
@@ -137,27 +88,58 @@ STDMETHODIMP CDropTarget::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POIN
 	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
-STDMETHODIMP CDropSource::QueryContinueDrag( BOOL bEscapePressed, DWORD dwKeyState )
+/* static */ DWORD CDropSource::DoDragDrop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwDesiredEffects,
+	bool bLeft
+)
 {
-	if( bEscapePressed || (dwKeyState & (m_bLeft ? MK_RBUTTON : MK_LBUTTON)) )
+	DWORD dwEffects;
+
+	const auto dropSource = Base::make_instance<Me>(bLeft);
+
+	if (FAILED(::DoDragDrop(
+			pDataObject,
+			dropSource,
+			dwDesiredEffects,
+			&dwEffects
+		)))
+	{
+		dwEffects = DROPEFFECT_NONE;
+	}
+
+	return dwEffects;
+}
+
+IFACEMETHODIMP CDropSource::QueryContinueDrag(
+	BOOL bEscapePressed,
+	DWORD dwKeyState
+)
+{
+	if (const auto altButtonPressed = dwKeyState & (m_bLeft ? MK_RBUTTON : MK_LBUTTON);
+		bEscapePressed || altButtonPressed)
 		return DRAGDROP_S_CANCEL;
-	if( !(dwKeyState & (m_bLeft ? MK_LBUTTON : MK_RBUTTON)) )
+
+	if (const auto targetButtonPressed = dwKeyState & (m_bLeft ? MK_LBUTTON : MK_RBUTTON);
+		!targetButtonPressed)
 		return DRAGDROP_S_DROP;
+
 	return S_OK;
 }
 
-STDMETHODIMP CDropSource::GiveFeedback( [[maybe_unused]] DWORD dropEffect )
+IFACEMETHODIMP CDropSource::GiveFeedback(
+	DWORD dropEffect [[maybe_unused]]
+)
 {
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
-DWORD CDropSource::DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects)
+CDataObject::CDataObject(
+	std::wstring_view text,
+	bool bColumnSelect
+)
 {
-	if (DWORD dwEffects; SUCCEEDED(::DoDragDrop(pDataObject, this, dwDesiredEffects, &dwEffects))) {
-		return dwEffects;
-	}
-
-	return DROPEFFECT_NONE;
+	SetText(text, bColumnSelect);
 }
 
 /** 転送対象の文字列を設定する
@@ -167,8 +149,17 @@ DWORD CDropSource::DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects)
 
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
-void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
+void CDataObject::SetText(
+	std::wstring_view text,
+	bool bColumnSelect
+)
 {
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Text{ text };
+
+	const auto lpszText = text.empty() ? nullptr : _Text.c_str();
+	const auto nTextLen = text.length();
+
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
 	if( m_pData != nullptr )
@@ -335,7 +326,11 @@ STDMETHODIMP CDataObject::EnumFormatEtc( DWORD dwDirection, IEnumFORMATETC** ppe
 {
 	if( dwDirection != DATADIR_GET )
 		return S_FALSE;
-	*ppenumFormatetc = new CEnumFORMATETC(this);
+
+	const auto pEnum = CEnumFORMATETC::make_instance(this);
+	*ppenumFormatetc = pEnum;
+	pEnum->AddRef();
+
 	return *ppenumFormatetc? S_OK: S_FALSE;
 }
 
@@ -354,15 +349,36 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 	return OLE_E_ADVISENOTSUPPORTED;
 }
 
-/** IEnumFORMATETC::Next
-	@date 2008.03.26 ryoji 新規作成
-*/
-STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
+/*!
+ * @brief IEnumFORMATETC::Next
+ *
+ * @param[in] celt 取得する要素の数
+ * @param[out] rgelt 取得した要素を格納する配列
+ * @param[out, opt] pceltFetched 取得した要素数の格納先。（celtが1の場合のみ省略可。）
+ * @refval S_OK      要求された数（celt）の要素をすべて正常に取得できた。
+ * @refval S_FALSE   要求された数より少ない要素しか取得できなかった（列挙の末尾に達した）。
+ * @refval E_POINTER rgelt が無効なポインタである（または celt > 1 なのに pceltFetched が NULL である）。
+ *
+ * @date 2008.03.26 ryoji 新規作成
+ */
+IFACEMETHODIMP CEnumFORMATETC::Next(
+	ULONG celt,
+	FORMATETC* rgelt,
+	ULONG* pceltFetched
+)
 {
-	if( celt <= 0 || rgelt == nullptr || m_nIndex >= m_pcDataObject->m_nFormat )
+	if (0 < celt && !rgelt ||
+		celt != 1 && !pceltFetched)
+	{
+		return E_POINTER;
+	}
+
+	if (0 == celt ||
+		!m_pcDataObject ||
+		m_pcDataObject->m_nFormat <= m_nIndex)
+	{
 		return S_FALSE;
-	if( celt != 1 && pceltFetched == nullptr )
-		return S_FALSE;
+	}
 
 	ULONG i = celt;
 	while( m_nIndex < m_pcDataObject->m_nFormat && i > 0 ){
@@ -384,7 +400,9 @@ STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetc
 /** IEnumFORMATETC::Skip
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
+IFACEMETHODIMP CEnumFORMATETC::Skip(
+	ULONG celt
+)
 {
 	while( m_nIndex < m_pcDataObject->m_nFormat && celt > 0 ){
 		++m_nIndex;
@@ -397,7 +415,7 @@ STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
 /** IEnumFORMATETC::Reset
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Reset(void)
+IFACEMETHODIMP CEnumFORMATETC::Reset()
 {
 	m_nIndex = 0;
 	return S_OK;
@@ -406,7 +424,9 @@ STDMETHODIMP CEnumFORMATETC::Reset(void)
 /** IEnumFORMATETC::Clone
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Clone([[maybe_unused]] IEnumFORMATETC** ppenum)
+IFACEMETHODIMP CEnumFORMATETC::Clone(
+	IEnumFORMATETC** ppenum [[maybe_unused]]
+)
 {
 	return E_NOTIMPL;
 }
