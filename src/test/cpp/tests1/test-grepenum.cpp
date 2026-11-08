@@ -107,8 +107,8 @@ TEST(CGrepEnumFiles, MatchesWildcardIgnoringCase)
 	CGrepEnumFiles files;
 	auto keys = Keys({ L"*.txt" });
 	CGrepEnumOptions options;
-	EXPECT_EQ(2, files.Enumerates(folder.Path().c_str(), keys, options));
-	EXPECT_EQ((std::vector<std::wstring>{ L"C.TXT", L"a.txt" }), Names(files));
+	EXPECT_THAT(files.Enumerates(folder.Path().c_str(), keys, options), Eq(2));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"C.TXT", L"a.txt" }));
 }
 
 /*!
@@ -124,7 +124,7 @@ TEST(CGrepEnumFiles, SkipsFolders)
 	auto keys = Keys({ L"*.txt" });
 	CGrepEnumOptions options;
 	files.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ((std::vector<std::wstring>{ L"a.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"a.txt" }));
 }
 
 /*!
@@ -138,8 +138,8 @@ TEST(CGrepEnumFiles, NoDuplicatesAcrossKeys)
 	CGrepEnumFiles files;
 	auto keys = Keys({ L"*.txt", L"a.*", L"A.TXT" });
 	CGrepEnumOptions options;
-	EXPECT_EQ(1, files.Enumerates(folder.Path().c_str(), keys, options));
-	EXPECT_EQ((std::vector<std::wstring>{ L"a.txt" }), Names(files));
+	EXPECT_THAT(files.Enumerates(folder.Path().c_str(), keys, options), Eq(1));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"a.txt" }));
 }
 
 /*!
@@ -155,7 +155,7 @@ TEST(CGrepEnumFiles, KeyWithSubFolder)
 	auto keys = Keys({ LR"(sub\*.txt)" });
 	CGrepEnumOptions options;
 	files.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ((std::vector<std::wstring>{ LR"(sub\x.txt)" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ LR"(sub\x.txt)" }));
 }
 
 /*!
@@ -168,8 +168,8 @@ TEST(CGrepEnumFiles, NonexistentFolder)
 	CGrepEnumFiles files;
 	auto keys = Keys({ L"*" });
 	CGrepEnumOptions options;
-	EXPECT_EQ(0, files.Enumerates((folder.Path() / L"none").c_str(), keys, options));
-	EXPECT_EQ(0, files.GetCount());
+	EXPECT_THAT(files.Enumerates((folder.Path() / L"none").c_str(), keys, options), Eq(0));
+	EXPECT_THAT(files.GetCount(), Eq(0));
 }
 
 /*!
@@ -186,7 +186,7 @@ TEST(CGrepEnumFiles, SpecialCharactersInFileName)
 	auto keys = Keys({ L"*.txt" });
 	CGrepEnumOptions options;
 	files.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ((std::vector<std::wstring>{ L"!y.txt", L"#x.txt", L"a b.txt", L"a,b.txt", L"a;b.txt", L"テスト.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"!y.txt", L"#x.txt", L"a b.txt", L"a,b.txt", L"a;b.txt", L"テスト.txt" }));
 }
 
 /*!
@@ -203,7 +203,7 @@ TEST(CGrepEnumFiles, ShortNameDoesNotMatch)
 	auto keys = Keys({ L"*.htm" });
 	CGrepEnumOptions options;
 	files.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ(0, files.GetCount());
+	EXPECT_THAT(files.GetCount(), Eq(0));
 }
 
 /*!
@@ -222,7 +222,7 @@ TEST(CGrepEnumFiles, AttributeOptions)
 		CGrepEnumFiles files;
 		CGrepEnumOptions options;
 		files.Enumerates(folder.Path().c_str(), keys, options);
-		EXPECT_EQ((std::vector<std::wstring>{ L"h.txt", L"n.txt", L"r.txt", L"s.txt" }), Names(files));
+		EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"h.txt", L"n.txt", L"r.txt", L"s.txt" }));
 	}
 	{
 		CGrepEnumFiles files;
@@ -231,7 +231,7 @@ TEST(CGrepEnumFiles, AttributeOptions)
 		options.m_bIgnoreReadOnly = true;
 		options.m_bIgnoreSystem = true;
 		files.Enumerates(folder.Path().c_str(), keys, options);
-		EXPECT_EQ((std::vector<std::wstring>{ L"n.txt" }), Names(files));
+		EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"n.txt" }));
 	}
 }
 
@@ -253,7 +253,7 @@ TEST(CGrepEnumFolders, SkipsFilesAndDots)
 	auto keys = Keys({ L"*" });
 	CGrepEnumOptions options;
 	folders.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ((std::vector<std::wstring>{ L"a", L"b" }), Names(folders));
+	EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"a", L"b" }));
 }
 
 /*!
@@ -271,7 +271,7 @@ TEST(CGrepEnumFolders, DefaultKeyMatchesNamesWithoutDot)
 	auto keys = Keys({ L"*.*" });
 	CGrepEnumOptions options;
 	folders.Enumerates(folder.Path().c_str(), keys, options);
-	EXPECT_EQ((std::vector<std::wstring>{ L"a.b", L"src" }), Names(folders));
+	EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"a.b", L"src" }));
 }
 
 // ---------------------------------------------------------------------------
@@ -289,11 +289,11 @@ TEST(CGrepEnumFilterFiles, ExceptWildcardIgnoringCase)
 	folder.AddFile(L"b.BAK");
 
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(L"*;!*.bak"));
+	ASSERT_THAT(keys.SetFileKeys(L"*;!*.bak"), Eq(0));
 	CGrepEnumFilterFiles files;
 	CGrepEnumFiles absExcept;
 	files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"a.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"a.txt" }));
 }
 
 /*!
@@ -306,11 +306,11 @@ TEST(CGrepEnumFilterFiles, ExceptQuotedNameWithSpace)
 	folder.AddFile(L"c.txt");
 
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(LR"(*;!"a b.txt")"));
+	ASSERT_THAT(keys.SetFileKeys(LR"(*;!"a b.txt")"), Eq(0));
 	CGrepEnumFilterFiles files;
 	CGrepEnumFiles absExcept;
 	files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"c.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"c.txt" }));
 }
 
 /*!
@@ -327,18 +327,18 @@ TEST(CGrepEnumFilterFiles, ExceptQuotedNamesWithComma)
 	folder.AddFolder(L"obj");
 
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(LR"(*.txt;#"obj,old";!"a,b.txt")"));
+	ASSERT_THAT(keys.SetFileKeys(LR"(*.txt;#"obj,old";!"a,b.txt")"), Eq(0));
 	{
 		CGrepEnumFilterFiles files;
 		CGrepEnumFiles absExcept;
 		files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-		EXPECT_EQ((std::vector<std::wstring>{ L"b.txt" }), Names(files));
+		EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"b.txt" }));
 	}
 	{
 		CGrepEnumFilterFolders folders;
 		CGrepEnumFolders absExcept;
 		folders.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-		EXPECT_EQ((std::vector<std::wstring>{ L"obj" }), Names(folders));
+		EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"obj" }));
 	}
 }
 
@@ -351,11 +351,11 @@ TEST(CGrepEnumFilterFiles, ExceptDoesNotApplyToKeyWithSubFolder)
 	folder.AddFile(LR"(sub\x.bak)");
 
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(LR"(sub\*;!*.bak)"));
+	ASSERT_THAT(keys.SetFileKeys(LR"(sub\*;!*.bak)"), Eq(0));
 	CGrepEnumFilterFiles files;
 	CGrepEnumFiles absExcept;
 	files.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ LR"(sub\x.bak)" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ LR"(sub\x.bak)" }));
 }
 
 /*!
@@ -373,17 +373,17 @@ TEST(CGrepEnumFilterFiles, ExceptAbsolutePath)
 	CGrepEnumKeys keys;
 	const auto excludePath = (folder.Path() / L"a.txt").wstring();
 	const std::wstring fileKeys = L"*;!\"" + excludePath + L"\"";
-	ASSERT_EQ(0, keys.SetFileKeys(fileKeys.c_str()));
-	ASSERT_EQ((std::vector<std::wstring>{ excludePath }), std::vector<std::wstring>(keys.m_vecExceptAbsFileKeys.cbegin(), keys.m_vecExceptAbsFileKeys.cend()));
+	ASSERT_THAT(keys.SetFileKeys(fileKeys.c_str()), Eq(0));
+	ASSERT_THAT(std::vector<std::wstring>(keys.m_vecExceptAbsFileKeys.cbegin(), keys.m_vecExceptAbsFileKeys.cend()), Eq(std::vector<std::wstring>{ excludePath }));
 
 	CGrepEnumOptions options;
 	CGrepEnumFiles absExcept;
 	absExcept.Enumerates(L"", keys.m_vecExceptAbsFileKeys, options);
-	EXPECT_EQ(1, absExcept.GetCount());
+	EXPECT_THAT(absExcept.GetCount(), Eq(1));
 
 	CGrepEnumFilterFiles files;
 	files.Enumerates(folder.Path().c_str(), keys, options, absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"b.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"b.txt" }));
 }
 
 /*!
@@ -399,16 +399,16 @@ TEST(CGrepEnumFilterFiles, ExceptAbsolutePathWithWildcard)
 	CGrepEnumKeys keys;
 	const auto excludePath = (folder.Path() / L"*.bak").wstring();
 	const std::wstring fileKeys = L"*;!\"" + excludePath + L"\"";
-	ASSERT_EQ(0, keys.SetFileKeys(fileKeys.c_str()));
+	ASSERT_THAT(keys.SetFileKeys(fileKeys.c_str()), Eq(0));
 
 	CGrepEnumOptions options;
 	CGrepEnumFiles absExcept;
 	absExcept.Enumerates(L"", keys.m_vecExceptAbsFileKeys, options);
-	EXPECT_EQ(2, absExcept.GetCount());
+	EXPECT_THAT(absExcept.GetCount(), Eq(2));
 
 	CGrepEnumFilterFiles files;
 	files.Enumerates(folder.Path().c_str(), keys, options, absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"c.txt" }), Names(files));
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"c.txt" }));
 }
 
 /*!
@@ -422,11 +422,11 @@ TEST(CGrepEnumFilterFolders, ExceptFolder)
 	}
 
 	CGrepEnumKeys keys;
-	ASSERT_EQ(0, keys.SetFileKeys(L"*;#OBJ"));
+	ASSERT_THAT(keys.SetFileKeys(L"*;#OBJ"), Eq(0));
 	CGrepEnumFilterFolders folders;
 	CGrepEnumFolders absExcept;
 	folders.Enumerates(folder.Path().c_str(), keys, CGrepEnumOptions(), absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"obj,old", L"obj2", L"src" }), Names(folders));
+	EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"obj,old", L"obj2", L"src" }));
 }
 
 /*!
@@ -443,15 +443,15 @@ TEST(CGrepEnumFilterFolders, ExceptAbsolutePath)
 	CGrepEnumKeys keys;
 	const auto excludePath = (folder.Path() / L"obj").wstring();
 	const std::wstring fileKeys = L"*;#\"" + excludePath + L"\"";
-	ASSERT_EQ(0, keys.SetFileKeys(fileKeys.c_str()));
-	ASSERT_EQ((std::vector<std::wstring>{ excludePath }), std::vector<std::wstring>(keys.m_vecExceptAbsFolderKeys.cbegin(), keys.m_vecExceptAbsFolderKeys.cend()));
+	ASSERT_THAT(keys.SetFileKeys(fileKeys.c_str()), Eq(0));
+	ASSERT_THAT(std::vector<std::wstring>(keys.m_vecExceptAbsFolderKeys.cbegin(), keys.m_vecExceptAbsFolderKeys.cend()), Eq(std::vector<std::wstring>{ excludePath }));
 
 	CGrepEnumOptions options;
 	CGrepEnumFolders absExcept;
 	absExcept.Enumerates(L"", keys.m_vecExceptAbsFolderKeys, options);
-	EXPECT_EQ(1, absExcept.GetCount());
+	EXPECT_THAT(absExcept.GetCount(), Eq(1));
 
 	CGrepEnumFilterFolders folders;
 	folders.Enumerates(folder.Path().c_str(), keys, options, absExcept);
-	EXPECT_EQ((std::vector<std::wstring>{ L"src" }), Names(folders));
+	EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"src" }));
 }
