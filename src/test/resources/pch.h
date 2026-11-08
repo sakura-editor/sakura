@@ -9,6 +9,8 @@
 // テストではGMockを使う前提にする
 #include <gmock/gmock.h>
 
+#include "env/DLLSHAREDATA.h"
+
 #include "Funccode_enum.h"
 
 // マッチャーのusing（追加するときは昇順で。）
@@ -33,6 +35,7 @@ using ::testing::StrCaseEq;
 using ::testing::StrCaseNe;
 using ::testing::StrEq;
 using ::testing::StrNe;
+using ::testing::ThrowsMessage;
 
 //! googletestに機能IDを出力させる
 void PrintTo(EFunctionCode eFuncCode, std::ostream* os);

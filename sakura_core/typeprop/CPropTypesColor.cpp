@@ -33,6 +33,7 @@
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
 #include "sakura_rc.h"
 #include "sakura.hh"
 #include "prop/CPropCommon.h"
@@ -1157,7 +1158,7 @@ BOOL CPropTypesColor::SelectColor( HWND hwndParent, COLORREF* pColor, DWORD* pCu
 	cc.lpCustColors = pCustColors;
 	cc.Flags = CC_FULLOPEN | CC_RGBINIT | CC_ENABLEHOOK;
 	cc.lpfnHook = static_cast<LPCCHOOKPROC>(DarkMode::HookDlgProc);
-	if( !::ChooseColor( &cc ) ){
+	if (!Comdlg32::getInstance()->ChooseColorW(&cc)) {
 		return FALSE;
 	}
 	*pColor = cc.rgbResult;

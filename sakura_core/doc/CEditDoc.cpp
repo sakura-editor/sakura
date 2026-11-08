@@ -1003,9 +1003,16 @@ void CEditDoc::SetCurDirNotitle() const
 	if( m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return; // ファイルがあるときは何もしない
 	}
-	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
-	WCHAR szSelDir[_MAX_PATH];
-	const WCHAR* pszDir = nullptr;
+
+	// 設定に従い初期フォルダーを決定する
+	const auto eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
+
+	// カレントディレクトリの移動先パス（設定されなければ移動しない）
+	LPCWSTR pszDir = nullptr;
+
+	// 指定フォルダーを格納するためのバッファ。
+	SFilePath szSelDir{};
+
 	if( eOpenDialogDir == OPENDIALOGDIR_MRU ){
 		const CMRUFolder cMRU;
 		std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
@@ -1021,8 +1028,10 @@ void CEditDoc::SetCurDirNotitle() const
 		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, int(std::size(szSelDir)) );
 		pszDir = szSelDir;
 	}
-	if( pszDir != nullptr ){
-		::SetCurrentDirectory( pszDir );
+
+	// 移動先が設定された場合
+	if (pszDir != nullptr) {
+		cxx::SetCurrentDirectoryW(pszDir);
 	}
 }
 

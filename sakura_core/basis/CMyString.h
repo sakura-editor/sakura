@@ -15,14 +15,51 @@
 #include "config/maxdata.h"
 
 //共通型
-using SFilePath = StaticString<_MAX_PATH>;
-using SFilePathLong = StaticString<MAX_GREP_PATH>;
-class CFilePath : public StaticString<_MAX_PATH>{
+
+/*!
+ * @brief ファイルパスを格納する文字列バッファ
+ *
+ * _MAX_PATH == 260
+ *
+ * 文字列長 _MAX_PATH - 1 までを格納できる固定長バッファ。
+ *
+ * 4096程度に拡張すべきだが、色々事情があり対応保留。
+ */
+using SFilePath = StaticString<_MAX_PATH, false>;
+
+/*!
+ * @brief 長めの文字列を格納する文字列バッファ
+ *
+ * 上限値の根拠が不明瞭なので、検討の余地がある。
+ */
+using SFilePathLong = StaticString<MAX_GREP_PATH, false>;
+
+/*!
+ * @brief ドキュメントパスの格納に使っているクラス
+ *
+ * SFilePathなので最大259文字。
+ */
+// TODO: いつか削除する
+class CFilePath : public SFilePath {
 private:
-	using Super = StaticString<_MAX_PATH>;
+	using Base = SFilePath;
+	using Me = CFilePath;
+
 public:
-	CFilePath() = default;
-	CFilePath(const WCHAR* rhs) : Super(std::wstring_view{ rhs ? rhs : L"" }) {}
+	// コンストラクタは流用
+	using Base::Base;
+
+	/*!
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 *
+	 * @param pszPath [in, opt] コピーする文字列
+	 */
+	constexpr /* implicit */ CFilePath(_In_opt_z_ LPCWSTR pszPath)
+	{
+		Assign(pszPath);
+	}
 
 	[[nodiscard]] bool IsValidPath() const noexcept { return !empty(); }
 	[[nodiscard]] std::wstring GetDirPath() const
@@ -51,37 +88,110 @@ public:
 		// 文字列末尾のアドレスを返す
 		return tail;
 	}
+
+	/*!
+	 * @brief バッファの内容を置き換える
+	 *
+	 * @param[in] rhs 代入する文字列
+	 * @return 自分自身への参照
+	 * @throws std::overflow_error 文字列が長過ぎて入り切らない場合。
+	 */
+	constexpr Me& operator = (const Base& rhs)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto _Rhs = cxx::NullTerminatedString{ rhs };
+
+		// SFilePath::operator=を呼び出す
+		Base::operator = (_Rhs.str());
+
+		return *this;
+	}
 };
 
-//$$ 仮
+/*!
+ * @brief コマンドライン文字列の組み立てに使う文字列バッファ
+ *
+ * かつてWindowsには、コマンドライン長 1023文字 の制約があった。
+ *
+ * 現代のWindowsは 32,767文字 まで指定可能。
+ * あえて制約を残す設計も多いが、1023文字では短すぎる。
+ */
+// TODO: いつか削除する
 class CCommandLineString{
+private:
+	static_assert(
+		1024 == static_cast<int>(MAX_CMDLEN),
+		"CCommandLineString designed 1024 chars buffer."
+	);
+
+	using SCmdLine = StaticString<MAX_CMDLEN>;
+
 public:
-	CCommandLineString()
+	CCommandLineString() = default;
+
+	template <typename... Args>
+	void AppendF(
+		_In_z_ _Printf_format_string_ LPCWSTR format,
+		const Args&... args
+	)
 	{
-		m_szCmdLine[0] = L'\0';
-		m_pHead = m_szCmdLine;
+		// 残りサイズを計算する
+		const auto availableSize = std::size(m_szCmdLine) - length();
+
+		// 書き込んでよい固定長バッファを作る
+		auto buffer = std::span{ m_pHead, availableSize };
+
+		// 書式付き文字列をバッファに書き込む
+		const auto written = cxx::_sprintf_s(
+			buffer,
+			format,
+			std::as_const(args)...
+		);
+
+		// エラーは想定していない
+		assert(0 <= written);
+
+		m_pHead += written;
 	}
-	void AppendF(const WCHAR* szFormat, ...)
+
+	/*!
+	 * @brief C String(NUL終端文字列)を取得する
+	 *
+	 * @return C String(NUL終端文字列)
+	 */
+	constexpr LPCWSTR c_str() const noexcept
 	{
-		va_list v;
-		va_start(v,szFormat);
-		m_pHead+=auto_vsprintf_s(m_pHead, std::size(m_szCmdLine)-(m_pHead-m_szCmdLine),szFormat,v);
-		va_end(v);
+		return m_szCmdLine.c_str();
 	}
-	const WCHAR* c_str() const
+
+	/*!
+	 * @brief 文字列長を取得する
+	 *
+	 * @return 文字列長（NUL終端を含まない）
+	 */
+	constexpr size_t length() const noexcept
 	{
-		return m_szCmdLine;
+		return m_pHead - m_szCmdLine.c_str();
 	}
+
+	// 固定長バッファなのでsizeはバッファサイズを返すべき。(std::stringは可変長。)
+	// TODO: いつか削除する
 	size_t size() const
 	{
 		return m_pHead - m_szCmdLine;
 	}
+
+	// インスタンスごとに変わる値ではないので static メソッドとすべき。
+	// TODO: いつか削除する
 	size_t max_size() const
 	{
+		// FIXME: 固定長バッファのmax_size()は要素数を返すが、このメソッドは -1 している。
 		return int(std::size(m_szCmdLine)) - 1;
 	}
+
 private:
-	WCHAR	m_szCmdLine[1024];
-	WCHAR*	m_pHead;
+	SCmdLine	m_szCmdLine;
+	WCHAR*		m_pHead = m_szCmdLine.data();
 };
+
 #endif /* SAKURA_CMYSTRING_009A2525_6B06_4C1B_B089_C1B8A424A565_H_ */

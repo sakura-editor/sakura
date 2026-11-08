@@ -44,7 +44,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Label="tests1.common">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\resources\;..\src\main\cpp;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\test\cpp\tests1\;..\src\test\cpp\mock\;..\src\test\resources\;..\src\main\cpp;..\src\test\resources\tests1;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -53,7 +53,7 @@
       <AdditionalOptions>/source-charset:utf-8 /execution-charset:shift_jis /w34996 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
-      <AdditionalIncludeDirectories>..\src\test\resources\;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\src\test\resources;..\src\main\resources;..\sakura_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Link>
@@ -113,6 +113,14 @@
     <Link Include="..\build\$(Platform)\$(Configuration)\sakura_core\*.res" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockBcrypt.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockComdlg32.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockKernel32.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockShell32.cpp" />
+    <ClCompile Include="..\src\test\cpp\mock\util\os\MockUser32.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\window\TrayWndTestSuite.cpp" />
     <ClCompile Include="..\src\test\resources\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -147,13 +155,16 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-cerrorinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cfileext.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cfuncinfoarr.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-cgrepenumkeys.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-clayoutint.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cimagelistmgr.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cmemory.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cmenudrawer.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cnative.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cprofile.cpp" />
-    <ClCompile Include="..\src\test\cpp\tests1\test-csakuraenvironment.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-csakuraenvironment.cpp">
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-ctextmetrics.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-cwordparse.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-design_template.cpp" />
@@ -162,8 +173,14 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-editinfo.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-file.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-charcode.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-charset.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-format.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep-cmdline.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep-dialog.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grep-exclude-regex.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grepenum.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-grepinfo.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-grepmessageformat.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-int2dec.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-is_mailaddress.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-loadstring.cpp" />
@@ -183,24 +200,58 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgInput1.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\dlg\MockCDlgOpenFile.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockBcrypt.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockComdlg32.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockKernel32.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockShell32.hpp" />
+    <ClInclude Include="..\src\test\cpp\mock\util\os\MockUser32.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\window\TrayWndTestSuite.hpp" />
     <ClInclude Include="..\src\test\resources\pch.h" />
     <ClInclude Include="..\src\test\resources\testing\CrtAllocHook.hpp" />
     <ClInclude Include="..\src\test\resources\testing\HResultEq.hpp" />
+    <ClInclude Include="..\src\test\resources\testing\MsvcInvalidParameterHandlerDisabler.hpp" />
+    <ClInclude Include="..\src\test\resources\testing\MsvcReportMode.hpp" />
     <ClInclude Include="..\src\test\resources\testing\StartEditorProcess.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\dlg\ModalDialogCloser.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\env\ShareDataTestSuite.hpp" />
+    <ClInclude Include="..\src\test\cpp\tests1\grep\GrepTestSuite.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\window\EditorTestSuite.hpp" />
     <ClInclude Include="..\src\test\cpp\tests1\window\UiaTestSuite.hpp" />
     <ClInclude Include="..\src\test\resources\eval_outputs.hpp" />
     <ClInclude Include="..\src\test\resources\rt_zipres.h" />
     <ClInclude Include="..\src\test\resources\TExtModule.hpp" />
-    <ClInclude Include="..\src\test\resources\tests1_rc.h" />
+    <ClInclude Include="..\src\test\resources\tests1\tests1_rc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\sakura_core\tests1_rc.rc" />
+    <ResourceCompile Include="..\src\test\resources\tests1\tests1_rc.rc" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\src\test\cmake\tests1.cmake" />
+  </ItemGroup>
+  <ItemGroup>
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Asm.asm.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Awk.awk.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Cobol.cbl.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Cpp.cpp.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Csv.csv.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\DosBatch.bat.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Html.html.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Java.java.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\OraclePLSQL.sql.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Perl.pl.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Python.py.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFile.txt.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFile.rule.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFileRegex.txt.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFileRegex.rule.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFileRegexReplace.txt.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\RuleFileRegexReplace.rule.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Text.txt.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\Tex.tex.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\VisualBasic.bas.txt" />
+    <TestOutline Include="..\src\test\resources\tests1\test-outline\VisualBasic.cls.txt" />
   </ItemGroup>
   <ItemGroup Condition="Exists('$(VCInstallDir)\Auxiliary\VS\include\CodeCoverage\CodeCoverage.h')">
     <ClCompile Include="..\src\test\resources\coverage.cpp">
@@ -209,13 +260,20 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\sakura_core\sakura.vcxproj">
+    <ProjectReference Include="sakura.vcxproj">
       <Project>{af03508c-515e-4a0e-87be-67ed1e254bd0}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ItemGroup>
     <TestResource Include="..\src\test\resources\tests1\test-plugin\plugin.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-cp932.zip" />
+    <None Include="..\build\$(Platform)\CMakeTools\cmigemo-dict-utf-8.zip" />
+    <None Include="..\build\$(Platform)\CMakeTools\outline.zip" />
+    <None Include="..\build\$(Platform)\CMakeTools\resources-dllplugin.zip" />
+    <None Include="..\build\$(Platform)\CMakeTools\resources.ja-JP.zip" />
   </ItemGroup>
   <Target Name="GenerateTests1ExeManifest" Inputs="..\src\main\cmake\manifest.in;..\src\main\cmake\manifest.cmake" Outputs="$(CMakeToolsBuildDir)tests1.exe.manifest" BeforeTargets="Link">
     <Exec Command="%22$(CMakeExe)%22 --build $(CMakeToolsPath) --config $(Configuration) --target generate_tests1_exe_manifest -- /nologo" />
@@ -232,6 +290,9 @@
   <Target Name="MakeTestDllPlugin1" Condition="!Exists('$(CMakeToolsBuildDir)resources-dllplugin.zip')" BeforeTargets="ResourceCompile">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_dllplugin_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
+  <Target Name="MakeTestOutline" Inputs="@(TestOutline);..\src\test\cmake\tests1.cmake" Outputs="$(CMakeToolsBuildDir)outline.zip" BeforeTargets="ResourceCompile">
+    <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); &amp; '$(CMakeExe)' --build '$(CMakeToolsPath)' --config $(Configuration) --target test_outline_zip -- /nologo&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
+  </Target>
   <Target Name="RemoveTests1Exe" Condition="Exists('$(TargetPath)')" DependsOnTargets="ClCompile;ResourceCompile" BeforeTargets="Link">
     <Exec Command="pwsh -NoProfile -NonInteractive -ExecutionPolicy RemoteSigned -Command &quot;[Console]::OutputEncoding=[System.Text.UTF8Encoding]::new($false); attrib -R '$(TargetPath)'; Remove-Item '$(TargetPath)' -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1&quot;" StdOutEncoding="UTF-8" ConsoleToMSBuild="true" />
   </Target>
@@ -239,6 +300,7 @@
     <!-- Add files to @Clean just before running CoreClean. -->
     <ItemGroup>
       <Clean Include="$(IntDir)..\..\CMakeTools\resources.ja-JP.zip" />
+      <Clean Include="$(CMakeToolsBuildDir)outline.zip" />
     </ItemGroup>
   </Target>
 </Project>

@@ -14,7 +14,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, Uchi
 	Copyright (C) 2009, syat, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -27,8 +27,10 @@
 
 #include "CCommandLine.h"
 #include "CControlTray.h"
+#include "_main/CMutex.h"
 #include "window/CEditWnd.h" // 2002/2/3 aroka
 #include "agent/CGrepAgent.h"
+#include "basis/make_initialization_error.hpp"
 #include "doc/CEditDoc.h"
 #include "doc/logic/CDocLine.h" // 2003/03/28 MIK
 #include "debug/CRunningTimer.h"
@@ -42,16 +44,16 @@
 #include "apiwrap/StdApi.h"
 #include "CSelectLang.h"
 #include "env/CShareData.h"
+
+#include <chrono>
+
 #include "config/system_constants.h"
+
+using namespace cxx;
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-CNormalProcess::CNormalProcess( HINSTANCE hInstance, LPCWSTR lpCmdLine )
-: CProcess( hInstance, lpCmdLine )
-{
-}
 
 CNormalProcess::~CNormalProcess()
 {
@@ -78,29 +80,67 @@ CNormalProcess::~CNormalProcess()
 	@date 2007.06.26 ryoji グループIDを指定して編集ウィンドウを作成する
 	@date 2012.02.25 novice 複数ファイル読み込み
 */
-bool CNormalProcess::InitializeProcess()
+bool CNormalProcess::InitializeProcess(
+	int nCmdShow
+)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::Init" );
 
-	/* プロセス初期化の目印 */
-	HANDLE	hMutex = _GetInitializeMutex();	// 2002/2/8 aroka 込み入っていたので分離
-	if( nullptr == hMutex ){
-		return false;
+	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
+
+	// エディタ初期化中ミューテックスを用意する（エディタの初期化は排他制御する）
+	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
+	strMutexInitName += GetProfileName();
+	CMutex hMutex{ strMutexInitName, nullptr, true };
+
+	// エディタ初期化中ミューテックス
+	try
+	{
+		// ミューテックスを作成する
+		if (!hMutex.try_lock_for(std::chrono::seconds(15))) {
+			throw basis::make_initialization_error(
+				// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。"
+				LS(STR_ERR_DLGPROCFACT5)
+				, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+			);
+		}
 	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_DLGNRMPROC1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
+	}
+
+	// スコープを抜けるときハンドルを閉じる
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 
 	// エディター初期化完了イベントを開く
 	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ::GetCurrentThreadId()) };
-	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 	HandleHolder hEvent{ ::OpenEventW(STANDARD_RIGHTS_REQUIRED | EVENT_MODIFY_STATE | SYNCHRONIZE, FALSE, initEventName) };
 
-	// スコープを抜けるときシグナル状態になるようにする
-	using InitEventHolder = cxx::ResourceHolder<&::SetEvent>;
-	InitEventHolder initEvent{ hEvent.get() };
+	// スコープを抜けるときイベントを閉じる
+	HandleHolder grepEventHolder;
 
-	/* 共有メモリを初期化する */
-	if (!CProcessFactory::IsExistControlProcess() && !CProcessFactory::StartControlProcess() || !CProcess::InitializeProcess()) {
+	// スコープを抜けるときシグナル状態になるようにする
+	using EventHolder = cxx::ResourceHolder<&::SetEvent>;
+	EventHolder initEvent{ hEvent.get() };
+
+	// スコープを抜けるときシグナル状態になるようにする
+	EventHolder grepEvent;
+
+	// コントロールプロセスが起動している状態にする
+	if (!CProcessFactory::IsExistControlProcess() &&
+		!CProcessFactory::StartControlProcess())
+	{
 		return false;
 	}
+
+	// 共有メモリを初期化する
+	GetShareData().OpenShareData();
 
 	/* ダークモード設定を反映する */
 	ApplyDarkModeSetting(GetDllShareData().m_Common.m_sWindow.m_bDarkMode);
@@ -144,8 +184,8 @@ bool CNormalProcess::InitializeProcess()
 			//	To Here Oct. 19, 2001 genta
 			/* アクティブにする */
 			ActivateFrameWindow( hwndOwner );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
+
+			hMutex.unlock();
 
 			// 複数ファイル読み込み
 			OpenFiles( hwndOwner );
@@ -166,22 +206,18 @@ bool CNormalProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
-	// グループIDを取得
-	int nGroupId = CCommandLine::getInstance()->GetGroupId();
-	if( GetDllShareData().m_Common.m_sTabBar.m_bNewWindow && nGroupId == -1 ){
-		nGroupId = CAppNodeManager::getInstance()->GetFreeGroupId();
-	}
 	// CEditAppを作成
 	m_pcEditApp = CEditApp::getInstance();
-	m_pcEditApp->Create(GetProcessInstance(), nGroupId);
+	m_pcEditApp->Create(GetProcessInstance());
 	CEditWnd* pEditWnd = m_pcEditApp->GetEditWindow();
 
-	const auto hEditWnd = pEditWnd->GetHwnd();
+	// 編集ウィンドウの作成
+	const auto hEditWnd = pEditWnd->CreateMainWnd(nCmdShow);
 	if (!hEditWnd) {
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
 		return false;	// 2009.06.23 ryoji CEditWnd::Create()失敗のため終了
 	}
+
+	SetMainWindow(*pEditWnd);
 
 	/* コマンドラインの解析 */	 // 2002/2/8 aroka ここに移動
 	bDebugMode = CCommandLine::getInstance()->IsDebugMode();
@@ -220,35 +256,24 @@ bool CNormalProcess::InitializeProcess()
 		}
 		GrepInfo gi;
 		CCommandLine::getInstance()->GetGrepInfo(&gi); // 2002/2/8 aroka ここに移動
+
+		// Grep完了イベントを開く
+		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ::GetCurrentThreadId()) };
+		grepEventHolder = ::OpenEventW(EVENT_MODIFY_STATE, FALSE, grepEventName);
+
+		// スコープを抜けるときシグナル状態になるようにする
+		grepEvent = grepEventHolder.get();
+
 		if( !bGrepDlg ){
 			// Grepでは対象パス解析に現在のカレントディレクトリを必要とする
 			// pEditWnd->GetDocument()->SetCurDirNotitle();
 			// 2003.06.23 Moca GREP実行前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
-			this->m_pcEditApp->m_pcGrepAgent->DoGrep(
-				&pEditWnd->GetActiveView(),
-				gi.bGrepReplace,
-				&gi.cmGrepKey,
-				&gi.cmGrepRep,
-				&gi.cmGrepFile,
-				&gi.cmGrepFolder,
-				gi.bGrepCurFolder,
-				gi.bGrepSubFolder,
-				gi.bGrepStdout,
-				gi.bGrepHeader,
-				gi.sGrepSearchOption,
-				gi.nGrepCharSet,	//	2002/09/21 Moca
-				gi.nGrepOutputLineType,
-				gi.nGrepOutputStyle,
-				gi.bGrepOutputFileOnly,
-				gi.bGrepOutputBaseFolder,
-				gi.bGrepSeparateFolder,
-				gi.bGrepPaste,
-				gi.bGrepBackup
-			);
+			hMutex.unlock();
+
+			initEvent = nullptr;
+
+			this->m_pcEditApp->m_pcGrepAgent->DoGrep( &pEditWnd->GetActiveView(), gi );
 			pEditWnd->m_cDlgFuncList.Refresh();	// アウトラインを再解析する
 		}
 		else{
@@ -279,11 +304,10 @@ bool CNormalProcess::InitializeProcess()
 			GetDllShareData().m_Common.m_sSearch.m_nGrepOutputStyle = gi.nGrepOutputStyle;
 			// 2003.06.23 Moca GREPダイアログ表示前にMutexを解放
 			//	こうしないとGrepが終わるまで新しいウィンドウを開けない
-			SetMainWindow( pEditWnd->GetHwnd() );
-			::ReleaseMutex( hMutex );
-			::CloseHandle( hMutex );
-			hMutex = nullptr;
-			
+			hMutex.unlock();
+
+			initEvent = nullptr;
+
 			//	Oct. 9, 2003 genta コマンドラインからGERPダイアログを表示させた場合に
 			//	引数の設定がBOXに反映されない
 			pEditWnd->m_cDlgGrep.m_strText = gi.cmGrepKey.GetStringPtr();		/* 検索文字列 */
@@ -404,8 +428,6 @@ bool CNormalProcess::InitializeProcess()
 		}
 	}
 
-	SetMainWindow( pEditWnd->GetHwnd() );
-
 	//	YAZAKI 2002/05/30 IMEウィンドウの位置がおかしいのを修正。
 	pEditWnd->GetActiveView().SetIMECompFormPos();
 
@@ -421,10 +443,7 @@ bool CNormalProcess::InitializeProcess()
 	//再描画
 	::InvalidateRect( pEditWnd->GetHwnd(), nullptr, TRUE );
 
-	if( hMutex ){
-		::ReleaseMutex( hMutex );
-		::CloseHandle( hMutex );
-	}
+	hMutex.unlock();
 
 	//プラグイン：EditorStartイベント実行
 	CJackManager::getInstance()->InvokePlugins(PP_EDITOR_START, &pEditWnd->GetActiveView());
@@ -451,75 +470,12 @@ bool CNormalProcess::InitializeProcess()
 	// 複数ファイル読み込み
 	OpenFiles( pEditWnd->GetHwnd() );
 
-	initEvent = nullptr;
-
 	return pEditWnd->GetHwnd() ? true : false;
-}
-
-/*!
-	@brief エディタプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CNormalProcess::MainLoop()
-{
-	if( GetMainWindow() ){
-		m_pcEditApp->GetEditWindow()->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
-}
-
-/*!
-	@brief エディタプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	こいつはなにもしない。後始末はdtorで。
-*/
-void CNormalProcess::OnExitProcess()
-{
-	/* プラグイン解放 */
-	CPluginManager::getInstance()->UnloadAllPlugin();		// Mpve here	2010/7/11 Uchi
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         実装補助                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/*!
-	@brief Mutex(プロセス初期化の目印)を取得する
-
-	多数同時に起動するとウィンドウが表に出てこないことがある。
-	
-	@date 2002/2/8 aroka InitializeProcessから移動
-	@retval Mutex のハンドルを返す
-	@retval 失敗した時はリリースしてから NULL を返す
-*/
-HANDLE CNormalProcess::_GetInitializeMutex() const
-{
-	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
-	HANDLE hMutex;
-	const auto pszProfileName = GetProfileName();
-	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
-	strMutexInitName += pszProfileName;
-	hMutex = ::CreateMutex( nullptr, TRUE, strMutexInitName.c_str() );
-	if( nullptr == hMutex ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return nullptr;
-	}
-	if( ::GetLastError() == ERROR_ALREADY_EXISTS ){
-		DWORD dwRet = ::WaitForSingleObject( hMutex, 15000 );	// 2002/2/8 aroka 少し長くした
-		if( WAIT_TIMEOUT == dwRet ){// 別の誰かが起動中
-			TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
-			::CloseHandle( hMutex );
-			return nullptr;
-		}
-	}
-	return hMutex;
-}
 
 /*!
 	@brief 複数ファイル読み込み

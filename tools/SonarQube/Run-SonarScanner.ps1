@@ -69,13 +69,15 @@ Write-Host "SonarScanner Arguments:"
 $sonarScannerArgs | ForEach-Object { Write-Host $_ }
 
 # Run SonarScanner.
-$p = Start-Process `
-  -FilePath $HomePath\.sonar\scanner\bin\sonar-scanner.bat `
-  -ArgumentList $sonarScannerArgs `
-  -NoNewWindow `
-  -WorkingDirectory $HomePath `
-  -PassThru `
-  -Wait
+$startProcessParams = @{
+  FilePath = "$HomePath\.sonar\scanner\bin\sonar-scanner.bat"
+  ArgumentList = $sonarScannerArgs
+  NoNewWindow = $true
+  WorkingDirectory = $HomePath
+  PassThru = $true
+  Wait = $true
+}
+$p = Start-Process @startProcessParams
 
 if ($p.ExitCode -ne 0) {
   throw "SonarScanner was Failed."

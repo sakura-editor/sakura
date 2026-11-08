@@ -169,10 +169,29 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
-# Find Python Interpreter(required)
-find_package(Python3 REQUIRED COMPONENTS Interpreter)
+# Find Python interpreter and development artifacts(required)
+find_package(Python3 3.14 REQUIRED COMPONENTS Interpreter Development)
 
-message(STATUS "Found Python: ${Python3_EXECUTABLE}")
+list(GET Python3_INCLUDE_DIRS 0 Python3_INCLUDE_DIR)
+get_filename_component(Python3_EXECUTABLE_DIR "${Python3_EXECUTABLE}" DIRECTORY)
+find_file(Python3_STABLE_ABI_DLL
+  NAMES python3.dll
+  HINTS
+    "${Python3_EXECUTABLE_DIR}"
+    ${Python3_RUNTIME_LIBRARY_DIRS}
+  NO_DEFAULT_PATH
+  REQUIRED
+)
+
+configure_file(
+  "${CMAKE_SOURCE_DIR}/src/main/cmake/python3_config.h.in"
+  "${CMAKE_BINARY_DIR}/python3_config.h"
+  @ONLY
+)
+
+message(STATUS "Found Python interpreter: ${Python3_EXECUTABLE}")
+message(STATUS "Found Python headers: ${Python3_INCLUDE_DIR}")
+message(STATUS "Found Python Stable ABI DLL: ${Python3_STABLE_ABI_DLL}")
 
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
@@ -205,6 +224,10 @@ add_custom_command(
     -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
     -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/version.h"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.h.in"
   COMMENT "Generating version.h"
 )
 
@@ -266,6 +289,10 @@ add_custom_command(
     -DEXE_ARCH=${EXE_ARCH}
     -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/sakura.exe.manifest
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.in"
   COMMENT "Generating sakura.exe.manifest"
 )
 
@@ -287,6 +314,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
     "${OUTPUT_DIRECTORY}/bregonig.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
   COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
 )
 
@@ -304,6 +332,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
     "${OUTPUT_DIRECTORY}/migemo.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
   COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
 )
 
@@ -320,6 +349,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
     "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
   COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
 )
 
@@ -336,6 +366,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
     "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
     "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
   COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
 )
 
@@ -365,13 +396,19 @@ function(convert_rc_files_to_utf8 RC_FILES_VAR LOCALE_NAME BINARY_DIR)
   foreach(RC_FILE ${${RC_FILES_VAR}})
     get_filename_component(RC_NAME ${RC_FILE} NAME_WE)
     get_filename_component(RC_EXT ${RC_FILE} EXT)
-    set(UTF8_RC_FILE ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME}/${RC_NAME}${RC_EXT})
+    set(UTF8_RC_DIR ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME})
+    set(UTF8_RC_FILE ${UTF8_RC_DIR}/${RC_NAME}${RC_EXT})
     
     add_custom_command(
       OUTPUT ${UTF8_RC_FILE}
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${UTF8_RC_DIR}"
       COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
       DEPENDS ${RC_FILE}
       COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
+    )
+
+    set_property(DIRECTORY APPEND PROPERTY
+      ADDITIONAL_CLEAN_FILES "${UTF8_RC_DIR}"
     )
     
     list(APPEND RC_FILES_UTF8 ${UTF8_RC_FILE})
@@ -560,6 +597,7 @@ target_link_directories(sakura_core
 target_link_libraries(sakura_core
   PUBLIC
     darkmodelib::darkmodelib
+    bcrypt
     comctl32
     dbghelp
     dwmapi
@@ -636,6 +674,11 @@ if(MINGW)
       -DOUTPUT_FILE="${SAKURA_MANIFEST_RC}"
       -DMANIFEST_FILE="${SAKURA_EXE_MANIFEST}"
       -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${SAKURA_MANIFEST_RC}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.in"
+      "${SAKURA_EXE_MANIFEST}"
     COMMENT "Generating sakura_manifest.rc"
   )
 endif(MINGW)

@@ -15,15 +15,13 @@
 #include "uiparts/CSoundSet.h"
 #include "uiparts/CImageListMgr.h"
 #include "types/CType.h"
+#include "window/CEditWnd.h"
 
 class CEditDoc;
-class CEditWnd;
 class CLoadAgent;
 class CSaveAgent;
 class CVisualProgress;
-class CMruListener;
 class CSMacroMgr;
-class CPropertyManager;
 class CGrepAgent;
 enum EFunctionCode;
 
@@ -31,9 +29,9 @@ enum EFunctionCode;
 class CEditApp final : public TSakuraSingleton<CEditApp> {
 public:
 	CEditApp() = default;
-	~CEditApp() noexcept;
+	~CEditApp() noexcept override;
 
-	void Create(HINSTANCE hInst, int);
+	void Create(HINSTANCE hInst);
 
 	//モジュール情報
 	HINSTANCE GetAppInstance() const{ return m_hInst; }	//!< インスタンスハンドル取得
@@ -42,7 +40,7 @@ public:
 	CEditWnd* GetEditWindow(){ return m_pcEditWnd; }		//!< ウィンドウ取得
 
 	CEditDoc*		GetDocument(){ return m_pcEditDoc; }
-	CImageListMgr&	GetIcons(){ return m_cIcons; }
+	CImageListMgr&	GetIcons() { return m_pcEditWnd->GetIcons(); }
 
 	bool OpenPropertySheet( int nPageNum );
 	bool OpenPropertySheetTypes( int nPageNum, CTypeConfig nSettingType );
@@ -62,16 +60,12 @@ public:
 	CVisualProgress*	m_pcVisualProgress = nullptr;
 
 	//その他ヘルパ
-	CMruListener*		m_pcMruListener = nullptr;		//!< MRU管理
 	CSMacroMgr*			m_pcSMacroMgr = nullptr;		//!< マクロ管理
 
 	CPropertyManager*	m_pcPropertyManager = nullptr;	//!< プロパティ管理
 
 	CGrepAgent*			m_pcGrepAgent = nullptr;		//!< GREPモード
 	CSoundSet			m_cSoundSet;					//!< サウンド管理
-
-	//GUIオブジェクト
-	CImageListMgr		m_cIcons;					//!< Image List
 };
 
 //WM_QUIT検出例外

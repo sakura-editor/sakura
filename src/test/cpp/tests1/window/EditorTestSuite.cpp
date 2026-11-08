@@ -8,6 +8,16 @@
 #include "window/EditorTestSuite.hpp"
 
 #include "_main/CAppMode.h"
+#include "_main/CProcessFactory.h"
+
+namespace testing {
+
+void TerminateControlProcess(
+	std::wstring_view profileName,
+	DWORD dwControlProcessId = 0
+);
+
+}	// namespace testing	
 
 namespace window {
 
@@ -16,7 +26,40 @@ namespace window {
  */
 /* static */ void EditorTestSuite::SetUpEditor()
 {
-	SetUpShareData();
+	// コマンドラインオブジェクトを用意する
+	pCommandLine = std::make_unique<CCommandLine>();
+	pCommandLine->ParseCommandLine(L"-PROF=", false);
+
+	// 言語環境を初期化する
+	CSelectLang::InitializeLanguageEnvironment();
+
+#pragma region CanBeMove
+	// 共有メモリ初期化前にメインウィンドウの取得はできない
+	EXPECT_THAT(GetAppMainWndPtr(), IsNull());
+
+#pragma endregion CanBeMove
+
+	// コントロールプロセスが起動している状態にする
+	CProcessFactory::StartControlProcess();
+
+	// 共有メモリのインスタンスを生成する
+	pcShareData = std::make_unique<CShareData>();
+
+	// 共有メモリを初期化する
+	pcShareData->OpenShareData();
+
+	// 言語を日本語に固定する
+	GetDllShareData().m_Common.m_sWindow.m_szLanguageDll = L"";
+	CSelectLang::ChangeLang(GetDllShareData().m_Common.m_sWindow.m_szLanguageDll);
+
+	dmpPath = GetExeFileName().replace_extension(".dmp");
+	iniBkPath = GetIniFileName().concat(".bak");
+	profIniPath = GetExeFileName().replace_extension().concat("_prof.ini");
+
+	std::error_code ec;
+	std::filesystem::remove(dmpPath, ec);
+	std::filesystem::remove(iniBkPath, ec);
+	std::filesystem::remove(profIniPath, ec);
 
 	// CanBeMoveリージョンをテストケースに分割する。（すぐ対応できないのでコメント残し）
 
@@ -36,9 +79,6 @@ namespace window {
 	const auto hInst = G_AppInstance();
 
 	CEditApp::getInstance()->m_hInst = hInst;
-
-	//ヘルパ作成
-	CEditApp::getInstance()->m_cIcons.Create(hInst);
 
 	// CEditViewをインスタンス化するにはドキュメントのインスタンスが必要
 	pcEditDoc = std::make_unique<CEditDoc>(nullptr);
@@ -95,18 +135,16 @@ namespace window {
 	// 編集ウインドウがあるのでエラーにならない
 	EXPECT_NO_THROW([] { GetEditWnd(); });
 
+	// 編集ウィンドウ生成後にメインウィンドウ取得を試みると、編集ウィンドウがとれる
+	EXPECT_THAT(GetAppMainWndPtr(), pcEditWnd.get());
+
 #pragma endregion CanBeMove
 
-	//MRU管理
-	pcMruListener = std::make_unique<CMruListener>();
-	CEditApp::getInstance()->m_pcMruListener = pcMruListener.get();
-
 	//プロパティ管理
-	pcPropertyManager = std::make_unique<CPropertyManager>();
-	CEditApp::getInstance()->m_pcPropertyManager = pcPropertyManager.get();
+	CEditApp::getInstance()->m_pcPropertyManager = pcEditWnd->m_pcPropertyManager.get();
 	CEditApp::getInstance()->m_pcPropertyManager->Create(
 		pcEditWnd->GetHwnd(),
-		&CEditApp::getInstance()->m_cIcons,
+		&pcEditWnd->GetIcons(),
 		&pcEditWnd->GetMenuDrawer()
 	);
 }
@@ -118,7 +156,6 @@ namespace window {
 {
 	CEditApp::getInstance()->m_pcSMacroMgr = nullptr;
 	CEditApp::getInstance()->m_pcPropertyManager = nullptr;
-	CEditApp::getInstance()->m_pcMruListener = nullptr;
 	CEditApp::getInstance()->m_pcGrepAgent = nullptr;
 	CEditApp::getInstance()->m_pcVisualProgress = nullptr;
 	CEditApp::getInstance()->m_pcSaveAgent = nullptr;
@@ -128,8 +165,6 @@ namespace window {
 
 	CEditApp::resetInstance();
 
-	pcPropertyManager = nullptr;
-	pcMruListener = nullptr;
 	pcGrepAgent = nullptr;
 	pcVisualProgress = nullptr;
 	pcSaveAgent = nullptr;
@@ -141,7 +176,17 @@ namespace window {
 
 	pcEditDoc = nullptr;
 
+	std::error_code ec;
+	std::filesystem::remove(dmpPath, ec);
+	std::filesystem::remove(iniBkPath, ec);
+	std::filesystem::remove(profIniPath, ec);
+
 	TearDownShareData();
+
+	pCommandLine = nullptr;
+
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
 }
 
 } // namespace window

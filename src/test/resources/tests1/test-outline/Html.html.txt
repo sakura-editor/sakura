@@ -1,0 +1,67 @@
+﻿<!-- アウトライン解析テスト向け HTML 構文サンプル（HTML Living Standard 2026相当） -->
+<!-- アウトラインに現れる代表的な文書構造を示す。 -->
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>アウトライン解析テスト</title>
+</head>
+<body>
+  <!-- ページ全体のヘッダーと最上位見出しを示す。 -->
+  <header>
+    <h1>アウトライン解析テスト</h1>
+    <nav aria-label="主要ナビゲーション">
+      <a href="#elements">要素</a>
+      <a href="#form">フォーム</a>
+    </nav>
+  </header>
+
+  <!-- main と section による主要コンテンツの階層を示す。 -->
+  <main>
+    <section id="elements">
+      <h2>セマンティック要素</h2>
+
+      <!-- article と下位見出しを示す。 -->
+      <article>
+        <h3>記事</h3>
+        <p>独立して配布できる内容を表します。</p>
+      </article>
+
+      <!-- aside による補足コンテンツを示す。 -->
+      <aside>
+        <h3>補足</h3>
+        <p>本文に関連する補足情報です。</p>
+      </aside>
+    </section>
+
+    <!-- フォームとフォーム部品を含む別セクションを示す。 -->
+    <section id="form">
+      <h2>入力フォーム</h2>
+      <form method="post">
+        <label for="name">名前</label>
+        <input id="name" name="name" autocomplete="name" required>
+        <button type="submit">送信</button>
+      </form>
+    </section>
+
+    <!-- CDATA セクション -->
+    <!-- Living Standard では直接書けないので SVG 外来要素内に書く。 -->
+    <section id="svg">
+      <h2>SVG 要素</h2>
+      <svg viewBox="0 0 200 40" role="img" aria-labelledby="svg-title">
+        <title id="svg-title">CDATA の例</title>
+        <![CDATA[
+          CDATA セクション内のテキスト
+        ]]>
+        <text x="10" y="25">SVG 要素</text>
+      </svg>
+    </section>
+  </main>
+
+  <!-- ページ末尾のフッターを示す。 -->
+  <footer>
+    <small>Outline test sample</small>
+  </footer>
+</body>
+</html>

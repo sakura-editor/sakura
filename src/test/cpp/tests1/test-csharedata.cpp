@@ -5,7 +5,7 @@
 	SPDX-License-Identifier: Zlib
  */
 #include "pch.h"
-#include "env/ShareDataTestSuite.hpp"
+#include "env/CShareData.h"
 
 #include "config/system_constants.h"
 #include "dlg/CDialog.h"	//仮置き、本来は不要。
@@ -14,6 +14,9 @@
 #include "uiparts/CMenuDrawer.h"
 #include "util/window.h"
 #include "util/file.h"
+
+#include "window/TrayWndTestSuite.hpp"
+
 #include "version.h"
 #include "sakura_rc.h"
 
@@ -78,15 +81,15 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
     // プロパティごとに等価評価を行う
 	EXPECT_THAT(actual.m_nIdx, expected.m_nIdx);
 	EXPECT_THAT(actual.m_id, expected.m_id);
-	EXPECT_THAT(actual.m_szTypeName, StrEq(expected.m_szTypeName));
-	EXPECT_THAT(actual.m_szTypeExts, StrEq(expected.m_szTypeExts));
+	EXPECT_THAT(actual.m_szTypeName, StrEq(expected.m_szTypeName.c_str()));
+	EXPECT_THAT(actual.m_szTypeExts, StrEq(expected.m_szTypeExts.c_str()));
 	EXPECT_THAT(actual.m_nTextWrapMethod, expected.m_nTextWrapMethod);
 	EXPECT_THAT(actual.m_nMaxLineKetas, expected.m_nMaxLineKetas);
 	EXPECT_THAT(actual.m_nColumnSpace, expected.m_nColumnSpace);
 	EXPECT_THAT(actual.m_nLineSpace, expected.m_nLineSpace);
 	EXPECT_THAT(actual.m_nTabSpace, expected.m_nTabSpace);
 	EXPECT_THAT(actual.m_bTabArrow, expected.m_bTabArrow);
-	EXPECT_THAT(actual.m_szTabViewString, StrEq(expected.m_szTabViewString));
+	EXPECT_THAT(actual.m_szTabViewString, StrEq(expected.m_szTabViewString.c_str()));
 	EXPECT_THAT(actual.m_bInsSpace, expected.m_bInsSpace);
 	EXPECT_THAT(actual.m_nTsvMode, expected.m_nTsvMode);
 	for (size_t i = 0; i < std::size(actual.m_nKeyWordSetIdx); ++i) {
@@ -106,7 +109,7 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	EXPECT_THAT(actual.m_bStringLineOnly, expected.m_bStringLineOnly);
 	EXPECT_THAT(actual.m_bStringEndLine, expected.m_bStringEndLine);
 	EXPECT_THAT(actual.m_nHeredocType, expected.m_nHeredocType);
-	EXPECT_THAT(actual.m_szIndentChars, StrEq(expected.m_szIndentChars));
+	EXPECT_THAT(actual.m_szIndentChars, StrEq(expected.m_szIndentChars.c_str()));
 	EXPECT_THAT(actual.m_nColorInfoArrNum, expected.m_nColorInfoArrNum);
 	for (size_t i = 0; i < std::size(actual.m_ColorInfoArr); ++i) {
 		EXPECT_THAT(actual.m_ColorInfoArr[i].m_bDisp,                  expected.m_ColorInfoArr[i].m_bDisp)                  << L"Unexpected value at index " << i;
@@ -137,9 +140,9 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	EXPECT_THAT(actual.m_bKinsokuRet, expected.m_bKinsokuRet);
 	EXPECT_THAT(actual.m_bKinsokuKuto, expected.m_bKinsokuKuto);
 	EXPECT_THAT(actual.m_bKinsokuHide, expected.m_bKinsokuHide);
-	EXPECT_THAT(actual.m_szKinsokuHead, StrEq(expected.m_szKinsokuHead));
-	EXPECT_THAT(actual.m_szKinsokuTail, StrEq(expected.m_szKinsokuTail));
-	EXPECT_THAT(actual.m_szKinsokuKuto, StrEq(expected.m_szKinsokuKuto));
+	EXPECT_THAT(actual.m_szKinsokuHead, StrEq(expected.m_szKinsokuHead.c_str()));
+	EXPECT_THAT(actual.m_szKinsokuTail, StrEq(expected.m_szKinsokuTail.c_str()));
+	EXPECT_THAT(actual.m_szKinsokuKuto, StrEq(expected.m_szKinsokuKuto.c_str()));
 	EXPECT_THAT(actual.m_nCurrentPrintSetting, expected.m_nCurrentPrintSetting);
 	EXPECT_THAT(actual.m_bOutlineDockDisp, expected.m_bOutlineDockDisp);
 	EXPECT_THAT(actual.m_eOutlineDockSide, expected.m_eOutlineDockSide);
@@ -187,7 +190,7 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	for (size_t i = 0; i < std::size(actual.m_RegexKeywordArr); ++i) {
 		EXPECT_THAT(actual.m_RegexKeywordArr[i].m_nColorIndex, expected.m_RegexKeywordArr[i].m_nColorIndex) << L"Unexpected value at index " << i;
 	}
-	EXPECT_THAT(actual.m_RegexKeywordList, StrEq(expected.m_RegexKeywordList));
+	EXPECT_THAT(actual.m_RegexKeywordList, StrEq(expected.m_RegexKeywordList.c_str()));
 	EXPECT_THAT(actual.m_bUseKeyWordHelp, expected.m_bUseKeyWordHelp);
 	EXPECT_THAT(actual.m_nKeyHelpNum, expected.m_nKeyHelpNum);
 	for (size_t i = 0; i < std::size(actual.m_KeyHelpArr); ++i) {
@@ -1627,8 +1630,8 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		auto type = std::make_unique<STypeConfig>();
 		table[i]->InitTypeConfig(i, *type);
 		EXPECT_THAT(shareData.m_TypeMini[i].m_id, type->m_id);
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName));
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName.c_str()));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts.c_str()));
 		EXPECT_THAT(shareData.m_TypeMini[i].m_encoding, type->m_encoding);
 
 		EXPECT_THAT(shareData.m_TypeBasis.m_nIdx, type->m_nIdx);
@@ -1639,13 +1642,13 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		auto type = std::make_unique<STypeConfig>();
 		table[i]->InitTypeConfig(i, *type);
 		EXPECT_THAT(shareData.m_TypeMini[i].m_id, type->m_id);
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName));
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName.c_str()));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts.c_str()));
 		EXPECT_THAT(shareData.m_TypeMini[i].m_encoding, type->m_encoding);
 	}
 
 	for (int i = 0; i < std::ssize(shareData.m_PrintSettingArr); ++i) {
-		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(std::format(L"{:s} {:d}", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
+		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceHan, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceZen, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_bColorPrint, IsFalse());
@@ -1712,7 +1715,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		&& true;
 }
 
-struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CShareDataTest : public ::testing::Test, public window::TrayWndTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -1736,7 +1739,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 #pragma endregion CanBeMove
 
 		// 共有データを生成して初期化する
-		SetUpShareData();
+		SetUpTrayWnd();
 
 		// 共有データがあるので値を返す
 		EXPECT_THAT(GetDllShareDataPtr(), pcShareData->GetDllShareDataPtr());
@@ -1757,7 +1760,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 	static void TearDownTestSuite()
 	{
 		// 共有データを破棄する
-		TearDownShareData();
+		TearDownTrayWnd();
 
 		// 共有データがなくなってもエラーにならない
 		EXPECT_THAT(GetDllShareDataPtr(), IsNull());

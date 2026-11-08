@@ -796,6 +796,7 @@
 #define IDC_PYTHONDIR                   1739
 #define IDC_PYTHONDIRREF                1740
 #define IDC_CHECK_bDarkMode             1741
+#define IDC_CHK_EXCLUDE_FILE_REGEXP     1742
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -1850,15 +1851,22 @@
 #define IDS_EOLTYPENAME_4               35054
 #define IDS_EOLTYPENAME_5               35055
 #define IDS_EOLTYPENAME_6               35056
+#define STR_ERR_MACRO_ENCODING          35057
+#define STR_DLGGREP_QUOTE_ERROR         35058
+#define STR_GREP_ERR_EXCLUDE_REGEXP     35059
+#define STR_GREP_EXCLUDE_FILE_REGEXP    35060
+#define IDS_BAD_ALLOC                   35061
+#define IDS_UNHANDLED                   35062
+#define IDS_APPNAME_JP                  35063
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        35057
+#define _APS_NEXT_RESOURCE_VALUE        35064
 #define _APS_NEXT_COMMAND_VALUE         101
-#define _APS_NEXT_CONTROL_VALUE         1741
+#define _APS_NEXT_CONTROL_VALUE         1743
 #define _APS_NEXT_SYMED_VALUE           10000
 #endif
 #endif

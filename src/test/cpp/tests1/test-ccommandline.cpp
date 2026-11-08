@@ -8,6 +8,7 @@
 #include "_main/CCommandLine.h"
 
 #include "env/CSakuraEnvironment.h"
+#include "util/os/MockUser32.hpp"
 #include "util/string_ex.h"
 
 #include "CSelectLang.h"
@@ -20,6 +21,8 @@
 #include "sakura_rc.h"
 
 using namespace std::literals::string_view_literals;
+
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s);
 
 bool operator == (const EditInfo& lhs, const EditInfo& rhs) noexcept;
 bool operator != (const EditInfo& lhs, const EditInfo& rhs) noexcept;
@@ -43,6 +46,55 @@ std::wstring GetLocalPath(const std::wstring_view& filename)
 	::wcscpy_s(pszResolvedPath, cchBufSize, filename.data());
 	CSakuraEnvironment::ResolvePath(pszResolvedPath);
 	return pszResolvedPath;
+}
+
+/*!
+ * @brief コマンドライン文字列を分割する関数のテスト
+ */
+TEST(SplitLegacyCommandLine, test001)
+{
+	const auto args1 = SplitLegacyCommandLine(LR"(test.exe arg1 -arg2="test arg" "the ""3rd"" arg" finalArg)");
+	EXPECT_THAT(args1[0], StrEq(LR"(test.exe)"));
+	EXPECT_THAT(args1[1], StrEq(LR"(arg1)"));
+	EXPECT_THAT(args1[2], StrEq(LR"(-arg2="test arg")"));
+	EXPECT_THAT(args1[3], StrEq(LR"("the ""3rd"" arg")"));
+	EXPECT_THAT(args1[4], StrEq(LR"(finalArg)"));
+
+	const auto args2 = SplitLegacyCommandLine(L"arg1 arg2 ");
+	EXPECT_THAT(args2, ::testing::SizeIs(2));
+	EXPECT_THAT(args2[0], StrEq(L"arg1"));
+	EXPECT_THAT(args2[1], StrEq(L"arg2"));
+
+	const auto args3 = SplitLegacyCommandLine(L"   ");
+	EXPECT_THAT(args3, ::testing::IsEmpty());
+
+	// "C:\path\to\file" の \ はリテラルとして扱われ、トークン全体が1引数になる
+	const auto args4 = SplitLegacyCommandLine(LR"(exe "C:\path\to\file")");
+	EXPECT_THAT(args4, ::testing::SizeIs(2));
+	EXPECT_THAT(args4[0], StrEq(L"exe"));
+	EXPECT_THAT(args4[1], StrEq(LR"("C:\path\to\file")"));
+
+	// "te\"st" は \" をエスケープとして扱い、トークン全体が1引数になる
+	const auto args5 = SplitLegacyCommandLine(LR"(exe "te\"st")");
+	EXPECT_THAT(args5, ::testing::SizeIs(2));
+	EXPECT_THAT(args5[0], StrEq(L"exe"));
+	EXPECT_THAT(args5[1], StrEq(LR"("te\"st")"));
+
+	// 閉じ引用符なし → 残り全部を最後の引数として扱う
+	const auto args6 = SplitLegacyCommandLine(L"arg1 \"open here arg3");
+	EXPECT_THAT(args6, ::testing::SizeIs(2));
+	EXPECT_THAT(args6[0], StrEq(L"arg1"));
+	EXPECT_THAT(args6[1], StrEq(L"\"open here arg3"));
+
+	EXPECT_THAT( cxx::iequals(L"abc", L"abc"), IsTrue());	// ケース含め一致
+	EXPECT_THAT( cxx::iequals(L"ABC", L"ABC"), IsTrue());	// ケース含め一致
+	EXPECT_THAT( cxx::iequals(L"abc", L"ABC"), IsTrue());	// ケース違い
+	EXPECT_THAT( cxx::iequals(L"ABC", L"abc"), IsTrue());	// ケース違い
+	EXPECT_THAT( cxx::iequals(L"AbC", L"aBc"), IsTrue());	// ケース違い
+
+	EXPECT_THAT( cxx::iequals(L"AbC", L"def"), IsFalse());
+	EXPECT_THAT( cxx::iequals(L"AbC", L"ab"), IsFalse());
+	EXPECT_THAT( cxx::iequals(L"AbC", std::wstring_view{ L"abc", 2 }), IsFalse());
 }
 
 /*!
@@ -685,6 +737,46 @@ TEST(CCommandLine, ParseGrepReplaceCreateBackupFiles)
 }
 
 /*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark -GOPTが指定されていなければFALSE
+* @remark -GOPTが指定されていたらTRUE
+*/
+TEST(CCommandLine, ParseGrepExceptFileRegexp)
+{
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(L"", false);
+	EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepExceptFileRegexp, IsFalse());
+	cCommandLine.ParseCommandLine(L"-GOPT=E", false);
+	EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepExceptFileRegexp, IsTrue());
+}
+
+/*!
+* @brief パラメータ解析(-GOPT)の仕様
+* @remark 他の文字と組み合わせても、順序によらず指定できる
+* @remark 小文字の e は受け付けない(他の文字と同じく大文字だけ)
+*/
+TEST(CCommandLine, ParseGrepExceptFileRegexp_Combination)
+{
+	{
+		CCommandLine cCommandLine;
+		cCommandLine.ParseCommandLine(L"-GOPT=SE", false);
+		EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepSubFolder, IsTrue());
+		EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepExceptFileRegexp, IsTrue());
+	}
+	{
+		CCommandLine cCommandLine;
+		cCommandLine.ParseCommandLine(L"-GOPT=ES", false);
+		EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepSubFolder, IsTrue());
+		EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepExceptFileRegexp, IsTrue());
+	}
+	{
+		CCommandLine cCommandLine;
+		cCommandLine.ParseCommandLine(L"-GOPT=e", false);
+		EXPECT_THAT(cCommandLine.GetGrepInfoRef().bGrepExceptFileRegexp, IsFalse());
+	}
+}
+
+/*!
  * @brief パラメータ解析(-GCODE)の仕様
  * @remark -GCODEが指定されていなければSJIS
  * @remark -GCODEが指定されていたら指定された数値
@@ -719,6 +811,25 @@ TEST(CCommandLine, ParseFromResponseFile)
 	cCommandLine.ParseCommandLine(L"test.response", false);
 
 	std::remove("test.response");
+}
+
+/*!
+ * @brief パラメータ解析(-@)の仕様
+ * @remark -@に指定されたレスポンスファイルが見付からなかった場合、何もしない
+ */
+TEST(CCommandLine, ParseFromResponseFile101)
+{
+	// レスポンスファイルのパス
+	const auto path = std::filesystem::path{ "test.response" };
+
+	// パスが存在しなかった場合をテストしたいので削除しておく
+	std::error_code ec;
+	std::filesystem::remove(path, ec);
+
+	// 指定されたレスポンスファイルが存在しない場合、何もしない（おそらくバグ。）
+	CCommandLine cCommandLine;
+	auto strCmdLine = std::format(L"-@={}", path.filename().c_str());
+	cCommandLine.ParseCommandLine(strCmdLine.c_str(), true);
 }
 
 /*!
@@ -909,6 +1020,20 @@ TEST(CCommandLine, ParseFileNameIncludesInvalidFilenameChars)
 	}
 
 	User32::resetInstance();
+}
+
+/*!
+ * @brief ファイルパスが「file:///」で始まっている場合の仕様
+ * @remark 先頭の「file:///」が除去され、パス解決される(相対パスはカレントディレクトリが基準)
+ */
+TEST(CCommandLine, ParseFileNameStartsWithFileProtocol)
+{
+	constexpr auto& fileName = L"test.txt";
+	const auto path = GetLocalPath(fileName);
+
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(std::data(std::format(L"file:///{:s}", fileName)), false);
+	EXPECT_THAT(cCommandLine.GetOpenFile(), StrEq(path));
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)

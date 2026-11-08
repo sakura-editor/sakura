@@ -1,5 +1,5 @@
 {
-  "2026-07-11": {
+  "2026-10-28": {
     "bregonig": {
       "baseline": "4.20.0",
       "port-version": 0
@@ -9,7 +9,7 @@
       "port-version": 0
     },
     "darkmodelib": {
-      "baseline": "0.48.0",
+      "baseline": "0.130.0",
       "port-version": 0
     },
     "dll-plugin1": {

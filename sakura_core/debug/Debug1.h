@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,16 +17,59 @@
 #define SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_
 #pragma once
 
+#include "util/string_ex.h"
+
 #include <vadefs.h>
 
 #include <Windows.h>
 #include <tchar.h>
 
+#include <string_view>
+
+namespace cxx {
+
+/*!
+ * @brief デバッガーに文字列を送信します。
+ *
+ * @param[in] outputString 出力する文字列
+ */
+void OutputDebugStringW(
+	std::wstring_view outputString
+);
+
+} // namespace cxx
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                   メッセージ出力：実装                      //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 #if defined(_DEBUG) || defined(USE_RELPRINT)
-void DebugOutW( LPCWSTR lpFmt, ...);
+
+/*!
+ * @brief 書式付きデバッガ出力
+ *
+ * 引数で与えられた情報をDebugStringとして出力する．
+ *
+ * @param[in] format printfの書式付き文字列
+ * @param[in, opt] args 引数リスト
+ *
+ * @date 2001/06/23 Norio Nakatani, 大量にトレースするときのためにウェイトを入れた
+ */
+template <typename... Args>
+void DebugOutW(
+	_In_z_ _Printf_format_string_ LPCWSTR format,
+	const Args&... args
+)
+{
+	// 出力文字列を整形する
+	const auto outputString = strprintf(format, std::as_const(args)...);
+
+	// デバッガーに文字列を送信する
+	cxx::OutputDebugStringW(outputString);
+
+	//ウェイト
+	::Sleep(1);
+}
+
 #endif	// _DEBUG || USE_RELPRINT
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -62,4 +105,5 @@ void DebugOutW( LPCWSTR lpFmt, ...);
 #else
 	#define TRACE( ... )
 #endif
+
 #endif /* SAKURA_DEBUG1_382EF8C2_DA86_410F_80D9_7F357A356C80_H_ */

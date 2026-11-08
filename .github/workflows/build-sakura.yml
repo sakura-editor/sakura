@@ -31,20 +31,18 @@ env:
   VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
   VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
 
-permissions:
-  actions: read
-  contents: read
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   check-encoding:
     runs-on: &windows_runner windows-latest # YAMLアンカーを使う
+    permissions:
+      contents: read
     defaults:
       run:
         shell: cmd # このJobでは 指定しない限り cmd を使う
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0  # 過去の履歴も含めて全て取得 (check_encoding.py で origin/master にアクセスするため)
 
@@ -52,12 +50,12 @@ jobs:
         run: set
 
       - name: Set up Python
-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
       - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           activate-environment: true
 
@@ -81,6 +79,7 @@ jobs:
       VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite
 
     permissions:
+      contents: read
       packages: write
 
     strategy:
@@ -90,9 +89,12 @@ jobs:
           - x64-mingw-static
           - x86-windows-static
 
+    # msys2パッケージが壊れたときにワークフロー全体が失敗してしまう対策
+    continue-on-error: ${{ matrix.triplet == 'x64-mingw-static' }}
+
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1  # 過去の履歴は含めず取得
         submodules: true
@@ -102,7 +104,7 @@ jobs:
       uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     - name: Set up MSYS2
-      uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 # v2.32.0
+      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
       if: matrix.triplet == 'x64-mingw-static'
       with:
         msystem: MINGW64
@@ -117,16 +119,16 @@ jobs:
           mingw-w64-x86_64-7zip
           mingw-w64-x86_64-gdb
           mingw-w64-x86_64-ctags
-          mingw-w64-x86_64-diffutils
+          diffutils
 
     - name: Set up Python
-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         activate-environment: true
@@ -193,15 +195,24 @@ jobs:
     runs-on: *windows_runner
     needs: check-encoding
 
+    permissions:
+      contents: read
+
     steps:
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1
         submodules: true
 
+    # コンパイル制御にpythonが必要
+    - name: Set up Python
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      with:
+        python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+
     # HHC.exeを実行するためにMsBuildが必要
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     # LEProc.exeをインストールするためにAutoHotKeyが必要
     - name: Install AutoHotKey
@@ -219,8 +230,8 @@ jobs:
         $LEExpandDir = "${{ github.workspace }}\tools\LocaleEmulator"
         $LEInitScript = "${{ github.workspace }}\tools\LocaleEmulator\init-locale-emulator.ahk"
         Expand-Archive "${{ github.workspace }}\externals\LocaleEmulator\locale-emulator.zip" "${LEExpandDir}"
-        Start-Process $env:AutoHotKey "${LEInitScript}"
-        Start-Process "${LEExpandDir}\LEInstaller.exe"
+        Start-Process -FilePath "$env:AutoHotKey" -ArgumentList "${LEInitScript}"
+        Start-Process -FilePath "${LEExpandDir}\LEInstaller.exe"
         echo "${LEExpandDir}" >> $env:GITHUB_PATH
 
     # HHC.exeを使ってHTMLヘルプをコンパイルする
@@ -230,7 +241,7 @@ jobs:
 
     # コンパイルしたHTMLヘルプをartifactにする
     - name: Upload CHM artifacts
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: build-chm-artifacts
         path: |
@@ -243,6 +254,9 @@ jobs:
     runs-on: *windows_runner
     needs: check-encoding
 
+    permissions:
+      contents: read
+
     strategy:
       matrix:
         config:
@@ -251,7 +265,7 @@ jobs:
 
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 1  # 過去の履歴は含めず取得
         submodules: true
@@ -276,6 +290,10 @@ jobs:
     runs-on: *windows_runner
     needs: [build-vcpkg, build-chm]
 
+    permissions:
+      contents: read
+      packages: read
+
     strategy:
       matrix:
         config:
@@ -288,19 +306,19 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     ## see https://github.com/actions/checkout
-    - uses: actions/checkout@v7
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       with:
         fetch-depth: 0
         submodules: true
 
     ## see https://github.com/microsoft/setup-msbuild
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v3
+      uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
     # SonarQubeのBuild Wrapperをインストールする
     - name: Install Build Wrapper
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+      uses: SonarSource/sonarqube-scan-action/install-build-wrapper@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
 
     # OpenCppCoverageをインストールする
     - name: Install OpenCppCoverage (winget)
@@ -328,10 +346,12 @@ jobs:
         if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
           throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
         }
-        Start-Process `
-          -FilePath $installer `
-          -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
-          -Wait
+        $startProcessParams = @{
+          FilePath = $installer
+          ArgumentList = "/VERYSILENT", "/SUPPRESSMSGBOXES"
+          Wait = $true
+        }
+        Start-Process @startProcessParams
         echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
     - name: Install CTags (winget)
@@ -353,12 +373,13 @@ jobs:
           --accept-source-agreements
 
     - name: Set up Python
-      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
+        architecture: ${{ matrix.platform == 'Win32' && 'x86' || 'x64' }}
 
     - name: Install the latest version of uv
-      uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       with:
         activate-environment: true
 
@@ -440,16 +461,14 @@ jobs:
       shell: cmd
 
     - name: Restore CHM artifacts
-      uses: actions/download-artifact@v8
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
       with:
         name: build-chm-artifacts
         path: help
 
     - name: Run unit tests
-      # 最大3回リトライするため、通常時間(約6分)の3倍以上の余裕を持たせる。値は暫定。
-      timeout-minutes: 30
-      # UI Automationを使うテストがCI環境限定で断続的にタイムアウトすることがある(既知のflaky、#2603)。
-      # 30秒ウォッチドッグで有限失敗に変換した上で、失敗時のみ最大2回まで再試行する。
+      # x64 Debugはカバレッジ計測で15分を超えるため、全構成を同じ上限にはしない。
+      timeout-minutes: ${{ matrix.config == 'Debug' && 90 || 45 }} # 指定時間を越えたら打ち切る。値は暫定。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
@@ -459,7 +478,7 @@ jobs:
 
     - name: Upload sonar-input artifact
       if: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' }}
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       with:
         name: sonar-input
         path: |
@@ -481,35 +500,35 @@ jobs:
 
     ## see https://github.com/actions/upload-artifact
     - name: Upload Installer
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Installer ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Installer.zip'
 
     - name: Upload Exe
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Exe ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Exe.zip'
 
     - name: Upload Log
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Log ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Log.zip'
 
     - name: Upload Asm
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Asm ${{ matrix.platform }} ${{ matrix.config }}
         path: 'sakura-*-Asm.zip'
 
     - name: Upload Dev
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
       if: ${{ matrix.config == 'Release' }}
       with:
         name: Dev ${{ matrix.platform }} ${{ matrix.config }}

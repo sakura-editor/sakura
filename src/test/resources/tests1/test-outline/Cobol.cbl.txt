@@ -1,0 +1,26 @@
+﻿      * アウトライン解析テスト向け COBOL 構文サンプル
+      * アウトラインに現れる代表的な文書構造を示す。
+      *
+      * 	Copyright (C) 2026, Sakura Editor Organization
+      *
+      * 	SPDX-License-Identifier: Zlib
+
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. OUTLINE-SAMPLE.
+
+       ENVIRONMENT DIVISION.
+       CONFIGURATION SECTION.
+       SOURCE-COMPUTER. IBM-PC.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  MESSAGE-TEXT PIC X(13) VALUE "HELLO, WORLD!".
+
+       PROCEDURE DIVISION.
+       MAIN-PROCEDURE.
+           DISPLAY MESSAGE-TEXT
+           PERFORM CLEAN-UP
+           STOP RUN.
+       CLEAN-UP.
+           CONTINUE.
+      * COMMENT LINES ARE NOT OUTLINE ENTRIES.

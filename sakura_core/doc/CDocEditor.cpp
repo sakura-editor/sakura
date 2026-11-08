@@ -116,7 +116,7 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 	this->SetImeMode( pcDoc->m_cDocType.GetDocumentAttribute().m_nImeState );
 
 	// カレントディレクトリの変更
-	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
+	cxx::SetCurrentDirectoryW(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	CAppMode::getInstance()->SetViewMode(sLoadInfo.bViewMode);		// ビューモード	##ここも、アリかな
 }
@@ -131,7 +131,7 @@ void CDocEditor::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 	this->m_cOpeBuf.SetNoModified();
 
 	// カレントディレクトリの変更
-	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
+	cxx::SetCurrentDirectoryW(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath());
 }
 
 //	From Here Nov. 20, 2000 genta

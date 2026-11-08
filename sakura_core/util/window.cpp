@@ -237,6 +237,9 @@ bool EnableDlgItem(HWND hWndDlg, int nIDDlgItem, bool nEnable)
  */
 SGetTextResult GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem)
 {
+	// ダイアログが無効な場合は失敗とする
+	if (!hWndDlg || !::IsWindow(hWndDlg)) return SGetTextResult{};
+
 	// コントロールが存在しない場合は失敗とする
 	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return SGetTextResult{};
 
@@ -253,28 +256,6 @@ SGetTextResult GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem)
 
 	// バッファを所有権ごと呼出元に返す
 	return SGetTextResult{ std::move(buffer) };
-}
-
-/*!
- * @brief ダイアログボックス項目のテキストを取得する
- */
-SGetTextResult	GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::span<WCHAR> buffer)
-{
-	// コントロールが存在しない場合は失敗とする
-	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return SGetTextResult{};
-
-	// 必要な文字数を確認する
-	const auto cchRequired = static_cast<int>(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, WM_GETTEXTLENGTH, 0L, 0L));
-	if (!cchRequired) return SGetTextResult{ std::wstring() };
-
-	// バッファが足りない場合は失敗とする
-	if (std::ssize(buffer) <= cchRequired) return SGetTextResult{};
-
-	// 文字列を取得する
-	const auto actualCopied = ::GetDlgItemTextW(hWndDlg, nIDDlgItem, std::data(buffer), static_cast<int>(std::ssize(buffer)));
-
-	// バッファ参照を呼出元に返す
-	return SGetTextResult{ std::wstring_view(std::data(buffer), actualCopied) };
 }
 
 /*!
@@ -298,6 +279,9 @@ int GetUpDownPos(HWND hWndDlg, int nIDDlgItem)
  */
 SGetTextResult GetWindowTextW(HWND hWnd)
 {
+	// ウィンドウが無効な場合は失敗とする
+	if (!hWnd || !::IsWindow(hWnd)) return SGetTextResult{};
+
 	// 必要な文字数を確認する
 	const auto cchRequired = ::GetWindowTextLengthW(hWnd);
 	if (!cchRequired) return SGetTextResult{ std::wstring() };
@@ -336,17 +320,6 @@ bool IsDlgItemEnabled(HWND hWndDlg, int nIDDlgItem)
 		ret = ::IsWindowEnabled(hWndCtl);
 	}
 	return ret;
-}
-
-/*!
- * @brief ダイアログボックス項目のテキストを設定する
- */
-bool SetDlgItemTextW(HWND hWndDlg, int nIDDlgItem, std::wstring_view text)
-{
-	// コントロールが存在しない場合は失敗とする
-	if (!::GetDlgItem(hWndDlg, nIDDlgItem)) return false;
-
-	return ::SetDlgItemTextW(hWndDlg, nIDDlgItem, std::data(text));
 }
 
 /*!

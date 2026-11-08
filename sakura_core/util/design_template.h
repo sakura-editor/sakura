@@ -139,6 +139,8 @@ public:
 
 	TSakuraSingleton(Me&&) = delete;
 	Me& operator = (Me&&) = delete;
+
+	virtual ~TSakuraSingleton() = default;
 };
 
 /*!

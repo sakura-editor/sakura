@@ -55,6 +55,24 @@ TEST(CFuncInfo, test002)
 	EXPECT_THAT(info.IsAddClipText(), Eq(false));
 }
 
+TEST(CFuncInfo, test003)
+{
+	CFuncInfo info(
+		CLogicInt(10),
+		CLogicInt(3),
+		CLayoutInt(12),
+		CLayoutInt(4),
+		L"funcA",
+		L"test.cpp",
+		FL_OBJ_FUNCTION
+	);
+
+	EXPECT_THAT(info.GetLineNumber(true), Eq(10));
+	EXPECT_THAT(info.GetColumnPosition(true), Eq(3));
+	EXPECT_THAT(info.GetLineNumber(false), Eq(12));
+	EXPECT_THAT(info.GetColumnPosition(false), Eq(4));
+}
+
 TEST(CFuncInfoArr, test001)
 {
 	CFuncInfoArr arr;

@@ -83,24 +83,36 @@ static       wchar_t	WSTR_FILETREE_HEAD_V1[]	= L"SakuraEditorFileTree_Ver1";
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
 //		2010/4/12 Uchi
-static wchar_t* MakeExportFileName(wchar_t* res, const wchar_t* trg, const wchar_t* ext)
+template <basis::WritableBuffer<WCHAR> A>
+static wchar_t* MakeExportFileName(A& dst, const wchar_t* trg, const wchar_t* ext)
 {
-	wchar_t		conv[_MAX_PATH+1];
-	wchar_t*	p;
+	assert(trg);
+	assert(ext);
 
-	wcscpy( conv, trg );
+	auto res = std::data(dst);
 
-	p = conv;
+	// 作業バッファにコピーする
+	SFilePath work;
+	::wcscpy_s(work, trg);
+
+	// 書き込み可能な生ポインタを得る
+	auto conv = work.data();
+
+	// 作業バッファの先頭を得る
+	auto p = conv;
 	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != nullptr ) {
 		// ファイル名に使えない文字を _ に置き換える
 		*p++ = L'_';
 	}
+
+	// 作業バッファの先頭を得る
 	p = conv;
 	while ( (p = wcspbrk( p, L"/" )) != nullptr ) {
 		// ファイル名に使えない文字を ／ に置き換える
 		*p++ = L'／';
 	}
-	auto_snprintf_s(res, _MAX_PATH, L"%ls.%ls", conv, ext);
+
+	auto_sprintf_s(dst, L"%ls.%ls", conv, ext);
 
 	return res;
 }
@@ -306,7 +318,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 
 	// 読み込み
-	CShareData_IO::ShareData_IO_Type_One( m_cProfile, m_Types, szSecTypes );
+	ShareData_IO_TypeConfig(m_cProfile, szSecTypes, m_Types);
 
 	m_nIdx = m_Types.m_nIdx;
 	if (m_nIdx == 0) {
@@ -432,7 +444,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 
 	cProfile.SetWritingMode();
 
-	CShareData_IO::ShareData_IO_Type_One( cProfile , m_Types, szSecTypes );
+	ShareData_IO_TypeConfig(cProfile, szSecTypes, m_Types);
 
 	// 共通設定との連結部
 	int		i;
@@ -570,7 +582,7 @@ bool CImpExpColors::Import( const std::wstring& sFileName, std::wstring& sErrMsg
 	}
 
 	/* 色設定 I/O */
-	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
+	ShareData_IO_ColorSet(cProfile, szSecColor, std::span{ m_ColorInfoArr, size_t(COLORIDX_LAST) });
 
 	return true;
 }
@@ -581,7 +593,7 @@ bool CImpExpColors::Export( const std::wstring& sFileName, std::wstring& sErrMsg
 	/* 色設定 I/O */
 	CDataProfile	cProfile;
 	cProfile.SetWritingMode();
-	CShareData_IO::IO_ColorSet( &cProfile, szSecColor, m_ColorInfoArr );
+	ShareData_IO_ColorSet(cProfile, szSecColor, std::span{ m_ColorInfoArr, size_t(COLORIDX_LAST) });
 	if (!cProfile.WriteProfile( sFileName.c_str(), WSTR_COLORDATA_HEAD3 )) { //Jan. 15, 2001 Stonee
 		sErrMsg = LS(STR_IMPEXP_ERR_EXPORT);
 		sErrMsg += sFileName;
@@ -900,7 +912,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", sKeyBind.m_nKeyNameArrNum);
 		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE){	bVer3=false; bVer4=false; } //範囲チェック
 
-		CShareData_IO::IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
+		ShareData_IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
 	}
 
 	if (!bVer3 && !bVer4) {
@@ -1041,7 +1053,7 @@ bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMs
 	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
-	CShareData_IO::IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
+	ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
 
 	// 書き込み
 	if (!cProfile.WriteProfile( strPath.c_str(), WSTR_KEYBIND_HEAD4)) {
@@ -1331,16 +1343,18 @@ bool CImpExpFileTree::Export( const std::wstring& sFileName, std::wstring& sErrM
 void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileTreeItem>& data )
 {
 	const WCHAR* pszSecName = L"FileTree";
+
 	int nItemCount = (int)data.size();
 	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", nItemCount );
 	if( nItemCount < 0 ){
 		nItemCount = 0;
 	}
-	int i = 0;
+
 	if( cProfile.IsReadingMode() ){
 		data.resize( nItemCount );
 	}
-	for( ;i < nItemCount; i++ ){
-		CShareData_IO::ShareData_IO_FileTreeItem( cProfile, data[i], pszSecName, i );
+
+	for (int i = 0; i < nItemCount; ++i) {
+		cProfile.IOProfileData(pszSecName, std::format(L"FileTree({})", i), data[i]);
 	}
 }

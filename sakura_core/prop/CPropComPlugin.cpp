@@ -235,7 +235,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダー名
+					std::wstring sName{ m_Common.m_sPlugin.m_PluginTable[sel].m_szName.str() };	// 個別フォルダー名
 					std::wstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -408,7 +408,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 				sDirName = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPWSTR>( sDirName.c_str() );
 			}else{
-				sItem.pszText = const_cast<LPWSTR>( plugin_table[index].m_szName );
+				sItem.pszText = plugin_table[index].m_szName.data();
 			}
 			break;
 		default:
@@ -510,8 +510,12 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 }
 
 //	Readme ファイルの取得	2011/11/2 Uchi
-std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
+std::wstring CPropPlugin::GetReadMeFile(
+	std::wstring_view pluginName
+)
 {
+	std::wstring sName{ pluginName };
+
 	std::wstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
 		+ sName + L"\\ReadMe.txt";
 	CFile* fl = new CFile(sReadMeName.c_str());

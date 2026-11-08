@@ -178,15 +178,21 @@ void CViewCommander::Command_EXECKEYMACRO( void )
 	//@@@ 2002.1.24 YAZAKI
 	if ( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName[0] ){
 		//	ファイルが保存されていたら
+		using enum EMacroResult;
+
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		BOOL bLoadResult = m_pcSMacroMgr->Load(
+		const auto eLoadResult = m_pcSMacroMgr->Load(
 			STAND_KEYMACRO,
 			G_AppInstance(),
 			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName,
 			nullptr
 		);
-		if ( !bLoadResult ){
-			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD28), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+		if ( eLoadResult != Success ){
+			ErrorMessage(
+				m_pCommanderView->GetHwnd(),
+				eLoadResult == EncodingError ? LS(STR_ERR_MACRO_ENCODING) : LS(STR_ERR_CEDITVIEW_CMD28),
+				GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
+			);
 		}
 		else {
 			//	2007.07.20 genta : flagsオプション追加
@@ -251,14 +257,18 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 	//古い一時マクロの退避
 	CMacroManagerBase* oldMacro = m_pcSMacroMgr->SetTempMacro( nullptr );
 
-	if (const auto bLoadResult = m_pcSMacroMgr->Load(
+	if (const auto eLoadResult = m_pcSMacroMgr->Load(
 		TEMP_KEYMACRO,
 		G_AppInstance(),
 		pszPath,
 		pszType
 	);
-		!bLoadResult) {
-		ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_MACROERR1), pszPath );
+		eLoadResult != EMacroResult::Success) {
+		ErrorMessage(
+			m_pCommanderView->GetHwnd(),
+			eLoadResult == EMacroResult::EncodingError ? LS(STR_ERR_MACRO_ENCODING) : LS(STR_ERR_MACROERR1),
+			pszPath
+		);
 	}
 	else {
 		m_pcSMacroMgr->Exec( TEMP_KEYMACRO, G_AppInstance(), m_pCommanderView, FA_NONRECORD | FA_FROMMACRO );

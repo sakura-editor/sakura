@@ -784,32 +784,31 @@ const WCHAR* jpVKEXNames[] = {
 };
 const int jpVKEXNamesLen = int(std::size(jpVKEXNames));
 
-/*!	@brief 共有メモリ初期化/キー割り当て
-
-	デフォルトキー割り当て関連の初期化処理
-
-	@date 2005.01.30 genta CShareData::Init()から分離
-	@date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
-*/
-bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
+/*!
+ * @brief 共有メモリ初期化/キー割り当て
+ *
+ * デフォルトキー割り当て関連の初期化処理
+ * 
+ * @date 2005.01.30 genta CShareData::Init()から分離
+ * @date 2007.11.04 genta キー設定数がDLLSHAREの領域を超えたら起動できないように
+ * @date 2026/10/29 設定数がDLLSHAREの領域を超えたらビルドできないようになっている
+ */
+void CShareData::InitKeyAssign(DLLSHAREDATA& cShareData) const
 {
 	/********************/
 	/* 共通設定の規定値 */
 	/********************/
 	constexpr auto nKeyDataInitNum = int(std::size(KeyDataInit));
-	constexpr auto KEYNAME_SIZE = _countof(pShareData->m_Common.m_sKeyBind.m_pKeyNameArr) - 1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
-	//	From Here 2007.11.04 genta バッファオーバーラン防止
+	constexpr auto KEYNAME_SIZE = std::extent_v<decltype(cShareData.m_Common.m_sKeyBind.m_pKeyNameArr)> - 1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
+
 	static_assert(nKeyDataInitNum <= KEYNAME_SIZE);
-//	if( nKeyDataInitNum > KEYNAME_SIZE ) {
-//		PleaseReportToAuthor( NULL, L"キー設定数に対してDLLSHARE::m_nKeyNameArr[]のサイズが不足しています" );
-//		return false;
-//	}
-	//	To Here 2007.11.04 genta バッファオーバーラン防止
 
 	// マウスコードの固定と重複排除 2012.11.25 aroka
 	static const KEYDATAINIT	dummy[] = {
 		{ 0,		{ L"" },				{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 } }
 	};
+
+	auto pShareData = &cShareData;
 
 	// インデックス用ダミー作成
 	SetKeyNameArrVal( pShareData, KEYNAME_SIZE, &dummy[0] );
@@ -825,7 +824,6 @@ bool CShareData::InitKeyAssign(DLLSHAREDATA* pShareData)
 		SetKeyNameArrVal( pShareData, i, &KeyDataInit[i] );
 	}
 	pShareData->m_Common.m_sKeyBind.m_nKeyNameArrNum = nKeyDataInitNum;
-	return true;
 }
 
 /*!	@brief 言語選択後の文字列更新処理 */

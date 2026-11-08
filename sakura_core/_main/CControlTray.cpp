@@ -39,6 +39,8 @@
 #include "plugin/CJackManager.h"
 #include "io/CTextStream.h"
 #include "util/module.h"
+#include "util/os.h"
+#include "util/os/User32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
 #include "util/string_ex2.h"
@@ -64,6 +66,8 @@
 #define IDT_EDITCHECK_INTERVAL 3000
 /////////////////////////////////////////////////////////////////////////
 static LRESULT CALLBACK CControlTrayWndProc( HWND, UINT, WPARAM, LPARAM );
+
+std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s);
 
 namespace cxx {
 
@@ -170,58 +174,14 @@ void CControlTray::DoGrepCreateWindow(HINSTANCE hinst, HWND msgParent, CDlgGrep&
 {
 	/*======= Grepの実行 =============*/
 	/* Grep結果ウィンドウの表示 */
-
-	CNativeW		cmWork1;
-	CNativeW		cmWork2;
-	CNativeW		cmWork3;
-
-	cmWork1.SetString( cDlgGrep.m_strText.c_str() );
-	cmWork2 = cDlgGrep.GetPackedGFileString();
-	cmWork3.SetString( cDlgGrep.m_szFolder );
-
-	cmWork1.Replace( L"\"", L"\"\"" );
-	cmWork2.Replace( L"\"", L"\"\"" );
-	cmWork3.Replace( L"\"", L"\"\"" );
-
-	// -GREPMODE -GKEY="1" -GFILE="*.*;*.c;*.h" -GFOLDER="c:\" -GCODE=0 -GOPT=S
-	CNativeW cCmdLine;
-	WCHAR szTemp[20];
-
-	cCmdLine.AppendString(L"-GREPMODE -GKEY=\"");
-	cCmdLine.AppendString(cmWork1.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GFILE=\"");
-	cCmdLine.AppendString(cmWork2.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GFOLDER=\"");
-	cCmdLine.AppendString(cmWork3.GetStringPtr());
-	cCmdLine.AppendString(L"\" -GCODE=");
-	auto_sprintf( szTemp, L"%d", cDlgGrep.m_nGrepCharSet );
-	cCmdLine.AppendString(szTemp);
-
-	//GOPTオプション
-	WCHAR pOpt[64] = L"";
-	if( cDlgGrep.m_bSubFolder					)wcscat( pOpt, L"S" );	// サブフォルダーからも検索する
-	if( cDlgGrep.m_sSearchOption.bLoHiCase		)wcscat( pOpt, L"L" );	// 英大文字と英小文字を区別する
-	if( cDlgGrep.m_sSearchOption.bRegularExp	)wcscat( pOpt, L"R" );	// 正規表現
-	if( cDlgGrep.m_nGrepOutputLineType == 1     )wcscat( pOpt, L"P" );	// 行を出力する
-	if( cDlgGrep.m_nGrepOutputLineType == 2     )wcscat( pOpt, L"N" );	// 否ヒット行を出力する 2014.09.23
-	if( cDlgGrep.m_sSearchOption.bWordOnly		)wcscat( pOpt, L"W" );	// 単語単位で探す
-	if( 1 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"1" );	// Grep: 出力形式
-	if( 2 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"2" );	// Grep: 出力形式
-	if( 3 == cDlgGrep.m_nGrepOutputStyle		)wcscat( pOpt, L"3" );
-	if( cDlgGrep.m_bGrepOutputFileOnly		)wcscat( pOpt, L"F" );
-	if( cDlgGrep.m_bGrepOutputBaseFolder		)wcscat( pOpt, L"B" );
-	if( cDlgGrep.m_bGrepSeparateFolder		)wcscat( pOpt, L"D" );
-	if( pOpt[0] != L'\0' ){
-		cCmdLine.AppendString( L" -GOPT=" );
-		cCmdLine.AppendString( pOpt );
-	}
+	const std::wstring cmdLine = cDlgGrep.MakeGrepInfo().MakeCommandLine();
 
 	/* 新規編集ウィンドウの追加 ver 0 */
 	SLoadInfo sLoadInfo;
 	sLoadInfo.cFilePath = L"";
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	OpenNewEditor( hinst, msgParent, sLoadInfo, cCmdLine.GetStringPtr(),
+	OpenNewEditor( hinst, msgParent, sLoadInfo, cmdLine.c_str(),
 		false, nullptr, GetDllShareData().m_Common.m_sTabBar.m_bNewWindow? true : false );
 }
 
@@ -256,16 +216,13 @@ static LRESULT CALLBACK CControlTrayWndProc(
 // CControlTray
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CControlTray::CControlTray()
+	: CAppMainWnd(G_AppInstance())
 {
-	/* 共有データ構造体のアドレスを返す */
-	m_pShareData = &GetDllShareData();
-
 	return;
 }
 
 CControlTray::~CControlTray()
 {
-	delete m_pcPropertyManager;
 	return;
 }
 
@@ -328,13 +285,10 @@ HWND CControlTray::Create( HINSTANCE hInstance )
 	::SetWindowPos( GetTrayHwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE );
 	
 	// タスクトレイアイコン作成
-	m_hIcons.Create( m_hInstance );	//	Oct. 16, 2000 genta
-	m_cMenuDrawer.Create( CSelectLang::getLangRsrcInstance(), GetTrayHwnd(), &m_hIcons );
 	if( GetTrayHwnd() ){
 		CreateTrayIcon( GetTrayHwnd() );
 	}
 
-	m_pcPropertyManager = new CPropertyManager();
 	m_pcPropertyManager->Create( GetTrayHwnd(), &m_hIcons, &m_cMenuDrawer );
 
 	m_szLanguageDll = GetDllShareData().m_Common.m_sWindow.m_szLanguageDll;
@@ -452,6 +406,14 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 		CDlgAbout().DoModal(unusedArg1, hWnd);
 		break;
 
+	case F_HELP_CONTENTS:	// ヘルプ目次
+		ShowWinHelpContents(hWnd);
+		break;
+
+	case F_HELP_SEARCH:	// ヘルプキーワード検索
+		MyWinHelp(hWnd, HELP_KEY, ULONG_PTR(L""));
+		break;
+
 	case F_EXITALLEDITORS:	// 編集の全終了
 		CloseAllEditor(TRUE, hWnd, TRUE, 0);
 		break;
@@ -508,24 +470,6 @@ void CControlTray::ExecCommand(HWND hWnd, EFunctionCode id)
 		}
 		break;
 	}
-}
-
-/* メッセージループ */
-void CControlTray::MessageLoop() const
-{
-//複数プロセス版
-	MSG	msg;
-	int ret;
-	
-	//2004.02.17 Moca GetMessageのエラーチェック
-	while ( GetTrayHwnd() != nullptr && (ret = ::GetMessage(&msg, nullptr, 0, 0 )) != 0 ){
-		if( ret == -1 ){
-			break;
-		}
-		::TranslateMessage( &msg );
-		::DispatchMessage( &msg );
-	}
-	return;
 }
 
 /* タスクトレイのアイコンに関する処理 */
@@ -815,14 +759,6 @@ LRESULT CControlTray::DispatchEvent(
 			/* ポップアップメニュー(トレイ右ボタン) */
 			nId = CreatePopUpMenu_R();
 			switch( nId ){
-			case F_HELP_CONTENTS:
-				/* ヘルプ目次 */
-				ShowWinHelpContents( GetTrayHwnd() );	//	目次を表示する
-				break;
-			case F_HELP_SEARCH:
-				/* ヘルプキーワード検索 */
-				MyWinHelp( GetTrayHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
-				break;
 			case F_EXTHELP1:
 				/* 外部ヘルプ１ */
 				do{
@@ -917,6 +853,8 @@ LRESULT CControlTray::DispatchEvent(
 	case WM_DESTROY:
 		OnDestroy();
 
+		m_pShareData->m_sHandles.m_hwndTray = nullptr;
+
 		/* Windows にスレッドの終了を要求します。*/
 		::PostQuitMessage( 0 );
 		return 0L;
@@ -946,7 +884,7 @@ LRESULT CControlTray::DispatchEvent(
 	}
 
 	//あとはデフォルトに任せる
-	return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /* WM_COMMANDメッセージ処理 */
@@ -974,7 +912,7 @@ bool CControlTray::OnSetTypeSetting(size_t index)
 		m_pShareData->m_TypeBasis.m_nIdx = 0;
 	}
 
-	auto types = CShareData::getInstance()->GetTypeSettings();
+	auto types = CShareData::getInstance()->GetTypeSettingArr();
 	*types[index] = type;
 	types[index]->m_nIdx = int(index);
 
@@ -993,7 +931,8 @@ bool CControlTray::OnGetTypeSetting(size_t index)
 		return false;
 	}
 
-	m_pShareData->m_sWorkBuffer.m_TypeConfig = *(CShareData::getInstance()->GetTypeSettings()[index]);
+	const auto types = CShareData::getInstance()->GetTypeSettingArr();
+	m_pShareData->m_sWorkBuffer.m_TypeConfig = *(types[index]);
 
 	return true;
 }
@@ -1011,7 +950,7 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 
 	const auto nInsert = (int)index;
 	auto& types = CShareData::getInstance()->GetTypeSettings();
-	auto type = new STypeConfig(*types[0]);	// 基本をコピー
+	auto type = std::make_unique<STypeConfig>(*types[0]);	// 基本をコピー
 	type->m_id = (::GetTickCount64() & 0x3fffffff) + nInsert * 0x10000;
 
 	// 同じ名前のものがあったらその次にする
@@ -1031,12 +970,12 @@ bool CControlTray::OnAddTypeSetting(size_t index)
 	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
 	++m_pShareData->m_nTypesCount;
 	for (auto i = nTypeSizeOld; nInsert < i; --i) {
-		types[i] = types[i - 1];
+		types[i] = std::move(types[i - 1]);
 		types[i]->m_nIdx = i;
 		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i - 1];
 	}
 
-	types[nInsert] = type;
+	types[nInsert] = std::move(type);
 
 	return true;
 }
@@ -1055,10 +994,8 @@ bool CControlTray::OnDelTypeSetting(size_t index)
 	const auto nTypeSizeOld = m_pShareData->m_nTypesCount;
 	auto& types = CShareData::getInstance()->GetTypeSettings();
 
-	delete types[nDelPos];
-
 	for (auto i = nDelPos; i < nTypeSizeOld - 1; ++i) {
-		types[i] = types[i + 1];
+		types[i] = std::move(types[i + 1]);
 		types[i]->m_nIdx = i;
 		m_pShareData->m_TypeMini[i] = m_pShareData->m_TypeMini[i + 1];
 	}
@@ -1203,6 +1140,12 @@ bool CControlTray::OpenNewEditor(
 			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
 		}
 	}
+
+	std::vector<std::wstring_view> additionalOpts;
+	if (szCmdLineOption) {
+		additionalOpts = SplitLegacyCommandLine(szCmdLineOption);
+	}
+
 	// -- -- -- -- プロセス生成 -- -- -- -- //
 
 	// 無効なディレクトリのときはNULLに変更
@@ -1285,9 +1228,25 @@ bool CControlTray::OpenNewEditor(
 	bool bRet = true;
 	if (sync)
 	{
+		const bool isGrepMode = std::ranges::any_of(additionalOpts, [] (std::wstring_view opt) {
+			return cxx::iequals(opt, L"-GREPMODE")
+				|| cxx::iequals(opt, L"-GREPDLG");
+		});
+
 		// エディター初期化完了イベントを作成する
 		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
 		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
+
+		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+		HandleHolder initIvent{ hEvent };
+		HandleHolder grepEvent{};
+
+		if (isGrepMode)
+		{
+			// Grep完了イベントを作成する
+			SFilePath grepEventName{ std::format( GSTR_EVENT_SAKURA_GREP_COMPLETED, p.dwThreadId ) };
+			grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
+		}
 
 		// エディターのメインスレッドを再開する
 		::ResumeThread(p.hThread);
@@ -1324,6 +1283,36 @@ bool CControlTray::OpenNewEditor(
 				szEXE
 			);
 			bRet = false;
+		}
+
+		// プロセス起動正常、かつ、Grepモードの場合
+		if (bRet && isGrepMode) {
+			dwRet = WAIT_TIMEOUT;
+
+			constexpr auto waitIntervals = 100; // 100ms
+
+			while (
+				WAIT_OBJECT_0 != dwRet && // Grep完了
+				WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
+			) {
+				std::array handles2{ grepEvent.get(), p.hProcess};
+				dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, waitIntervals, QS_SENDMESSAGE);
+
+				// 自スレッドにメッセージが送られてきた場合
+				if (WAIT_OBJECT_0 + count == dwRet) {
+					BlockingHook(nullptr);	// 溜まったメッセージを処理する
+				}
+			}
+
+			if (WAIT_OBJECT_0 != dwRet) {
+				// プロセス起動側と同じメッセージを出しておく
+				ErrorMessage(
+					hWndParent,
+					LS(STR_TRAY_CREATEPROC2),
+					szEXE
+				);
+				bRet = false;
+			}
 		}
 	}
 
@@ -1613,7 +1602,7 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
@@ -1682,7 +1671,7 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	rc.bottom = 0;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = ::TrackPopupMenu(
+	nId = User32::getInstance()->TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN

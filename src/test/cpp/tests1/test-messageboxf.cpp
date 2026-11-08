@@ -7,6 +7,8 @@
 #include "pch.h"
 #include "util/MessageBoxF.h"
 
+#include "util/os/MockUser32.hpp"
+
 #include "eval_outputs.hpp"
 
 /*!

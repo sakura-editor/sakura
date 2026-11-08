@@ -722,13 +722,34 @@ CMenuDrawer::~CMenuDrawer()
 
 void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pcIcons )
 {
-	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
-	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
-
 	m_hInstance = hInstance;
 	m_hWndOwner = hWndOwner;
 	m_pcIcons = pcIcons;
-	m_dibs.resize(pcIcons->Count());
+}
+
+/*!
+ * アイコン番号に対応するメニュー用ビットマップを返す
+ *
+ * プラグインのアイコンはCreateの後にCImageListMgr::Addで追加されるので、
+ * 必要になった時点で作る。
+ *
+ * @retval nullptr アイコン番号が範囲外、またはビットマップを作れなかった
+ */
+HBITMAP CMenuDrawer::GetMenuBitmap( int nIconId )
+{
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+
+	if (nIconId < 0 || m_pcIcons->Count() <= nIconId) {
+		return nullptr;
+	}
+	if (m_dibs.size() <= size_t(nIconId)) {
+		m_dibs.resize(m_pcIcons->Count());
+	}
+	DIB& dib = m_dibs[nIconId];
+	if (dib.hBMP) {
+		return dib.hBMP;
+	}
 
 	BITMAPINFO bminfo = {};
 	BITMAPINFOHEADER& bmih = bminfo.bmiHeader;
@@ -743,24 +764,21 @@ void CMenuDrawer::Create( HINSTANCE hInstance, HWND hWndOwner, CImageListMgr* pc
 
 	// 仮想デバイスコンテキストを生成する
 	const auto hdc = ::CreateCompatibleDC(nullptr);
-	if (!hdc) return;
+	if (!hdc) return nullptr;
 
 	// 仮想デバイスコンテキストをスマートポインターに入れる
 	MemDcHolder hDcHolder{ hdc };
 
-	for (int i = 0; i < pcIcons->Count(); ++i) {
-		DIB& dib = m_dibs[i];
-		if ((dib.hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, std::bit_cast<void**>(&dib.pvBits), nullptr, 0))) {
-			// ビットマップを選択してアイコンを描画する
-			SelectionHolder hBitmapOld{ hdc };
-			hBitmapOld = ::SelectObject(hdc, dib.hBMP);
-			m_pcIcons->DrawToolIcon(hdc, 0, 0, i, true, cx, cy);
+	if ((dib.hBMP = ::CreateDIBSection(hdc, &bminfo, DIB_RGB_COLORS, std::bit_cast<void**>(&dib.pvBits), nullptr, 0))) {
+		// ビットマップを選択してアイコンを描画する
+		SelectionHolder hBitmapOld{ hdc };
+		hBitmapOld = ::SelectObject(hdc, dib.hBMP);
+		m_pcIcons->DrawToolIcon(hdc, 0, 0, nIconId, true, cx, cy);
 
-			// 選択解除されるときにデバイスコンテキストの内容がビットマップにコピーされる
-		}
+		// 選択解除されるときにデバイスコンテキストの内容がビットマップにコピーされる
 	}
 
-	return;
+	return dib.hBMP;
 }
 
 void CMenuDrawer::ResetContents( void )
@@ -874,7 +892,7 @@ void CMenuDrawer::MyAppendMenu(
 	mii.hbmpUnchecked = nullptr;
 	if (MF_BITMAP & (nFlag | nFlagAdd)) {
 		mii.fMask |= MIIM_BITMAP;
-		mii.hbmpItem = m_dibs[GetIconIdByFuncId(nForceIconId)].hBMP;
+		mii.hbmpItem = GetMenuBitmap(GetIconIdByFuncId(nForceIconId));
 	}
 	mii.dwItemData = (ULONG_PTR)this;
 	mii.dwTypeData = szLabel;

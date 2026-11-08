@@ -28,13 +28,15 @@ private:
 	/*!
 	 * @brief COMライブラリのクリーンアップ
 	 */
-	static void Cleanup([[maybe_unused]] const COleInit*)
+	static void _CleanUp(
+		[[maybe_unused]] const COleInit* /* pThis */
+	) noexcept
 	{
 		// OLEをシャットダウンする
 		::OleUninitialize();
 	}
 
-	using CleanupHolder = cxx::ResourceHolder<&COleInit::Cleanup>;
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
 	using Me = COleInit;
 
@@ -45,7 +47,7 @@ private:
 	 * 初期化に成功した場合、クリーンアップ用のリソースホルダーを生成する。
 	 * 初期化失敗した場合、リソースホルダーはnullptrとなり、クリーンアップは行われない。
 	 */
-	CleanupHolder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
+	Holder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
 
 public:
 	COleInit() = default;
@@ -310,19 +312,7 @@ struct UiaTestSuite
 	std::jthread StartDialogCloser(
 		const std::optional<std::wstring>& optTitle,
 		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
-		ULONGLONG timeoutMillis = defaultTimeoutMillis * 3
-	);
-
-	/*!
-	 * ダイアログを閉じるスレッドを開始する
-	 *
-	 * @param titleResourceId タイトルのリソースID
-	 * @param action 閉じるアクション
-	 * @return ダイアログを閉じるためのスレッド
-	 */
-	std::jthread StartDialogCloser(
-		int titleResourceId,
-		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action
+		ULONGLONG timeoutMillis = defaultTimeoutMillis * 4
 	);
 
 	/*!
@@ -334,18 +324,6 @@ struct UiaTestSuite
 	std::jthread StartPopupMenuSelector(
 		std::wstring_view menuLabel,
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
-	);
-
-	/*!
-	 * プロパティーシートを閉じるスレッドを開始する
-	 *
-	 * @param titleResourceId タイトルのリソースID
-	 * @param psButtonId ボタンID
-	 * @return プロパティーシートを閉じるためのスレッド
-	 */
-	std::jthread StartPropertySheetCloser(
-		int titleResourceId,
-		UINT psButtonId = PSBTN_OK
 	);
 
 	/*!
@@ -371,6 +349,10 @@ struct UiaTestSuite
 		const std::optional<std::wstring>& optTitle,
 		const std::function<void(IUIAutomation*, HWND, std::stop_token)>& action,
 		ULONGLONG timeoutMillis = defaultTimeoutMillis
+	);
+
+	void RunMessageLoop(
+		ULONGLONG timeoutMillis = defaultTimeoutMillis * 6
 	);
 
 	std::stop_source m_StopSource;

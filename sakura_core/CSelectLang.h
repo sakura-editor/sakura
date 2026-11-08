@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,10 +16,18 @@
 #define SAKURA_CSELECTLANG_657416B2_2B3D_455C_AC28_8B86244F5F83_H_
 #pragma once
 
+#include "basis/CMyString.h"
+#include "basis/primitive.h"
 #include "cxx/ResourceHolder.hpp"
 #include "cxx/load_string.hpp"
 
 #include "sakura_rc.h"
+
+#include <mutex>
+#include <span>
+#include <string>
+#include <string_view>
+#include <vector>
 
 /*!
  * 言語リリースDLL選択クラス
@@ -39,14 +47,20 @@ public:
 	struct SSelLangInfo {
 		using Me = SSelLangInfo;
 
-		std::filesystem::path	m_Path;				//!< メッセージリソースDLLのファイル名
-		ResourceDllHolder		m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
-		WORD					m_LangId = 0;		//!< 言語ID
-		std::wstring			m_LangName;			//!< 言語名
+		SFilePath			m_Path{};				//!< メッセージリソースDLLのファイル名
+		ResourceDllHolder	m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
+		WORD				m_LangId = 0;		//!< 言語ID
+		std::wstring		m_LangName;			//!< 言語名
 
-		SSelLangInfo() = default;
+		SSelLangInfo(
+			int langId,
+			std::wstring_view langName
+		);
 
-		explicit SSelLangInfo(const std::filesystem::path& path);
+		SSelLangInfo(
+			std::wstring_view path,
+			WORD langId
+		);
 
 		SSelLangInfo(const Me&) = delete;
 		Me& operator = (const Me&) = delete;
@@ -59,28 +73,61 @@ public:
 		LPCWSTR	GetDllName() const noexcept { return m_Path.c_str(); }
 		LPCWSTR	GetLangName() const noexcept { return m_LangName.c_str(); }
 
-		bool	Load();
+		HMODULE	GetModule() const noexcept;
+
+		void	Load();
 		void	Unload() noexcept;
 	};
 
 private:
-	using LangInfoHolder = std::unique_ptr<SSelLangInfo>;
+	using LangInfoArr = std::vector<SSelLangInfo>;
+	using LangInfoIter = LangInfoArr::iterator;
 
 	using Me = CSelectLang;
 
-public:
-	static inline size_t gm_Selected = 0;
-	static inline std::vector<LangInfoHolder> gm_Langs{};
+	static inline std::mutex	gm_Mutex{};
+	static LangInfoArr			gm_Langs;
+	static LangInfoIter			gm_Selected;
 
+public:
 	static HMODULE	InitializeLanguageEnvironment();
+	static void		UninitializeLanguageEnvironment();
 
 	static HMODULE	getLangRsrcInstance() noexcept;		// メッセージリソースDLLのインスタンスハンドルを返す
 	static LPCWSTR	getDefaultLangString() noexcept;	// メッセージリソースDLL未読み込み時のデフォルト言語（"(Japanese)" or "(English(United States))"）
 	static WORD		getDefaultLangId() noexcept;
 
-	static std::span<LangInfoHolder> GetLangInfo() noexcept { return gm_Langs; }
+	static std::span<SSelLangInfo> GetLangInfo() noexcept { return gm_Langs; }
 
-	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return *gm_Langs[index].get(); }
+	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return gm_Langs[index]; }
+
+	static void ChangeLang(
+		std::wstring_view dllName
+	);
+
+	/*!
+	 * @brief 言語を変更する
+	 *
+	 * @tparam A [in] 文字列型（NUL終端文字列として扱える型）
+	 * @param[in] dllName 言語リソースDLLのファイルパス
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	static void ChangeLang(
+		const A& dllName
+	)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto _DllName = cxx::NullTerminatedString{ dllName };
+
+		// 言語を変更する
+		ChangeLang(_DllName.str());
+	}
+
+	static void TryEmplaceLangInfo(
+		std::wstring_view path,
+		WORD langId
+	);
 
 	/*
 	||  Constructors
@@ -95,7 +142,6 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static void		ChangeLang(const std::filesystem::path& dllName);
 
 private:
 	/*
@@ -104,6 +150,13 @@ private:
 	static void		ChangeLang(size_t newSelection);
 
 public:
+	/*!
+	 * @brief 文字列リソースを読み込む
+	 *
+	 * @param[in] id リソースID。
+	 * @returns 読み込んだ文字列。
+	 * @throw std::system_error リソースが見つからなかった場合
+	 */
 	static std::wstring_view LoadStringW(UINT id);
 };
 
@@ -138,8 +191,10 @@ private:
 		std::wstring		m_String;		//!< リソース文字列格納用バッファ
 	};
 
-	static inline std::array<CLoadStrBuffer, 4> gm_Buffers{};		//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
-	static inline size_t gm_LastUsedIndex = std::size(gm_Buffers);	//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
+	// 並列Grepのワーカーからも呼ばれるため、バッファはスレッドごとに持つ
+	// MinGW(GCC)では inline thread_local の TLS 初期化関数が多重定義になるため、定義は CSelectLang.cpp に置く
+	static thread_local std::array<CLoadStrBuffer, 16> gm_Buffers;	//!< 文字列読み込みバッファの配列（CLoadString::LoadStringSt() が使用する）
+	static thread_local size_t gm_LastUsedIndex;					//!< 最後に使用したバッファのインデックス（CLoadString::LoadStringSt() が使用する）
 
 	using Me = CLoadString;
 

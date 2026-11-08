@@ -1,13 +1,14 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 
 #include "StdAfx.h"
-#include "DLLSHAREDATA.h"
+#include "env/DLLSHAREDATA.h"
+
 #include "_main/CMutex.h"
 #include "dlg/CDlgCancel.h"
 #include "uiparts/CWaitCursor.h"
@@ -37,19 +38,19 @@ DLLSHAREDATA& GetDllShareData()
 }
 
 CShareDataLockCounter::CShareDataLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
-	GetDllShareData().m_nLockCount++;
+	std::lock_guard lock{ g_cKeywordMutex };
+	assert_warning( 0 <= m_pShareData->m_nLockCount );
+	m_pShareData->m_nLockCount++;
 }
 
 CShareDataLockCounter::~CShareDataLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
-	GetDllShareData().m_nLockCount--;
-	assert_warning( 0 <= GetDllShareData().m_nLockCount );
+	std::lock_guard lock{ g_cKeywordMutex };
+	m_pShareData->m_nLockCount--;
+	assert_warning( 0 <= m_pShareData->m_nLockCount );
 }
 
 int CShareDataLockCounter::GetLockCounter(){
-	LockGuard<CMutex> guard( g_cKeywordMutex );
+	std::lock_guard lock{ g_cKeywordMutex };
 	assert_warning( 0 <= GetDllShareData().m_nLockCount );
 	return GetDllShareData().m_nLockCount;
 }
@@ -90,7 +91,7 @@ public:
 // countが0だったらLockして返す
 static int GetCountIf0Lock( CShareDataLockCounter** ppLock )
 {
-	LockGuard<CMutex> guard(g_cKeywordMutex);
+	std::lock_guard lock{ g_cKeywordMutex };
 	int count = GetDllShareData().m_nLockCount;
 	if( count <= 0 ){
 		if( ppLock ){

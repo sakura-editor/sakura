@@ -9,7 +9,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -48,8 +48,19 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputSty
 
 CRunningTimer::~CRunningTimer()
 {
+	// デストラクタに例外を投げ得る処理を書いてはならない
+	try {
+
 	WriteTraceInternal( GetTime(), TraceType::ExitScope );
 	FlushPendingTraces();
+
+	}
+	// エラーが発生した場合
+	catch(const std::exception& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+	}
+
 	if( m_nDepth == 0 ){
 		OutputFooter();
 	}
@@ -126,7 +137,7 @@ void CRunningTimer::OutputHeader() const
 void CRunningTimer::OutputFooter() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output( L"\n" );
+		cxx::OutputDebugStringW( L"\n" );
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -171,17 +182,4 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 				msg.data() );
 		}
 	}
-}
-
-void CRunningTimer::Output( std::wstring_view fmt, ... ) const
-{
-	va_list args;
-	va_start( args, fmt );
-
-	std::wstring str;
-	vstrprintf( str, fmt.data(), args );
-
-	va_end( args );
-
-	OutputDebugStringW( str.data() );
 }

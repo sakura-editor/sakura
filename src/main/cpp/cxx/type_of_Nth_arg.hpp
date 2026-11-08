@@ -29,6 +29,13 @@ struct args_of_function<R(*)(Args...)>
 	using types = std::tuple<Args...>;
 };
 
+//! Deleter関数の引数を解析するためのメタタイプ
+template<typename R, typename... Args>
+struct args_of_function<R(*)(Args...) noexcept>
+{
+	using types = std::tuple<Args...>;
+};
+
 //! クラスメソッド引数を解析するためのメタタイプ
 template<typename R, typename C, typename... Args>
 struct args_of_function<R (C::*)(Args...)>

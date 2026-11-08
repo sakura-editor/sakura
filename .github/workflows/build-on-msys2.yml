@@ -19,14 +19,12 @@ env:
   VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
   VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
 
-permissions:
-  actions: read
-  contents: read
-  packages: read
-
 jobs:
   mingw:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: read
     strategy:
       matrix:
         configuration: [Debug, Release]
@@ -40,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
 
@@ -70,14 +68,16 @@ jobs:
           if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
             throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
           }
-          Start-Process `
-            -FilePath $installer `
-            -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES" `
-            -Wait
+          $startProcessParams = @{
+            FilePath = $installer
+            ArgumentList = "/VERYSILENT", "/SUPPRESSMSGBOXES"
+            Wait = $true
+          }
+          Start-Process @startProcessParams
           echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
 
       - name: Set up MSYS2
-        uses: msys2/setup-msys2@v2
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
         with:
           msystem: MINGW64
           update: true
@@ -91,7 +91,7 @@ jobs:
             mingw-w64-x86_64-7zip
             mingw-w64-x86_64-gdb
             mingw-w64-x86_64-ctags
-            mingw-w64-x86_64-diffutils
+            diffutils
 
       - run: uv venv
 

@@ -87,6 +87,7 @@ public:
 
 private:
 	void DeleteCompDC();
+	HBITMAP GetMenuBitmap( int nIconId );	//!< メニュー用ビットマップの取得
 	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ツールバーIndexの取得 */// 20050809 aroka
 	int Find( int nFuncID );
 	const WCHAR* GetLabel( int nFuncID );

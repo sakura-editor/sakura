@@ -27,7 +27,15 @@ CSortedTagJumpList::CSortedTagJumpList(int max)
 
 CSortedTagJumpList::~CSortedTagJumpList()
 {
+	// 暫定対応(デストラクタに例外を投げ得る処理を書いてはならない)
+	try {
+
+	//TODO: Empty()をnoexceptにする
 	Empty();
+
+	} catch(...) {
+		// 例外は握りつぶす
+	}
 }
 
 /*

@@ -39,9 +39,6 @@ int wmain(int argc, wchar_t **argv)
 	// コンソール出力のコードページをUTF-8にする
 	::SetConsoleOutputCP(CP_UTF8);
 
-	// terminate対策でスレッドトレースを出すようにする
-	std::set_terminate(testing::OnTerminate);
-
 	// テスト実行時のロケールは日本語に固定する
 	::SetThreadUILanguage(langId);	// スレッドのUI言語を変更
 

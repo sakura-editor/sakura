@@ -19,6 +19,7 @@
 */
 
 #include "StdAfx.h"
+#include <bit>
 #include <shobjidl.h>
 #include "charset/CCodePage.h"
 #include "dlg/CDlgOpenFile.h"
@@ -101,6 +102,9 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	IFileDialog* m_pFileDialog = nullptr;
 	IFileDialogCustomize* m_pFileDialogCustomize = nullptr;
+
+	static LRESULT CALLBACK FileDialogSubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
+	void ReplaceSlashInFileName() const;
 
 	// IFileDialogCustomize
 
@@ -304,10 +308,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChange(
-		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
-		return E_NOTIMPL;
-	}
-		
+		/* [in] */ __RPC__in_opt IFileDialog *pfd) override;
+
 	HRESULT STDMETHODCALLTYPE OnSelectionChange(
 		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
@@ -829,6 +831,61 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg( SSaveInfo* pSaveInfo, bool b
 		}
 	}
 	return ret;
+}
+
+/*!
+	フォルダーが変わったとき(ダイアログを表示した直後にも呼ばれる)
+
+	ダイアログのウィンドウをサブクラス化して、「開く」(IDOK)の前にファイル名の / を \ に置き換える(Issue #2727)。
+	同じプロシージャ・ID で SetWindowSubclass を呼び直しても二重にはならない。
+*/
+HRESULT CDlgOpenFile_CommonItemDialog::OnFolderChange(
+	/* [in] */ __RPC__in_opt IFileDialog *pfd)
+{
+	cxx::com_pointer<IOleWindow> pOleWindow;
+	if( HWND hwnd = nullptr;
+		pfd && SUCCEEDED( pfd->QueryInterface( &pOleWindow ) ) && SUCCEEDED( pOleWindow->GetWindow( &hwnd ) ) )
+	{
+		::SetWindowSubclass( hwnd, &FileDialogSubclassProc, 0, DWORD_PTR(this) );
+	}
+	return S_OK;
+}
+
+/*!
+	ファイルダイアログのサブクラスプロシージャ
+*/
+LRESULT CALLBACK CDlgOpenFile_CommonItemDialog::FileDialogSubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData )
+{
+	const auto pThis = std::bit_cast<const CDlgOpenFile_CommonItemDialog*>( dwRefData );
+	switch( uMsg ){
+	case WM_COMMAND:
+		if( LOWORD( wParam ) == IDOK && HIWORD( wParam ) == BN_CLICKED ){
+			pThis->ReplaceSlashInFileName();
+		}
+		break;
+	case WM_NCDESTROY:
+		::RemoveWindowSubclass( hwnd, &FileDialogSubclassProc, uIdSubclass );
+		break;
+	default:
+		break;
+	}
+	return ::DefSubclassProc( hwnd, uMsg, wParam, lParam );
+}
+
+/*!
+	ファイル名ボックスに入力されたパスの区切りの / を \ に置き換える(Issue #2727)
+*/
+void CDlgOpenFile_CommonItemDialog::ReplaceSlashInFileName() const
+{
+	PWSTR pszFileName = nullptr;
+	if( !m_pFileDialog || FAILED( m_pFileDialog->GetFileName( &pszFileName ) ) || !pszFileName ){
+		return;
+	}
+	const std::wstring text{ pszFileName };
+	::CoTaskMemFree( pszFileName );
+	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
+		m_pFileDialog->SetFileName( replaced.c_str() );
+	}
 }
 
 HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(

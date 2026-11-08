@@ -15,10 +15,11 @@
 #include "macro/CPPA.h"
 //#include "plugin/CDllPlugin.h"		//継承不可なのでテストできない
 
-#include "env/ShareDataTestSuite.hpp"
-
 #include "mem/CNativeW.h"
+#include "util/file.h"
 #include "view/colors/EColorIndexType.h"
+
+#include "window/EditorTestSuite.hpp"
 
 #include "tests1_rc.h"
 
@@ -114,22 +115,9 @@ INSTANTIATE_TYPED_TEST_SUITE_P(
 
 namespace extmodule {
 
-struct ExtModuleTest : public ::testing::Test, public env::ShareDataTestSuite {
-	/*!
-	 * テストスイートの開始前に1回だけ呼ばれる関数
-	 */
-	static void SetUpTestSuite()
-	{
-		SetUpShareData();
-	}
-
-	/*!
-	 * テストスイートの終了後に1回だけ呼ばれる関数
-	 */
-	static void TearDownTestSuite()
-	{
-		TearDownShareData();
-	}
+struct ExtModuleTest : public ::testing::Test, public window::EditorTestSuite {
+	static void SetUpTestSuite() { SetUpEditor(); }
+	static void TearDownTestSuite() { TearDownEditor(); }
 };
 
 struct CBregexpTest : public ExtModuleTest {
@@ -153,6 +141,39 @@ struct CBregexpTest : public ExtModuleTest {
 		pcBregexp = nullptr;
 	}
 };
+
+/*!
+ * @brief 照合器が別々なら、別のスレッドから同時に Match() できる
+ *
+ * Grep でファイルを並列に検索するときは、スレッドごとに照合器を持つ。
+ */
+TEST_F(CBregexpTest, MatchConcurrentlyWithSeparateObjects)
+{
+	constexpr size_t threadCount = 4;
+	constexpr int loopCount = 2000;
+	std::array<CBregexp, threadCount> regexps;
+	for (auto& regexp : regexps) {
+		ASSERT_THAT(regexp.InitDll(L"bregonig.dll"), Eq(DLL_SUCCESS));
+		ASSERT_THAT(regexp.Compile(L"H.T", CBregexp::optCaseSensitive), IsTrue());
+	}
+
+	std::array<int, threadCount> hitCounts{};
+	{
+		std::vector<std::jthread> threads;
+		for (size_t i = 0; i < threadCount; ++i) {
+			threads.emplace_back([&regexp = regexps[i], &hitCount = hitCounts[i]] {
+				constexpr std::wstring_view line = L"xx HIT yy hat";
+				for (int n = 0; n < loopCount; ++n) {
+					if (regexp.Match(line.data(), int(line.size())) && regexp.GetIndex() == CLogicInt(3)) {
+						++hitCount;
+					}
+				}
+			});
+		}
+	}	// ここで全スレッドの終わりを待つ
+
+	EXPECT_THAT(hitCounts, ::testing::Each(Eq(loopCount)));
+}
 
 TEST_F(CBregexpTest, test001)
 {
@@ -259,6 +280,66 @@ TEST_F(CBregexpTest, CheckRegexpSyntax101)
 	EXPECT_THAT(::CheckRegexpSyntax(L"([0-9]+)", hWndMessageParent, showMessage, nOption, bKakomi), IsFalse());
 }
 
+/*!
+ * DLL の読み込み先のテスト
+ *
+ * カレントディレクトリを一時フォルダーに移してから読み込み、終わったら戻す。
+ */
+struct CDllImpLoadPathTest : public CBregexpTest {
+	std::filesystem::path originalDir;
+	std::filesystem::path workDir;
+
+	void SetUp() override
+	{
+		CBregexpTest::SetUp();
+		originalDir = std::filesystem::current_path();
+		workDir = std::filesystem::temp_directory_path() / L"CDllImpLoadPathTest";
+		std::filesystem::create_directories(workDir);
+		std::filesystem::current_path(workDir);
+	}
+
+	void TearDown() override
+	{
+		pcBregexp = nullptr;	// DLL を解放してから一時フォルダーを消す
+		std::filesystem::current_path(originalDir);
+		std::error_code ec;
+		std::filesystem::remove_all(workDir, ec);
+		CBregexpTest::TearDown();
+	}
+};
+
+/*!
+ * @brief 相対パスは実行ファイルのフォルダーから読み込み、カレントディレクトリは変えない
+ *
+ * bregonig.dll は、ビルドで tests1.exe と同じフォルダーにコピーされる。
+ */
+TEST_F(CDllImpLoadPathTest, RelativePathFromExeDir)
+{
+	EXPECT_THAT(pcBregexp->InitDll(L"bregonig.dll"), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(L"bregonig.dll"));
+	EXPECT_THAT(std::filesystem::equivalent(std::filesystem::current_path(), workDir), IsTrue());
+}
+
+/*!
+ * @brief フルパスはそのまま読み込む
+ */
+TEST_F(CDllImpLoadPathTest, FullPath)
+{
+	const auto fullPath = (GetExeFileName().parent_path() / L"bregonig.dll").native();
+	EXPECT_THAT(pcBregexp->InitDll(fullPath.c_str()), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(fullPath));
+}
+
+/*!
+ * @brief カレントディレクトリにだけある DLL は読み込まず、次の名前候補(クラスが定義している DLL 名)を読み込む
+ */
+TEST_F(CDllImpLoadPathTest, NotFromCurrentDirectory)
+{
+	std::filesystem::copy_file(GetExeFileName().parent_path() / L"bregonig.dll", workDir / L"skr_cwd_only.dll", std::filesystem::copy_options::overwrite_existing);
+	EXPECT_THAT(pcBregexp->InitDll(L"skr_cwd_only.dll"), Eq(DLL_SUCCESS));
+	EXPECT_THAT(pcBregexp->GetLoadedDllName(), StrEq(L"bregonig.dll"));
+}
+
 struct CMigemoTest : public ExtModuleTest {
 	using CMigemoHolder = std::unique_ptr<CMigemo>;
 
@@ -303,68 +384,41 @@ struct CMigemoTest : public ExtModuleTest {
 
 TEST_F(CMigemoTest, test001)
 {
-	// 共有メモリを破棄して初期状態にする
-	pcShareData = nullptr;
-
-	// 初期状態では利用不可
-	EXPECT_THAT(pcMigemo->IsAvailable(), IsFalse());
-
-	// 初期状態では利用不可
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());
-
-	// ロード前は辞書ロードも利用不可
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
-
-	// 名前を指定しないロードは、共有メモリ初期化前にはできない
-	EXPECT_ANY_THROW(pcMigemo->InitDll());
-
-	// 名前を指定してロードする
-	pcMigemo->InitDll(L"migemo.dll");
-
-	// ロードされたら利用可能になる
-	EXPECT_THAT(pcMigemo->IsAvailable(), IsTrue());
-
-	// テストクラスのインスタンスを破棄する
-	pcMigemo = nullptr;
-
-	// テストクラスをインスタンス化する
-	pcMigemo = std::make_unique<CMigemo>();
-
-	// 共有メモリを初期化する
-	pcShareData = std::make_unique<CShareData>();
-	EXPECT_THAT(pcShareData->InitShareData(), IsTrue());
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
 	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, L"", _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"", _TRUNCATE);
+	sHelper.m_szMigemoDll = L"";
+	sHelper.m_szMigemoDict = L"";
 
 	// 名前を指定せずにロードする
 	pcMigemo->InitDll();
 
-	// ロードされたら辞書ロードも利用可能になるが辞書がないのでロードに失敗する
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsFalse());
+	// 辞書がないのでロードに失敗する
+	EXPECT_FALSE(pcMigemo->migemo_load_all());
 
 	// 辞書がないので結局利用不可
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsFalse());
+	EXPECT_FALSE(pcMigemo->migemo_is_enable());
 }
 
 TEST_F(CMigemoTest, test002)
 {
-	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, L"migemo.dll", _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, L"dict", _TRUNCATE);
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
-	// 名前を指定せずにロードする
-	pcMigemo->InitDll();
+	// C/Migemo設定に値を入れる
+	sHelper.m_szMigemoDll = L"migemo.dll";	// 相対パス
+	sHelper.m_szMigemoDict = L"dict";
 
 	// 辞書ファイルを展開する
 	extract_zip_resource(IDR_ZIPRES2, dictPath);
 
+	// 名前を指定せずにロードする
+	pcMigemo->InitDll();
+
 	// ロードされたら辞書ロードも利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_load_all());
 
 	// 辞書が見付かるので利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_is_enable());
 
 	// 与えた文字列に対する正規表現が返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"さくらえでぃt"), StrEq(L"(ｻｸﾗｴﾃﾞｨ[ﾄﾃﾂﾁﾀ]|サクラエディ[トテツチタ]|さくらえでぃ[とてつちたｔt])"));
@@ -372,21 +426,23 @@ TEST_F(CMigemoTest, test002)
 
 TEST_F(CMigemoTest, test003)
 {
-	// C/Migemo設定に値を入れる
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDll, GetIniFileName().replace_filename( L"migemo.dll" ).c_str(), _TRUNCATE);
-	::wcsncpy_s(GetDllShareData().m_Common.m_sHelper.m_szMigemoDict, dictPath.c_str(), _TRUNCATE);
+	auto& sHelper = GetDllShareData().m_Common.m_sHelper;
 
-	// 名前を指定せずにロードする
-	pcMigemo->InitDll();
+	// C/Migemo設定に値を入れる
+	sHelper.m_szMigemoDll = GetIniFileName().replace_filename(L"migemo.dll");	// 絶対パス
+	sHelper.m_szMigemoDict = dictPath;
 
 	// 辞書ファイルを展開する
 	extract_zip_resource(IDR_ZIPRES3, dictPath);
 
+	// 名前を指定せずにロードする
+	pcMigemo->InitDll();
+
 	// ロードされたら辞書ロードも利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_load_all(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_load_all());
 
 	// 辞書が見付かるので利用可能になる
-	EXPECT_THAT(pcMigemo->migemo_is_enable(), IsTrue());
+	EXPECT_TRUE(pcMigemo->migemo_is_enable());
 
 	// 与えた文字列をSJISに変換できない場合、与えた文字列がそのまま返る
 	EXPECT_THAT(pcMigemo->migemo_query_w(L"\U0001F6B9"), StrEq(L"\U0001F6B9"));

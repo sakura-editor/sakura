@@ -17,6 +17,7 @@ set(CTAGS_VERSION "v6.1.0")
 set(CTAGS_ZIP_FILE "${CMAKE_SOURCE_DIR}/installer/externals/universal-ctags/ctags-${CTAGS_VERSION}-${ARCH}.zip")
 set(CTAGS_GENERATED "${CTAGS_BUILD_DIR}/ctags.exe")
 set(CTAGS_EXECUTABLE "${OUTPUT_DIRECTORY}/ctags.exe")
+set(CTAGS_FETCH_STAMP "${CTAGS_BUILD_DIR}/fetch.stamp")
 
 find_program(CTAGS_SYSTEM_EXECUTABLE
   NAMES ctags
@@ -32,21 +33,25 @@ if(CTAGS_SYSTEM_EXECUTABLE)
 # 実績のあるものだけビルド対象にする。
 elseif(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CMAKE_GENERATOR_PLATFORM STREQUAL "Win32")
   add_custom_command(
-    OUTPUT
-      "${CMAKE_SOURCE_DIR}/externals/ctags/.git"
+    OUTPUT "${CTAGS_FETCH_STAMP}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CTAGS_BUILD_DIR}"
     COMMAND ${CMAKE_COMMAND}
       -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
       -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
       -DSUBMODULE_PATH:STRING=externals/ctags
       -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
       -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${CTAGS_FETCH_STAMP}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/.gitmodules"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     COMMENT "Fetching ctag's source files"
   )
 
   add_custom_target(fetch_ctags_source_files
     DEPENDS
-      "${CMAKE_SOURCE_DIR}/externals/ctags/.git"
+      "${CTAGS_FETCH_STAMP}"
   )
 
   # Copy source files to build directory
@@ -82,6 +87,7 @@ else()
   add_custom_command(
     OUTPUT "${CTAGS_EXECUTABLE}"
     COMMAND ${7ZIP_EXECUTABLE} e "${CTAGS_ZIP_FILE}" -o"${OUTPUT_DIRECTORY}" -y ctags.exe > NUL
+    DEPENDS "${CTAGS_ZIP_FILE}"
     COMMENT "Extracting ctags.exe from ${CTAGS_ZIP_FILE}"
   )
 endif()

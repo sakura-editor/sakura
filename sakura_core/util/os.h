@@ -9,33 +9,16 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
-#include "util/design_template.h"
+#include "basis/primitive.h"
+#include "basis/CMyString.h"
+#include "cxx/ResourceHolder.hpp"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
+#include "util/design_template.h"
+
+#include <string>
+#include <string_view>
 
 #include <objidl.h> // LPDATAOBJECT
-
-//! User32.dll呼出をテスト可能にするDIっぽいもの
-struct User32 : public TSakuraSingleton<User32>
-{
-	using Me = User32;
-
-	static int MessageBoxW(
-		_In_opt_ HWND hWnd,
-		const std::optional<std::wstring>& optText,
-		const std::optional<std::wstring>& optCaption,
-		_In_ UINT uType
-	);
-
-	virtual ~User32() = default;
-
-	virtual int	MessageBoxExW(
-		_In_opt_ HWND hWnd,
-		_In_opt_ LPCWSTR lpText,
-		_In_opt_ LPCWSTR lpCaption,
-		_In_ UINT uType,
-		_In_ WORD wLanguageId
-	) const;
-};
 
 //クリップボード
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
@@ -91,21 +74,34 @@ private:
 	PVOID	m_OldValue = nullptr;
 };
 
-//カレントディレクトリユーティリティ。
-//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
-//2008.03.01 kobake 作成
+/*!
+ * @brief カレントディレクトリ復元ポイント
+ *
+ * 構築時にカレントディレクトリを取得し、破棄時に復元する
+ *
+ * @note GUIスレッド専用ユーティリティです。
+ *
+ * @date 2008/03/01 kobake 作成
+ */
 class CCurrentDirectoryBackupPoint{
+private:
 	using Me = CCurrentDirectoryBackupPoint;
+
+	static void _CleanUp(
+		const CCurrentDirectoryBackupPoint* pThis
+	) noexcept;
+
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
 public:
 	CCurrentDirectoryBackupPoint();
+
 	CCurrentDirectoryBackupPoint(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CCurrentDirectoryBackupPoint(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CCurrentDirectoryBackupPoint();
+
 private:
-	WCHAR m_szCurDir[_MAX_PATH];
+	SFilePath	m_szCurDir{};
+	Holder		m_Holder{ this };
 };
 
 /*!
@@ -350,6 +346,102 @@ public:
 };
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
+
+/*!
+ * @brief カレントディレクトリのパスを取得する
+ *
+ * @return カレントディレクトリのパス
+ */
+std::wstring GetCurrentDirectoryW();
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+);
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+template <
+	basis::NullTerminatedStringConstructible<WCHAR> A1,
+	basis::NullTerminatedStringConstructible<WCHAR> A2
+> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+void ReplaceFileW(
+	const A1 & replacedFileName,
+	const A2 & replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString _ReplacedFileName{ replacedFileName };
+	cxx::NullTerminatedString _ReplacementFileName{ replacementFileName };
+
+	// 指定したファイルを別ファイルで置換する
+	return ReplaceFileW(
+		_ReplacedFileName.str(),
+		_ReplacementFileName.str(),
+		optBackupFileName,
+		dwReplaceFlags
+	);
+}
+
+/*!
+ * @brief カレントディレクトリを変更する
+ *
+ * @param[in] newPath 新しいディレクトリ
+ */
+void SetCurrentDirectoryW(
+	std::wstring_view newPath
+);
 
 } // namespace cxx
 

@@ -10,6 +10,7 @@
 #pragma once
 
 #include "mem/CMemory.h"
+#include "util/string_ex.h"
 
 //※CMemoryをprotect継承することにより、あまり自由にCMemoryを使えないようにしておく
 class CNative : protected CMemory{

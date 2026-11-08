@@ -19,7 +19,7 @@
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2011, ryoji, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -41,6 +41,19 @@
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
+}
+
+/*!
+ * @brief コマンダービューのウィンドウハンドルを取得
+ *
+ * 既存コード互換用。
+ *
+ * CViewCommanderはCEditViewのメンバーなので、
+ * CViewCommander.hでCEditView.hはインクルードできない。
+ */
+HWND CViewCommander::GetCommanderViewHwnd(HWND hWnd) const
+{
+	return hWnd ? hWnd : m_pCommanderView->GetHwnd();
 }
 
 /*!
@@ -136,15 +149,33 @@ BOOL CViewCommander::HandleCommand(
 
 	//	From Here Sep. 29, 2001 genta マクロの実行機能追加
 	if( F_USERMACRO_0 <= nCommand && nCommand < F_USERMACRO_0 + (int)MAX_CUSTMACRO ){
+		using enum EMacroResult;
+
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一（インターフェースの変更）
-		if( !m_pcSMacroMgr->Exec( nCommand - F_USERMACRO_0, G_AppInstance(), m_pCommanderView,
-			nCommandFrom & FA_NONRECORD )){
-			InfoMessage(
-				this->m_pCommanderView->m_hwndParent,
-				LS(STR_ERR_MACRO1),
-				nCommand - F_USERMACRO_0,
-				m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
-			);
+		const auto eMacroResult = m_pcSMacroMgr->Exec(
+			nCommand - F_USERMACRO_0,
+			G_AppInstance(),
+			m_pCommanderView,
+			nCommandFrom & FA_NONRECORD
+		);
+		if( eMacroResult != Success ){
+			if( eMacroResult == EncodingError ){
+				//	マクロファイルの文字コード変換エラー
+				//	L"文字コードの変換に失敗しました。\nBOM付きUTF-8またはShift_JIS等で保存されているか確認してください。\n\n%s"
+				ErrorMessage(
+					this->m_pCommanderView->m_hwndParent,
+					LS(STR_ERR_MACRO_ENCODING),
+					m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				);
+			}
+			else {
+				InfoMessage(
+					this->m_pCommanderView->m_hwndParent,
+					LS(STR_ERR_MACRO1),
+					nCommand - F_USERMACRO_0,
+					m_pcSMacroMgr->GetFile( nCommand - F_USERMACRO_0 )
+				);
+			}
 		}
 		return TRUE;
 	}
@@ -721,27 +752,4 @@ ptrdiff_t CViewCommander::ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen,
 		}
 	}
 	return nConvertedTextLen;
-}
-
-/*!
-	@brief 検索で見つからないときの警告（メッセージボックス／サウンド）
-
-	@date 2010.04.21 ryoji	新規作成（数カ所で用いられていた類似コードの共通化）
-*/
-void CViewCommander::AlertNotFound(HWND hwnd, bool bReplaceAll, LPCWSTR format, ...)
-{
-	if( GetDllShareData().m_Common.m_sSearch.m_bNOTIFYNOTFOUND
-		&& !bReplaceAll
-	){
-		if( nullptr == hwnd ){
-			hwnd = m_pCommanderView->GetHwnd();
-		}
-		//InfoMessage(hwnd, format, __VA_ARGS__);
-		va_list p;
-		va_start(p, format);
-		VMessageBoxF(hwnd, MB_OK | MB_ICONINFORMATION, GSTR_APPNAME, format, p);
-		va_end(p);
-	}else{
-		DefaultBeep();
-	}
 }

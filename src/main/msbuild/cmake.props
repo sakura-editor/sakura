@@ -7,6 +7,7 @@
     <VersionHeader>$(CMakeToolsBuildDir)version.h</VersionHeader>
     <FuncCodeDefine>$(CMakeToolsBuildDir)Funccode_define.h</FuncCodeDefine>
     <FuncCodeEnum>$(CMakeToolsBuildDir)Funccode_enum.h</FuncCodeEnum>
+    <PythonConfigHeader>$(CMakeToolsBuildDir)python3_config.h</PythonConfigHeader>
   </PropertyGroup>
   <ItemDefinitionGroup Label="CMakeTools">
     <ClCompile>

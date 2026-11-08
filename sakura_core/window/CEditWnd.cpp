@@ -27,9 +27,10 @@
 #include <ShlObj.h>
 
 #include "window/CEditWnd.h"
-#include "_main/CControlTray.h"
-#include "_main/CCommandLine.h"	/// 2003/1/26 aroka
+
 #include "_main/CAppMode.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
 #include "basis/CErrorInfo.h"
 #include "dlg/CDlgAbout.h"
 #include "dlg/CDlgPrintSetting.h"
@@ -42,10 +43,12 @@
 #include "recent/CMRUFolder.h"
 #include "util/module.h"
 #include "util/os.h"		//WM_MOUSEWHEEL,WM_THEMECHANGED
+#include "util/os/make_system_error.hpp"
 #include "util/window.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "plugin/CJackManager.h"
+#include "plugin/CPluginManager.h"
 #include "agent/CGrepAgent.h"
 #include "env/CMarkMgr.h"
 #include "doc/layout/CLayout.h"
@@ -164,6 +167,26 @@ static void ShowCodeBox( HWND hWnd, CEditDoc* pcEditDoc )
 }
 
 /*!
+ * メインウィンドウのアドレスを取得します。
+ */
+CAppMainWnd* GetAppMainWndPtr() noexcept
+{
+	// 編集ウィンドウのアドレスを取得する
+	CAppMainWnd* pcAppMainWnd = GetEditWndPtr();
+
+	// 取得できなかった場合
+	if (!pcAppMainWnd)
+	{
+		if (const auto pcProcess = CProcess::getInstance())
+		{
+			pcAppMainWnd = pcProcess->GetMainWindow();
+		}
+	}
+
+	return pcAppMainWnd;
+}
+
+/*!
  * 編集ウインドウのアドレスを取得します。
  */
 CEditWnd* GetEditWndPtr() noexcept
@@ -193,6 +216,11 @@ CViewFont* GetViewFont(bool isMiniMap)
 	return GetEditWnd().GetViewFont(isMiniMap);
 }
 
+extern template
+bool CDropTargetWnd::AttachDropTarget<CEditWnd>(
+	CEditWnd* pThis
+);
+
 //	/* メッセージループ */
 //	DWORD MessageLoop_Thread( DWORD pCEditWndObject );
 
@@ -211,6 +239,7 @@ LRESULT CALLBACK CEditWndProc(
 }
 
 CEditWnd::CEditWnd()
+	: CAppMainWnd(G_AppInstance())
 {
 	const auto& cTypeConfig = GetEditDoc().m_cDocType.GetDocumentAttribute();
 	auto& cLayoutMgr = GetEditDoc().m_cLayoutMgr;
@@ -273,27 +302,31 @@ void CEditWnd::UpdateCaption()
 		CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ); // 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
 }
 
-//!< ウィンドウ生成用の矩形を取得
-void CEditWnd::_GetWindowRectForInit(
-	CMyRect* rcResult,
-	int nGroup [[maybe_unused]],
-	const STabGroupInfo& sTabGroupInfo
+/*!
+ * @brief ウィンドウ生成用の矩形を取得
+ *
+ * @retval true  ウィンドウ作成後にShowWindowを呼び出す必要がある
+ * @retval false ウィンドウ作成後にShowWindowを呼び出す必要がない
+ */
+bool CEditWnd::_GetWindowRectForInit(
+	CMyRect& rectForInit,
+	const STabGroupInfo& sTabGroupInfo,
+	int nCmdShow
 ) const
 {
+	bool needShowWindow = true;
+
 	/* ウィンドウサイズ継承 */
-	int	nWinCX, nWinCY;
+	auto nWinCX = CW_USEDEFAULT;
+	auto nWinCY = 0;
 	//	2004.05.13 Moca m_Common.m_eSaveWindowSizeをBOOLからenumに変えたため
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowSize ){
 		nWinCX = m_pShareData->m_Common.m_sWindow.m_nWinSizeCX;
 		nWinCY = m_pShareData->m_Common.m_sWindow.m_nWinSizeCY;
-	}else{
-		nWinCX = CW_USEDEFAULT;
-		nWinCY = 0;
 	}
 
 	/* ウィンドウサイズ指定 */
-	EditInfo fi;
-	CCommandLine::getInstance()->GetEditInfo(&fi);
+	const auto& fi = CCommandLine::getInstance()->GetEditInfoRef();
 	if( fi.m_nWindowSizeX >= 0 ){
 		nWinCX = fi.m_nWindowSizeX;
 	}
@@ -302,9 +335,8 @@ void CEditWnd::_GetWindowRectForInit(
 	}
 
 	/* ウィンドウ位置指定 */
-	int nWinOX, nWinOY;
-	nWinOX = CW_USEDEFAULT;
-	nWinOY = 0;
+	auto nWinOX = CW_USEDEFAULT;
+	auto nWinOY = 0;
 	// ウィンドウ位置固定
 	//	2004.05.13 Moca 保存したウィンドウ位置を使う場合は共有メモリからセット
 	if( WINSIZEMODE_DEF != m_pShareData->m_Common.m_sWindow.m_eSaveWindowPos ){
@@ -332,59 +364,84 @@ void CEditWnd::_GetWindowRectForInit(
 		nWinOX = wpTop.rcNormalPosition.left   + (rcWork.left - rcMon.left);
 		nWinOY = wpTop.rcNormalPosition.top    + (rcWork.top - rcMon.top);
 	}
+	// ウィンドウ位置やサイズが指定されなかった場合
+	else if (CW_USEDEFAULT == nWinOX &&
+		SW_HIDE == nWinOY &&
+		CW_USEDEFAULT == nWinCX &&
+		0 == nWinCY)
+	{
+		// CreateWindow関数には
+		//   スタイルにWS_OVERLAPPEDWINDOWを含み、
+		//   xにCW_USEDEFAULTが指定されている場合、
+		//   ウィンドウ作成後にyの値でShowWindowを呼び出す
+		// という仕様がある。
+		nWinOY = nCmdShow;
+
+		needShowWindow = false;
+	}
 
 	//結果
-	rcResult->SetXYWH(nWinOX,nWinOY,nWinCX,nWinCY);
+	rectForInit.SetXYWH(nWinOX, nWinOY, nWinCX, nWinCY);
+
+	return needShowWindow;
 }
 
-HWND CEditWnd::_CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo)
+/*!
+ * @brief ウィンドウ作成
+ *
+ * @param[in] rectForInit ウィンドウ作成時の矩形
+ * @return 作成したウィンドウのハンドル
+ */
+HWND CEditWnd::_CreateMainWindow(
+	const CMyRect& rectForInit
+)
 {
+	// アイコンを読み込む
+	HICON hIcon = nullptr;
+	HICON hIconSm = nullptr;
+	GetDefaultIcon(&hIcon, &hIconSm);
+
 	// -- -- -- -- ウィンドウクラス登録 -- -- -- -- //
-	WNDCLASSEX	wc;
+	WNDCLASSEXW wc{ sizeof(WNDCLASSEX) };
+	wc.cbSize			= sizeof(wc);
 	//	Apr. 27, 2000 genta
 	//	サイズ変更時のちらつきを抑えるためCS_HREDRAW | CS_VREDRAW を外した
 	wc.style			= CS_DBLCLKS | CS_BYTEALIGNCLIENT | CS_BYTEALIGNWINDOW;
 	wc.lpfnWndProc		= CEditWndProc;
 	wc.cbClsExtra		= 0;
-	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;                                  //拡張領域を1個確保。
-	wc.hInstance		= G_AppInstance();
-	//	Dec, 2, 2002 genta アイコン読み込み方法変更
-	wc.hIcon			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, false );
-
+	wc.cbWndExtra		= sizeof(LONG_PTR) * 1;	//拡張領域を1個確保。
+	wc.hInstance		= GetAppInstance();
+	wc.hIcon			= hIcon;
 	wc.hCursor			= nullptr/*LoadCursor( NULL, IDC_ARROW )*/;
 	wc.hbrBackground	= (HBRUSH)nullptr/*(COLOR_3DSHADOW + 1)*/;
 	wc.lpszMenuName		= nullptr;	// MAKEINTRESOURCE( IDR_MENU1 );	2010/5/16 Uchi
 	wc.lpszClassName	= GSTR_EDITWINDOWNAME;
+	wc.hIconSm			= hIconSm;
 
-	//	Dec. 6, 2002 genta
-	//	small icon指定のため RegisterClassExに変更
-	wc.cbSize			= sizeof( wc );
-	wc.hIconSm			= GetAppIcon( G_AppInstance(), ICON_DEFAULT_APP, FN_APP_ICON, true );
-	ATOM	atom = RegisterClassEx( &wc );
-	if( 0 == atom ){
-		//	2004.05.13 Moca return NULLを有効にした
-		return nullptr;
-	}
+	const auto atom = ::RegisterClassExW(&wc);
 
-	//矩形取得
-	CMyRect rc;
-	_GetWindowRectForInit(&rc, nGroup, sTabGroupInfo);
+	if (!atom) throw cxx::make_system_error("RegisterClassExW() failed");
 
-	//作成
-	HWND hwndResult = ::CreateWindowEx(
-		0,				 	// extended window style
-		GSTR_EDITWINDOWNAME,		// pointer to registered class name
-		GSTR_EDITWINDOWNAME,		// pointer to window name
-		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,	// window style
-		rc.left,			// horizontal position of window
-		rc.top,				// vertical position of window
-		rc.Width(),			// window width
-		rc.Height(),		// window height
+	const auto hwndResult = ::CreateWindowExW(
+		0L,					 	// extended window style
+		MAKEINTATOM(atom),		// class atom or pointer to registered class name
+		GSTR_EDITWINDOWNAME,	// pointer to window name
+		WS_OVERLAPPEDWINDOW
+		| WS_CLIPCHILDREN,		// window style
+		rectForInit.left,		// horizontal position of window
+		rectForInit.top,		// vertical position of window
+		rectForInit.Width(),	// window width
+		rectForInit.Height(),	// window height
 		nullptr,				// handle to parent or owner window
 		nullptr,				// handle to menu or child-window identifier
-		G_AppInstance(),		// handle to application instance
+		GetAppInstance(),		// handle to application instance
+		
+		//TODO: thisを渡す
 		nullptr				// pointer to window-creation data
 	);
+
+	if (!hwndResult) throw cxx::make_system_error("CreateWindowExW() failed");
+
 	return hwndResult;
 }
 
@@ -565,10 +622,8 @@ void CEditWnd::_AdjustInMonitor(const STabGroupInfo& sTabGroupInfo)
 	@date 2007.06.26 ryoji nGroup追加
 	@date 2008.04.19 ryoji 初回アイドリング検出用ゼロ秒タイマーのセット処理を追加
 */
-HWND CEditWnd::Create(
-	[[maybe_unused]] const CEditDoc* pcEditDoc,
-	CImageListMgr*	pcIcons,	//!< [in] Image List
-	int				nGroup		//!< [in] グループID
+HWND CEditWnd::CreateMainWnd(
+	int nCmdShow
 )
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CEditWnd::Create" );
@@ -590,12 +645,28 @@ HWND CEditWnd::Create(
 		return nullptr;
 	}
 
+	// グループIDを取得
+	int nGroup = CCommandLine::getInstance()->GetGroupId();
+	if (-1 == nGroup &&
+		m_pShareData->m_Common.m_sTabBar.m_bNewWindow)
+	{
+		// どうやってもテストが通らない。
+		// この条件が妥当か、検証要。
+		// タブ表示が有効でなければグループIDを取得する意味はないはず。
+		nGroup = CAppNodeManager::getInstance()->GetFreeGroupId();
+	}
+
 	//タブグループ情報取得
 	STabGroupInfo sTabGroupInfo;
 	_GetTabGroupInfo(&sTabGroupInfo, nGroup);
 
 	// -- -- -- -- ウィンドウ作成 -- -- -- -- //
-	HWND hWnd = _CreateMainWindow(nGroup, sTabGroupInfo);
+	//矩形取得
+	CMyRect rectForInit{};
+	const auto needShowWindow = _GetWindowRectForInit(rectForInit, sTabGroupInfo, nCmdShow);
+
+	//作成
+	auto hWnd = _CreateMainWindow(rectForInit);
 	if(!hWnd)return nullptr;
 	m_hWnd = hWnd;
 
@@ -621,8 +692,8 @@ HWND CEditWnd::Create(
 	MyInitCommonControls();
 
 	//イメージ、ヘルパなどの作成
-	m_cMenuDrawer.Create( G_AppInstance(), GetHwnd(), pcIcons );
-	m_cToolbar.Create( pcIcons );
+	m_cMenuDrawer.Create(GetAppInstance(), hWnd, &GetIcons());
+	m_cToolbar.Create(&GetIcons());
 
 	// プラグインコマンドを登録する
 	RegisterPluginCommand();
@@ -678,15 +749,19 @@ HWND CEditWnd::Create(
 
 	// -- -- -- -- その他調整など -- -- -- -- //
 
+	//TODO: いつか削除する
 	// 画面表示直前にDispatchEventを有効化する
 	::SetWindowLongPtr( GetHwnd(), GWLP_USERDATA, (LONG_PTR)this );
 
+	//TODO: 処理内容を精査する
+	// 内部でウィンドウを表示しているが、このタイミングはまだ初期処理が終わってない。
+	// CreateWindowExの仕様的にShowWindow不要な場合にもShowWindowしている。
 	// デスクトップからはみ出さないようにする
 	_AdjustInMonitor(sTabGroupInfo);
 
 	// ドロップされたファイルを受け入れる
 	::DragAcceptFiles( GetHwnd(), TRUE );
-	m_pcDropTarget->Register_DropTarget( m_hWnd );	// 右ボタンドロップ用	// 2008.06.20 ryoji
+	m_DropTargetWnd->AttachDropTarget(this);	// 右ボタンドロップ用
 
 	//アクティブ情報
 	m_bIsActiveApp = ( ::GetActiveWindow() == GetHwnd() );	// 2007.03.08 ryoji
@@ -731,6 +806,17 @@ HWND CEditWnd::Create(
 
 	//デフォルトのIMEモード設定
 	GetDocument()->m_cDocEditor.SetImeMode( GetDocument()->m_cDocType.GetDocumentAttribute().m_nImeState );
+
+	//プロパティ管理
+	CEditApp::getInstance()->m_pcPropertyManager = m_pcPropertyManager.get();
+	m_pcPropertyManager->Create(
+		hWnd,
+		&GetIcons(),
+		&GetMenuDrawer()
+	);
+
+	// ウィンドウサイズを独自指定した場合、自前でShowWindowする。
+	if (needShowWindow) ::ShowWindow(hWnd, SW_SHOW);
 
 	return GetHwnd();
 }
@@ -1048,55 +1134,67 @@ void CEditWnd::EndLayoutBars( BOOL bAdjust/* = TRUE*/ )
 	}
 }
 
-static inline BOOL MyIsDialogMessage(HWND hwnd, MSG* msg)
+/*!
+ * @brief 編集ウィンドウのメッセージループ
+ *
+ * @returns 終了コード
+ *
+ * @date 2004/02/17 Moca GetMessageのエラーチェックを追加
+ */
+EAppExitCode CEditWnd::MessageLoop() const
 {
-	if(hwnd==nullptr)return FALSE;
-	return ::IsDialogMessage(hwnd, msg);
-}
+	const auto hWnd = GetHwnd();
+	DarkMode::setDarkWndNotifySafeEx(hWnd, false, true);
 
-//複数プロセス版
-/* メッセージループ */
-//2004.02.17 Moca GetMessageのエラーチェック
-void CEditWnd::MessageLoop( void )
-{
-	MSG	msg;
-	int ret;
+	// constメソッド内では非const参照できないので無理矢理ローカル定義する
+	auto& m_cToolbar = GetEditWnd().m_cToolbar;
 
-	auto hWndDM = GetHwnd();
-	DarkMode::setDarkWndNotifySafeEx(hWndDM, false, true);
+	// メッセージを受け取るためのMSG構造体
+	MSG	msg{};
 
-	while(GetHwnd())
+	// メッセージループ
+	for (;;)
 	{
-		//メッセージ取得
-		ret = GetMessage(&msg,nullptr,0,0);
-		if(ret== 0)break; //WM_QUIT
-		if(ret==-1)break; //GetMessage失敗
+		// 次のメッセージが来るまで無限に待機する
+		const auto result = ::GetMessageW(&msg, nullptr, 0, 0);
 
-		//ダイアログメッセージ
-		     if( MyIsDialogMessage( CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),	&msg ) ){}	//!< 印刷プレビュー 操作バー
-		else if( MyIsDialogMessage( m_cDlgFind.GetHwnd(),								&msg ) ){}	//!<「検索」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgFuncList.GetHwnd(),							&msg ) ){}	//!<「アウトライン」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgReplace.GetHwnd(),							&msg ) ){}	//!<「置換」ダイアログ
-		else if( MyIsDialogMessage( m_cDlgGrep.GetHwnd(),								&msg ) ){}	//!<「Grep」ダイアログ
-		else if( MyIsDialogMessage( m_cHokanMgr.GetHwnd(),								&msg ) ){}	//!<「入力補完」
-		else if( m_cToolbar.EatMessage(&msg ) ){ }													//!<ツールバー
-		//アクセラレータ
-		else{
+		//WM_QUITが来たらループを抜ける
+		if (0 == result) break;
+
+		//GetMessageW処理中のエラーを検出したら例外を投げる
+		if (result < 0) throw cxx::make_system_error("GetMessageW() failed");
+
+		// モードレスダイアログのハンドルを取得する
+		const std::array modelessDlgs = {
+			CPrintPreview::GetPrintPreviewBarHANDLE_Safe(m_pPrintPreview.get()),
+			m_cDlgFind.GetHwnd(),
+			m_cDlgFuncList.GetHwnd(),
+			m_cDlgReplace.GetHwnd(),
+			m_cHokanMgr.GetHwnd(),
+		};
+
+		if (const auto handled = std::ranges::any_of(modelessDlgs, [&msg] (HWND hWndDlg) {
+				return
+					hWndDlg &&
+					::IsDialogMessageW(hWndDlg, &msg);
+			});
+			handled ||
+			// ツールバーの検索ボックス
+			m_cToolbar.EatMessage(&msg) ||
 			// 補完ウィンドウが表示されているときはキーボード入力を先に処理させる（カーソル移動／決定／キャンセルの処理）
-			if (WM_KEYDOWN == msg.message &&
-				GetActiveView().m_bHokan &&
-				-1 == m_cHokanMgr.KeyProc(msg.wParam, msg.lParam)) {
-						continue;	// 補完ウィンドウが処理を実行した
-			}
+			CHokanMgr::EatMessage(msg) ||
+			//アクセラレータ
+			m_hAccel && ::TranslateAcceleratorW(msg.hwnd, m_hAccel, &msg))
+		{
+			continue;
+		}
 
-			if( m_hAccel && TranslateAccelerator( msg.hwnd, m_hAccel, &msg ) ){}
-			//通常メッセージ
-			else{
 				TranslateMessage( &msg );
 				DispatchMessage( &msg );
-			}
-		}
 	}
+
+	// PostQuitMessageに指定された終了コードを返す
+	return static_cast<EAppExitCode>(msg.wParam);
 }
 
 LRESULT CEditWnd::DispatchEvent(
@@ -1106,7 +1204,7 @@ LRESULT CEditWnd::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
-	const auto hWnd = GetHwnd();
+	const auto hWnd = hwnd;
 
 	int					nRet;
 	LPNMHDR				pnmh;
@@ -1250,9 +1348,9 @@ LRESULT CEditWnd::DispatchEvent(
 		// 右ドロップファイルの受け入れ設定／解除	// 2009.01.09 ryoji
 		// Note: DragAcceptFilesを適用した左ドロップについては Enable/Disable で自動的に受け入れ設定／解除が切り替わる
 		if( (BOOL)wParam ){
-			m_pcDropTarget->Register_DropTarget( m_hWnd );
+			m_DropTargetWnd->RegisterDropTarget();
 		}else{
-			m_pcDropTarget->Revoke_DropTarget();
+			m_DropTargetWnd->RevokeDropTarget();
 		}
 		return 0L;
 
@@ -1303,7 +1401,8 @@ LRESULT CEditWnd::DispatchEvent(
 				m_pShareData->m_Common.m_sWindow.m_nWinPosY = rcWin.top;
 		}
 		// To Here 2004.05.13 Moca ウィンドウ位置継承
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
+
 	//To here 2003.05.31 MIK
 	case WM_SYSCOMMAND:
 		// タブまとめ表示では閉じる動作はオプション指定に従う	// 2006.02.13 ryoji
@@ -1515,7 +1614,7 @@ LRESULT CEditWnd::DispatchEvent(
 
 		/* ドロップされたファイルを受け入れるのを解除 */
 		::DragAcceptFiles( hwnd, FALSE );
-		m_pcDropTarget->Revoke_DropTarget();	// 右ボタンドロップ用	// 2008.06.20 ryoji
+		m_DropTargetWnd = nullptr;
 
 		/* 編集ウィンドウリストからの削除 */
 		CAppNodeGroupHandle(GetHwnd()).DeleteEditWndList( GetHwnd() );
@@ -1527,6 +1626,9 @@ LRESULT CEditWnd::DispatchEvent(
 
 		/* 編集ウィンドウオブジェクトからのオブジェクト削除要求 */
 		::PostMessageAny( m_pShareData->m_sHandles.m_hwndTray, MYWM_DELETE_ME, 0, 0 );
+
+		/* プラグイン解放 */
+		CPluginManager::getInstance()->UnloadAllPlugin();
 
 		/* Windows にスレッドの終了を要求します */
 		::PostQuitMessage( 0 );
@@ -2038,12 +2140,12 @@ LRESULT CEditWnd::DispatchEvent(
 			return 0L;
 		}
 		::KillTimer( GetHwnd(), IDT_CAPTION );	// タイマーが残っていたら削除する（遅延タイトルを破棄）
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	case WM_TIMER:
 		if( !OnTimer(wParam, lParam) )
 			return 0L;
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 
 	default:
 #if 0
@@ -2053,8 +2155,11 @@ LRESULT CEditWnd::DispatchEvent(
 		}
 // >> by aroka
 #endif
-		return DefWindowProc( hwnd, uMsg, wParam, lParam );
+		break;
 	}
+
+	//あとはデフォルトに任せる
+	return Base::DispatchEvent(hWnd, uMsg, wParam, lParam);
 }
 
 /*! 終了時の処理

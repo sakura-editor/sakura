@@ -11,13 +11,14 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2012, Uchi
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgGrep.h"
+#include "basis/GrepInfo.h"
 #include "agent/CGrepAgent.h"
 #include "grep/CGrepEnumKeys.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
@@ -54,6 +55,7 @@ const DWORD p_helpids[] = {	//12000
 	IDC_COMBO_FOLDER,				HIDC_GREP_COMBO_FOLDER,				//フォルダー
 	IDC_COMBO_EXCLUDE_FILE,			HIDC_GREP_COMBO_EXCLUDE_FILE,		//除外ファイル
 	IDC_COMBO_EXCLUDE_FOLDER,		HIDC_GREP_COMBO_EXCLUDE_FOLDER,		//除外フォルダー
+	IDC_CHK_EXCLUDE_FILE_REGEXP,	HIDC_GREP_CHK_EXCLUDE_FILE_REGEXP,	//除外ファイルの正規表現
 	IDC_BUTTON_FOLDER_UP,			HIDC_GREP_BUTTON_FOLDER_UP,			//上
 	IDC_RADIO_OUTPUTLINE,			HIDC_GREP_RADIO_OUTPUTLINE,			//結果出力：行単位
 	IDC_RADIO_OUTPUTMARKED,			HIDC_GREP_RADIO_OUTPUTMARKED,		//結果出力：該当部分
@@ -94,57 +96,18 @@ CDlgGrep::CDlgGrep()
 }
 
 /*
-	@brief ファイル/フォルダーの除外パターンをエスケープする必要があるか判断する
-	@param[in]     pattern チェックするパターン
-	@return        true  エスケープする必要がある
-	@return        false エスケープする必要がない
-	@author m-tmatma
-*/
-static bool IsEscapeRequiredForExcludePattern(const std::wstring & pattern)
-{
-	const auto NotFound = std::wstring::npos;
-	if (pattern.find(L'!') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L'#') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L'\x20') != NotFound)
-	{
-		return true;
-	}
-	if (pattern.find(L';') != NotFound)
-	{
-		return true;
-	}
-	return false;
-}
-
-/*
-	@brief エスケープパターンを取得する
-	@param[in] pattern        エスケープ対象文字列
-	@author m-tmatma
-*/
-static LPCWSTR GetEscapePattern(const std::wstring& pattern)
-{
-	return IsEscapeRequiredForExcludePattern(pattern) ? L"\"" : L"";
-}
-
-/*
 	@brief フォルダーの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFolder Grep ダイアログで指定されたフォルダーの除外パターン
+	@note 引用符で囲み直さず、入力されたまま '#' の後ろに連結する (例: "a,b" → ;#"a,b")
 	@author m-tmatma
 */
 static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFolder)
 {
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFolder.GetStringPtr());
-	for (const auto& pattern : patterns)
+	for (const auto& pattern : CGrepEnumKeys::SplitPatternKeepQuotes(cmWorkExcludeFolder.GetStringPtr()))
 	{
-		LPCWSTR escapeStr = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L";%s#%s%s", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L";#");
+		cFilePattern.AppendString(pattern.data(), pattern.size());
 	}
 }
 
@@ -152,15 +115,15 @@ static void AppendExcludeFolderPatterns(CNativeW& cFilePattern, const CNativeW& 
 	@brief ファイルの除外パターンを詰める
 	@param[in,out] cFilePattern        "-GFILE=" に指定する引数用のバッファ (このバッファの末尾に追加する)
 	@param[in]     cmWorkExcludeFile Grep ダイアログで指定されたファイルの除外パターン
+	@note 引用符で囲み直さず、入力されたまま '!' の後ろに連結する (例: "a,b.txt" → ;!"a,b.txt")
 	@author m-tmatma
 */
 static void AppendExcludeFilePatterns(CNativeW& cFilePattern, const CNativeW& cmWorkExcludeFile)
 {
-	auto patterns = CGrepEnumKeys::SplitPattern(cmWorkExcludeFile.GetStringPtr());
-	for (const auto& pattern : patterns)
+	for (const auto& pattern : CGrepEnumKeys::SplitPatternKeepQuotes(cmWorkExcludeFile.GetStringPtr()))
 	{
-		LPCWSTR escapeStr = GetEscapePattern(pattern);
-		cFilePattern.AppendStringF(L";%s!%s%s", escapeStr, pattern.c_str(), escapeStr);
+		cFilePattern.AppendString(L";!");
+		cFilePattern.AppendString(pattern.data(), pattern.size());
 	}
 }
 
@@ -180,6 +143,33 @@ CNativeW CDlgGrep::GetPackedGFileString() const
 	AppendExcludeFilePatterns( cmGFileString, cmExcludeFiles );
 
 	return cmGFileString;
+}
+
+/*!
+ * ダイアログの設定内容から Grep 実行の入力一式を作る
+ *
+ * @return Grep を1回実行するのに必要な入力の全体
+ * @note 置換に固有の項目は CDlgGrepReplace::MakeGrepInfo() で足す。
+ */
+GrepInfo CDlgGrep::MakeGrepInfo() const
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString( m_strText.c_str() );
+	gi.cmGrepFile = GetPackedGFileString();
+	gi.cmGrepFolder.SetString( m_szFolder );
+	gi.sGrepSearchOption = m_sSearchOption;
+	gi.bGrepCurFolder = false;
+	gi.bGrepStdout = false;
+	gi.bGrepHeader = true;
+	gi.bGrepSubFolder = ( FALSE != m_bSubFolder );
+	gi.nGrepCharSet = m_nGrepCharSet;
+	gi.nGrepOutputStyle = m_nGrepOutputStyle;
+	gi.nGrepOutputLineType = m_nGrepOutputLineType;
+	gi.bGrepOutputFileOnly = m_bGrepOutputFileOnly;
+	gi.bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
+	gi.bGrepSeparateFolder = m_bGrepSeparateFolder;
+	gi.bGrepExceptFileRegexp = m_bGrepExceptFileRegexp;
+	return gi;
 }
 
 /*!
@@ -247,6 +237,7 @@ int CDlgGrep::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCur
 	m_bGrepOutputFileOnly = m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly;
 	m_bGrepOutputBaseFolder = m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder;
 	m_bGrepSeparateFolder = m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder;
+	m_bGrepExceptFileRegexp = m_pShareData->m_Common.m_sSearch.m_bGrepExceptFileRegexp;
 
 	// 2013.05.21 コンストラクタからDoModalに移動
 	// m_strText は呼び出し元で設定済み
@@ -714,6 +705,7 @@ void CDlgGrep::SetData( void )
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_FILE_ONLY, m_bGrepOutputFileOnly );
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_BASE_PATH, m_bGrepOutputBaseFolder );
 	CheckDlgButtonBool( GetHwnd(), IDC_CHECK_SEP_FOLDER, m_bGrepSeparateFolder );
+	CheckDlgButtonBool( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP, m_bGrepExceptFileRegexp );
 
 	// フォルダーの初期値をカレントフォルダーにする
 	::CheckDlgButton( GetHwnd(), IDC_CHK_DEFAULTFOLDER, m_pShareData->m_Common.m_sSearch.m_bGrepDefaultFolder );
@@ -754,6 +746,7 @@ void CDlgGrep::SetDataFromThisText( bool bChecked )
 	::EnableWindow( GetItemHwnd( IDC_CHK_SUBFOLDER ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FILEOPENDIR ),    bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FILE ),    bEnableControls );
+	::EnableWindow( GetItemHwnd( IDC_CHK_EXCLUDE_FILE_REGEXP ), bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_COMBO_EXCLUDE_FOLDER ),  bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_FOLDER_UP ),      bEnableControls );
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_CURRENTFOLDER ),  bEnableControls );
@@ -817,6 +810,7 @@ int CDlgGrep::GetData( void )
 	m_bGrepOutputFileOnly = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_FILE_ONLY );
 	m_bGrepOutputBaseFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_BASE_PATH );
 	m_bGrepSeparateFolder = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_SEP_FOLDER );
+	m_bGrepExceptFileRegexp = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHK_EXCLUDE_FILE_REGEXP );
 
 	/* 検索文字列 */
 	m_bSetText = ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, m_strText );;
@@ -852,6 +846,15 @@ int CDlgGrep::GetData( void )
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputFileOnly = m_bGrepOutputFileOnly;
 	m_pShareData->m_Common.m_sSearch.m_bGrepOutputBaseFolder = m_bGrepOutputBaseFolder;
 	m_pShareData->m_Common.m_sSearch.m_bGrepSeparateFolder = m_bGrepSeparateFolder;
+	m_pShareData->m_Common.m_sSearch.m_bGrepExceptFileRegexp = m_bGrepExceptFileRegexp;
+
+	// 引用符の閉じ忘れがあると、後ろに連結する除外パターンまで引用符の中に入ってしまう
+	if( CGrepEnumKeys::HasUnclosedQuote( m_szFile )
+	 || CGrepEnumKeys::HasUnclosedQuote( m_szExcludeFile )
+	 || CGrepEnumKeys::HasUnclosedQuote( m_szExcludeFolder ) ){
+		WarningMessage(	GetHwnd(), LS(STR_DLGGREP_QUOTE_ERROR) );
+		return FALSE;
+	}
 
 	if( m_szFile[0] != '\0' ) {
 		CGrepEnumKeys enumKeys;

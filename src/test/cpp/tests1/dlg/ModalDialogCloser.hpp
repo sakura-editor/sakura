@@ -9,11 +9,16 @@
 #include "cxx/ResourceHolder.hpp"
 #include "dlg/CDlgOpenFile.h"
 
+#include "CSelectLang.h"
+
 #include <deque>
 #include <exception>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
+#include <string>
+#include <string_view>
 
 namespace dialog {
 
@@ -24,7 +29,7 @@ struct ModalDialogCloserTestPeer;
  *
  * WindowsHookを使ってダイアログの初期表示を検出して閉じるもの。
  */
-class ModalDialogCloser final {
+class ModalDialogCloser {
 private:
 	friend struct ModalDialogCloserTestPeer;
 
@@ -33,7 +38,7 @@ private:
 	using Me = ModalDialogCloser;
 
 	static constexpr UINT TIMER_ID_FIRST_IDLE = 9999;
-	static constexpr UINT FALLBACK_DELAY_MILLIS = 500;
+	static constexpr UINT SNOOZE_INTERVAL = 10;
 
 	enum class State {
 		Pending,
@@ -58,14 +63,16 @@ private:
 		_In_ LPARAM lParam
 	);
 
-	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 	static bool ExecuteAction(HWND hWnd) noexcept;
+	static void CALLBACK TimerProc(HWND hWnd, UINT, UINT_PTR idEvent, DWORD);
 
 public:
+	static bool IsHandled() noexcept;
+
 	ModalDialogCloser(const std::optional<std::wstring>& optTitle, const std::function<void(HWND)>& action);
 
 	ModalDialogCloser(int dialogTitleResourceId, const std::function<void(HWND)>& action);
-	ModalDialogCloser(const std::optional<std::wstring>& optTitle, int nIDDlgItem = IDCANCEL);
+	explicit ModalDialogCloser(const std::optional<std::wstring>& optTitle = std::nullopt, int nIDDlgItem = IDCANCEL);
 
 	ModalDialogCloser(const Me&) = delete;
 	Me& operator=(const Me&) = delete;
@@ -83,40 +90,28 @@ private:
 	bool m_TimerActive = false;
 };
 
-} // namespace dialog
+/*!
+ * プロパティシートテスト用のクラス
+ */
+class PropertySheetCloser : public ModalDialogCloser
+{
+public:
+	explicit PropertySheetCloser(const std::function<void(HWND, HWND)>& action)
+		: ModalDialogCloser(std::nullopt, [action] (HWND hWndDlg) {
+			// アクティブなプロパティーシートのハンドルを取得する 
+			const auto hWndPage = HWND(::SendMessageW(hWndDlg, PSM_GETCURRENTPAGEHWND, 0L, 0L));
 
-struct MockCDlgOpenFile final : public CDlgOpenFile {
-	MOCK_METHOD2(DoModal_GetOpenFileName, bool(std::span<WCHAR>, EFilter));
-	MOCK_METHOD1(DoModal_GetSaveFileName, bool(std::span<WCHAR>));
-	MOCK_METHOD3(DoModalOpenDlg, bool(SLoadInfo*, std::vector<std::wstring>*, bool));
-	MOCK_METHOD2(DoModalSaveDlg, bool(SSaveInfo*, bool));
+			action(hWndDlg, hWndPage);
+		})
+	{
+	}
 
-	static inline std::vector<std::wstring> gm_Files;
-
-	static void _Cleanup([[maybe_unused]] const MockCDlgOpenFile*);
-
-	static bool _GetOpenFileName(
-		std::span<WCHAR> szPath,
-		EFilter eAddFileter
-	);
-
-	static bool _GetSaveFileName(
-		std::span<WCHAR> szPath
-	);
-
-	static bool _DoModalOpenDlg(
-		SLoadInfo* pLoadInfo,
-		std::vector<std::wstring>* pFilenames,
-		bool bOptions [[maybe_unused]]
-	);
-
-	static bool _DoModalSaveDlg(
-		SSaveInfo* pSaveInfo,
-		bool bSimpleMode [[maybe_unused]]
-	);
-
-	explicit MockCDlgOpenFile();
-
-	using Holder = cxx::ResourceHolder<&_Cleanup>;
-	Holder m_Holder{ this };
+	explicit PropertySheetCloser(int button = PSBTN_CANCEL)
+		: PropertySheetCloser([button] (HWND hWndDlg, HWND) {
+			::SendMessageW(hWndDlg, PSM_PRESSBUTTON, button, 0L);
+		})
+	{
+	}
 };
+
+} // namespace dialog

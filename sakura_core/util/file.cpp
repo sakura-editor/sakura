@@ -3,7 +3,7 @@
 	Copyright (C) 2002, SUI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,19 +11,21 @@
 #include "StdAfx.h"
 #include "file.h"
 
+#include "_main/CProcessFactory.h"
+
 #include <Shlwapi.h>
 
 #include <regex>
 #include <string_view>
 
 #include "charset/codechecker.h"
+#include "util/file/FileHandle.hpp"
 #include "util/module.h"
+#include "util/os.h"
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 
 //! ファイル名に使えない文字(ADSを使えるように':'は除外する)
 static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
@@ -41,19 +43,34 @@ bool fexist(const std::filesystem::path& path) noexcept
 
 /*!
  * パスがファイル名に使えない文字を含んでいるかチェックする
- * @param[in] path チェック対象のパス
+ *
+ * @param[in] szPath チェック対象のパス文字列
  * @retval true  パスはファイル名に使えない文字を含んでいる
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
-bool IsInvalidFilenameChars(const std::filesystem::path& path) noexcept
+bool IsInvalidFilenameChars(
+	std::wstring_view szPath
+)
 {
+	// 引数からパスオブジェクトを作成する
+	std::filesystem::path path{ szPath };
+
 	// 文字列中のファイル名を抽出する
 	if (!path.has_filename()) {
 		return false;
 	}
+	
+	// ファイル名を抽出する
+	if (path.has_parent_path()) {
+		// ファイル名のみのパスオブジェクトにする
+		path = path.filename();
+	}
+
+	// パスオブジェクトから文字列を取り出す
+	const auto& filename = path.native();
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
-	return path.filename().wstring().find_first_of(g_InvalidChars) != std::wstring::npos;
+	return std::wstring::npos != filename.find_first_of(g_InvalidChars);
 }
 
 /*!	ファイル名の切り出し
@@ -267,6 +284,8 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 	return;
 }
 
+namespace cxx {
+
 void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 {
 	const auto cchFolder = std::size(folder);
@@ -289,6 +308,8 @@ void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 	return;
 }
 
+} // namespace cxx
+
 //! パスらしき文字列の末尾に'\\'または'/'がなかったら'\\'を付加する
 std::wstring AddLastYenPath(std::wstring_view path)
 {
@@ -299,6 +320,22 @@ std::wstring AddLastYenPath(std::wstring_view path)
 	if (auto c = ret.back(); !(c == L'\\' || c == L'/')) {
 		ret.append(L"\\");
 	}
+	return ret;
+}
+
+/*!
+	パスの区切りの / を \ に置き換える
+
+	ファイルダイアログの「ファイル名」に / 区切りのパスを入力したときに使う(Issue #2727)。
+	URL(:// を含むもの)は変えない。
+*/
+std::wstring ReplaceSlashToYen(std::wstring_view path)
+{
+	std::wstring ret{ path };
+	if (ret.find(L"://") != std::wstring::npos) {
+		return ret;
+	}
+	std::ranges::replace(ret, L'/', L'\\');
 	return ret;
 }
 
@@ -475,13 +512,19 @@ int CalcDirectoryDepth(
  */
 std::filesystem::path GetExeFileName()
 {
-	// メモリ確保
-	constexpr const size_t cchPath = decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1;
-	std::wstring path(cchPath, L'\0');
-
 	// sakura.exe のパスを取得して返却
-	::GetModuleFileName(nullptr, path.data(), (DWORD)path.capacity());
-	return path.data();
+	const auto path = cxx::GetModuleFileNameW(nullptr);
+	if (const auto cchMaxPath = decltype(DLLSHAREDATA::m_szIniFile)::size();
+		cchMaxPath <= path.length())
+	{
+		// EXEパスが長過ぎる場合、例外を投げる
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1)
+		);
+	}
+
+	return path;
 }
 
 /*!
@@ -625,6 +668,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
  * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
  * @param [in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
  */
+// TODO: いつか廃止する
 std::filesystem::path GetTempFilePath(
 	std::wstring_view prefix,
 	const std::optional<std::filesystem::path>& optTempDir
@@ -729,35 +773,36 @@ bool IsDirectory(LPCWSTR pszPath)
 	return false;
 }
 
-/*!	ファイルの更新日時を取得
-
-	@return true: 成功, false: 失敗
-*/
-bool GetLastWriteTimestamp(
-	const WCHAR*	pszFileName,	//!< [in]  ファイルのパス
-	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
+/*!
+ * @brief ファイルの更新日時を取得
+ *
+ * @param[in] filename ファイルのパス
+ * @returns ファイルの更新日時
+ */
+FILETIME GetLastWriteTime(
+	std::wstring_view	fileName	//!< [in]  ファイルのパス
 )
 {
+	using namespace cxx;
+
 	// dwDesiredAccess に 0 を指定する事で読み取りアクセスが拒否されてしまうような場合でも、
 	// ファイル自体にはアクセスせずにメタデータの読み取りが可能
 	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
 	// If this parameter is zero, the application can query certain metadata such as file, directory, or device attributes without accessing that file or device, even if GENERIC_READ access would have been denied.
-	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, nullptr, OPEN_EXISTING, 0, nullptr);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	FILETIME ftLastWrite;
-	BOOL ret = ::GetFileTime(hFile, nullptr, nullptr, &ftLastWrite);
-	::CloseHandle(hFile);
-	if (ret == 0)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	pcFileTime->SetFILETIME(ftLastWrite);
-	return true;
+	const auto hFile = FileHandle::OpenExisting(
+		fileName,
+		0,
+		0
+	);
+
+	FILETIME ftLastWrite{};
+	hFile.GetFileTime(
+		nullptr,
+		nullptr,
+		&ftLastWrite
+	);
+
+	return ftLastWrite;
 }
 
 // -----------------------------------------------------------------------------

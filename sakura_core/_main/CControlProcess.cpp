@@ -16,16 +16,20 @@
 */
 
 #include "StdAfx.h"
-#include "CControlProcess.h"
-#include "CControlTray.h"
-#include "env/DLLSHAREDATA.h"
-#include "CCommandLine.h"
-#include "env/CShareData_IO.h"
+#include "_main/CControlProcess.h"
+
+#include "apiwrap/DarkMode.h"
+#include "basis/make_initialization_error.hpp"
 #include "debug/CRunningTimer.h"
 #include "env/CShareData.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
+#include "env/CShareData_IO.h"
+#include "env/DLLSHAREDATA.h"
+#include "util/os.h"
+#include "util/sync/MutexHandle.hpp"
+
 #include "config/system_constants.h"
-#include "apiwrap/DarkMode.h"
+
+#include "sakura_rc.h"
 
 //-------------------------------------------------
 
@@ -116,16 +120,26 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
 	@date 2013.03.20 novice コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 */
-bool CControlProcess::InitializeProcess()
+bool CControlProcess::InitializeProcess(
+	int nCmdShow [[maybe_unused]] // 指定を無視して非表示で起動する
+)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( nullptr, FALSE, GSTR_MUTEX_SAKURA );
-	if( nullptr == m_hMutex ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+	try
+	{
+		// ミューテックスを作成する
+		m_hMutex = MutexHandle::CreateMutexW(nullptr, FALSE, GSTR_MUTEX_SAKURA);
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 
 	const auto pszProfileName = GetProfileName();
@@ -141,25 +155,40 @@ bool CControlProcess::InitializeProcess()
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
-	m_hMutexCP = ::CreateMutex( nullptr, TRUE, strCtrlProcEvent.c_str() );
-	if( nullptr == m_hMutexCP ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+	try
+	{
+		// ミューテックスを作成する
+		m_hMutexCP = MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
 	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
-		return false;
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 	
-	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess() ){
-		return false;
+	if (ERROR_ALREADY_EXISTS == ::GetLastError())
+	{
+		throw basis::make_initialization_error(
+			L"",
+			static_cast<int>(EAppExitCode::Exited)
+		);
 	}
 
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, int(std::size(szDir)) );
-	::SetCurrentDirectory( szDir );
+	const auto sysDir = cxx::GetSystemDirectoryW();
+	if (const auto curDir = cxx::GetCurrentDirectoryW();
+		curDir != sysDir)
+	{
+		// カレントディレクトリを変更する
+		cxx::SetCurrentDirectoryW(sysDir);
+	}
+
+	/* 共有メモリを初期化 */
+	GetShareData().InitShareData();
 
 	/* 共有データのロード */
 	if( !CShareData_IO::LoadShareData() ){
@@ -177,7 +206,7 @@ bool CControlProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcTray = new CControlTray;
+	m_pcTray = std::make_unique<CControlTray>();
 
 	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
@@ -187,7 +216,7 @@ bool CControlProcess::InitializeProcess()
 		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
-	SetMainWindow(hwnd);
+	SetMainWindow(*m_pcTray);
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
@@ -195,45 +224,3 @@ bool CControlProcess::InitializeProcess()
 
 	return true;
 }
-
-/*!
-	@brief コントロールプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CControlProcess::MainLoop()
-{
-	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
-}
-
-/*!
-	@brief コントロールプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
-*/
-void CControlProcess::OnExitProcess()
-{
-	GetDllShareData().m_sHandles.m_hwndTray = nullptr;
-}
-
-CControlProcess::~CControlProcess()
-{
-	delete m_pcTray;
-
-	if( m_hMutexCP ){
-		::ReleaseMutex( m_hMutexCP );
-	}
-	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
-};

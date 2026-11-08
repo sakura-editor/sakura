@@ -90,7 +90,7 @@ set_target_properties(darkmodelib
 )
 
 install(FILES
-  "${DARKMODELIB_ROOT}/include/DarkModeSubclass.h"
+  "${DARKMODELIB_ROOT}/include/Darkmodelib.h"
   DESTINATION include
 )
 
@@ -112,7 +112,7 @@ configure_package_config_file(
 
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/darkmodelib-config-version.cmake"
-  VERSION 0.48.0
+  VERSION 0.130.0
   COMPATIBILITY ExactVersion
 )
 

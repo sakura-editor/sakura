@@ -33,22 +33,47 @@ const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
-struct MacroFuncInfoEx
-{
-	int			m_nArgMinSize;
-	int			m_nArgMaxSize;
-	VARTYPE*	m_pVarArgEx;
+//! マクロの読み込み・実行結果
+enum class EMacroResult {
+	Success,
+	Failure,
+	EncodingError,
 };
 
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	int				m_nFuncID;
-	const WCHAR*	m_pszFuncName;
-	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
-	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
-	MacroFuncInfoEx*	m_pData;
+	static constexpr auto MaxArgs = 8;
+	using SVarTypeArr = std::array<VARTYPE, MaxArgs>;
+
+	MacroFuncInfo() = default;
+
+	constexpr MacroFuncInfo(
+		int funcID,
+		const WCHAR* funcName,
+		std::initializer_list<VARTYPE> arguments,
+		VARTYPE result,
+		std::nullptr_t = nullptr
+	)
+		: m_nFuncID{ funcID }
+		, m_pszFuncName{ funcName }
+		, m_varResult{ result }
+	{
+		if (std::size(m_varArguments) < arguments.size()) throw std::overflow_error("Too many arguments for MacroFuncInfo");
+
+		std::copy_n(
+			arguments.begin(),
+			std::min(arguments.size(), std::size(m_varArguments)),
+			m_varArguments.begin()
+		);
+	}
+
+	int				m_nFuncID = 0;
+	LPCWSTR			m_pszFuncName = nullptr;
+	SVarTypeArr		m_varArguments{};			//!< 引数型の配列
+	VARTYPE			m_varResult = VT_EMPTY;		//!< 戻り値の型 VT_EMPTYならprocedureということで
 };
+
 //マクロ関数情報構造体配列
 typedef MacroFuncInfo* MacroFuncInfoArray;
 
@@ -83,7 +108,7 @@ public:
 	void ClearAll( void );	/* キーマクロのバッファをクリアする */
 
 	//! キーボードマクロの実行
-	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
+	EMacroResult Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
@@ -118,7 +143,8 @@ public:
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+	EMacroResult Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+
 	BOOL Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath );
 	void UnloadAll(void);
 

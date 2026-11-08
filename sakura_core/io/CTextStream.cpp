@@ -12,13 +12,10 @@
 #include "charset/CUtf8.h"		// move from CCodeMediator.h	2010/6/14 Uchi
 #include "basis/CEol.h"
 #include "util/file.h"			// _IS_REL_PATH
+#include "util/tchar_convert.h"
 #include "util/module.h"
 
-namespace cxx {
-
-std::wstring_view MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer);
-
-} // namespace cxx
+#include <stdexcept>
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     CTextInputStream                        //
@@ -96,7 +93,13 @@ void CTextInputStream::ReadLineW(std::wstring& line)
 	const auto codePage = m_bIsUtf8 ? CP_UTF8 : CP_SJIS;	// UTF-8ならCP_UTF8、そうでなければShift_JIS(CP932)とする
 
 	// 変換を実行する
-	cxx::MultiByteToWideChar(codePage, std::string_view{ m_Buffer.begin(), it }, line);
+	try {
+		cxx::MultiByteToWideChar(codePage, std::string_view{ m_Buffer.begin(), it }, line);
+	}
+	catch (const std::invalid_argument&) {
+		// 呼び出し元が文字コード変換の失敗を他の不正引数と区別できるようにする
+		throw CError_TextEncoding();
+	}
 }
 
 /*!
@@ -183,19 +186,6 @@ void CTextOutputStream::WriteString(
 			break;
 		}
 	}
-}
-
-void CTextOutputStream::WriteF(const wchar_t* format, ...)
-{
-	//テキスト整形 -> buf
-	static wchar_t buf[16*1024]; //$$ 確保しすぎかも？
-	va_list v;
-	va_start(v,format);
-	auto_vsprintf_s(buf, std::size(buf),format,v);
-	va_end(v);
-
-	//出力
-	WriteString(buf);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

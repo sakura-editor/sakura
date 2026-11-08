@@ -11,13 +11,14 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2010, ryoji
 	Copyright (C) 2014, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "dlg/CDlgGrepReplace.h"
+#include "basis/GrepInfo.h"
 #include "view/CEditView.h"
 #include "func/Funccode.h"		// Stonee, 2001/03/12
 #include "util/module.h"
@@ -73,6 +74,21 @@ CDlgGrepReplace::CDlgGrepReplace()
 	return;
 }
 
+/*!
+ * 置換に固有の項目を足した Grep 実行の入力一式を作る
+ *
+ * @return Grep置換を1回実行するのに必要な入力の全体
+ */
+GrepInfo CDlgGrepReplace::MakeGrepInfo() const
+{
+	GrepInfo gi = CDlgGrep::MakeGrepInfo();
+	gi.cmGrepRep.SetString( m_strText2.c_str() );
+	gi.bGrepReplace = true;
+	gi.bGrepPaste = m_bPaste;
+	gi.bGrepBackup = m_bBackup;
+	return gi;
+}
+
 /* モーダルダイアログの表示 */
 int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR* pszCurrentFilePath, LPARAM lParam )
 {
@@ -81,6 +97,7 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	m_nGrepCharSet = m_pShareData->m_Common.m_sSearch.m_nGrepCharSet;			// 文字コードセット
 	m_nGrepOutputLineType = m_pShareData->m_Common.m_sSearch.m_nGrepOutputLineType;	// 行を出力するか該当部分だけ出力するか
 	m_nGrepOutputStyle = m_pShareData->m_Common.m_sSearch.m_nGrepOutputStyle;	// Grep: 出力形式
+	m_bGrepExceptFileRegexp = m_pShareData->m_Common.m_sSearch.m_bGrepExceptFileRegexp;	// 除外ファイルを正規表現で指定する
 	m_bPaste = false;
 	m_bBackup = m_pShareData->m_Common.m_sSearch.m_bGrepBackup;
 

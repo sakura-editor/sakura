@@ -17,11 +17,13 @@
 */
 
 #include "StdAfx.h"
-#include "CProcessFactory.h"
-#include "CControlProcess.h"
-#include "CNormalProcess.h"
-#include "CCommandLine.h"
-#include "CControlTray.h"
+#include "_main/CProcessFactory.h"
+
+#include "_main/CControlProcess.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
+#include "basis/primitive.h"
+
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
@@ -29,7 +31,12 @@
 #include "CSelectLang.h"
 #include "config/system_constants.h"
 
-class CProcess;
+CProcessFactory::CProcessFactory(
+	_In_opt_ HINSTANCE hInstance
+)
+	: m_hInstance(hInstance ? hInstance : G_AppInstance())
+{
+}
 
 /*!
 	@brief プロセスクラスを生成する
@@ -38,22 +45,43 @@ class CProcess;
 	適当なプロセスクラスを生成する。
 	
 	@param[in] hInstance インスタンスハンドル
-	@param[in] lpCmdLine コマンドライン文字列
+	@param[in] commandLine コマンドライン文字列
 	
 	@author aroka
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
+	std::wstring_view commandLine
+) const
 {
-	// 言語環境を初期化する
-	CSelectLang::InitializeLanguageEnvironment();
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _CommandLine{ commandLine };
 
-	if( !ProfileSelect( hInstance, lpCmdLine ) ){
+	// NUL終端文字列から文字列ポインターを取り出す
+	const auto lpCmdLine = _CommandLine.c_str();
+
+	//コマンドラインクラスのインスタンスを生成する
+	auto cmdLineHolder = std::make_unique<CCommandLine>();
+
+	auto& cCommandLine = *cmdLineHolder;
+
+	// 実行ファイル名を取得する
+	std::wstring exeFileName{ GetExeFileName() };
+	auto szExeFileName = exeFileName.data();
+	const auto cchExeFileName = static_cast<int>(exeFileName.length());
+
+	// 実行ファイル名をもとに漢字コードを固定する．
+	cCommandLine.ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+
+	// コマンドラインを解析する
+	cCommandLine.ParseCommandLine(lpCmdLine);
+
+	if (!ProfileSelect(cCommandLine))
+	{
 		return nullptr;
 	}
 
-	CProcess* process = nullptr;
 	if( !IsValidVersion() ){
 		return nullptr;
 	}
@@ -68,35 +96,27 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-
-			process = new CControlProcess( hInstance, lpCmdLine );
-
+		return std::make_unique<CControlProcess>(m_hInstance, std::move(cmdLineHolder));
 	}
 	else{
-
-			process = new CNormalProcess( hInstance, lpCmdLine );
-
+		return std::make_unique<CNormalProcess>(m_hInstance,  std::move(cmdLineHolder));
 	}
-	return process;
 }
 
-bool CProcessFactory::ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine) const
+bool CProcessFactory::ProfileSelect(
+	CCommandLine& cCommandLine
+) const
 {
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(nullptr, szExeFileName, int(std::size(szExeFileName)));
-	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
-
-	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+	auto* pCommandLine = &cCommandLine;
 
 	// コマンドラインオプションから起動プロファイルを判定する
-	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
-	if( !profileSelected ){
+	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(pCommandLine);
+		!profileSelected)	// プロファイルが決まらなかった
+	{
+		// プロファイルマネージャを表示して選択させる
 		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, nullptr, 0 ) ){
-			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
-		}else{
+		if (HWND hWndParent = nullptr;
+			!dlgProf.DoModal(hWndParent, pCommandLine->GetProfileNameRef())) {
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
 	}

@@ -48,7 +48,7 @@
         - cmake.exe
           - ChmSourceConverter.exe : ヘルプファイルの文字コードを UTF-8 から Shift_JIS に変換する
           - pwsh.exe
-            - [help\CompileChm.ps1](../help/CompileChm.ps1)
+            - python.exe [src/main/py/compile_chm.py](../src/main/py/compile_chm.py)
               - hhc.exe (Visual Studio に同梱) : compiled HTML をビルドするコンパイラ。かなり古いツールであり、日本語 HTML をビルドするためには Windows のシステムロケールを日本語に変更する必要がある。
     - [build-installer.bat](../build-installer.bat)
         - ISCC.exe : [InnoSetup](https://www.jrsoftware.org/isinfo.php) でインストーラをビルドする

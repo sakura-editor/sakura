@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -200,9 +200,12 @@ namespace WCODE
 
 // 文字幅の動的計算用キャッシュ関連
 struct SCharWidthCache {
+	using SFaceName = StaticString<LF_FACESIZE>;
+
 	// 文字半角全角キャッシュ
-	StaticString<LF_FACESIZE> m_lfFaceName1;
-	StaticString<LF_FACESIZE> m_lfFaceName2;
+	SFaceName m_lfFaceName1{};
+	SFaceName m_lfFaceName2{};
+
 	std::array<short, 0x10000> m_nCharPxWidthCache;
 	int			m_nCharWidthCacheTest;				//cache溢れ検出
 };

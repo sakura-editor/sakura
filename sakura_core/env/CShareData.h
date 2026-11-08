@@ -37,7 +37,11 @@
 #include "CSelectLang.h"		// 2011.04.10 nasukoji
 #include "charset/charset.h"
 #include "util/design_template.h"
-#include "charset/charset.h"
+#include "util/file/FileMapping.hpp"
+
+#include <memory>
+#include <span>
+#include <vector>
 
 // 2010.04.19 Moca DLLSHAREDATA関連はDLLSHAREDATA.h等最低限必要な場所へ移動
 // CShareData.hは、自分のInterfaceしか提供しません。別にDLLSHAREDATA.hをincludeすること。
@@ -62,6 +66,12 @@ struct STypeConfig;
 */
 class CShareData : public TSingleInstance<CShareData>
 {
+private:
+	using FileMapping = cxx::FileMapping;
+	using MappedShareData = cxx::MappedFileView<DLLSHAREDATA*>;
+	using STypeConfigHolder = std::unique_ptr<STypeConfig>;
+	using STypeConfigArr = std::vector<STypeConfigHolder>;
+
 public:
 	CShareData();
 	~CShareData() override;
@@ -69,7 +79,9 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	bool InitShareData();	/* CShareDataクラスの初期化処理 */
+	void	InitShareData();
+	void	OpenShareData();
+
 	void RefreshString();	/* 言語選択後に共有メモリ内の文字列を更新する */
 	
 	//MRU系
@@ -87,9 +99,27 @@ public:
 	int			GetMacroFilename( int idx, WCHAR* pszPath, int nBufLen ); // idxで指定したマクロファイル名（フルパス）を取得する	//	Jun. 14, 2003 genta 引数追加．書式変更
 	bool		BeReloadWhenExecuteMacro(int idx) const;	//	idxで指定したマクロは、実行するたびにファイルを読み込む設定か？
 
-	//タイプ別設定(コントロールプロセス専用)
-	void CreateTypeSettings();
-	std::vector<STypeConfig*>& GetTypeSettings();
+	/*!
+	 * @brief タイプ別設定の配列(サイズ変更可能)を返す
+	 *
+	 * @note コントロールプロセス専用
+	 * @note 戻り値は auto& types で受けてください
+	 */
+	std::vector<STypeConfigHolder>& GetTypeSettings()
+	{
+		return m_TypeSettings;
+	}
+
+	/*!
+	 * @brief タイプ別設定の配列(サイズ変更不可)を返す
+	 *
+	 * @note コントロールプロセス専用
+	 * @note 戻り値は auto types で受けて大丈夫です
+	 */
+	std::span<STypeConfigHolder> GetTypeSettingArr()
+	{
+		return GetTypeSettings();
+	}
 
 	// 国際化対応のための文字列を変更する(コントロールプロセス専用)
 	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);
@@ -105,10 +135,10 @@ protected:
 
 	//	Jan. 30, 2005 genta 初期化関数の分割
 	void InitKeyword(DLLSHAREDATA* pShareData);
-	bool InitKeyAssign(DLLSHAREDATA* pShareData); // 2007.11.04 genta 起動中止のため値を返す
+	void	InitKeyAssign(DLLSHAREDATA& cShareData) const;
 	void RefreshKeyAssignString(DLLSHAREDATA* pShareData);
 	void	InitToolButtons(DLLSHAREDATA* pShareData) const;
-	void InitTypeConfigs(DLLSHAREDATA* pShareData, std::vector<STypeConfig*>& types);
+	void	InitTypeConfigs(DLLSHAREDATA* pShareData, STypeConfigArr& types);
 	void InitPopupMenu(DLLSHAREDATA* pShareData);
 
 public:
@@ -116,9 +146,14 @@ public:
 
 private:
 	CSelectLang m_cSelectLang;			// メッセージリソースDLL読み込み用（プロセスに1個）		// 2011.04.10 nasukoji
-	HANDLE			m_hFileMap = nullptr;
+
+	FileMapping		m_FileMapping{};
+	MappedShareData	m_MappedData{};
+
 	DLLSHAREDATA*	m_pShareData = nullptr;
-	std::vector<STypeConfig*>* 	m_pvTypeSettings = nullptr;	//	(コントロールプロセスのみ)
+
+	STypeConfigArr	m_TypeSettings{};	// タイプ別設定リスト（コントロールプロセス専用）
+
 	HWND			m_hwndTraceOutSource = nullptr;	// TraceOutA()起動元ウィンドウ（いちいち起動元を指定しなくてすむように）
 };
 
