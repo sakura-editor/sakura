@@ -63,14 +63,12 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 
 CHokanMgr::CHokanMgr()
 {
-	m_cmemCurWord.SetString(L"");
-
-	m_nCurKouhoIdx = -1;
-	m_bTimerFlag = TRUE;
+	return;
 }
 
 CHokanMgr::~CHokanMgr()
 {
+	return;
 }
 
 /* モードレスダイアログの表示 */
@@ -94,7 +92,7 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 	return;
 }
 
-void CHokanMgr::Hide( void )
+void CHokanMgr::Hide()
 {
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;

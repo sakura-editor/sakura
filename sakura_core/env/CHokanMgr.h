@@ -47,7 +47,8 @@ public:
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
 
-	void Hide( void );
+	void Hide();
+
 	/* 初期化 */
 	size_t Search(
 		POINT*			ppoWin,
@@ -66,11 +67,12 @@ public:
 		bool 			bHokanLoHiCase,
 		vector_ex<std::wstring>& 	vKouho
 	);
-//	void SetCurKouhoStr( void );
+
 	BOOL DoHokan(int nVKey);
 	void ChangeView(LPARAM pcEditView);/* モードレス時：対象となるビューの変更 */
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
+
 	BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnDestroy( void ) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
@@ -83,22 +85,20 @@ public:
 
 	static bool AddKouhoUnique(vector_ex<std::wstring>&, const std::wstring&);
 
-	CNativeW		m_cmemCurWord;
-	vector_ex<std::wstring>	m_vKouho;
-	int				m_nKouhoNum;
-
-	int				m_nCurKouhoIdx;
-
-	POINT			m_poWin;
-	int				m_nWinHeight;
-	int				m_nColumnWidth;
-	int				m_bTimerFlag;
-
-protected:
 	/*
 	||  実装ヘルパ関数
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+
+	CNativeW		m_cmemCurWord{ L"" };
+	vector_ex<std::wstring>	m_vKouho;
+
+	int				m_nCurKouhoIdx = -1;
+
+	POINT			m_poWin{};
+	int				m_nWinHeight = 0;
+	int				m_nColumnWidth = 0;
+	int				m_bTimerFlag = TRUE;
 };
 
 #endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */
