@@ -8,14 +8,15 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CDropTarget.h"
+#include "_os/CDropTarget.h"
+
 #include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
@@ -87,7 +88,6 @@ template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFAC
 DECLARE_YB_INTERFACEIMPL( IDataObject )
 DECLARE_YB_INTERFACEIMPL( IDropSource )
 DECLARE_YB_INTERFACEIMPL( IDropTarget )
-DECLARE_YB_INTERFACEIMPL( IEnumFORMATETC )
 
 CDropTarget::CDropTarget( CEditWnd* pCEditWnd )
 {
@@ -335,7 +335,11 @@ STDMETHODIMP CDataObject::EnumFormatEtc( DWORD dwDirection, IEnumFORMATETC** ppe
 {
 	if( dwDirection != DATADIR_GET )
 		return S_FALSE;
-	*ppenumFormatetc = new CEnumFORMATETC(this);
+
+	const auto pEnum = CEnumFORMATETC::make_instance(this);
+	*ppenumFormatetc = pEnum;
+	pEnum->AddRef();
+
 	return *ppenumFormatetc? S_OK: S_FALSE;
 }
 
@@ -354,15 +358,36 @@ STDMETHODIMP CDataObject::EnumDAdvise( LPENUMSTATDATA* )
 	return OLE_E_ADVISENOTSUPPORTED;
 }
 
-/** IEnumFORMATETC::Next
-	@date 2008.03.26 ryoji 新規作成
-*/
-STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched)
+/*!
+ * @brief IEnumFORMATETC::Next
+ *
+ * @param[in] celt 取得する要素の数
+ * @param[out] rgelt 取得した要素を格納する配列
+ * @param[out, opt] pceltFetched 取得した要素数の格納先。（celtが1の場合のみ省略可。）
+ * @refval S_OK      要求された数（celt）の要素をすべて正常に取得できた。
+ * @refval S_FALSE   要求された数より少ない要素しか取得できなかった（列挙の末尾に達した）。
+ * @refval E_POINTER rgelt が無効なポインタである（または celt > 1 なのに pceltFetched が NULL である）。
+ *
+ * @date 2008.03.26 ryoji 新規作成
+ */
+IFACEMETHODIMP CEnumFORMATETC::Next(
+	ULONG celt,
+	FORMATETC* rgelt,
+	ULONG* pceltFetched
+)
 {
-	if( celt <= 0 || rgelt == nullptr || m_nIndex >= m_pcDataObject->m_nFormat )
+	if (0 < celt && !rgelt ||
+		celt != 1 && !pceltFetched)
+	{
+		return E_POINTER;
+	}
+
+	if (0 == celt ||
+		!m_pcDataObject ||
+		m_pcDataObject->m_nFormat <= m_nIndex)
+	{
 		return S_FALSE;
-	if( celt != 1 && pceltFetched == nullptr )
-		return S_FALSE;
+	}
 
 	ULONG i = celt;
 	while( m_nIndex < m_pcDataObject->m_nFormat && i > 0 ){
@@ -384,7 +409,9 @@ STDMETHODIMP CEnumFORMATETC::Next(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetc
 /** IEnumFORMATETC::Skip
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
+IFACEMETHODIMP CEnumFORMATETC::Skip(
+	ULONG celt
+)
 {
 	while( m_nIndex < m_pcDataObject->m_nFormat && celt > 0 ){
 		++m_nIndex;
@@ -397,7 +424,7 @@ STDMETHODIMP CEnumFORMATETC::Skip(ULONG celt)
 /** IEnumFORMATETC::Reset
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Reset(void)
+IFACEMETHODIMP CEnumFORMATETC::Reset()
 {
 	m_nIndex = 0;
 	return S_OK;
@@ -406,7 +433,9 @@ STDMETHODIMP CEnumFORMATETC::Reset(void)
 /** IEnumFORMATETC::Clone
 	@date 2008.03.26 ryoji 新規作成
 */
-STDMETHODIMP CEnumFORMATETC::Clone([[maybe_unused]] IEnumFORMATETC** ppenum)
+IFACEMETHODIMP CEnumFORMATETC::Clone(
+	IEnumFORMATETC** ppenum [[maybe_unused]]
+)
 {
 	return E_NOTIMPL;
 }

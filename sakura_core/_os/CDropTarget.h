@@ -19,6 +19,8 @@
 #pragma once
 
 #include <Unknwn.h>
+
+#include "cxx/TComImpl.hpp"
 #include "util/design_template.h"
 #include "util/os.h"
 
@@ -162,28 +164,41 @@ public:
 	DISALLOW_COPY_AND_ASSIGN(CDataObject);
 };
 
-//! CEnumFORMATETC クラス
-//	2008.03.26 ryoji 新規作成
-class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
+/*!
+ * @brief データ形式を列挙するクラス
+ *
+ * クリップボードに含まれるデータ形式を列挙する。
+ *
+ * @date 2008/03/26 ryoji 複数フォーマット対応で新規作成
+ */
+class CEnumFORMATETC final : public cxx::TComImpl<IEnumFORMATETC> {
 private:
-	LONG m_lRef = 1;
+	using Base = cxx::TComImpl<IEnumFORMATETC>;
+	using Me = CEnumFORMATETC;
+
 	int m_nIndex = 0;
 	CDataObject* m_pcDataObject;
+
 public:
-	CEnumFORMATETC(CDataObject* pcDataObject) : m_pcDataObject(pcDataObject) {}
-	STDMETHOD_( ULONG, AddRef )( void )
-	{return ::InterlockedIncrement(&m_lRef);}
-	STDMETHOD_( ULONG, Release )( void )
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<Me, Args...>
 	{
-		if( ::InterlockedDecrement(&m_lRef) == 0 ){
-			delete this;
-			return 0;	// 削除後なので m_lRef は使わない
-		}
-		return m_lRef;
+		return Base::template make_instance<Me>(std::forward<Args>(args)...);
 	}
+
+	explicit CEnumFORMATETC(
+		CDataObject* pcDataObject
+	)
+		: m_pcDataObject(pcDataObject)
+	{
+	}
+
 	STDMETHOD( Next )(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched);
 	STDMETHOD( Skip )(ULONG celt);
 	STDMETHOD( Reset )(void);
 	STDMETHOD( Clone )(IEnumFORMATETC** ppenum);
 };
+
 #endif /* SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_ */
