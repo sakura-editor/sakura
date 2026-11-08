@@ -1179,7 +1179,6 @@ EAppExitCode CEditWnd::MessageLoop() const
 		if (const auto handled = std::ranges::any_of(modelessDlgs, [&msg] (HWND hWndDlg) {
 				return
 					hWndDlg &&
-					hWndDlg == msg.hwnd &&
 					::IsDialogMessageW(hWndDlg, &msg);
 			});
 			handled ||
