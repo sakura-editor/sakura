@@ -8,7 +8,7 @@ PRODUCT_NAME = $(APP_DISPLAY_NAME)
 // TODO(阶段 0 第 9 步)：确定正式的 Bundle ID。
 PRODUCT_BUNDLE_IDENTIFIER = com.shinxxx.texteditor
 
-// 最低支持的 macOS 版本（阶段 0 第 9 步确认）
+// 最低支持的 macOS 版本（2026-11-08 确定为 macOS 13）
 MACOSX_DEPLOYMENT_TARGET = 13.0
 
 MARKETING_VERSION = 0.1.0
