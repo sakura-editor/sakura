@@ -4168,8 +4168,12 @@ TEST_F(EditWndTest, ShowDlgWinSize101)
  */
 TEST_F(EditWndTest, ShowHokanMgr001)
 {
+	using target = CHokanMgr;
+	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
+	const auto hWnd = pcEditWnd->GetHwnd();
+
 	// 表示されたモーダルダイアログを閉じる
-	dialog::ModalDialogCloser closer(std::nullopt /* タイトルなし */, [] (HWND hWndDlg) {
+	dialog::ModalDialogCloser closer(std::nullopt /* タイトルなし */, [&cHokanMgr] (HWND hWndDlg) {
 		// 処理対象でないメッセージを送信して空振りさせる
 		::SendMessageW(hWndDlg, WM_NULL, 0L, 0L);
 
@@ -4189,16 +4193,37 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 		::GetClientRect(hWndDlg, &rc);
 		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
 
+		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_HOME, 0L), Eq(-1));
+
+		const auto bHokanKey_RETURN = GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RETURN;
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RETURN = FALSE;
+		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_RETURN, 0L), Eq(-2));
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RETURN = bHokanKey_RETURN;
+
+		const auto bHokanKey_TAB = GetDllShareData().m_Common.m_sHelper.m_bHokanKey_TAB;
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_TAB = FALSE;
+		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_TAB, 0L), Eq(-2));
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_TAB = bHokanKey_TAB;
+
+		const auto bHokanKey_RIGHT = GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RIGHT;
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RIGHT = FALSE;
+		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_RIGHT, 0L), Eq(-2));
+		GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RIGHT = bHokanKey_RIGHT;
+
+		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_ESCAPE, 0L), Eq(-2));
+
+		MSG msg{ hWndDlg, WM_KEYDOWN, VK_HOME, 0L };
+		CHokanMgr::EatMessage(msg);	//呼ぶだけ
+
+		msg.message = WM_KEYUP;
+		EXPECT_FALSE(CHokanMgr::EatMessage(msg));
+
 		SendDlgCommand(hWndDlg, IDOK);
 	});
 
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_WM_HELP, _)).WillRepeatedly(testing::DoDefault());			// WM_HELP 空振り
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
-
-	using target = CHokanMgr;
-	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
-	const auto hWnd = pcEditWnd->GetHwnd();
 
 	// データなしだとスカる
 	EXPECT_THAT(ExecMacroCommand(L"Complete()"), IsTrue());
@@ -4219,7 +4244,7 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 	// 非表示ウィンドウはModalDialogCloserに拾われないので強制的に表示させる
 	::ShowWindow(cHokanMgr.GetHwnd(), SW_SHOW);
 
-	EXPECT_THAT(cHokanMgr.KeyProc(WM_KEYUP, 0L, 0L), Eq(-2));
+	EXPECT_THAT(cHokanMgr.KeyProc(nullptr, WM_KEYDOWN, VK_RETURN, 0L), Eq(-2));
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();

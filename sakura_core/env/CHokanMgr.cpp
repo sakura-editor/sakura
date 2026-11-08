@@ -77,6 +77,15 @@ LRESULT APIENTRY HokanList_SubclassProc(
 	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
+bool CHokanMgr::EatMessage(const MSG& msg)
+{
+	auto& cHokanMgr = GetEditWnd().m_cHokanMgr;
+
+	const auto hWnd = cHokanMgr.GetHwnd();
+
+	return handled == cHokanMgr.KeyProc(hWnd, msg.message, msg.wParam, msg.lParam);
+}
+
 CHokanMgr::CHokanMgr()
 {
 	return;
@@ -591,6 +600,8 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	return TRUE;
 }
 
+#if 0 // コメントアウトされたコード
+
 /*
 戻り値が -2 の場合は、アプリケーションは項目の選択を完了し、
 リスト ボックスでそれ以上の動作が必要でないことを示します。
@@ -635,22 +646,29 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //		return -1;
 //	}
 
+#endif
+
 int CHokanMgr::KeyProc(
+	HWND hWndDlg,
 	UINT uMsg,
 	WPARAM wParam,
 	LPARAM lParam
 )
 {
-	if (WM_KEYDOWN != uMsg ||
-		!GetEditWnd().GetActiveView().m_bHokan)
+	constexpr auto notHandled = handled - 1;
+
+	// WM_KEYDOWN以外、補完中でない場合、処理なし。
+	if (const auto& view = GetEditWnd().GetActiveView();
+		WM_KEYDOWN != uMsg ||
+		!hWndDlg ||
+		!::IsWindowVisible(hWndDlg) ||
+		!view.m_bHokan)
 	{
-		return -2;
+		return notHandled;	// メッセージを処理しなかった
 	}
 
-	WORD vkey;
-	vkey = LOWORD(wParam);		// virtual-key code
-//	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
-	switch( vkey ){
+	// 仮想キーコードで分岐する
+	switch (auto vkey = LOWORD(wParam)) {
 	case VK_HOME:
 	case VK_END:
 	case VK_UP:
@@ -658,8 +676,10 @@ int CHokanMgr::KeyProc(
 	case VK_PRIOR:
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
-		::SendDlgItemMessageW(hWnd, IDC_LIST_WORDS, WM_KEYDOWN, wParam, lParam);
-		return -1;
+		::SendDlgItemMessageW(hWndDlg, IDC_LIST_WORDS, WM_KEYDOWN, wParam, lParam);
+
+		return handled;
+
 	case VK_RETURN:
 	case VK_TAB:
 	case VK_RIGHT:
@@ -667,18 +687,21 @@ int CHokanMgr::KeyProc(
 	case VK_SPACE:
 #endif
 		/* 補完実行 */
-		if( DoHokan( vkey ) ){
-			return -1;
-		}else{
-			return -2;
-		}
+		if (DoHokan(vkey)) return handled;
+
+		break;
+
+#if 0 //defaultと同じなので不要
 	case VK_ESCAPE:
 	case VK_LEFT:
-		return -2;
+		return notHandled;
+#endif
+
 	default:
 		break;
 	}
-	return -2;
+
+	return notHandled;	// メッセージを処理しなかった
 }
 
 //	2001/06/18 Start by asa-o: 補完ウィンドウで選択中の単語にキーワードヘルプを表示

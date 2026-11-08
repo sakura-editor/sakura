@@ -38,7 +38,11 @@ private:
 	// 親クラスのメソッドを隠す
 	using Base::DoModeless;
 
+	static constexpr auto handled = -1;	//!< KeyProcがメッセージを処理した
+
 public:
+	static bool EatMessage(const MSG& msg);
+
 	/*
 	||  Constructors
 	*/
@@ -78,7 +82,7 @@ public:
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnLbnSelChange( HWND hwndCtl, int wID ) override;
 
-	int KeyProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	int KeyProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
