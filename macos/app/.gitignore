@@ -1,0 +1,4 @@
+# XcodeGen 生成的工程和构建产物
+SakuraMac.xcodeproj/
+build/
+DerivedData/

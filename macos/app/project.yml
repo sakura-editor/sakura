@@ -1,0 +1,29 @@
+# XcodeGen 工程定义。生成 Xcode 工程：
+#   brew install xcodegen
+#   cd macos/app && xcodegen generate
+# 生成的 SakuraMac.xcodeproj 不提交到仓库。
+name: SakuraMac
+options:
+  createIntermediateGroups: true
+configFiles:
+  Debug: Config/App.xcconfig
+  Release: Config/App.xcconfig
+targets:
+  SakuraMac:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources
+    settings:
+      base:
+        INFOPLIST_FILE: Config/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Config/SakuraMac.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_STYLE: Automatic
+        PRODUCT_MODULE_NAME: SakuraMac
+        SWIFT_VERSION: "5.0"
+        GENERATE_INFOPLIST_FILE: NO
+      configs:
+        Release:
+          ONLY_ACTIVE_ARCH: NO
+    scheme: {}

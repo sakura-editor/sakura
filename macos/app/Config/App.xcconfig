@@ -1,0 +1,18 @@
+// App 的名字、Bundle ID 和版本集中在这里。改名时只需要改这个文件。
+
+// 显示名称（菜单栏、关于窗口、Dock）
+APP_DISPLAY_NAME = Sakura Editor for Mac
+PRODUCT_NAME = $(APP_DISPLAY_NAME)
+
+// Bundle ID 上架后不能更改，因此刻意不包含 “Sakura”，以便日后改名。
+// TODO(阶段 0 第 9 步)：确定正式的 Bundle ID。
+PRODUCT_BUNDLE_IDENTIFIER = com.shinxxx.texteditor
+
+// 最低支持的 macOS 版本（阶段 0 第 9 步确认）
+MACOSX_DEPLOYMENT_TARGET = 13.0
+
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1
+
+// 签名用的开发团队 ID。在 Xcode 的 Signing & Capabilities 里选择团队即可。
+DEVELOPMENT_TEAM =

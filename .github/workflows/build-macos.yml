@@ -1,0 +1,53 @@
+name: macOS Build
+
+on:
+  push:
+    branches: [macos]
+    paths:
+      - 'macos/**'
+      - '.github/workflows/build-macos.yml'
+  pull_request:
+    branches: [macos]
+    paths:
+      - 'macos/**'
+      - '.github/workflows/build-macos.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: macos/app
+        run: xcodegen generate
+
+      - name: Build (Release, unsigned)
+        working-directory: macos/app
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project SakuraMac.xcodeproj \
+            -scheme SakuraMac \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Check app bundle
+        working-directory: macos/app
+        run: |
+          APP="build/Build/Products/Release/Sakura Editor for Mac.app"
+          test -d "$APP"
+          /usr/libexec/PlistBuddy -c 'Print CFBundleIdentifier' "$APP/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c 'Print CFBundleDisplayName' "$APP/Contents/Info.plist"
+          lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac"
+          lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac" | grep -q arm64
+          lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac" | grep -q x86_64

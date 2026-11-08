@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- App Store 必须开启沙盒 -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<!-- 读写用户通过文件面板或拖放选择的文件 -->
+	<key>com.apple.security.files.user-selected.read-write</key>
+	<true/>
+	<!-- 用安全书签记住“最近打开的文件”的访问权限 -->
+	<key>com.apple.security.files.bookmarks.app-scope</key>
+	<true/>
+</dict>
+</plist>

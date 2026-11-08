@@ -14,11 +14,27 @@
 | --- | --- |
 | `macos/docs/` | 计划、功能对照表等文档 |
 | `macos/tools/` | 辅助脚本（例如生成功能对照表） |
-| `macos/app/` | Xcode 工程和 Swift + AppKit 界面层（阶段 0 第 10 步创建） |
+| `macos/app/` | Xcode 工程定义（XcodeGen）和 Swift + AppKit 界面层 |
 | `macos/bridge/` | Objective-C++ 桥接层（阶段 2） |
 | `macos/platform/` | 平台抽象层：Win32 类型替代、字符类型（阶段 1） |
 
 核心逻辑继续使用 `sakura_core/` 中的原版代码，不复制到本目录。
+
+## 在 Mac 上构建
+
+需要 Xcode 15 或更新版本，以及 [XcodeGen](https://github.com/yonaskolb/XcodeGen)。
+
+```sh
+brew install xcodegen
+cd macos/app
+xcodegen generate
+open SakuraMac.xcodeproj
+```
+
+在 Xcode 里选好签名团队（Signing & Capabilities），按 Cmd+R 运行。
+App 名称、Bundle ID、最低系统版本都集中在 `macos/app/Config/App.xcconfig`。
+
+每次推送到 `macos` 分支，GitHub Actions（`.github/workflows/build-macos.yml`）都会在 macOS 上生成工程并做一次不签名的构建。
 
 ## 许可证
 
