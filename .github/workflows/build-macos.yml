@@ -3,9 +3,6 @@ name: macOS Build
 on:
   push:
     branches: [macos]
-    paths:
-      - 'macos/**'
-      - '.github/workflows/build-macos.yml'
   pull_request:
     branches: [macos]
     paths:
@@ -14,7 +11,27 @@ on:
   workflow_dispatch:
 
 jobs:
+  # 与 build-sakura.yml 的 check-encoding 相同的规则：Mac 版新增的 .cpp / .h / .mm 必须是带 BOM 的 UTF-8
+  check-encoding:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check encoding
+        run: |
+          ng=0
+          while IFS= read -r -d '' f; do
+            if [ "$(head -c 3 "$f" | od -An -tx1 | tr -d ' ')" != "efbbbf" ]; then
+              echo "NG (not UTF-8 with BOM): $f"; ng=1
+            fi
+          done < <(git ls-files -z -- 'macos/*.h' 'macos/*.cpp' 'macos/*.mm')
+          exit $ng
+
   build:
+    needs: check-encoding
     runs-on: macos-latest
     permissions:
       contents: read
