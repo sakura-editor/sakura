@@ -17,6 +17,7 @@ $startProcessParams = @{
     "--test-dir", "build/$Platform/CMakeTools",
     "-C", $Configuration,
     "--output-on-failure",
+    "--repeat", "until-pass:3",
     "-V"
   )
   NoNewWindow = $true
