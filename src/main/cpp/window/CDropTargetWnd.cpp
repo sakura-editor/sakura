@@ -8,6 +8,7 @@
 #include "StdAfx.h"
 #include "window/CDropTargetWnd.hpp"
 
+#include "_os/CDropTarget.h"
 #include "view/CEditView.h"
 #include "window/CEditWnd.h"
 
@@ -81,11 +82,11 @@ bool CDropTargetWnd::AttachDropTarget(
 {
 	if constexpr (std::is_same_v<T, CEditView>)
 	{
-		m_pcDropTarget = std::make_unique<CDropTarget>(pThis);
+		m_DropTarget = CDropTarget::make_instance(pThis);
 	}
 	else if constexpr (std::is_same_v<T, CEditWnd>)
 	{
-		m_pcDropTarget = std::make_unique<CDropTarget>(pThis);
+		m_DropTarget = CDropTarget::make_instance(pThis);
 	}
 
 	// ウィンドウハンドルを取得する
@@ -110,7 +111,7 @@ bool CDropTargetWnd::RegisterDropTarget()
 
 	if (const auto hWnd = m_hWnd;
 		!m_hWnd_DropTarget &&
-		FAILED(::RegisterDragDrop(hWnd, m_pcDropTarget.get())))
+		FAILED(::RegisterDragDrop(hWnd, m_DropTarget)))
 	{
 		// L"::RegisterDragDrop()\n失敗"
 		TopWarningMessage(hWnd, LS(STR_ERR_DLGDRPTGT1));

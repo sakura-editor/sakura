@@ -1095,7 +1095,7 @@ TEST(CDropSource, DoDragDrop101)
  */
 TEST(CopiedTextData, NotSupportedMethods)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = CDataObject::make_instance(L"abc");
 
 	//構築後の変更はサポートしてない。
 	EXPECT_HRESULT_EQ(target->SetData(nullptr, nullptr, FALSE), E_NOTIMPL);
@@ -1114,7 +1114,7 @@ TEST(CopiedTextData, NotSupportedMethods)
  */
 TEST(CopiedTextData, EnumFormatEtc001)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = CDataObject::make_instance(L"abc");
 
 	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
 	EXPECT_HRESULT_EQ(target->EnumFormatEtc(DATADIR_SET, &pEnumFormatEtc), S_FALSE);
@@ -1142,7 +1142,7 @@ TEST(CopiedTextData, EnumFormatEtc001)
  */
 TEST(CopiedTextData, QueryGetData101)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = CDataObject::make_instance(L"abc");
 
 	EXPECT_HRESULT_EQ(target->QueryGetData(nullptr), E_INVALIDARG);
 
@@ -1173,10 +1173,10 @@ TEST(CopiedTextData, QueryGetData101)
  */
 TEST(CopiedTextData, QueryGetData102)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = std::make_unique<CDataObject>(L"abc");
 
 	//データを空にする
-	target->SetText(nullptr, 0, FALSE);
+	target->SetText(std::wstring_view{ nullptr, 0 });
 
 	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	EXPECT_THAT(target->QueryGetData(&format), OLE_E_NOTRUNNING);	// 👈バグです。サクラエディタは起動時にOLEを初期化するため、「OLE未実行」にはならない。
@@ -1188,7 +1188,7 @@ TEST(CopiedTextData, QueryGetData102)
 TEST(CopiedTextData, GetData001)
 {
 	const auto text = L"abc"s;
-	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+	const auto target = CDataObject::make_instance(text);
 
 	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM medium = {};
@@ -1204,7 +1204,7 @@ TEST(CopiedTextData, GetData001)
  */
 TEST(CopiedTextData, GetData101)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = CDataObject::make_instance(L"abc");
 
 	STGMEDIUM emptyMedium = {};
 	EXPECT_HRESULT_EQ(target->GetData(nullptr, &emptyMedium), E_INVALIDARG);
@@ -1232,10 +1232,10 @@ TEST(CopiedTextData, GetData101)
  */
 TEST(CopiedTextData, GetData102)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = std::make_unique<CDataObject>(L"abc");
 
 	//データを空にする
-	target->SetText(nullptr, 0, FALSE);
+	target->SetText(std::wstring_view{ nullptr, 0 });
 
 	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM emptyMedium = {};
@@ -1248,8 +1248,7 @@ TEST(CopiedTextData, GetData102)
 TEST(CopiedTextData, GetDataHere001)
 {
 	const auto text = L"abcdef"s;
-
-	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+	const auto target = CDataObject::make_instance(text);
 
 	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 
@@ -1268,7 +1267,7 @@ TEST(CopiedTextData, GetDataHere001)
  */
 TEST(CopiedTextData, GetDataHere101)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, FALSE);
+	const auto target = CDataObject::make_instance(L"abc");
 
 	FORMATETC format = { CF_UNICODETEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	EXPECT_HRESULT_EQ(target->GetDataHere(&format, nullptr), E_INVALIDARG);
@@ -1309,28 +1308,6 @@ TEST(CopiedTextData, GetDataHere101)
 }
 
 /*!
- * CEnumFORMATETC のテスト。
- */
-TEST(CEnumFORMATETC, test001)
-{
-	auto* target = new CEnumFORMATETC(nullptr);
-
-	//AddRefする。内部カウンタが増えて2になる
-	EXPECT_THAT(target->AddRef(), 2UL);
-
-	//Cloneは未実装。
-	EXPECT_THAT(target->Clone(nullptr), E_NOTIMPL);
-
-	//Resetする。
-	EXPECT_HRESULT_SUCCEEDED(target->Reset());
-
-	//Releaseする。内部カウンタが減って1になる
-	EXPECT_THAT(target->Release(), 1UL);
-
-	//生ポインタなのでReleaseして解放する
-	EXPECT_THAT(target->Release(), 0UL);
-}
-/*!
  * SetText（矩形選択あり）のテスト。
  *
  * 矩形選択時は MSDEVColumnSelect 形式が追加され、フォーマット数が 4 になる。
@@ -1338,7 +1315,7 @@ TEST(CEnumFORMATETC, test001)
  */
 TEST(CopiedTextData, SetTextColumnSelect)
 {
-	const auto target = std::make_unique<CDataObject>(L"abc", 3, TRUE);
+	const auto target = CDataObject::make_instance(L"abc", true);
 
 	// CF_UNICODETEXT / CF_TEXT / サクラ形式 / MSDEVColumnSelect の 4 形式になる
 	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
@@ -1372,7 +1349,7 @@ TEST(CopiedTextData, SetTextColumnSelect)
 TEST(CopiedTextData, GetDataSakuraFormatLayout)
 {
 	const auto text = L"abc"s;
-	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+	const auto target = CDataObject::make_instance(text);
 
 	const CLIPFORMAT sakuraFormat = CClipboard::GetSakuraFormat();
 	FORMATETC format = { sakuraFormat, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
@@ -1390,13 +1367,43 @@ TEST(CopiedTextData, GetDataSakuraFormatLayout)
 TEST(CopiedTextData, GetDataAnsiText)
 {
 	const auto text = L"abc"s;
-	const auto target = std::make_unique<CDataObject>(text.data(), text.size(), FALSE);
+	const auto target = CDataObject::make_instance(text);
 
 	FORMATETC format = { CF_TEXT, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
 	STGMEDIUM medium = {};
 	EXPECT_HRESULT_SUCCEEDED(target->GetData(&format, &medium));
 	EXPECT_THAT(medium.tymed, TYMED_HGLOBAL);
 	EXPECT_THAT(medium.hGlobal, AnsiStringInGlobalMemory("abc"s));
+}
+
+/*!
+ * CEnumFORMATETC のテスト。
+ */
+TEST(CEnumFORMATETC, test001)
+{
+	CDataObject* pcDataObject = nullptr;
+
+	const auto target = CEnumFORMATETC::make_instance(pcDataObject);
+
+	//AddRefする。内部カウンタが増えて2になる
+	EXPECT_THAT(target->AddRef(), 2UL);
+
+	//Nextのパラメーターエラー仕様をチェックする
+	FORMATETC rgelt;
+	ULONG fetched;
+	EXPECT_HRESULT_EQ(target->Next(0, &rgelt, &fetched), S_FALSE);
+	EXPECT_HRESULT_EQ(target->Next(1, &rgelt, &fetched), S_FALSE);
+	EXPECT_HRESULT_EQ(target->Next(1, nullptr, &fetched), E_POINTER);
+	EXPECT_HRESULT_EQ(target->Next(2, &rgelt, nullptr), E_POINTER);
+
+	//Cloneは未実装。
+	EXPECT_THAT(target->Clone(nullptr), E_NOTIMPL);
+
+	//Resetする。
+	EXPECT_HRESULT_SUCCEEDED(target->Reset());
+
+	//Releaseする。内部カウンタが減って1になる
+	EXPECT_THAT(target->Release(), 1UL);
 }
 
 } //namespace ole
