@@ -126,7 +126,14 @@ public:
 	DWORD	DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects);
 };
 
-class CDataObject : public CYbInterfaceImpl<IDataObject> {
+/*!
+ * @brief クリップボードデータクラス
+ *
+ * クリップボードデータ(IDataObject)の実装です。
+ * 「サクラエディタが扱えるクリップボードデータ」です。
+ * SetDataをサポートしない Init Only な実装です。
+ */
+class CDataObject final : public cxx::TComImpl<IDataObject> {
 private:
 	friend class CEnumFORMATETC;	// 2008.03.26 ryoji
 
@@ -140,16 +147,25 @@ private:
 		SIZE_T		size = 0ULL;				//!< データサイズ。バイト単位。
 	};
 
+	using Base = cxx::TComImpl<IDataObject>;
+	using Me = CDataObject;
+
 	int m_nFormat = 0;
 	PDATA m_pData = nullptr;
 
 public:
-	CDataObject (LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<Me, Args...>
 	{
-		SetText( lpszText, nTextLen, bColumnSelect );
+		return Base::template make_instance<Me>(std::forward<Args>(args)...);
 	}
-	~CDataObject(){SetText( nullptr, 0, FALSE );}
-	void	SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect );
+
+	explicit CDataObject(
+		std::wstring_view text,
+		bool bColumnSelect = false
+	);
 
 	STDMETHOD( GetData )( LPFORMATETC, LPSTGMEDIUM );
 	STDMETHOD( GetDataHere )( LPFORMATETC, LPSTGMEDIUM );
@@ -161,7 +177,10 @@ public:
 	STDMETHOD( DUnadvise )( DWORD );
 	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
 
-	DISALLOW_COPY_AND_ASSIGN(CDataObject);
+	void SetText(
+		std::wstring_view text,
+		bool bColumnSelect = false
+	);
 };
 
 /*!

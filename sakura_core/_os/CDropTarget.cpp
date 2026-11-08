@@ -17,6 +17,7 @@
 #include "StdAfx.h"
 #include "_os/CDropTarget.h"
 
+#include "basis/primitive.h"
 #include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
@@ -85,7 +86,6 @@ void COleLibrary::UnInitialize()
 #define DECLARE_YB_INTERFACEIMPL( BASEINTERFACE ) \
 template<> REFIID CYbInterfaceImpl<BASEINTERFACE>::m_owniid = IID_##BASEINTERFACE;
 
-DECLARE_YB_INTERFACEIMPL( IDataObject )
 DECLARE_YB_INTERFACEIMPL( IDropSource )
 DECLARE_YB_INTERFACEIMPL( IDropTarget )
 
@@ -160,6 +160,14 @@ DWORD CDropSource::DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects)
 	return DROPEFFECT_NONE;
 }
 
+CDataObject::CDataObject(
+	std::wstring_view text,
+	bool bColumnSelect
+)
+{
+	SetText(text, bColumnSelect);
+}
+
 /** 転送対象の文字列を設定する
 	@param lpszText [in] 文字列
 	@param nTextLen [in] pszTextの長さ
@@ -167,8 +175,17 @@ DWORD CDropSource::DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects)
 
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
-void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
+void CDataObject::SetText(
+	std::wstring_view text,
+	bool bColumnSelect
+)
 {
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _Text{ text };
+
+	const auto lpszText = text.empty() ? nullptr : _Text.c_str();
+	const auto nTextLen = text.length();
+
 	//Feb. 26, 2001, fixed by yebisuya sugoroku
 	int i;
 	if( m_pData != nullptr )
