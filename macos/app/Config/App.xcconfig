@@ -5,8 +5,8 @@ APP_DISPLAY_NAME = Sakura Editor for Mac
 PRODUCT_NAME = $(APP_DISPLAY_NAME)
 
 // Bundle ID 上架后不能更改，因此刻意不包含 “Sakura”，以便日后改名。
-// TODO(阶段 0 第 9 步)：确定正式的 Bundle ID。
-PRODUCT_BUNDLE_IDENTIFIER = com.shinxxx.texteditor
+// 2026-11-08 确定。基于 GitHub Pages 域名 shinxxx.github.io 倒写。
+PRODUCT_BUNDLE_IDENTIFIER = io.github.shinxxx.texteditor
 
 // 最低支持的 macOS 版本（2026-11-08 确定为 macOS 13）
 MACOSX_DEPLOYMENT_TARGET = 13.0
