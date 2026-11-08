@@ -31,12 +31,20 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
-WNDPROC			gm_wpHokanListProc;
-
-LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT APIENTRY HokanList_SubclassProc(
+	HWND hWnd,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam,
+	UINT_PTR uIdSubclass,
+	DWORD_PTR dwRefData
+)
 {
-	// Modified by KEITA for WIN64 2003.9.6
-	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
+	const auto hwnd = hWnd;
+
+	using CHokanMgrPtr = CHokanMgr*;
+	auto pCHokanMgr = CHokanMgrPtr(dwRefData);
+	if (!pCHokanMgr) return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 	switch( uMsg ){
 	case WM_LBUTTONDOWN:
@@ -55,10 +63,18 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			}
 		}
 		return 0;	// 本来のウィンドウプロシージャは呼ばない（アクティブ化しない）
+
+	case WM_DESTROY:
+		// サブクラスを解除する
+		::RemoveWindowSubclass(hWnd, &HokanList_SubclassProc, uIdSubclass);
+		break;
+
 	default:
 		break;
 	}
-	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
+
+	//あとはデフォルトに任せる
+	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
 CHokanMgr::CHokanMgr()
@@ -78,9 +94,10 @@ HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam
 	hwndWork = CDialog::DoModeless( hInstance, hwndParent, IDD_HOKAN, lParam, SW_HIDE );
 	::SetFocus( ((CEditView*)m_lParam)->GetHwnd() );	//エディタにフォーカスを戻す
 	OnSize( 0, 0 );
-	/* リストをフック */
-	// Modified by KEITA for WIN64 2003.9.6
-	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( GetItemHwnd( IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
+
+	// 候補リストをサブクラス化してカスタマイズする
+	const auto hWndList = GetItemHwnd(IDC_LIST_WORDS);
+	::SetWindowSubclass(hWndList, &HokanList_SubclassProc, 0, DWORD_PTR(this));
 
 	return hwndWork;
 }
@@ -641,7 +658,7 @@ int CHokanMgr::KeyProc(
 	case VK_PRIOR:
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
-		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, GetItemHwnd( IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
+		::SendDlgItemMessageW(hWnd, IDC_LIST_WORDS, WM_KEYDOWN, wParam, lParam);
 		return -1;
 	case VK_RETURN:
 	case VK_TAB:
