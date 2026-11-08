@@ -114,16 +114,35 @@ protected:
 	*/
 };
 
-class CDropSource : public CYbInterfaceImpl<IDropSource> {
+/*!
+ * @brief D&Dソースクラス
+ *
+ * D&Dソース(IDropSource)の実装です。
+ */
+class CDropSource final : public cxx::TComImpl<IDropSource> {
 private:
-	BOOL m_bLeft;
+	using Base = cxx::TComImpl<IDropSource>;
+	using Me = CDropSource;
+
 public:
-	CDropSource( BOOL bLeft ):m_bLeft( bLeft ){}
+	static DWORD DoDragDrop(
+		LPDATAOBJECT pDataObject,
+		DWORD dwDesiredEffects,
+		bool bLeft = true
+	);
+
+	explicit CDropSource(
+		bool bLeft
+	)
+		: m_bLeft{ bLeft }
+	{
+	}
 
 	STDMETHOD( QueryContinueDrag )( BOOL bEscapePressed, DWORD dwKeyState );
 	STDMETHOD( GiveFeedback )( DWORD dropEffect );
 
-	DWORD	DoDragDrop(LPDATAOBJECT pDataObject, DWORD dwDesiredEffects);
+private:
+	bool m_bLeft;
 };
 
 /*!

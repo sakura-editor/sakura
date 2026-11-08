@@ -2237,8 +2237,6 @@ void CEditView::DragSelection()
 	// ドラッグ開始前のドキュメント操作番号を記憶する
 	const auto nOpe = GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
 
-	CDropSource drop(true);
-
 	// ドラッグ元ビューを設定する
 	GetEditWnd().SetDragSourceView(this);
 
@@ -2249,7 +2247,7 @@ void CEditView::DragSelection()
 	}
 
 	// ドラッグ＆ドロップを開始する
-	const auto actualEffects = drop.DoDragDrop(data, desiredEffects);
+	const auto actualEffects = CDropSource::DoDragDrop(data, desiredEffects);
 
 	// ドラッグ元ビューの設定を解除する
 	GetEditWnd().SetDragSourceView(nullptr);
