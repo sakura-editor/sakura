@@ -6,7 +6,9 @@
  */
 #pragma once
 
-#include "_os/CDropTarget.h"
+#include "cxx/com_pointer.hpp"
+
+#include <oleidl.h>
 
 /*!
  * @brief ドロップターゲットウィンドウ
@@ -17,7 +19,7 @@
 class CDropTargetWnd
 {
 private:
-	using DropTargetHolder = std::unique_ptr<CDropTarget>;
+	using IDropTargetPtr = cxx::com_pointer<IDropTarget>;
 
 	using Me = CDropTargetWnd;
 	using MePtr = Me*;
@@ -59,7 +61,7 @@ public:
 
 private:
 	HWND				m_hWnd = nullptr;
-	DropTargetHolder	m_pcDropTarget = nullptr;
+	IDropTargetPtr		m_DropTarget = nullptr;
 	HWND				m_hWnd_DropTarget = nullptr;
 	Holder				m_Holder{ this };
 };
