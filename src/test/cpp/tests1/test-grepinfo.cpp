@@ -64,7 +64,7 @@ bool operator != (const GrepInfo& lhs, const GrepInfo& rhs) noexcept
 TEST(GrepInfo, operatorEqualSame)
 {
 	GrepInfo value, other;
-	ASSERT_EQ(value, other);
+	ASSERT_THAT(value, Eq(std::ref(other)));
 }
 
 /*!
@@ -74,7 +74,7 @@ TEST(GrepInfo, operatorEqualSame)
 TEST(GrepInfo, operatorEqualBySelf)
 {
 	GrepInfo value;
-	ASSERT_EQ(value, value);
+	ASSERT_THAT(value, Eq(std::ref(value)));	// 写しではなく同じオブジェクトと比べる
 }
 
 /*!
@@ -88,87 +88,87 @@ TEST(GrepInfo, operatorNotEqual)
 	GrepInfo value, other;
 
 	value.cmGrepKey = L"ぐれっぷ";
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.cmGrepKey = other.cmGrepKey;
 
 	value.cmGrepRep = L"ちかん";
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.cmGrepRep = other.cmGrepRep;
 
 	value.cmGrepFile = L"#.git;*.*";
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.cmGrepFile = other.cmGrepFile;
 
 	value.cmGrepFolder = L"C:\\work\\sakura";
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.cmGrepFolder = other.cmGrepFolder;
 
 	value.sGrepSearchOption.bRegularExp = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.sGrepSearchOption = other.sGrepSearchOption;
 
 	value.sGrepSearchOption.bLoHiCase = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.sGrepSearchOption = other.sGrepSearchOption;
 
 	value.sGrepSearchOption.bWordOnly = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.sGrepSearchOption = other.sGrepSearchOption;
 
 	value.bGrepCurFolder = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepCurFolder = other.bGrepCurFolder;
 
 	value.bGrepStdout = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepStdout = other.bGrepStdout;
 
 	value.bGrepHeader = false;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepHeader = other.bGrepHeader;
 
 	value.bGrepSubFolder = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepSubFolder = other.bGrepSubFolder;
 
 	value.nGrepCharSet = CODE_EUC;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.nGrepCharSet = other.nGrepCharSet;
 
 	value.nGrepOutputStyle = 2;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.nGrepOutputStyle = other.nGrepOutputStyle;
 
 	value.nGrepOutputLineType = 2;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.nGrepOutputLineType = other.nGrepOutputLineType;
 
 	value.bGrepOutputFileOnly = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepOutputFileOnly = other.bGrepOutputFileOnly;
 
 	value.bGrepOutputBaseFolder = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepOutputBaseFolder = other.bGrepOutputBaseFolder;
 
 	value.bGrepSeparateFolder = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepSeparateFolder = other.bGrepSeparateFolder;
 
 	value.bGrepReplace = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepReplace = other.bGrepReplace;
 
 	value.bGrepPaste = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepPaste = other.bGrepPaste;
 
 	value.bGrepBackup = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepBackup = other.bGrepBackup;
 
 	value.bGrepExceptFileRegexp = true;
-	ASSERT_NE(value, other);
+	ASSERT_THAT(value, Ne(std::ref(other)));
 	value.bGrepExceptFileRegexp = other.bGrepExceptFileRegexp;
 }
 
@@ -181,13 +181,13 @@ TEST(GrepInfo, operatorEqualAndNotEqual)
 	// 初期値同士の比較(等価になる)
 	GrepInfo v1, v2;
 
-	EXPECT_TRUE(v1 == v2);
-	EXPECT_FALSE(v1 != v2);
+	EXPECT_THAT(v1 == v2, IsTrue());
+	EXPECT_THAT(v1 != v2, IsFalse());
 
 	// 初期値と値を変えた値の比較(不一致になる)
 	v2.bGrepBackup = true;
-	EXPECT_FALSE(v1 == v2);
-	EXPECT_TRUE(v1 != v2);
+	EXPECT_THAT(v1 == v2, IsFalse());
+	EXPECT_THAT(v1 != v2, IsTrue());
 }
 
 /*!
@@ -212,18 +212,18 @@ TEST(GrepInfo, Normalized_KeepsOtherMembers)
 
 	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_TRUE(normalized.bGrepSubFolder);
-	EXPECT_TRUE(normalized.bGrepStdout);
-	EXPECT_FALSE(normalized.bGrepHeader);
-	EXPECT_EQ(CODE_EUC, normalized.nGrepCharSet);
-	EXPECT_EQ(1, normalized.nGrepOutputLineType);
-	EXPECT_EQ(3, normalized.nGrepOutputStyle);
-	EXPECT_TRUE(normalized.bGrepOutputFileOnly);
-	EXPECT_TRUE(normalized.bGrepOutputBaseFolder);
-	EXPECT_TRUE(normalized.bGrepSeparateFolder);
-	EXPECT_FALSE(normalized.bGrepReplace);
-	EXPECT_TRUE(normalized.bGrepPaste);
-	EXPECT_TRUE(normalized.bGrepBackup);
+	EXPECT_THAT(normalized.bGrepSubFolder, IsTrue());
+	EXPECT_THAT(normalized.bGrepStdout, IsTrue());
+	EXPECT_THAT(normalized.bGrepHeader, IsFalse());
+	EXPECT_THAT(normalized.nGrepCharSet, Eq(CODE_EUC));
+	EXPECT_THAT(normalized.nGrepOutputLineType, Eq(1));
+	EXPECT_THAT(normalized.nGrepOutputStyle, Eq(3));
+	EXPECT_THAT(normalized.bGrepOutputFileOnly, IsTrue());
+	EXPECT_THAT(normalized.bGrepOutputBaseFolder, IsTrue());
+	EXPECT_THAT(normalized.bGrepSeparateFolder, IsTrue());
+	EXPECT_THAT(normalized.bGrepReplace, IsFalse());
+	EXPECT_THAT(normalized.bGrepPaste, IsTrue());
+	EXPECT_THAT(normalized.bGrepBackup, IsTrue());
 }
 
 /*!
@@ -253,8 +253,8 @@ TEST(GrepInfo, Normalized_ReplaceDisablesNoHitLine)
 
 	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_TRUE(normalized.bGrepReplace);
-	EXPECT_EQ(1, normalized.nGrepOutputLineType);	// 行単位に落ちる
+	EXPECT_THAT(normalized.bGrepReplace, IsTrue());
+	EXPECT_THAT(normalized.nGrepOutputLineType, Eq(1));	// 行単位に落ちる
 }
 
 /*!
@@ -269,8 +269,8 @@ TEST(GrepInfo, Normalized_KeepsNoHitLineWhenNotReplace)
 
 	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_FALSE(normalized.bGrepReplace);
-	EXPECT_EQ(2, normalized.nGrepOutputLineType);
+	EXPECT_THAT(normalized.bGrepReplace, IsFalse());
+	EXPECT_THAT(normalized.nGrepOutputLineType, Eq(2));
 }
 
 /*!
@@ -285,8 +285,8 @@ TEST(GrepInfo, Normalized_DoesNotModifySelf)
 
 	const GrepInfo normalized = gi.Normalized();
 
-	EXPECT_EQ(2, gi.nGrepOutputLineType);
-	EXPECT_EQ(1, normalized.nGrepOutputLineType);
+	EXPECT_THAT(gi.nGrepOutputLineType, Eq(2));
+	EXPECT_THAT(normalized.nGrepOutputLineType, Eq(1));
 }
 
 /*!
@@ -403,27 +403,27 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_CopiesDialogSettings)
 
 	const GrepInfo gi = dlg.MakeGrepInfo();
 
-	EXPECT_STREQ(L"ぐれっぷ", gi.cmGrepKey.GetStringPtr());
-	EXPECT_STREQ(L"*.cpp", gi.cmGrepFile.GetStringPtr());
-	EXPECT_STREQ(L"C:\\work\\sakura", gi.cmGrepFolder.GetStringPtr());
-	EXPECT_TRUE(gi.sGrepSearchOption.bRegularExp);
-	EXPECT_TRUE(gi.bGrepSubFolder);
-	EXPECT_EQ(CODE_EUC, gi.nGrepCharSet);
-	EXPECT_EQ(2, gi.nGrepOutputStyle);
-	EXPECT_EQ(2, gi.nGrepOutputLineType);
-	EXPECT_TRUE(gi.bGrepOutputFileOnly);
-	EXPECT_TRUE(gi.bGrepOutputBaseFolder);
-	EXPECT_TRUE(gi.bGrepSeparateFolder);
+	EXPECT_THAT(gi.cmGrepKey.GetStringPtr(), StrEq(L"ぐれっぷ"));
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.cpp"));
+	EXPECT_THAT(gi.cmGrepFolder.GetStringPtr(), StrEq(L"C:\\work\\sakura"));
+	EXPECT_THAT(gi.sGrepSearchOption.bRegularExp, IsTrue());
+	EXPECT_THAT(gi.bGrepSubFolder, IsTrue());
+	EXPECT_THAT(gi.nGrepCharSet, Eq(CODE_EUC));
+	EXPECT_THAT(gi.nGrepOutputStyle, Eq(2));
+	EXPECT_THAT(gi.nGrepOutputLineType, Eq(2));
+	EXPECT_THAT(gi.bGrepOutputFileOnly, IsTrue());
+	EXPECT_THAT(gi.bGrepOutputBaseFolder, IsTrue());
+	EXPECT_THAT(gi.bGrepSeparateFolder, IsTrue());
 
 	// Grep置換ではないので置換系は落ちている
-	EXPECT_FALSE(gi.bGrepReplace);
-	EXPECT_FALSE(gi.bGrepPaste);
-	EXPECT_FALSE(gi.bGrepBackup);
+	EXPECT_THAT(gi.bGrepReplace, IsFalse());
+	EXPECT_THAT(gi.bGrepPaste, IsFalse());
+	EXPECT_THAT(gi.bGrepBackup, IsFalse());
 
 	// 従来 Command_GREP が直接渡していた既定値
-	EXPECT_FALSE(gi.bGrepCurFolder);
-	EXPECT_FALSE(gi.bGrepStdout);
-	EXPECT_TRUE(gi.bGrepHeader);
+	EXPECT_THAT(gi.bGrepCurFolder, IsFalse());
+	EXPECT_THAT(gi.bGrepStdout, IsFalse());
+	EXPECT_THAT(gi.bGrepHeader, IsTrue());
 }
 
 /*!
@@ -440,7 +440,7 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatterns)
 	const GrepInfo gi = dlg.MakeGrepInfo();
 
 	// 除外フォルダー(#)が先、除外ファイル(!)が後ろに連結される
-	EXPECT_STREQ(L"*.cpp;#obj;!*.bak", gi.cmGrepFile.GetStringPtr());
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.cpp;#obj;!*.bak"));
 }
 
 /*!
@@ -457,14 +457,14 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatternsWithComma)
 	const GrepInfo gi = dlg.MakeGrepInfo();
 
 	// 引用符で囲み直さず、接頭辞の後ろにそのまま連結される
-	EXPECT_STREQ(L"*.*;#\"obj,old\";!\"a,b.txt\"", gi.cmGrepFile.GetStringPtr());
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.*;#\"obj,old\";!\"a,b.txt\""));
 
 	// Grep 実行側で解析すると、除外パターンが1要素のまま復元される
 	CGrepEnumKeys keys;
-	EXPECT_EQ(0, keys.SetFileKeys(gi.cmGrepFile.GetStringPtr()));
-	EXPECT_EQ(std::vector<std::wstring>({ L"*.*" }), std::vector<std::wstring>(keys.m_vecSearchFileKeys.cbegin(), keys.m_vecSearchFileKeys.cend()));
-	EXPECT_EQ(std::vector<std::wstring>({ L"a,b.txt" }), std::vector<std::wstring>(keys.m_vecExceptFileKeys.cbegin(), keys.m_vecExceptFileKeys.cend()));
-	EXPECT_EQ(std::vector<std::wstring>({ L"obj,old" }), std::vector<std::wstring>(keys.m_vecExceptFolderKeys.cbegin(), keys.m_vecExceptFolderKeys.cend()));
+	EXPECT_THAT(keys.SetFileKeys(gi.cmGrepFile.GetStringPtr()), Eq(0));
+	EXPECT_THAT(std::vector<std::wstring>(keys.m_vecSearchFileKeys.cbegin(), keys.m_vecSearchFileKeys.cend()), Eq(std::vector<std::wstring>({ L"*.*" })));
+	EXPECT_THAT(std::vector<std::wstring>(keys.m_vecExceptFileKeys.cbegin(), keys.m_vecExceptFileKeys.cend()), Eq(std::vector<std::wstring>({ L"a,b.txt" })));
+	EXPECT_THAT(std::vector<std::wstring>(keys.m_vecExceptFolderKeys.cbegin(), keys.m_vecExceptFolderKeys.cend()), Eq(std::vector<std::wstring>({ L"obj,old" })));
 }
 
 /*!
@@ -480,7 +480,7 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_PacksExcludePatternsWithSpace)
 
 	const GrepInfo gi = dlg.MakeGrepInfo();
 
-	EXPECT_STREQ(L"*.cpp;#\"x y\";!\"a b.txt\"", gi.cmGrepFile.GetStringPtr());
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.cpp;#\"x y\";!\"a b.txt\""));
 }
 
 /*!
@@ -499,12 +499,12 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_ReplaceDialogAddsReplaceFields)
 
 	const GrepInfo gi = dlg.MakeGrepInfo();
 
-	EXPECT_STREQ(L"before", gi.cmGrepKey.GetStringPtr());
-	EXPECT_STREQ(L"after", gi.cmGrepRep.GetStringPtr());
-	EXPECT_STREQ(L"*.cpp", gi.cmGrepFile.GetStringPtr());
-	EXPECT_TRUE(gi.bGrepReplace);
-	EXPECT_TRUE(gi.bGrepPaste);
-	EXPECT_TRUE(gi.bGrepBackup);
+	EXPECT_THAT(gi.cmGrepKey.GetStringPtr(), StrEq(L"before"));
+	EXPECT_THAT(gi.cmGrepRep.GetStringPtr(), StrEq(L"after"));
+	EXPECT_THAT(gi.cmGrepFile.GetStringPtr(), StrEq(L"*.cpp"));
+	EXPECT_THAT(gi.bGrepReplace, IsTrue());
+	EXPECT_THAT(gi.bGrepPaste, IsTrue());
+	EXPECT_THAT(gi.bGrepBackup, IsTrue());
 }
 
 /*!
