@@ -10,7 +10,7 @@
     },
     "darkmodelib": {
       "baseline": "0.130.0",
-      "port-version": 0
+      "port-version": 1
     },
     "dll-plugin1": {
       "baseline": "1.0.0",

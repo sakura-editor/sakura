@@ -1,9 +1,25 @@
 get_filename_component(REPO_ROOT "${CURRENT_PORT_DIR}/../../../.." ABSOLUTE)
-set(DARKMODELIB_ROOT "${REPO_ROOT}/externals/darkmodelib")
+set(DARKMODELIB_SOURCE_ROOT "${REPO_ROOT}/externals/darkmodelib")
 
-if(NOT EXISTS "${DARKMODELIB_ROOT}/include/Darkmodelib.h")
-  message(FATAL_ERROR "darkmodelib source not found: ${DARKMODELIB_ROOT}")
+if(NOT EXISTS "${DARKMODELIB_SOURCE_ROOT}/include/Darkmodelib.h")
+  message(FATAL_ERROR "darkmodelib source not found: ${DARKMODELIB_SOURCE_ROOT}")
 endif()
+
+# Do not patch the submodule checkout; apply the fix to a build-tree copy.
+set(DARKMODELIB_ARCHIVE "${CURRENT_BUILDTREES_DIR}/darkmodelib-source.tar")
+vcpkg_execute_required_process(
+  COMMAND "${CMAKE_COMMAND}" -E tar cf "${DARKMODELIB_ARCHIVE}" --format=gnutar
+    src include LICENSE.md LICENSE-MIT.md
+  WORKING_DIRECTORY "${DARKMODELIB_SOURCE_ROOT}"
+  LOGNAME archive-source
+)
+
+vcpkg_extract_source_archive(
+  DARKMODELIB_ROOT
+  ARCHIVE "${DARKMODELIB_ARCHIVE}"
+  NO_REMOVE_ONE_LEVEL
+  PATCHES selected-tab-clip.patch
+)
 
 vcpkg_cmake_configure(
   SOURCE_PATH "${CURRENT_PORT_DIR}"
