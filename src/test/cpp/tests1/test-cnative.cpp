@@ -360,22 +360,17 @@ TEST(CNativeW, AppendStringF102)
 {
 	CNativeW value;
 
-	// 例外が出た直後の errno を記録する（gtest の処理で errno が変わる環境があるため）
-	int errnoAtThrow = 0;
-
 	// Cランタイムの呼出が失敗したら例外を投げる
 	EXPECT_THAT(([&] {
-		try {
-			// エンコードエラーを発生させる。（ShiftJISの後続バイトが欠落）
-			value.AppendStringF(LTEXT("%S"), "\x81\0");
-		} catch (...) {
-			errnoAtThrow = errno;
-			throw;
-		} }),
+		// エンコードエラーを発生させる。（ShiftJISの後続バイトが欠落）
+		value.AppendStringF(LTEXT("%S"), "\x81\0"); }),
 		ThrowsMessage<std::domain_error>(Eq(std::format("AppendStringF error. errno = {:d}", EILSEQ)))
 	);
 
-	EXPECT_THAT(errnoAtThrow, Eq(EILSEQ));
+#if defined(_WIN32)
+	// macOS では例外の送出（スタック巻き戻し）で errno が変わるので、メッセージ内の errno だけを確認する
+	EXPECT_THAT(errno, Eq(EILSEQ));
+#endif
 }
 
 /*!
@@ -1112,26 +1107,21 @@ TEST(CNativeA, AppendStringF102)
 {
 	CNativeA value;
 
-	// 例外が出た直後の errno を記録する（gtest の処理で errno が変わる環境があるため）
-	int errnoAtThrow = 0;
-
 	// Cランタイムの呼出が失敗したら例外を投げる
 	EXPECT_THAT(([&] {
-		try {
-			// エンコードエラーを発生させる。（Windows: 無効な文字値WEOF、Mac: UTF-8 にできない対のないサロゲート）
+		// エンコードエラーを発生させる。（Windows: 無効な文字値WEOF、Mac: UTF-8 にできない対のないサロゲート）
 #if defined(_WIN32)
-			value.AppendStringF("%S", LTEXT("\xFFFF"));
+		value.AppendStringF("%S", LTEXT("\xFFFF")); }),
 #else
-			value.AppendStringF("%S", LTEXT("\xD800"));
+		value.AppendStringF("%S", LTEXT("\xD800")); }),
 #endif
-		} catch (...) {
-			errnoAtThrow = errno;
-			throw;
-		} }),
 		ThrowsMessage<std::domain_error>(Eq(std::format("AppendStringF error. errno = {:d}", EILSEQ)))
 	);
 
-	EXPECT_THAT(errnoAtThrow, Eq(EILSEQ));
+#if defined(_WIN32)
+	// macOS では例外の送出（スタック巻き戻し）で errno が変わるので、メッセージ内の errno だけを確認する
+	EXPECT_THAT(errno, Eq(EILSEQ));
+#endif
 }
 
 TEST(CNativeA, AppendStringWithFormatting)
