@@ -45,7 +45,7 @@ bool IsSkipped(UINT cp)
 {
 	static const std::set<UINT> skip = {
 		42, 1200, 1201, 12000, 12001, 65000, 65001,
-		50220, 50221, 50222, 50225, 50227, 50229, 52936, 54936,
+		50220, 50221, 50222, 50225, 50227, 50229, 52936,
 		57002, 57003, 57004, 57005, 57006, 57007, 57008, 57009, 57010, 57011,
 	};
 	return skip.contains(cp);
@@ -92,11 +92,10 @@ void WriteWcTable(Writer& w, UINT cp, DWORD flags)
 		char out[8] = {};
 		BOOL used = FALSE;
 		const int n = ::WideCharToMultiByte(cp, flags, &wc, 1, out, 8, nullptr, &used);
-		if (n <= 0 || used || n > 2) continue;
+		if (n <= 0 || used || n > 4) continue;
 		entries.push_back(static_cast<uint8_t>(u & 0xFF)); entries.push_back(static_cast<uint8_t>(u >> 8));
 		entries.push_back(static_cast<uint8_t>(n));
-		entries.push_back(static_cast<uint8_t>(out[0]));
-		entries.push_back(n == 2 ? static_cast<uint8_t>(out[1]) : 0);
+		for (int i = 0; i < 4; ++i) entries.push_back(i < n ? static_cast<uint8_t>(out[i]) : 0);
 		++count;
 	}
 	w.u32(count);
@@ -134,6 +133,50 @@ void ProbeUtf8()
 	wprintf(L" errInvalid=%d(%lu) usedDefault=%d(%lu)\n", e1, err1, e2, err2);
 }
 
+void PrintMb(const wchar_t* tag, UINT cp, const char* in, int len)
+{
+	WCHAR out[64] = {};
+	const int n = ::MultiByteToWideChar(cp, 0, in, len, out, 64);
+	const int strict = ::MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, in, len, nullptr, 0);
+	const DWORD err = strict ? 0 : ::GetLastError();
+	wprintf(L"%ls MB", tag);
+	for (int i = 0; i < len; ++i) wprintf(L" %02X", static_cast<unsigned char>(in[i]));
+	wprintf(L" ->");
+	for (int i = 0; i < n; ++i) wprintf(L" %04X", out[i]);
+	wprintf(L" strict=%d err=%lu\n", strict, err);
+}
+
+void PrintWc(const wchar_t* tag, UINT cp, const WCHAR* in, int len)
+{
+	char out[64] = {};
+	const int n = ::WideCharToMultiByte(cp, 0, in, len, out, 64, nullptr, nullptr);
+	wprintf(L"%ls WC", tag);
+	for (int i = 0; i < len; ++i) wprintf(L" %04X", in[i]);
+	wprintf(L" ->");
+	for (int i = 0; i < n; ++i) wprintf(L" %02X", static_cast<unsigned char>(out[i]));
+	wprintf(L" n=%d err=%lu\n", n, n ? 0 : ::GetLastError());
+}
+
+//! UTF-7 和 GB18030 的规则。Mac 版的实现按这里的结果核对
+void ProbeUtf7AndGb18030()
+{
+	for (WCHAR c = 0; c < 0x80; ++c) PrintWc(L"utf7-probe", CP_UTF7, &c, 1);
+	const WCHAR w1[] = { 0x3042, L'a' }, w2[] = { L'a', L'+', L'b' }, w3[] = { 0x3042, L'-' }, w4[] = { 0x3042, 0x3042 },
+		w5[] = { 0x3042, L'.' }, w6[] = { 0xD83D, 0xDE00 }, w7[] = { 0xD800 }, w8[] = { 0x3042, L' ', 0x3044 };
+	PrintWc(L"utf7-probe", CP_UTF7, w1, 2); PrintWc(L"utf7-probe", CP_UTF7, w2, 3); PrintWc(L"utf7-probe", CP_UTF7, w3, 2);
+	PrintWc(L"utf7-probe", CP_UTF7, w4, 2); PrintWc(L"utf7-probe", CP_UTF7, w5, 2); PrintWc(L"utf7-probe", CP_UTF7, w6, 2);
+	PrintWc(L"utf7-probe", CP_UTF7, w7, 1); PrintWc(L"utf7-probe", CP_UTF7, w8, 3);
+	const char* mb[] = { "+MEI-", "+MEI", "+MEI-x", "+MEIw", "+-", "+", "a+MEI.b", "+ZeVnLIqe-", "+!", "\x80", "+MEIAQg-", "+2D3eAA-", "+2D0-", "~\\", "+AGE-", "+MEIwRA" };
+	for (const char* m : mb) PrintMb(L"utf7-probe", CP_UTF7, m, static_cast<int>(strlen(m)));
+
+	const char* gb[] = { "\x81\x30\x81\x30", "\x94\x39\xFC\x36", "\x90\x30\x81\x30", "\x84\x31\xA4\x39", "\x84\x31\xA5\x30",
+		"\xE3\x32\x9A\x35", "\xE3\x32\x9A\x36", "\xFE\x39\xFE\x39", "\x81\x30", "\x81\x30\x81", "\x81\x30\x41\x30", "\x81\x30\x81\x41", "\x80", "\xFF", "\x81\x7F", "\xA1\xA1" };
+	for (const char* m : gb) PrintMb(L"gb18030-probe", 54936, m, static_cast<int>(strlen(m)));
+	const WCHAR g1[] = { 0xD83D, 0xDE00 }, g2[] = { 0xDBFF, 0xDFFF }, g3[] = { 0xD800 }, g4[] = { 0xE5E5 }, g5[] = { 0x0080 }, g6[] = { 0xFFFF };
+	PrintWc(L"gb18030-probe", 54936, g1, 2); PrintWc(L"gb18030-probe", 54936, g2, 2); PrintWc(L"gb18030-probe", 54936, g3, 1);
+	PrintWc(L"gb18030-probe", 54936, g4, 1); PrintWc(L"gb18030-probe", 54936, g5, 1); PrintWc(L"gb18030-probe", 54936, g6, 1);
+}
+
 } // namespace
 
 int wmain(int argc, wchar_t** argv)
@@ -143,12 +186,13 @@ int wmain(int argc, wchar_t** argv)
 		return 2;
 	}
 	ProbeUtf8();
+	ProbeUtf7AndGb18030();
 	::EnumSystemCodePagesW(EnumProc, CP_INSTALLED);
 	std::set<UINT> sorted(g_codePages.begin(), g_codePages.end());
 
 	Writer w;
 	w.buf = { 'S', 'K', 'C', 'P' };
-	w.u32(1);           // version
+	w.u32(2);           // version（2: WideCharToMultiByte 的结果最多 4 字节，含 GB18030）
 	const size_t countPos = w.buf.size();
 	w.u32(0);           // count（最后再写入）
 
@@ -159,7 +203,7 @@ int wmain(int argc, wchar_t** argv)
 	for (UINT cp : sorted) {
 		CPINFOEXW info{};
 		if (!::GetCPInfoExW(cp, 0, &info)) continue;
-		const bool skipped = IsSkipped(cp) || info.MaxCharSize > 2;
+		const bool skipped = IsSkipped(cp) || (info.MaxCharSize > 2 && cp != 54936);
 		if (list) fwprintf(list, L"%u\t%u\t%ls\t%ls\n", cp, info.MaxCharSize, skipped ? L"skip" : L"table", info.CodePageName);
 		if (skipped) continue;
 
@@ -191,7 +235,7 @@ int wmain(int argc, wchar_t** argv)
 			WriteMbEntry(w, cp, &c, 1, nullptr, 0, nullptr, 0);
 		}
 		// 2 字节输入（按前导字节）
-		if (info.MaxCharSize == 2) {
+		if (info.MaxCharSize == 2 || cp == 54936) {
 			for (int lead = 0; lead < 256; ++lead) {
 				if (!::IsDBCSLeadByteEx(cp, static_cast<BYTE>(lead))) continue;
 				for (int trail = 0; trail < 256; ++trail) {
