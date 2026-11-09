@@ -2036,6 +2036,71 @@ TEST_F(EditWndTest, DiffComponents001)
 /*!
  * IDropTarget実装のテスト。
  */
+TEST_F(EditWndTest, DropTarget001)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
+
+	DWORD dwKeyState = 0;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	const auto data = CDataObject::make_instance(L"data", true);
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	//DragEnterのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	//DragOverのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->DragOver(dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragOver(dwKeyState, pt, &dwEffect), S_OK);
+
+	//常にS_OKを返す
+	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
+
+	//Dropのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->Drop(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
+	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	//DragEnter～DragOverを実行させる(1回目)
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	//1回目はDragLeaveでキャンセルさせる
+	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
+
+	//DragEnter～DragOverを実行させる(2回目)
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	//2回目はドロップする
+	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	pcEditWnd->SetDragSourceView(&pcEditWnd->GetActiveView());
+
+	//DragEnter～DragOverを実行させる(1回目)
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	//1回目はDragLeaveでキャンセルさせる
+	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
+
+	//DragEnter～DragOverを実行させる(2回目)
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	//2回目はドロップする
+	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), S_OK);
+
+	pcEditWnd->SetDragSourceView(nullptr);
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
 TEST_F(EditWndTest, DropTarget002)
 {
 	const auto& targetPath = dummyPath;

@@ -15,12 +15,15 @@
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 #include "util/design_template.h"
 
+#include <set>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <objidl.h> // LPDATAOBJECT
 
 //クリップボード
+std::set<CLIPFORMAT> GetAvailableClipFormats(LPDATAOBJECT pDataObject);
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );

@@ -47,6 +47,11 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
+auto GetDragSourceView()
+{
+	return GetEditWnd().GetDragSourceView();
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1662,94 +1667,152 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	DEBUG_TRACE( L"CEditView::DragEnter()\n" );
+	if (!pDataObject) return E_UNEXPECTED;
+
+	if (!pdwEffect) return E_INVALIDARG;
+
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
 	//編集禁止の場合はドロップを受け付けない
-	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
+	if (!GetDocument()->IsEditable()) return E_UNEXPECTED;
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
-		return E_INVALIDARG;
+	m_Formats = GetAvailableClipFormats(pDataObject);
 
-	m_cfDragData = GetAvailableClipFormat( pDataObject );
-	if( m_cfDragData == 0 )
-		return E_INVALIDARG;
-	else if( m_cfDragData == CF_HDROP ){
-		// 右ボタンで入ってきたときだけファイルをビューで取り扱う
-		if( !(MK_RBUTTON & dwKeyState) )
-			return E_INVALIDARG;
-	}
+	if (m_Formats.empty()) return E_INVALIDARG;
 
+	// ファイルを受け付けるのは右ボタンで入ってきたときだけ
+	if (IsDragFile() && !(dwKeyState & MK_RBUTTON)) return E_INVALIDARG;
+
+#if 0 //この処理は不要なはず
 	/* 自分をアクティブペインにする */
 	GetEditWnd().SetActivePane( m_nMyIndex );
+#endif
+
+	// ドラッグデータは矩形か
+	m_pcEditView->m_bDragBoxData = m_Formats.contains(CDataObject::cfColumn);
 
 	// 現在のカーソル位置を記憶する	// 2007.12.09 ryoji
 	m_ptCaretPos_DragEnter = GetCaret().GetCaretLayoutPos();
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
-	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" ) );
+	EnterDragMode();
 
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( TRUE );
-
-	DragOver( dwKeyState, pt, pdwEffect );
-	return S_OK;
+	return DragOver(dwKeyState, pt, pdwEffect);
 }
 
-STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	DEBUG_TRACE( L"CEditView::DragOver()\n" );
-
-	/* マウス移動のメッセージ処理 */
-	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
-	OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
-
-	if ( pdwEffect == nullptr )
-		return E_INVALIDARG;
-
-	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
-
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
+	if (!pdwEffect) return E_INVALIDARG;
 
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
-	if( pcDragSourceView && !IsDragSource() &&
-		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
-	){
+	if (auto pcDragSourceView = GetDragSourceView();
+		IsDragSource() &&
+		pcDragSourceView &&
+		!pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos()))
+	{
 		*pdwEffect = DROPEFFECT_NONE;
+	}
+	else {
+		const auto hWnd = m_pcEditView->GetHwnd();
+
+		/* マウス移動のメッセージ処理 */
+		::ScreenToClient(hWnd, (LPPOINT)&pt);
+		FORWARD_WM_MOUSEMOVE(hWnd, pt.x, pt.y, dwKeyState, SendMessageW);
+
+		*pdwEffect = TranslateDropEffect(dwKeyState, *pdwEffect);
 	}
 
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::DragLeave( void )
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
-	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( FALSE );
+	LeaveDragMode();
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
 	// ※範囲選択中のときに選択範囲とカーソルが分離すると変だから
 	GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
 	GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
-	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
-	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == nullptr )
-		OnKillFocus();
+	m_pcEditView->RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
 
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CDropTarget::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
+{
+	if (!pDataObject) return E_UNEXPECTED;
+
+	if (!pdwEffect) return E_INVALIDARG;
+
+	LeaveDragMode();
+
+	// ファイルドロップは PostMyDropFiles() で処理する
+	if (IsDragFile()) return m_pcEditView->PostMyDropFiles(pDataObject);
+
+	bool bMove = false;
+
+	// 外部からのドロップは以後の処理ではコピーと同様に扱う
+	if (const auto pcDragSourceView = GetDragSourceView())
+	{
+		bMove = (DROPEFFECT_MOVE == *pdwEffect);
+
+		// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
+		if (!pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
+			// DragEnter時のカーソル位置を復元
+			// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
+			*pdwEffect = DROPEFFECT_NONE;
+
+			return DragLeave();
+		}
+	}
+	else {
+		*pdwEffect = TranslateDropEffect(dwKeyState, *pdwEffect);
+
+		if (DROPEFFECT_NONE == *pdwEffect) return E_INVALIDARG;
+	}
+
+	HRESULT hr;
+
+	try {
+		hr = m_pcEditView->InsertDroppedText(
+			pDataObject,
+			bMove
+		);
+	}
+	// メモリ不足の場合
+	catch (const std::bad_alloc&) {
+		hr = E_OUTOFMEMORY;
+	}
+
+	return hr;
+}
+
+HRESULT CEditView::InsertDroppedText(
+	LPDATAOBJECT pDataObject,
+	bool bMove
+)
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
-	BOOL		bBoxData;
-	BOOL		bMove;
+
 	BOOL		bMoveToPrev = FALSE;
 	RECT		rcSel;
 	CNativeW	cmemBuf;
@@ -1758,52 +1821,16 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	CLayoutRange sSelectBgn_Old;
 	CLayoutRange sSelect_Old;
 
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( FALSE );
+	const auto formats = GetAvailableClipFormats(pDataObject);
 
-	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == nullptr )
-		OnKillFocus();
+	const auto cf = *formats.begin();
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
-		return E_INVALIDARG;
-
-	CLIPFORMAT cf;
-	cf = GetAvailableClipFormat( pDataObject );
-	if( cf == 0 )
-		return E_INVALIDARG;
-
-	*pdwEffect = TranslateDropEffect( cf, dwKeyState, pt, *pdwEffect );
-	if( *pdwEffect == DROPEFFECT_NONE )
-		return E_INVALIDARG;
-
-	// ファイルドロップは PostMyDropFiles() で処理する
-	if( cf == CF_HDROP )
-		return PostMyDropFiles( pDataObject );
-
-	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
-	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
-	bBoxData = m_bDragBoxData;
-
-	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
-	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
-	){
-		// DragEnter時のカーソル位置を復元
-		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
-		*pdwEffect = DROPEFFECT_NONE;
-		GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
-		GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
-		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
-			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
-		return S_OK;
-	}
+	auto pcDragSourceView = GetDragSourceView();
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == nullptr)
-		return E_INVALIDARG;
+	if (!hData) return E_INVALIDARG;
+
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 	if( cf == CClipboard::GetSakuraFormat() ){
@@ -1828,6 +1855,8 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		m_cCommander.SetOpeBlk(new COpeBlk);
 	}
 	m_cCommander.GetOpeBlk()->AddRef();
+
+	const auto bBoxData = m_bDragBoxData;
 
 	/* 移動の場合、位置関係を算出 */
 	if( bMove ){
@@ -2171,29 +2200,12 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::GlobalFree( hDrop );
 }
 
-CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
+DWORD CDropTarget::TranslateDropEffect(
+	DWORD dwKeyState,
+	DWORD dwEffect
+) const
 {
-	CLIPFORMAT cf = 0;
-	CLIPFORMAT cfSAKURAClip = CClipboard::GetSakuraFormat();
-
-	if( IsDataAvailable(pDataObject, cfSAKURAClip) )
-		cf = cfSAKURAClip;
-	else if( IsDataAvailable(pDataObject, CF_UNICODETEXT) )
-		cf = CF_UNICODETEXT;
-	else if( IsDataAvailable(pDataObject, CF_TEXT) )
-		cf = CF_TEXT;
-	else if( IsDataAvailable(pDataObject, CF_HDROP) )	// 2008.06.20 ryoji
-		cf = CF_HDROP;
-
-	return cf;
-}
-
-DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_unused]] POINTL pt, DWORD dwEffect )
-{
-	if( cf == CF_HDROP )	// 2008.06.20 ryoji
-		return DROPEFFECT_LINK;
-
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
+	if (IsDragFile()) return DROPEFFECT_LINK;
 
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
@@ -2201,7 +2213,9 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 #if 1
 	// ドラッグ元が外部ウィンドウかどうかによって受け方を変える
 	// ※汎用テキストエディタではこちらが主流っぽい
-	if( pcDragSourceView ){
+	if (const auto pcDragSourceView = GetDragSourceView();
+		pcDragSourceView)
+	{
 #else
 	// ドラッグ元が移動を許すかどうかによって受け方を変える
 	// ※MS 製品（MS Office, Visual Studioなど）ではこちらが主流っぽい
@@ -2214,9 +2228,9 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 	return dwEffect;
 }
 
-bool CEditView::IsDragSource( void )
+bool CEditView::IsDragSource() const
 {
-	return ( this == GetEditWnd().GetDragSourceView() );
+	return this == GetDragSourceView();
 }
 
 /*!
