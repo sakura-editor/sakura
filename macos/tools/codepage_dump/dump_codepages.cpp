@@ -237,7 +237,9 @@ int wmain(int argc, wchar_t** argv)
 		// 2 字节输入（按前导字节）
 		if (info.MaxCharSize == 2 || cp == 54936) {
 			for (int lead = 0; lead < 256; ++lead) {
-				if (!::IsDBCSLeadByteEx(cp, static_cast<BYTE>(lead))) continue;
+				// GB18030 的 CPINFO 没有前导字节范围，直接用 81〜FE（4 字节字符由 WideCharToMultiByte 的表反推）
+				const bool isLead = (cp == 54936) ? (0x81 <= lead && lead <= 0xFE) : ::IsDBCSLeadByteEx(cp, static_cast<BYTE>(lead));
+				if (!isLead) continue;
 				for (int trail = 0; trail < 256; ++trail) {
 					const char src[2] = { static_cast<char>(lead), static_cast<char>(trail) };
 					WriteMbEntry(w, cp, src, 2, single[lead], singleLen[lead], single[trail], singleLen[trail]);
