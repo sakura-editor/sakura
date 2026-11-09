@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <set>
 #include <string>
 #include <vector>
@@ -50,7 +51,7 @@ bool IsSkipped(UINT cp)
 	return skip.contains(cp);
 }
 
-//! MultiByteToWideChar の結果 1 件
+//! 一项 MultiByteToWideChar 的结果
 void WriteMbEntry(Writer& w, UINT cp, const char* src, int len, const WCHAR* aloneLead, int aloneLeadLen, const WCHAR* aloneTrail, int aloneTrailLen)
 {
 	WCHAR out[8] = {};
@@ -58,7 +59,7 @@ void WriteMbEntry(Writer& w, UINT cp, const char* src, int len, const WCHAR* alo
 	WCHAR tmp[8] = {};
 	const bool strictOk = ::MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, src, len, tmp, 8) > 0;
 	uint32_t flags = strictOk ? 1 : 0;
-	// 2 バイト入力で、先行バイト単独 + 後続バイト単独 と同じ結果なら「先行バイトだけ消費した」
+	// 2 字节输入的结果等于“前导字节单独 + 后续字节单独”时，视为只消耗了前导字节
 	if (len == 2 && aloneLead && n == aloneLeadLen + aloneTrailLen
 		&& std::wstring(out, n) == std::wstring(aloneLead, aloneLeadLen) + std::wstring(aloneTrail, aloneTrailLen)) {
 		flags |= 2;
@@ -80,7 +81,7 @@ void WriteWcResult(Writer& w, UINT cp, const WCHAR* src, int len)
 	w.u8(used ? 1 : 0);
 }
 
-//! WideCharToMultiByte の一覧（替代字符になったものは書かない）
+//! WideCharToMultiByte 的结果一览（变成替代字符的不写）
 void WriteWcTable(Writer& w, UINT cp, DWORD flags)
 {
 	std::vector<uint8_t> entries;
@@ -102,6 +103,37 @@ void WriteWcTable(Writer& w, UINT cp, DWORD flags)
 	w.buf.insert(w.buf.end(), entries.begin(), entries.end());
 }
 
+//! UTF-8 的转换规则（不正确序列的处理等）。Mac 版的实现按这里的结果核对
+void ProbeUtf8()
+{
+	const char* inputs[] = {
+		"a\xF0\x9F\x98\x80", "\xE3\x81" "A" "\x80", "\xED\xA0\x80", "\xC0\xAF", "\xF4\x90\x80\x80",
+		"\xE0\x80\x80", "\xF0\x9F\x98", "\xFF", "\xC2", "\xE3\x81\x82\x80\x80",
+	};
+	for (const char* in : inputs) {
+		const int len = static_cast<int>(strlen(in));
+		WCHAR out[32] = {};
+		const int n = ::MultiByteToWideChar(CP_UTF8, 0, in, len, out, 32);
+		const int strict = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, in, len, nullptr, 0);
+		wprintf(L"utf8-probe MB");
+		for (int i = 0; i < len; ++i) wprintf(L" %02X", static_cast<unsigned char>(in[i]));
+		wprintf(L" ->");
+		for (int i = 0; i < n; ++i) wprintf(L" %04X", out[i]);
+		wprintf(L" strict=%d err=%lu\n", strict, strict ? 0 : ::GetLastError());
+	}
+	const WCHAR lone[] = { 0xD800, L'A', 0xDC00 };
+	char mb[16] = {};
+	const int n = ::WideCharToMultiByte(CP_UTF8, 0, lone, 3, mb, 16, nullptr, nullptr);
+	wprintf(L"utf8-probe WC D800 0041 DC00 ->");
+	for (int i = 0; i < n; ++i) wprintf(L" %02X", static_cast<unsigned char>(mb[i]));
+	BOOL used = FALSE;
+	const int e1 = ::WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, lone, 3, nullptr, 0, nullptr, nullptr);
+	const DWORD err1 = ::GetLastError();
+	const int e2 = ::WideCharToMultiByte(CP_UTF8, 0, lone, 3, nullptr, 0, nullptr, &used);
+	const DWORD err2 = ::GetLastError();
+	wprintf(L" errInvalid=%d(%lu) usedDefault=%d(%lu)\n", e1, err1, e2, err2);
+}
+
 } // namespace
 
 int wmain(int argc, wchar_t** argv)
@@ -110,6 +142,7 @@ int wmain(int argc, wchar_t** argv)
 		fwprintf(stderr, L"usage: dump_codepages <out.bin> [list.tsv]\n");
 		return 2;
 	}
+	ProbeUtf8();
 	::EnumSystemCodePagesW(EnumProc, CP_INSTALLED);
 	std::set<UINT> sorted(g_codePages.begin(), g_codePages.end());
 
@@ -117,7 +150,7 @@ int wmain(int argc, wchar_t** argv)
 	w.buf = { 'S', 'K', 'C', 'P' };
 	w.u32(1);           // version
 	const size_t countPos = w.buf.size();
-	w.u32(0);           // count（後で書き換える）
+	w.u32(0);           // count（最后再写入）
 
 	FILE* list = nullptr;
 	if (argc >= 3) _wfopen_s(&list, argv[2], L"w, ccs=UTF-8");
@@ -140,7 +173,7 @@ int wmain(int argc, wchar_t** argv)
 		w.u16(static_cast<uint32_t>(name.size()));
 		for (WCHAR c : name) w.u16(c);
 
-		// サロゲートの扱い（対、上位だけ、下位だけ）
+		// 代理项的处理（成对、只有高位、只有低位）
 		const WCHAR pair[] = { 0xD83D, 0xDE00 };
 		const WCHAR hi[] = { 0xD83D };
 		const WCHAR lo[] = { 0xDE00 };
@@ -148,7 +181,7 @@ int wmain(int argc, wchar_t** argv)
 		WriteWcResult(w, cp, hi, 1);
 		WriteWcResult(w, cp, lo, 1);
 
-		// 1 バイト入力
+		// 1 字节输入
 		WCHAR single[256][8] = {};
 		int singleLen[256] = {};
 		for (int b = 0; b < 256; ++b) {
@@ -157,7 +190,7 @@ int wmain(int argc, wchar_t** argv)
 			if (singleLen[b] < 0) singleLen[b] = 0;
 			WriteMbEntry(w, cp, &c, 1, nullptr, 0, nullptr, 0);
 		}
-		// 2 バイト入力（先行バイトごと）
+		// 2 字节输入（按前导字节）
 		if (info.MaxCharSize == 2) {
 			for (int lead = 0; lead < 256; ++lead) {
 				if (!::IsDBCSLeadByteEx(cp, static_cast<BYTE>(lead))) continue;
