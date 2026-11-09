@@ -1107,14 +1107,17 @@ TEST(CNativeA, AppendStringF102)
 {
 	CNativeA value;
 
+	// エンコードエラーを発生させる文字列（Windows: 無効な文字値WEOF、Mac: UTF-8 にできない対のないサロゲート）
+#if defined(_WIN32)
+	const WCHAR* const pszInvalid = LTEXT("\xFFFF");
+#else
+	const WCHAR* const pszInvalid = LTEXT("\xD800");
+#endif
+
 	// Cランタイムの呼出が失敗したら例外を投げる
 	EXPECT_THAT(([&] {
-		// エンコードエラーを発生させる。（Windows: 無効な文字値WEOF、Mac: UTF-8 にできない対のないサロゲート）
-#if defined(_WIN32)
-		value.AppendStringF("%S", LTEXT("\xFFFF")); }),
-#else
-		value.AppendStringF("%S", LTEXT("\xD800")); }),
-#endif
+		// エンコードエラーを発生させる。
+		value.AppendStringF("%S", pszInvalid); }),
 		ThrowsMessage<std::domain_error>(Eq(std::format("AppendStringF error. errno = {:d}", EILSEQ)))
 	);
 
