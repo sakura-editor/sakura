@@ -18,7 +18,7 @@ namespace basis {
  */
 initialization_error::initialization_error(
 	std::string_view what,
-	std::wstring_view message,
+	sakura::wstring_view message,
 	std::optional<int> optExitCode
 )
 	: Base{ std::data(what) }

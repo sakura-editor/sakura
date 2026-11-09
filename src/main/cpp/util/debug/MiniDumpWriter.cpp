@@ -28,7 +28,7 @@ namespace cxx {
  * @date 2026/10/16 berryzplus 復刻
  */
 void MiniDumpWriter::WriteMiniDump(
-	std::wstring_view file,
+	sakura::wstring_view file,
 	PEXCEPTION_POINTERS pExceptionParams
 ) const
 {

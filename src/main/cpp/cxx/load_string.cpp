@@ -20,7 +20,7 @@ namespace cxx {
  * @param [in, opt] optModule リソースDLLのハンドル（省略時はアプリリソースから取得）
  * @throw std::system_error 指定された文字列リソースが見付からなかった場合
  */
-std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
+sakura::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 {
 	if (std::numeric_limits<WORD>::max() < id) {
 		throw std::invalid_argument("string resource id should be in WORD range!");
@@ -44,7 +44,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 #endif
 
 	// 先頭ポインターと文字列長で文字列参照を構築して返す
-	return std::wstring_view(lpBuffer, cchResStr);
+	return sakura::wstring_view(lpBuffer, cchResStr);
 
 #else
 	// RT_STRINGリソースのブロック番号を計算
@@ -83,7 +83,7 @@ std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule)
 			if (std::size(resData) < 1 + length) throw std::system_error(std::make_error_code(std::errc::not_supported), "String resource entry is truncated.");
 
 			// 文字列をstd::wstring_viewに格納して返す
-			return std::wstring_view(resData.data() + 1, length);
+			return sakura::wstring_view(resData.data() + 1, length);
 		},
 		RT_STRING,
 		optModule

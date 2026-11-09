@@ -39,11 +39,11 @@ public:
 
 	explicit NamedFilePointer(
 		FilePointer&& fp,
-		std::wstring_view path
+		sakura::wstring_view path
 	);
 
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	explicit NamedFilePointer(
 		FilePointer&& fp,
 		const A& path
@@ -61,14 +61,14 @@ public:
 	NamedFilePointer(Me&& other) noexcept = default;
 	Me& operator=(Me&& rhs) noexcept = default;
 
-	std::wstring GetPath() const { return std::wstring{ m_Path.str() }; }
+	sakura::wstring GetPath() const { return sakura::wstring{ m_Path.str() }; }
 
 private:
 	SFilePath	m_Path;
 };
 
 template <basis::NullTerminatedStringConstructible<WCHAR> A>
-	requires (!std::is_same_v<A, std::wstring_view>)
+	requires (!std::is_same_v<A, sakura::wstring_view>)
 NamedFilePointer FilePointer::CreateFilePath(
 	const A& path
 )
@@ -83,10 +83,10 @@ NamedFilePointer FilePointer::CreateFilePath(
 }
 
 template <basis::NullTerminatedStringConstructible<WCHAR> A>
-	requires (!std::is_same_v<A, std::wstring_view>)
+	requires (!std::is_same_v<A, sakura::wstring_view>)
 NamedFilePointer FilePointer::OpenFilePath(
 	const A& path,
-	std::wstring_view mode
+	sakura::wstring_view mode
 )
 {
 	// 引数はNUL終端文字列として扱う

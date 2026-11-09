@@ -80,7 +80,7 @@ TEST(EditInfo, operatorNotEqual)
 {
 	EditInfo value, other;
 
-	wcscpy_s(value.m_szPath, L"test");
+	wcscpy_s(value.m_szPath, LTEXT("test"));
 	ASSERT_NE(value, other);
 	value.m_szPath[0] = 0;
 	
@@ -92,7 +92,7 @@ TEST(EditInfo, operatorNotEqual)
 	ASSERT_NE(value, other);
 	value.m_bBom = other.m_bBom;
 
-	wcscpy_s(value.m_szDocType, L"test");
+	wcscpy_s(value.m_szDocType, LTEXT("test"));
 	ASSERT_NE(value, other);
 	value.m_szDocType[0] = 0;
 
@@ -120,7 +120,7 @@ TEST(EditInfo, operatorNotEqual)
 	ASSERT_NE(value, other);
 	value.m_bIsGrep = other.m_bIsGrep;
 
-	wcscpy_s(value.m_szGrepKey, L"test");
+	wcscpy_s(value.m_szGrepKey, LTEXT("test"));
 	ASSERT_NE(value, other);
 	value.m_szGrepKey[0] = 0;
 
@@ -128,7 +128,7 @@ TEST(EditInfo, operatorNotEqual)
 	ASSERT_NE(value, other);
 	value.m_bIsDebug = other.m_bIsDebug;
 
-	wcscpy_s(value.m_szMarkLines, L"test");
+	wcscpy_s(value.m_szMarkLines, LTEXT("test"));
 	ASSERT_NE(value, other);
 	value.m_szMarkLines[0] = 0;
 

@@ -87,20 +87,20 @@ bool CDataProfile::IOProfileData<EditInfo>(
 	EditInfo&				ei				//!< [in,out] エントリ値
 )
 {
-	IOProfileData(sectionName, std::format(LTEXT("{}.nViewTopLine"),	keyPrefix), ei.m_nViewTopLine);
-	IOProfileData(sectionName, std::format(LTEXT("{}.nViewLeftCol"),	keyPrefix), ei.m_nViewLeftCol);
-	IOProfileData(sectionName, std::format(LTEXT("{}.nX"),			keyPrefix), ei.m_ptCursor.x);
-	IOProfileData(sectionName, std::format(LTEXT("{}.nY"),			keyPrefix), ei.m_ptCursor.y);
-	IOProfileData(sectionName, std::format(LTEXT("{}.nCharCode"),		keyPrefix), ei.m_nCharCode);
-	IOProfileData(sectionName, std::format(LTEXT("{}.szPath"),		keyPrefix), ei.m_szPath);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nViewTopLine"),	keyPrefix), ei.m_nViewTopLine);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nViewLeftCol"),	keyPrefix), ei.m_nViewLeftCol);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nX"),			keyPrefix), ei.m_ptCursor.x);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nY"),			keyPrefix), ei.m_ptCursor.y);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nCharCode"),		keyPrefix), ei.m_nCharCode);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.szPath"),		keyPrefix), ei.m_szPath);
 
-	if (!IOProfileData(sectionName, std::format(LTEXT("{}.szMark2"),	keyPrefix), ei.m_szMarkLines) &&
+	if (!IOProfileData(sectionName, sakura::format(LTEXT("{}.szMark2"),	keyPrefix), ei.m_szMarkLines) &&
 		IsReadingMode())
 	{
-		IOProfileData(sectionName, std::format(LTEXT("{}.szMark"), keyPrefix), ei.m_szMarkLines);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.szMark"), keyPrefix), ei.m_szMarkLines);
 	}
 
-	IOProfileData(sectionName, std::format(LTEXT("{}.nType"), keyPrefix), ei.m_nTypeId );
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nType"), keyPrefix), ei.m_nTypeId );
 
 	return true;	// 返却値に意味はない
 }
@@ -307,17 +307,17 @@ bool CDataProfile::IOProfileData<PluginRec>(
 		::wcscpy_s(szId, pluginRec.m_szId);
 	}
 
-	if (!IOProfileData(sectionName, std::format(LTEXT("{}.Name"), keyPrefix), szName))
+	if (!IOProfileData(sectionName, sakura::format(LTEXT("{}.Name"), keyPrefix), szName))
 	{
 		return false;
 	}
 
-	if (!IOProfileData(sectionName, std::format(LTEXT("{}.Id"), keyPrefix), szId))
+	if (!IOProfileData(sectionName, sakura::format(LTEXT("{}.Id"), keyPrefix), szId))
 	{
 		return false;
 	}
 
-	if (!IOProfileData(sectionName, std::format(LTEXT("{}.CmdNum"), keyPrefix), pluginRec.m_nCmdNum))
+	if (!IOProfileData(sectionName, sakura::format(LTEXT("{}.CmdNum"), keyPrefix), pluginRec.m_nCmdNum))
 	{
 		return false;
 	}
@@ -397,31 +397,31 @@ bool CDataProfile::IOProfileData<SFileTreeItem>(
 	SFileTreeItem&			fileTreeItem		//!< [in,out] エントリ値
 )
 {
-	IOProfileData(sectionName, std::format(LTEXT("{}.eItemType"), keyPrefix), fileTreeItem.m_eFileTreeItemType);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.eItemType"), keyPrefix), fileTreeItem.m_eFileTreeItemType);
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_File)
 	{
-		IOProfileData(sectionName, std::format(LTEXT("{}.szTargetPath"), keyPrefix), fileTreeItem.m_szTargetPath);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.szTargetPath"), keyPrefix), fileTreeItem.m_szTargetPath);
 	}
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Folder ||
 		!fileTreeItem.m_szLabelName.empty())
 	{
-		IOProfileData(sectionName, std::format(LTEXT("{}.szLabelName"), keyPrefix), fileTreeItem.m_szLabelName);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.szLabelName"), keyPrefix), fileTreeItem.m_szLabelName);
 	}
 
-	IOProfileData(sectionName, std::format(LTEXT("{}.nDepth"), keyPrefix), fileTreeItem.m_nDepth);
+	IOProfileData(sectionName, sakura::format(LTEXT("{}.nDepth"), keyPrefix), fileTreeItem.m_nDepth);
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep)
 	{
-		IOProfileData(sectionName, std::format(LTEXT("{}.szTargetFile"),   keyPrefix), fileTreeItem.m_szTargetFile);
-		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreHidden"),  keyPrefix), fileTreeItem.m_bIgnoreHidden);
-		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreReadOny"), keyPrefix), fileTreeItem.m_bIgnoreReadOnly);
-		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreSystem"),  keyPrefix), fileTreeItem.m_bIgnoreSystem);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.szTargetFile"),   keyPrefix), fileTreeItem.m_szTargetFile);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.bIgnoreHidden"),  keyPrefix), fileTreeItem.m_bIgnoreHidden);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.bIgnoreReadOny"), keyPrefix), fileTreeItem.m_bIgnoreReadOnly);
+		IOProfileData(sectionName, sakura::format(LTEXT("{}.bIgnoreSystem"),  keyPrefix), fileTreeItem.m_bIgnoreSystem);
 	}
 
 	return true;	// 返却値に意味はない

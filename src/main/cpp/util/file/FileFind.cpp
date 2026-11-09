@@ -18,7 +18,7 @@
 namespace cxx {
 
 FileFind FileFind::FindFirstFileW(
-	std::wstring_view searchPattern,
+	sakura::wstring_view searchPattern,
 	WIN32_FIND_DATAW* pFindFileData
 )
 {

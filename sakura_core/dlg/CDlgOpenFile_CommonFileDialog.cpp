@@ -1219,7 +1219,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 		return;
 	}
 
-	const auto formatted = std::format(LTEXT("{:<21}"), name);
+	const auto formatted = sakura::format(LTEXT("{:<21}"), name);
 
 	const auto pszError = std::data(formatted);
 

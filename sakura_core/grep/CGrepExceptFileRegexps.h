@@ -53,7 +53,7 @@ public:
 			}
 			// Windows のパスなので、既存の除外ワイルドカードと同じく大文字小文字を区別しない
 			if( !pRegexp->Compile( strPattern.c_str(), CBregexp::optNothing ) ){
-				m_strErrorMessage = std::format( LTEXT("{}\n{}\n{}"), LS( STR_GREP_ERR_EXCLUDE_REGEXP ), strPattern, pRegexp->GetLastMessage() );
+				m_strErrorMessage = sakura::format( LTEXT("{}\n{}\n{}"), LS( STR_GREP_ERR_EXCLUDE_REGEXP ), strPattern, pRegexp->GetLastMessage() );
 				return false;
 			}
 			m_regexps.push_back( std::move( pRegexp ) );

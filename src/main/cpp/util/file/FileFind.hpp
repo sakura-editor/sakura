@@ -27,7 +27,7 @@ private:
 
 public:
 	static Me FindFirstFileW(
-		std::wstring_view searchPattern,
+		sakura::wstring_view searchPattern,
 		WIN32_FIND_DATAW* pFindFileData
 	);
 

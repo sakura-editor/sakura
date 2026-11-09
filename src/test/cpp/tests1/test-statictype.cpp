@@ -19,8 +19,8 @@ static_assert(basis::StringViewCompatible<CStringRef, WCHAR>);
 static_assert(basis::StringViewCompatible<SFilePath, WCHAR>);
 static_assert(!basis::StringViewCompatible<std::filesystem::path, WCHAR>);
 static_assert(!basis::StringViewCompatible<std::nullptr_t, WCHAR>);
-static_assert(basis::StringViewCompatible<std::wstring, WCHAR>);
-static_assert(basis::StringViewCompatible<std::wstring_view, WCHAR>);
+static_assert(basis::StringViewCompatible<sakura::wstring, WCHAR>);
+static_assert(basis::StringViewCompatible<sakura::wstring_view, WCHAR>);
 static_assert(!basis::StringViewCompatible<WCHAR[16], WCHAR>);
 static_assert(!basis::StringViewCompatible<const WCHAR[16], WCHAR>);
 static_assert(!basis::StringViewCompatible<std::array<WCHAR, 16>, WCHAR>);
@@ -30,10 +30,12 @@ static_assert(!basis::StringConstructible<LPCWSTR, WCHAR>);
 static_assert(!basis::StringConstructible<CNativeW, WCHAR>);
 static_assert(!basis::StringConstructible<CStringRef, WCHAR>);
 static_assert(!basis::StringConstructible<SFilePath, WCHAR>);
+#if defined(_WIN32)	// Windows の path は wchar_t で保持する。Mac の path は UTF-8 なので対象外
 static_assert(basis::StringConstructible<std::filesystem::path, WCHAR>);
+#endif
 static_assert(!basis::StringConstructible<std::nullptr_t, WCHAR>);
-static_assert(!basis::StringConstructible<std::wstring, WCHAR>);
-static_assert(!basis::StringConstructible<std::wstring_view, WCHAR>);
+static_assert(!basis::StringConstructible<sakura::wstring, WCHAR>);
+static_assert(!basis::StringConstructible<sakura::wstring_view, WCHAR>);
 static_assert(!basis::StringConstructible<WCHAR[16], WCHAR>);
 static_assert(!basis::StringConstructible<const WCHAR[16], WCHAR>);
 static_assert(!basis::StringConstructible<std::array<WCHAR, 16>, WCHAR>);
@@ -54,8 +56,8 @@ static_assert(!basis::WritableBuffer<CStringRef, WCHAR>);
 static_assert(basis::WritableBuffer<SFilePath, WCHAR>);
 static_assert(!basis::WritableBuffer<std::filesystem::path, WCHAR>);
 static_assert(!basis::WritableBuffer<std::nullptr_t, WCHAR>);
-static_assert(!basis::WritableBuffer<std::wstring, WCHAR>);
-static_assert(!basis::WritableBuffer<std::wstring_view, WCHAR>);
+static_assert(!basis::WritableBuffer<sakura::wstring, WCHAR>);
+static_assert(!basis::WritableBuffer<sakura::wstring_view, WCHAR>);
 static_assert(basis::WritableBuffer<WCHAR[16], WCHAR>);
 static_assert(!basis::WritableBuffer<const WCHAR[16], WCHAR>);
 static_assert(basis::WritableBuffer<std::array<WCHAR, 16>, WCHAR>);
@@ -212,7 +214,7 @@ TEST(StaticString, test001)
 {
 	StaticString<_MAX_PATH> path{};
 
-	const std::wstring tooLong(_MAX_PATH * 2, L'a');
+	const sakura::wstring tooLong(_MAX_PATH * 2, LCHAR('a'));
 
 	// 初期状態（空）の確認
 	EXPECT_THAT(path.empty(), IsTrue());
@@ -220,29 +222,29 @@ TEST(StaticString, test001)
 	EXPECT_THAT(path.GetBufferCount(), Eq(260u));
 
 	// 代入メソッドの確認
-	EXPECT_THAT(path.assign(L"C:\\work"), Eq(0));
-	EXPECT_THAT(path, StrEq(L"C:\\work"));
+	EXPECT_THAT(path.assign(LTEXT("C:\\work")), Eq(0));
+	EXPECT_THAT(path, StrEq(LTEXT("C:\\work")));
 
 	// 追記メソッドの確認
-	EXPECT_THAT(path.append(L"\\sample.txt"), Eq(0));
-	EXPECT_THAT(path, StrEq(L"C:\\work\\sample.txt"));
+	EXPECT_THAT(path.append(LTEXT("\\sample.txt")), Eq(0));
+	EXPECT_THAT(path, StrEq(LTEXT("C:\\work\\sample.txt")));
 
 	// 代入メソッドの確認（オーバーフロー）
 	EXPECT_THAT(path.assign(tooLong), Eq(STRUNCATE));
 	EXPECT_THAT(path.length(), Eq(_MAX_PATH - 1));
-	EXPECT_THAT(path.c_str()[_MAX_PATH - 1], Eq(L'\0'));
+	EXPECT_THAT(path.c_str()[_MAX_PATH - 1], Eq(LCHAR('\0')));
 
-	EXPECT_THAT(path.assign(L"abc"), Eq(0));
+	EXPECT_THAT(path.assign(LTEXT("abc")), Eq(0));
 
 	EXPECT_THAT(path.append(tooLong), Eq(STRUNCATE));
 	EXPECT_THAT(path.length(), Eq(_MAX_PATH - 1));
-	EXPECT_THAT(path[0], Eq(L'a'));
-	EXPECT_THAT(path[1], Eq(L'b'));
-	EXPECT_THAT(path[2], Eq(L'c'));
+	EXPECT_THAT(path[0], Eq(LCHAR('a')));
+	EXPECT_THAT(path[1], Eq(LCHAR('b')));
+	EXPECT_THAT(path[2], Eq(LCHAR('c')));
 	for (size_t i = 3; i < _MAX_PATH - 1; ++i) {
-		EXPECT_THAT(path[3], Eq(L'a'));
+		EXPECT_THAT(path[3], Eq(LCHAR('a')));
 	}
-	EXPECT_THAT(path.c_str()[_MAX_PATH - 1], Eq(L'\0'));
+	EXPECT_THAT(path.c_str()[_MAX_PATH - 1], Eq(LCHAR('\0')));
 
 	// lengthがおかしいときの挙動確認
 	::wmemcpy_s(std::data(path), std::size(path), std::data(tooLong), std::size(path));
@@ -251,39 +253,39 @@ TEST(StaticString, test001)
 	EXPECT_THAT(wcsncpy_s(path, tooLong, _TRUNCATE), Eq(STRUNCATE));
 	EXPECT_THAT(path.data()[_MAX_PATH - 1], Eq(0));
 
-	EXPECT_THAT(wcscpy_s(path, L"abc"), Eq(0));
-	EXPECT_THAT(wcsncat_s(path, L"DEFxyz", 3), Eq(0));
-	EXPECT_THAT(path.c_str(), StrEq(L"abcDEF"));
+	EXPECT_THAT(wcscpy_s(path, LTEXT("abc")), Eq(0));
+	EXPECT_THAT(wcsncat_s(path, LTEXT("DEFxyz"), 3), Eq(0));
+	EXPECT_THAT(path.c_str(), StrEq(LTEXT("abcDEF")));
 
 	EXPECT_THAT(wcsncat_s(path, tooLong, _TRUNCATE), Eq(STRUNCATE));
 	EXPECT_THAT(path.length(), Eq(_MAX_PATH - 1));
 
-	path.assign(L"C:\\work");
+	path.assign(LTEXT("C:\\work"));
 
-	const std::wstring_view sv{ path };
-	EXPECT_THAT(sv, StrEq(L"C:\\work"));
+	const sakura::wstring_view sv{ path };
+	EXPECT_THAT(sv, StrEq(LTEXT("C:\\work")));
 
 	const std::filesystem::path p{ path };
-	EXPECT_THAT(p, StrEq(L"C:\\work"));
+	EXPECT_THAT(p, StrEq(LTEXT("C:\\work")));
 
 	const std::span<WCHAR> s{ path };
-	EXPECT_THAT(std::data(s), StrEq(L"C:\\work"));
+	EXPECT_THAT(std::data(s), StrEq(LTEXT("C:\\work")));
 
 	// 既存メソッドの呼出確認
-	path.Assign(L"C:\\work");
-	EXPECT_THAT(path, StrEq(L"C:\\work"));
+	path.Assign(LTEXT("C:\\work"));
+	EXPECT_THAT(path, StrEq(LTEXT("C:\\work")));
 
 	// 呼ぶだけ
 	EXPECT_THAT(path.GetBufferPointer(), path.c_str());
 	EXPECT_THAT(path.At(0), path[0]);
 
 	// begin/endの確認（非const版）
-	path.assign(L"abc");
+	path.assign(LTEXT("abc"));
 	EXPECT_THAT(static_cast<size_t>(std::distance(path.begin(), path.end())), Eq(path.GetBufferCount() - 1));
-	*(path.begin() + 0) = L'X';
-	*(path.begin() + 1) = L'Y';
-	*(path.begin() + 2) = L'\0';
-	EXPECT_THAT(path.c_str(), StrEq(L"XY"));
+	*(path.begin() + 0) = LCHAR('X');
+	*(path.begin() + 1) = LCHAR('Y');
+	*(path.begin() + 2) = LCHAR('\0');
+	EXPECT_THAT(path.c_str(), StrEq(LTEXT("XY")));
 
 	// begin/endの確認（const版）
 	const auto& constPath = path;
@@ -295,31 +297,31 @@ TEST(StaticString, test001)
  */
 TEST(StaticString, compareCaseSensitive001)
 {
-	StaticString<10> value{ L"test data" };
+	StaticString<10> value{ LTEXT("test data") };
 
 	// 同じオブジェクト
 	EXPECT_THAT(value.compare(value), Eq(0));
 
 	// 同じ値
-	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+	EXPECT_THAT(value.compare(LTEXT("test data")), Eq(0));
 
 	// 比較対象が空
-	EXPECT_THAT(value.compare(L""), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("")), Gt(0));
 
 	// 比較対象がNULL
 	EXPECT_THAT(value.compare(nullptr), Gt(0));
 
 	// 先頭部分が一致、かつ、比較対象より短い
-	EXPECT_THAT(value.compare(L"test"), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("test")), Gt(0));
 
 	// 先頭部分が一致、かつ、比較対象より長い
-	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+	EXPECT_THAT(value.compare(LTEXT("test data1")), Lt(0));
 
 	// 比較対象より小さい（辞書順で前）
-	EXPECT_THAT(value.compare(L"exam"), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("exam")), Gt(0));
 
 	// 比較対象より大きい（辞書順で後）
-	EXPECT_THAT(value.compare(L"xyz"), Lt(0));
+	EXPECT_THAT(value.compare(LTEXT("xyz")), Lt(0));
 }
 
 /*!
@@ -327,28 +329,28 @@ TEST(StaticString, compareCaseSensitive001)
  */
 TEST(StaticString, compareIgnoreCase001)
 {
-	StaticString<10, false> value{ L"Test Data" };
+	StaticString<10, false> value{ LTEXT("Test Data") };
 
 	// 同じ値
-	EXPECT_THAT(value.compare(L"test data"), Eq(0));
+	EXPECT_THAT(value.compare(LTEXT("test data")), Eq(0));
 
 	// 比較対象が空
-	EXPECT_THAT(value.compare(L""), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("")), Gt(0));
 
 	// 比較対象がNULL
 	EXPECT_THAT(value.compare(nullptr), Gt(0));
 
 	// 先頭部分が一致、かつ、比較対象より短い
-	EXPECT_THAT(value.compare(L"TEST"), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("TEST")), Gt(0));
 
 	// 先頭部分が一致、かつ、比較対象より長い
-	EXPECT_THAT(value.compare(L"test data1"), Lt(0));
+	EXPECT_THAT(value.compare(LTEXT("test data1")), Lt(0));
 
 	// 比較対象より大きい（辞書順で後）
-	EXPECT_THAT(value.compare(L"EXAM"), Gt(0));
+	EXPECT_THAT(value.compare(LTEXT("EXAM")), Gt(0));
 
 	// 比較対象より小さい（辞書順で前）
-	EXPECT_THAT(value.compare(L"XYZ"), Lt(0));
+	EXPECT_THAT(value.compare(LTEXT("XYZ")), Lt(0));
 }
 
 /*!
@@ -356,63 +358,63 @@ TEST(StaticString, compareIgnoreCase001)
  */
 TEST(StaticString, comparisonOperators001)
 {
-	StaticString<10> value{ L"test data" };
+	StaticString<10> value{ LTEXT("test data") };
 
 	// 同じオブジェクト
 	EXPECT_TRUE(value == value);
 	EXPECT_THAT(value != value, IsFalse());
 
 	// 同じ値
-	EXPECT_TRUE(value == L"test data");
-	EXPECT_THAT(value != L"test data", IsFalse());
+	EXPECT_TRUE(value == LTEXT("test data"));
+	EXPECT_THAT(value != LTEXT("test data"), IsFalse());
 
 	// 異なる値
-	EXPECT_TRUE(value != L"test date");
-	EXPECT_THAT(value == L"test date", IsFalse());
+	EXPECT_TRUE(value != LTEXT("test date"));
+	EXPECT_THAT(value == LTEXT("test date"), IsFalse());
 
 	// 比較対象が空
-	EXPECT_TRUE(L"" < value);
-	EXPECT_TRUE(value > L"");
+	EXPECT_TRUE(LTEXT("") < value);
+	EXPECT_TRUE(value > LTEXT(""));
 
 	// 比較対象がNULL
 	EXPECT_TRUE(nullptr <= value);
 	EXPECT_TRUE(value >= nullptr);
 
 	// 先頭部分が一致、かつ、比較対象より短い
-	EXPECT_TRUE(L"test" < value);
-	EXPECT_TRUE(value > L"test");
+	EXPECT_TRUE(LTEXT("test") < value);
+	EXPECT_TRUE(value > LTEXT("test"));
 
 	// 先頭部分が一致、かつ、比較対象より長い
-	EXPECT_TRUE(value < L"test data1");
-	EXPECT_TRUE(L"test data1" > value);
+	EXPECT_TRUE(value < LTEXT("test data1"));
+	EXPECT_TRUE(LTEXT("test data1") > value);
 
 	// 比較対象より大きい（辞書順で後）
-	EXPECT_TRUE(L"exam" < value);
-	EXPECT_TRUE(value > L"exam");
+	EXPECT_TRUE(LTEXT("exam") < value);
+	EXPECT_TRUE(value > LTEXT("exam"));
 
 	// 比較対象より小さい（辞書順で前）
-	EXPECT_TRUE(value < L"xyz");
-	EXPECT_TRUE(L"xyz" > value);
+	EXPECT_TRUE(value < LTEXT("xyz"));
+	EXPECT_TRUE(LTEXT("xyz") > value);
 }
 
 // swprintf_sの確認
 TEST(StaticString, swprintf_s001)
 {
-	std::wstring expected(259, L'a');
+	sakura::wstring expected(259, LCHAR('a'));
 
 	SFilePath path{};
-	EXPECT_THAT(swprintf_s(path, L"%s", std::data(expected)), Eq(259));
+	EXPECT_THAT(swprintf_s(path, LTEXT("%s"), std::data(expected)), Eq(259));
 	EXPECT_THAT(path, StrEq(expected));
 }
 
 // swprintf_sの確認
 TEST(StaticString, swprintf_s101)
 {
-	std::wstring expected(259, L'b');
-	std::wstring dummy(260, L'b');
+	sakura::wstring expected(259, LCHAR('b'));
+	sakura::wstring dummy(260, LCHAR('b'));
 
-	SFilePath path{ std::wstring(259, L'a') };
-	EXPECT_THAT(swprintf_s(path, L"%s", std::data(dummy)), Lt(0));
+	SFilePath path{ sakura::wstring(259, LCHAR('a')) };
+	EXPECT_THAT(swprintf_s(path, LTEXT("%s"), std::data(dummy)), Lt(0));
 	EXPECT_THAT(path, StrEq(expected));
 }
 
@@ -420,7 +422,7 @@ TEST(StaticString, test101)
 {
 	EXPECT_THAT(([] {
 		// バッファサイズより文字列が長いと例外。
-		StaticString<4> str{ L"test"}; }),
+		StaticString<4> str{ LTEXT("test")}; }),
 		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 4, allowed: 3)"))
 	);
 }
@@ -430,7 +432,7 @@ TEST(StaticString, test102)
 	EXPECT_THAT(([] {
 		// バッファサイズより文字列が長いと例外。
 		StaticString<4> str{};
-		str = L"test"; }),
+		str = LTEXT("test"); }),
 		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 4, allowed: 3)"))
 	);
 }
@@ -439,8 +441,8 @@ TEST(StaticString, test103)
 {
 	EXPECT_THAT(([] {
 		// 残りバッファサイズより文字列が長いと例外。
-		StaticString<4> str{ L"te" };
-		str += L"st"; }),
+		StaticString<4> str{ LTEXT("te") };
+		str += LTEXT("st"); }),
 		ThrowsMessage<std::overflow_error>(Eq("source string is too long. (length: 2, allowed: 1)"))
 	);
 }
@@ -452,31 +454,33 @@ namespace cxx {
 //! @brief NUL終端文字列と互換性のある型で初期化
 TEST(NullTerminatedString, test001)
 {
-	auto testData = L"test"s;
+	auto testData = LTEXT("test"s);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData.c_str()));
 }
 
+#if defined(_WIN32)	// Windows の path は wchar_t で保持する。Mac の path は UTF-8 なので対象外
 //! @brief std::filesystem::path型で初期化
 TEST(NullTerminatedString, test002)
 {
 	auto testData = std::filesystem::path("test");
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData.c_str()));
 }
+#endif
 
 //! @brief NULで初期化
 TEST(NullTerminatedString, test003)
 {
 	auto value = cxx::NullTerminatedString(nullptr);
 	EXPECT_THAT(static_cast<LPCWSTR>(value), IsNull());
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), IsNull());
 }
@@ -484,10 +488,10 @@ TEST(NullTerminatedString, test003)
 //! @brief 配列で初期化
 TEST(NullTerminatedString, test004)
 {
-	WCHAR testData[_MAX_PATH] = L"test";
+	WCHAR testData[_MAX_PATH] = LTEXT("test");
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData));
 }
@@ -495,10 +499,10 @@ TEST(NullTerminatedString, test004)
 //! @brief 配列で初期化
 TEST(NullTerminatedString, test005)
 {
-	const auto& testData = L"test\0data";
+	const auto& testData = LTEXT("test\0data");
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq<LPCWSTR>(testData));
 }
@@ -506,10 +510,10 @@ TEST(NullTerminatedString, test005)
 //! @brief ポインタで初期化
 TEST(NullTerminatedString, test006)
 {
-	LPCWSTR testData = L"test";
+	LPCWSTR testData = LTEXT("test");
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData));
 }
@@ -520,7 +524,7 @@ TEST(NullTerminatedString, test007)
 	LPCWSTR testData = nullptr;
 	auto value = cxx::NullTerminatedString(testData);
 	EXPECT_THAT(static_cast<LPCWSTR>(value), IsNull());
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), IsNull());
 }
@@ -528,10 +532,10 @@ TEST(NullTerminatedString, test007)
 //! @brief 文字列として扱える型で初期化
 TEST(NullTerminatedString, test008)
 {
-	auto testData = L""sv;
+	auto testData = LTEXT(""sv);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("")));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Ne(testData.data()));
 }
@@ -539,10 +543,10 @@ TEST(NullTerminatedString, test008)
 //! @brief 文字列として扱える型で初期化
 TEST(NullTerminatedString, test009)
 {
-	auto testData = L"test"sv;
+	auto testData = LTEXT("test"sv);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData.data()));
 }
@@ -550,10 +554,10 @@ TEST(NullTerminatedString, test009)
 //! @brief 文字列として扱える型で初期化
 TEST(NullTerminatedString, test00A)
 {
-	auto testData = L"testData"sv.substr(0, 4);
+	auto testData = LTEXT("testData"sv).substr(0, 4);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsTrue());
 	EXPECT_THAT(value.c_str(), Ne(testData.data()));
 }
@@ -562,23 +566,23 @@ TEST(NullTerminatedString, test00A)
 TEST(NullTerminatedString, test00B)
 {
 	struct Dummy {
-		explicit operator std::wstring() const { return L"test"; }
+		explicit operator sakura::wstring() const { return LTEXT("test"); }
 	};
 
 	auto testData = Dummy();
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L"test"));
-	EXPECT_THAT(value, StrEq(L"test"));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("test")));
+	EXPECT_THAT(value, StrEq(LTEXT("test")));
 	EXPECT_THAT(value.uses_buffer(), IsTrue());
 }
 
 //! @brief NUL終端文字列と互換性のある型で初期化
 TEST(NullTerminatedString, test00C)
 {
-	auto testData = L""s;
+	auto testData = LTEXT(""s);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("")));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Eq(testData.data()));
 }
@@ -586,10 +590,10 @@ TEST(NullTerminatedString, test00C)
 //! @brief 文字列として扱える型で初期化
 TEST(NullTerminatedString, test00D)
 {
-	auto testData = L"testData"sv.substr(0, 0);
+	auto testData = LTEXT("testData"sv).substr(0, 0);
 	auto value = cxx::NullTerminatedString(testData);
-	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(L""));
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(static_cast<LPCWSTR>(value), StrEq(LTEXT("")));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 	EXPECT_THAT(value.c_str(), Ne(testData.data()));
 }
@@ -604,9 +608,9 @@ TEST(NullTerminatedString, test101)
 
 TEST(NullTerminatedString, test102)
 {
-	auto value = cxx::NullTerminatedString(L"", 0);
+	auto value = cxx::NullTerminatedString(LTEXT(""), 0);
 	EXPECT_THAT(static_cast<LPCWSTR>(value), NotNull());
-	EXPECT_THAT(value, StrEq(L""));
+	EXPECT_THAT(value, StrEq(LTEXT("")));
 	EXPECT_THAT(value.uses_buffer(), IsFalse());
 }
 
@@ -615,7 +619,7 @@ TEST(NullTerminatedString, test103)
 {
 	EXPECT_THAT(([] {
 		WCHAR testData[5] = {};
-		std::wstring dummy(5, L'a');
+		sakura::wstring dummy(5, LCHAR('a'));
 		std::ranges::copy_n(dummy.begin(), 5, std::begin(testData));
 		auto value = cxx::NullTerminatedString(testData); }),
 		ThrowsMessage<std::invalid_argument>(Eq("char array should be null-terminated."))

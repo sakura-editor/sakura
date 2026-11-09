@@ -276,7 +276,7 @@ sakura::wstring CCodePage::GetNameBracket(int charcodeEx)
 	}else if( codepage == CP_OEMCP ){
 		return LTEXT("  [CP_OEM]");
 	}else{
-		return std::format(LTEXT("  [CP{}]"), charcodeEx);
+		return sakura::format(LTEXT("  [CP{}]"), charcodeEx);
 	}
 }
 

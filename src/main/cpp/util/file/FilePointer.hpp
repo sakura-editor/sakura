@@ -43,7 +43,7 @@ public:
 	 * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
 	 */
 	static NamedFilePointer CreateFilePath(
-		std::wstring_view path
+		sakura::wstring_view path
 	);
 
 	/*!
@@ -53,7 +53,7 @@ public:
 	 * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static NamedFilePointer CreateFilePath(
 		const A& path
 	);
@@ -67,10 +67,10 @@ public:
 	 * @param[in, opt] optExt 一時ファイルの拡張子。指定しない場合は "tmp" を使う。
 	 */
 	static NamedFilePointer CreateTempFile(
-		const std::optional<std::wstring>& optPrefix = std::nullopt,
-		const std::optional<std::wstring>& optTempDir = std::nullopt,
+		const std::optional<sakura::wstring>& optPrefix = std::nullopt,
+		const std::optional<sakura::wstring>& optTempDir = std::nullopt,
 		DWORD dwFlagsAndAttributes = FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
-		const std::optional<std::wstring>& optExt = std::nullopt
+		const std::optional<sakura::wstring>& optExt = std::nullopt
 	);
 
 	/*!
@@ -82,7 +82,7 @@ public:
 	 */
 	static Me OpenFileHandle(
 		FileHandle&& hFile,
-		std::wstring_view mode
+		sakura::wstring_view mode
 	);
 
 	/*!
@@ -93,8 +93,8 @@ public:
 	 * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
 	 */
 	static NamedFilePointer OpenFilePath(
-		std::wstring_view path,
-		std::wstring_view mode
+		sakura::wstring_view path,
+		sakura::wstring_view mode
 	);
 
 	/*!
@@ -105,10 +105,10 @@ public:
 	 * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static NamedFilePointer OpenFilePath(
 		const A& path,
-		std::wstring_view mode
+		sakura::wstring_view mode
 	);
 
 	/*!

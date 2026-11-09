@@ -36,7 +36,7 @@ namespace cxx {
  * @param[in] hTemplateFile テンプレートファイルのハンドル
  */
 /* static */ FileHandle FileHandle::CreateFileW(
-	std::wstring_view fileName,
+	sakura::wstring_view fileName,
 	_In_ DWORD dwDesiredAccess,
 	_In_ DWORD dwShareMode,
 	_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -97,7 +97,7 @@ namespace cxx {
  * @throw std::system_error Windowsがエラーを返したとき
  */
 /* static */ FileHandle FileHandle::CreateNew(
-	std::wstring_view path,
+	sakura::wstring_view path,
 	_In_opt_ DWORD dwFlagsAndAttributes
 )
 {
@@ -162,7 +162,7 @@ namespace cxx {
  * @throw std::system_error Windowsがエラーを返したとき
  */
 /* static */ FileHandle FileHandle::OpenExisting(
-	std::wstring_view path,
+	sakura::wstring_view path,
 	_In_ DWORD dwDesiredAccess,
 	_In_ DWORD dwShareMode
 )

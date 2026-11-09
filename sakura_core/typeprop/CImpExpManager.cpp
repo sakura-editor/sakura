@@ -1355,6 +1355,6 @@ void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileT
 	}
 
 	for (int i = 0; i < nItemCount; ++i) {
-		cProfile.IOProfileData(pszSecName, std::format(LTEXT("FileTree({})"), i), data[i]);
+		cProfile.IOProfileData(pszSecName, sakura::format(LTEXT("FileTree({})"), i), data[i]);
 	}
 }

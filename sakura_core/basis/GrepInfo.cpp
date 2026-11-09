@@ -70,7 +70,7 @@ sakura::wstring GrepInfo::MakeCommandLine() const
 	}
 	cmdLine += LTEXT(" -GFILE=") + QuoteForCommandLine( cmGrepFile );
 	cmdLine += LTEXT(" -GFOLDER=") + QuoteForCommandLine( cmGrepFolder );
-	cmdLine += std::format( LTEXT(" -GCODE={}"), int( nGrepCharSet ) );
+	cmdLine += sakura::format( LTEXT(" -GCODE={}"), int( nGrepCharSet ) );
 	if( const auto options = MakeCommandLineOptions(); !options.empty() ){
 		cmdLine += LTEXT(" -GOPT=") + options;
 	}

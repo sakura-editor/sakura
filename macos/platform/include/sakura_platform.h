@@ -175,6 +175,9 @@ typedef struct _GUID {
 } GUID, IID, CLSID;
 
 #define LF_FACESIZE 32
+#define DEFAULT_PITCH 0
+#define FIXED_PITCH   1
+#define VARIABLE_PITCH 2
 typedef struct tagLOGFONTW {
 	LONG lfHeight; LONG lfWidth; LONG lfEscapement; LONG lfOrientation; LONG lfWeight;
 	BYTE lfItalic; BYTE lfUnderline; BYTE lfStrikeOut; BYTE lfCharSet;
@@ -230,6 +233,7 @@ typedef struct tagLOGFONTW {
 #define _TRUNCATE  (static_cast<size_t>(-1))
 #define STRUNCATE  80
 #define _countof(a) (std::size(a))
+#define _HEAP_MAXREQ (static_cast<size_t>(-1) & ~static_cast<size_t>(0x1F))
 
 inline int _stricmp(const char* a, const char* b) { return ::strcasecmp(a, b); }
 inline int _strnicmp(const char* a, const char* b, size_t n) { return ::strncasecmp(a, b, n); }
@@ -246,18 +250,40 @@ inline unsigned short _byteswap_ushort(unsigned short v) { return __builtin_bswa
 inline unsigned long _byteswap_ulong(unsigned long v) { return __builtin_bswap32(static_cast<std::uint32_t>(v)); }
 inline int __iscsym(int c) { return std::isalnum(c) || c == '_'; }
 
-inline int _vsnprintf_s(char* buf, size_t size, size_t count, const char* fmt, va_list ap) {
-	if (!buf || size == 0) return -1;
-	const size_t limit = (count == _TRUNCATE || count >= size) ? size : count + 1;
-	const int n = std::vsnprintf(buf, limit, fmt, ap);
-	if (n < 0 || static_cast<size_t>(n) >= limit) { buf[limit - 1] = '\0'; return -1; }
-	return n;
-}
-inline int _snprintf_s(char* buf, size_t size, size_t count, const char* fmt, ...) {
-	va_list ap; va_start(ap, fmt); const int n = _vsnprintf_s(buf, size, count, fmt, ap); va_end(ap); return n;
-}
-inline int _scprintf(const char* fmt, ...) {
-	va_list ap; va_start(ap, fmt); const int n = std::vsnprintf(nullptr, 0, fmt, ap); va_end(ap); return n;
-}
+// char 版の _snprintf_s / _scprintf は sakura_core/util/wchar16.h（%S で WCHAR 文字列を扱うため）
+
+// ---------------------------------------------------------------------------
+// Win32 API 的替代实现（macos/platform/src/win32_api.cpp）
+// 只提供核心代码需要的少数函数，行为与 Windows 相同。
+// ---------------------------------------------------------------------------
+//! 代码页是否可用（第 17 步改为按 iconv 的实际支持情况判断）
+BOOL IsValidCodePage(UINT codePage);
+//! FILETIME（1601-01-01 起的 100 纳秒数，UTC）→ SYSTEMTIME（UTC）
+BOOL FileTimeToSystemTime(const FILETIME* lpFileTime, LPSYSTEMTIME lpSystemTime);
+//! SYSTEMTIME → FILETIME
+BOOL SystemTimeToFileTime(const SYSTEMTIME* lpSystemTime, LPFILETIME lpFileTime);
+//! UTC 的 SYSTEMTIME → 本地时间。lpTimeZone 必须是 nullptr（使用当前时区）
+BOOL SystemTimeToTzSpecificLocalTime(const void* lpTimeZone, const SYSTEMTIME* lpUniversalTime, LPSYSTEMTIME lpLocalTime);
+//! 当前本地时间
+void GetLocalTime(LPSYSTEMTIME lpSystemTime);
+//! 当前 UTC 时间
+void GetSystemTime(LPSYSTEMTIME lpSystemTime);
+//! 系统启动后的毫秒数
+DWORD GetTickCount();
+ULONGLONG GetTickCount64();
+//! 暂停指定毫秒
+void Sleep(DWORD dwMilliseconds);
+//! (a * b) / c，四舍五入。c 为 0 时返回 -1
+int MulDiv(int nNumber, int nNumerator, int nDenominator);
+//! 向调试输出写字符串（macOS 上写到 stderr 和系统日志）
+void OutputDebugStringW(const WCHAR* lpOutputString);
+void OutputDebugStringA(const char* lpOutputString);
+//! 中断到调试器
+void DebugBreak();
+//! 释放动态库（dlclose）。语言资源 DLL 在 Mac 版不使用，这里只为让持有句柄的类能编译
+BOOL FreeLibrary(HMODULE hLibModule);
+//! 最近一次错误码
+DWORD GetLastError();
+void SetLastError(DWORD dwErrCode);
 
 #endif /* SAKURA_PLATFORM_H_ */

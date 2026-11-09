@@ -47,4 +47,4 @@ public:
 };
 
 //! メッセージからエラー情報を生成する
-#define MakeMsgError(msg) CErrorInfo::make_instance(std::format(LTEXT("{}({})"), std::filesystem::path(std::source_location::current().file_name()).wstring(), std::source_location::current().line()), (msg))
+#define MakeMsgError(msg) CErrorInfo::make_instance(sakura::format(LTEXT("{}({})"), std::filesystem::path(std::source_location::current().file_name()).wstring(), std::source_location::current().line()), (msg))

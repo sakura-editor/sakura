@@ -96,7 +96,7 @@ const DWORD p_helpids[] = {	//12900
 	#define TARGET_DEBUG_MODE "R"
 #endif
 
-#define TSTR_TARGET_MODE _T(TARGET_STRING_MODEL) _T(TARGET_DEBUG_MODE)
+#define TSTR_TARGET_MODE LTEXT(TARGET_STRING_MODEL) LTEXT(TARGET_DEBUG_MODE)
 
 #if defined(CI_BUILD_URL)
 #pragma message("CI_BUILD_URL: " CI_BUILD_URL)
@@ -179,12 +179,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// 2行目
 #ifdef GIT_COMMIT_HASH
-	cmemMsg.AppendString( LTEXT("(GitHash ") _T(GIT_COMMIT_HASH) LTEXT(")\r\n") );
+	cmemMsg.AppendString( LTEXT("(GitHash ") LTEXT(GIT_COMMIT_HASH) LTEXT(")\r\n") );
 #endif
 
 	// 3行目
 #ifdef GIT_REMOTE_ORIGIN_URL
-	cmemMsg.AppendString( LTEXT("(GitURL ") _T(GIT_REMOTE_ORIGIN_URL) LTEXT(")\r\n"));
+	cmemMsg.AppendString( LTEXT("(GitURL ") LTEXT(GIT_REMOTE_ORIGIN_URL) LTEXT(")\r\n"));
 #endif
 
 	// 段落区切り
@@ -192,7 +192,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// コンパイル情報
 	cmemMsg.AppendStringF(
-		LTEXT("      Compile Info: ") _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) LTEXT("%d ") TSTR_TARGET_MODE LTEXT(" WIN%03x/I%03x/N%03x\r\n"),
+		LTEXT("      Compile Info: ") LTEXT(COMPILER_TYPE) LTEXT(TARGET_M_SUFFIX) LTEXT("%d ") TSTR_TARGET_MODE LTEXT(" WIN%03x/I%03x/N%03x\r\n"),
 		COMPILER_VER, WINVER, _WIN32_IE, _WIN32_WINNT
 	);
 
@@ -307,20 +307,20 @@ BOOL CDlgAbout::OnStnClicked( int wID )
 	case IDC_STATIC_URL_CI_BUILD:
 		{
 #if defined(CI_BUILD_URL)
-			::ShellExecute(GetHwnd(), nullptr, _T(CI_BUILD_URL), nullptr, nullptr, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, LTEXT(CI_BUILD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #elif defined(GIT_REMOTE_ORIGIN_URL)
-			::ShellExecute(GetHwnd(), nullptr, _T(GIT_REMOTE_ORIGIN_URL), nullptr, nullptr, SW_SHOWNORMAL);
+			::ShellExecute(GetHwnd(), nullptr, LTEXT(GIT_REMOTE_ORIGIN_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 			return TRUE;
 		}
 	case IDC_STATIC_URL_GITHUB_COMMIT:
 #if defined(GITHUB_COMMIT_URL)
-		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_COMMIT_URL), nullptr, nullptr, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, LTEXT(GITHUB_COMMIT_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	case IDC_STATIC_URL_GITHUB_PR:
 #if defined(GITHUB_PR_HEAD_URL)
-		::ShellExecute(GetHwnd(), nullptr, _T(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
+		::ShellExecute(GetHwnd(), nullptr, LTEXT(GITHUB_PR_HEAD_URL), nullptr, nullptr, SW_SHOWNORMAL);
 #endif
 		return TRUE;
 	default:

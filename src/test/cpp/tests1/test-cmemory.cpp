@@ -94,10 +94,10 @@ TEST(CMemory, OverHeapMaxReq)
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
-	constexpr auto& data = L"テストデータ";
-	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
-	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	constexpr auto& data = LTEXT("テストデータ");
+	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(WCHAR));
+	ASSERT_STREQ(data, reinterpret_cast<WCHAR*>(cmem.GetRawPtr()));
+	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(WCHAR), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
 	cmem.AllocBuffer(static_cast<unsigned>(_HEAP_MAXREQ) + 1);
@@ -117,10 +117,10 @@ TEST(CMemory, OverMaxSize)
 	ASSERT_TRUE(cmem.GetRawPtr() == nullptr);
 
 	// 検証用のデータを入れる
-	constexpr auto& data = L"テストデータ";
-	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(wchar_t));
-	ASSERT_STREQ(data, reinterpret_cast<wchar_t*>(cmem.GetRawPtr()));
-	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(wchar_t), cmem.GetRawLength());
+	constexpr auto& data = LTEXT("テストデータ");
+	cmem.SetRawData(data, (int(std::size(data)) - 1) * sizeof(WCHAR));
+	ASSERT_STREQ(data, reinterpret_cast<WCHAR*>(cmem.GetRawPtr()));
+	ASSERT_EQ((int(std::size(data)) - 1) * sizeof(WCHAR), cmem.GetRawLength());
 
 	// メモリ確保失敗時は、メモリが解放される
 	cmem.AllocBuffer(static_cast<unsigned>(INT_MAX) + 1);

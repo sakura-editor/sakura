@@ -39,7 +39,7 @@ protected:
 	DbgHelp();
 
 public:
-	DllHolder m_DbgHelp{ ::LoadLibraryW(L"DbgHelp.dll") };
+	DllHolder m_DbgHelp{ ::LoadLibraryW(LTEXT("DbgHelp.dll")) };
 
 	std::map<std::string, FARPROC, std::less<>> m_Functions{};
 

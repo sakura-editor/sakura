@@ -29,7 +29,10 @@
 #include <cstring>
 #include <cwchar>
 #include <cwctype>
+#include <filesystem>
+#include <format>
 #include <string>
+#include <tuple>
 #include <string_view>
 #include <type_traits>
 
@@ -350,8 +353,22 @@ inline std::basic_string<C> from_native_wide(std::wstring_view s) {
 // 戻り値は書式化後の長さ（終端 NUL を含まない）。buf が小さいときは切り詰めて NUL 終端する。
 // 書式エラーのときは -1。
 // ---------------------------------------------------------------------------
+//! 厳密な UTF-8 → UTF-16 変換。不正なバイト列なら false
 template <CodeUnit16 C>
-inline int vformat(C* buf, size_t size, const C* fmt, va_list ap) {
+inline bool from_utf8_strict(std::string_view s, std::basic_string<C>& out) {
+	out = from_utf8<C>(s);
+	// from_utf8 は不正な列を U+FFFD にする。元の列に U+FFFD（EF BF BD）が無いのに出てきたら不正。
+	size_t replacements = 0;
+	for (C c : out) if (static_cast<std::uint16_t>(c) == 0xFFFD) ++replacements;
+	if (!replacements) return true;
+	size_t original = 0;
+	for (size_t pos = 0; (pos = s.find("\xEF\xBF\xBD", pos)) != std::string_view::npos; pos += 3) ++original;
+	return replacements == original;
+}
+
+//! narrow_default が true のときは char 版 printf の規則（%s が char 文字列、%S / %ls が WCHAR 文字列）
+template <CodeUnit16 C>
+inline int vformat(C* buf, size_t size, const C* fmt, va_list ap, bool narrow_default = false) {
 	size_t pos = 0;
 	auto put = [&](C c) { if (pos + 1 < size) buf[pos] = c; ++pos; };
 	auto pad = [&](size_t n, C c) { while (n--) put(c); };
@@ -395,7 +412,7 @@ inline int vformat(C* buf, size_t size, const C* fmt, va_list ap) {
 			else len = z;
 		}
 		const C conv = *f;
-		if (!conv) return -1;
+		if (!conv) { errno = EINVAL; return -1; }
 		auto emit_units = [&](auto&& units, size_t n) {
 			const size_t w = width > 0 ? static_cast<size_t>(width) : 0;
 			if (!left && w > n) pad(w - n, C(' '));
@@ -404,13 +421,14 @@ inline int vformat(C* buf, size_t size, const C* fmt, va_list ap) {
 		};
 		switch (conv) {
 		case C('s'): case C('S'): {
-			const bool narrow = (conv == C('S')) ? (len != l && len != wide) : (len == h);
+			const bool narrow = (len == h) ? true : (len == l || len == wide) ? false : (narrow_default != (conv == C('S')));
 			if (narrow) {
 				const char* s = va_arg(ap, const char*);
 				if (!s) s = "(null)";
 				std::string_view sv(s);
 				if (prec >= 0 && sv.size() > static_cast<size_t>(prec)) sv = sv.substr(0, prec);
-				const auto w = from_utf8<C>(sv);
+				std::basic_string<C> w;
+				if (!from_utf8_strict<C>(sv, w)) { errno = EILSEQ; return -1; }  // MSVC と同じくエンコードエラー
 				emit_units([&](size_t i) { return w[i]; }, w.size());
 			} else {
 				const C* s = va_arg(ap, const C*);
@@ -422,7 +440,7 @@ inline int vformat(C* buf, size_t size, const C* fmt, va_list ap) {
 			break;
 		}
 		case C('c'): case C('C'): {
-			const bool narrow = (conv == C('C')) ? (len != l && len != wide) : (len == h);
+			const bool narrow = (len == h) ? true : (len == l || len == wide) ? false : (narrow_default != (conv == C('C')));
 			const int v = va_arg(ap, int);
 			const C ch = narrow ? static_cast<C>(static_cast<unsigned char>(v)) : static_cast<C>(v);
 			emit_units([&](size_t) { return ch; }, 1);
@@ -456,11 +474,12 @@ inline int vformat(C* buf, size_t size, const C* fmt, va_list ap) {
 				}
 				n = is_signed ? std::snprintf(out, sizeof(out), spec.c_str(), sv) : std::snprintf(out, sizeof(out), spec.c_str(), uv);
 			}
-			if (n < 0) return -1;
+			if (n < 0) { errno = EINVAL; return -1; }
 			for (int i = 0; i < n && i + 1 < static_cast<int>(sizeof(out)); ++i) put(static_cast<C>(static_cast<unsigned char>(out[i])));
 			break;
 		}
 		default:
+			errno = EINVAL;
 			return -1; // %n や未知の変換
 		}
 	}
@@ -484,7 +503,7 @@ inline int vsnprintf_s(C* buf, size_t size, size_t count, const C* fmt, va_list 
 	va_list ap2; va_copy(ap2, ap);
 	const int n = vformat(buf, limit, fmt, ap2);
 	va_end(ap2);
-	if (n < 0) { buf[0] = 0; errno = EINVAL; return -1; }
+	if (n < 0) { buf[0] = 0; return -1; }        // errno は vformat が設定済み
 	if (static_cast<size_t>(n) < limit) return n;
 	// 収まらなかった
 	if (truncate) return -1;                       // 切り詰めた文字列を残す
@@ -493,6 +512,64 @@ inline int vsnprintf_s(C* buf, size_t size, size_t count, const C* fmt, va_list 
 }
 
 } // namespace u16
+} // namespace sakura
+
+// ---------------------------------------------------------------------------
+// std::format / std::filesystem::path との橋渡し
+// ---------------------------------------------------------------------------
+namespace sakura {
+
+/*!
+ * @brief std::format の WCHAR 版。
+ *
+ * Windows では std::format(L"...") と同じ（コンパイル時の書式チェックもそのまま）。
+ * 標準ライブラリは char16_t の format に対応していないので、Mac では書式と WCHAR の文字列引数を
+ * wchar_t（UTF-32）に変換して std::vformat で書式化し、結果を UTF-16 に戻す。
+ */
+#if !SAKURA_WCHAR_IS_CHAR16
+template <typename... Args>
+inline wstring format(std::wformat_string<Args...> fmt, Args&&... args)
+{
+	return std::format(fmt, std::forward<Args>(args)...);
+}
+#else
+namespace detail {
+template <typename T>
+inline decltype(auto) to_format_arg(const T& value)
+{
+	if constexpr (std::is_same_v<std::decay_t<T>, WCHAR>) {
+		return static_cast<wchar_t>(value);
+	} else if constexpr (std::is_convertible_v<const T&, std::basic_string_view<WCHAR>>) {
+		return u16::to_native_wide(std::basic_string_view<WCHAR>(value));
+	} else {
+		return (value);
+	}
+}
+} // namespace detail
+
+template <typename... Args>
+inline wstring format(wstring_view fmt, const Args&... args)
+{
+	std::tuple<decltype(detail::to_format_arg(args))...> converted{ detail::to_format_arg(args)... };
+	const std::wstring wfmt = u16::to_native_wide(fmt);
+	const std::wstring result = std::apply([&wfmt](auto&... a) {
+		return std::vformat(wfmt, std::make_wformat_args(a...));
+	}, converted);
+	return u16::from_native_wide(result);
+}
+#endif
+
+//! std::filesystem::path → WCHAR の文字列（Windows: path.wstring()、Mac: path.u16string()）
+inline wstring path_to_wstring(const std::filesystem::path& path)
+{
+#if SAKURA_WCHAR_IS_CHAR16
+	const auto s = path.u16string();
+	return wstring(s.begin(), s.end());
+#else
+	return path.wstring();
+#endif
+}
+
 } // namespace sakura
 
 // ---------------------------------------------------------------------------
@@ -530,6 +607,21 @@ inline char16_t* _wcsupr(char16_t* s) noexcept { for (auto p = s; *p; ++p) *p = 
 
 inline int       wmemcmp(const char16_t* a, const char16_t* b, size_t n) noexcept { return su16::memcmp(a, b, n); }
 inline char16_t* wmemcpy(char16_t* d, const char16_t* s, size_t n) noexcept { return su16::memcpy(d, s, n); }
+//! MSVC の wmemcpy_s と同じ：コピー元が大きすぎるときは dest を 0 で埋めて ERANGE
+inline errno_t wmemcpy_s(char16_t* d, size_t dsz, const char16_t* s, size_t n) noexcept {
+	if (n == 0) return 0;
+	if (!d) return EINVAL;
+	if (!s || dsz < n) { su16::memset<char16_t>(d, 0, dsz); return s ? ERANGE : EINVAL; }
+	su16::memcpy(d, s, n);
+	return 0;
+}
+inline errno_t wmemmove_s(char16_t* d, size_t dsz, const char16_t* s, size_t n) noexcept {
+	if (n == 0) return 0;
+	if (!d || !s) return EINVAL;
+	if (dsz < n) return ERANGE;
+	su16::memmove(d, s, n);
+	return 0;
+}
 inline char16_t* wmemmove(char16_t* d, const char16_t* s, size_t n) noexcept { return su16::memmove(d, s, n); }
 inline char16_t* wmemset(char16_t* d, char16_t c, size_t n) noexcept { return su16::memset(d, c, n); }
 inline const char16_t* wmemchr(const char16_t* s, char16_t c, size_t n) noexcept { return su16::memchr(s, c, n); }
@@ -546,6 +638,54 @@ inline double        _wtof(const char16_t* s) { return su16::strtod(s, static_ca
 inline char16_t* _itow(int v, char16_t* buf, int radix) noexcept { return su16::itoa32(static_cast<std::int32_t>(v), buf, radix); }
 inline char16_t* _ltow(long v, char16_t* buf, int radix) noexcept { return su16::itoa32(static_cast<std::int32_t>(v), buf, radix); }
 inline char16_t* _i64tow(long long v, char16_t* buf, int radix) noexcept { return su16::itoa64(static_cast<std::int64_t>(v), buf, radix); }
+
+//! Win32 の CharPrevW / CharNextW 相当（サロゲートペアを 1 文字として扱う）
+inline const char16_t* CharPrev(const char16_t* start, const char16_t* current) noexcept {
+	if (!start || !current || current <= start) return start;
+	const char16_t* p = current - 1;
+	if (p > start && su16::is_low_surrogate(*p) && su16::is_high_surrogate(p[-1])) --p;
+	return p;
+}
+inline char16_t* CharPrev(char16_t* start, char16_t* current) noexcept { return const_cast<char16_t*>(CharPrev(static_cast<const char16_t*>(start), static_cast<const char16_t*>(current))); }
+inline const char16_t* CharNext(const char16_t* p) noexcept {
+	if (!p || !*p) return p;
+	if (su16::is_high_surrogate(p[0]) && su16::is_low_surrogate(p[1])) return p + 2;
+	return p + 1;
+}
+inline char16_t* CharNext(char16_t* p) noexcept { return const_cast<char16_t*>(CharNext(static_cast<const char16_t*>(p))); }
+#define CharPrevW CharPrev
+#define CharNextW CharNext
+
+//! swscanf：数値の変換（%d %u %x %f など）だけに対応。文字列を受け取る %s %c %[ は使えない（-1 を返す）
+inline int swscanf(const char16_t* str, const char16_t* fmt, ...) {
+	for (const char16_t* f = fmt; *f; ++f) {
+		if (*f != u'%') continue;
+		++f;
+		while (*f && su16::strchr(u"0123456789*hlLjztIw", *f)) ++f;
+		if (*f == u's' || *f == u'c' || *f == u'[' || *f == u'S' || *f == u'C') { errno = EINVAL; return -1; }
+		if (!*f) break;
+	}
+	const std::wstring ws = su16::to_native_wide(std::u16string_view(str));
+	const std::wstring wf = su16::to_native_wide(std::u16string_view(fmt));
+	va_list ap; va_start(ap, fmt);
+	const int n = std::vswscanf(ws.c_str(), wf.c_str(), ap);
+	va_end(ap);
+	return n;
+}
+
+//! MSVC の swprintf_s / sprintf_s：収まらないときは空文字列にして -1
+inline int _vswprintf_s_impl(char16_t* buf, size_t size, const char16_t* fmt, va_list ap) {
+	if (!buf || size == 0 || !fmt) { errno = EINVAL; return -1; }
+	va_list ap2; va_copy(ap2, ap);
+	const int n = su16::vformat(buf, size, fmt, ap2);
+	va_end(ap2);
+	if (n < 0 || static_cast<size_t>(n) >= size) { buf[0] = 0; if (n >= 0) errno = ERANGE; return -1; }
+	return n;
+}
+inline int swprintf_s(char16_t* buf, size_t size, const char16_t* fmt, ...) {
+	va_list ap; va_start(ap, fmt); const int n = _vswprintf_s_impl(buf, size, fmt, ap); va_end(ap); return n;
+}
+inline int vswprintf_s(char16_t* buf, size_t size, const char16_t* fmt, va_list ap) { return _vswprintf_s_impl(buf, size, fmt, ap); }
 
 inline int vswprintf(char16_t* buf, size_t count, const char16_t* fmt, va_list ap) {
 	const int n = su16::vformat(buf, count, fmt, ap);
@@ -567,6 +707,72 @@ inline int _vscwprintf(const char16_t* fmt, va_list ap) { return su16::vcount(fm
 inline int _scwprintf(const char16_t* fmt, ...) {
 	va_list ap; va_start(ap, fmt); const int n = _vscwprintf(fmt, ap); va_end(ap); return n;
 }
+
+// ---------------------------------------------------------------------------
+// char 版 printf（MSVC 互換：%S / %ls は WCHAR 文字列）。char の文字列は UTF-8 として扱う。
+// ---------------------------------------------------------------------------
+namespace sakura::u16 {
+//! 書式化した結果を UTF-8 で返す。エラー時は false（errno を設定）
+inline bool vformat_narrow(std::string& out, const char* fmt, va_list ap) {
+	std::u16string wfmt;
+	if (!from_utf8_strict<char16_t>(fmt, wfmt)) { errno = EILSEQ; return false; }
+	va_list ap2; va_copy(ap2, ap);
+	char16_t probe[1];
+	const int n = vformat(probe, 0, wfmt.c_str(), ap2, true);
+	va_end(ap2);
+	if (n < 0) return false;
+	std::u16string w(static_cast<size_t>(n) + 1, u'\0');
+	va_copy(ap2, ap);
+	vformat(w.data(), w.size(), wfmt.c_str(), ap2, true);
+	va_end(ap2);
+	w.resize(static_cast<size_t>(n));
+	// 対のないサロゲートは UTF-8 にできない（MSVC で変換できない文字と同じくエラー）
+	for (size_t i = 0; i < w.size(); ++i) {
+		const char32_t c = w[i];
+		if (is_high_surrogate(c) && i + 1 < w.size() && is_low_surrogate(w[i + 1])) { ++i; continue; }
+		if (is_high_surrogate(c) || is_low_surrogate(c)) { errno = EILSEQ; return false; }
+	}
+	out = to_utf8(std::u16string_view(w));
+	return true;
+}
+} // namespace sakura::u16
+
+inline int _vsnprintf_s(char* buf, size_t size, size_t count, const char* fmt, va_list ap) {
+	if (!buf || size == 0 || !fmt) { errno = EINVAL; return -1; }
+	std::string s;
+	if (!sakura::u16::vformat_narrow(s, fmt, ap)) { buf[0] = '\0'; return -1; }
+	const bool truncate = (count == static_cast<size_t>(-1));
+	const size_t limit = truncate ? size : (count < size ? count + 1 : size);
+	if (s.size() < limit) { std::memcpy(buf, s.c_str(), s.size() + 1); return static_cast<int>(s.size()); }
+	if (truncate || count < size) { std::memcpy(buf, s.data(), limit - 1); buf[limit - 1] = '\0'; return -1; }
+	buf[0] = '\0'; errno = ERANGE; return -1;
+}
+inline int _snprintf_s(char* buf, size_t size, size_t count, const char* fmt, ...) {
+	va_list ap; va_start(ap, fmt); const int n = _vsnprintf_s(buf, size, count, fmt, ap); va_end(ap); return n;
+}
+inline int vsprintf_s(char* buf, size_t size, const char* fmt, va_list ap) {
+	if (!buf || size == 0 || !fmt) { errno = EINVAL; return -1; }
+	std::string s;
+	if (!sakura::u16::vformat_narrow(s, fmt, ap)) { buf[0] = '\0'; return -1; }
+	if (s.size() >= size) { buf[0] = '\0'; errno = ERANGE; return -1; }
+	std::memcpy(buf, s.c_str(), s.size() + 1);
+	return static_cast<int>(s.size());
+}
+inline int sprintf_s(char* buf, size_t size, const char* fmt, ...) {
+	va_list ap; va_start(ap, fmt); const int n = vsprintf_s(buf, size, fmt, ap); va_end(ap); return n;
+}
+template <size_t N>
+inline int sprintf_s(char (&buf)[N], const char* fmt, ...) {
+	va_list ap; va_start(ap, fmt); const int n = vsprintf_s(buf, N, fmt, ap); va_end(ap); return n;
+}
+inline int _vscprintf(const char* fmt, va_list ap) {
+	std::string s;
+	return sakura::u16::vformat_narrow(s, fmt, ap) ? static_cast<int>(s.size()) : -1;
+}
+inline int _scprintf(const char* fmt, ...) {
+	va_list ap; va_start(ap, fmt); const int n = _vscprintf(fmt, ap); va_end(ap); return n;
+}
+
 #endif // SAKURA_WCHAR_IS_CHAR16
 
 #endif /* SAKURA_WCHAR16_H_ */

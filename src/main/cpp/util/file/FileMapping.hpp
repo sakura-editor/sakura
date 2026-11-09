@@ -42,7 +42,7 @@ public:
 		_In_opt_ LPSECURITY_ATTRIBUTES lpFileMappingAttributes,
 		_In_ DWORD flProtect,
 		const ULARGE_INTEGER& maximumSize,
-		std::wstring_view name
+		sakura::wstring_view name
 	);
 
 	/*!
@@ -55,7 +55,7 @@ public:
 	static Me OpenFileMappingW(
 		_In_ DWORD dwDesiredAccess,
 		_In_ BOOL bInheritHandle,
-		std::wstring_view name
+		sakura::wstring_view name
 	);
 
 	/*!

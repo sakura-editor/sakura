@@ -28,16 +28,16 @@ private:
 public:
 	explicit initialization_error(
 		std::string_view what,
-		std::wstring_view message,
+		sakura::wstring_view message,
 		std::optional<int> optExitCode = std::nullopt
 	);
 
-	auto message() const -> std::wstring { return m_Message; }
+	auto message() const -> sakura::wstring { return m_Message; }
 
 	auto exitCode() const -> std::optional<EAppExitCode> { return m_ExitCode; }
 
 private:
-	std::wstring m_Message;
+	sakura::wstring m_Message;
 	std::optional<EAppExitCode> m_ExitCode;
 };
 

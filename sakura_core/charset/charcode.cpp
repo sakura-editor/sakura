@@ -9,7 +9,12 @@
 #include "StdAfx.h"
 #include "charset/charcode.h"
 #include <array>
+#if defined(_WIN32)
 #include "env/DLLSHAREDATA.h"
+#else
+#include "util/design_template.h"
+#include "sakura_platform_hooks.h"	// Mac 版：文字幅は登録された測定関数（Core Text）で測る
+#endif
 
 /*! キーワードキャラクタ */
 const std::array<unsigned char, 128> gm_keyword_char = {
@@ -25,6 +30,7 @@ const std::array<unsigned char, 128> gm_keyword_char = {
 	/* 0: not-keyword, 1:__iscsym(), 2:user-define */
 };
 
+#if defined(_WIN32)
 namespace cxx {
 
 sakura::wstring GetFaceName(const HFONT hFont)
@@ -42,6 +48,7 @@ sakura::wstring GetFaceName(const HFONT hFont)
 }
 
 } // namespace cxx
+#endif
 
 namespace WCODE
 {
@@ -94,6 +101,7 @@ namespace WCODE
 	}
 }
 
+#if defined(_WIN32)
 void CCharWidthCache::DeleteLocalData()
 {
 	m_hFont2Old = nullptr;
@@ -157,11 +165,60 @@ void CCharWidthCache::Clear()
 	m_pCache->m_nCharWidthCacheTest = 0x12345678;
 }
 
+#else
+void CCharWidthCache::DeleteLocalData()
+{
+}
+
+void CCharWidthCache::Init(const LOGFONT &lf, const LOGFONT &lfFull, HDC /* hdcOrg */)
+{
+	DeleteLocalData();
+
+	m_lf = lf;
+	m_lfFull = lfFull;
+	m_bMultiFont = &lf != &lfFull && 0 != memcmp(&lf, &lfFull, sizeof(lf));
+
+	WCODE::s_MultiFont = m_bMultiFont;
+
+	// -- -- 半角基準（Windows 版と同じ計算） -- -- //
+	const std::array<const LOGFONT*, 2> fonts = { &m_lf, &m_lfFull };
+	const int size = (m_bMultiFont ? 2 : 1);
+	m_han_size.cx = 1;
+	m_han_size.cy = 1;
+	static constexpr WCHAR sample[] = LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+	for (int i = 0; i < size; i++) {
+		std::lock_guard lock(m_mtx);
+		SIZE sz{};
+		sz.cx = sakura::platform::MeasureTextWidth(*fonts[i], sample, 52);
+		sz.cy = fonts[i]->lfHeight < 0 ? -fonts[i]->lfHeight : fonts[i]->lfHeight;
+		sz.cx = (sz.cx / 26 + 1) / 2;
+		if (m_han_size.cx < sz.cx) {
+			m_han_size.cx = sz.cx;
+		}
+		if (m_han_size.cy < sz.cy) {
+			m_han_size.cy = sz.cy;
+		}
+	}
+}
+
+void CCharWidthCache::Clear()
+{
+	if (!m_pCache) return;
+
+	// キャッシュのクリア
+	m_pCache->m_lfFaceName1 = m_lf.lfFaceName;
+	m_pCache->m_lfFaceName2 = m_bMultiFont ? m_lfFull.lfFaceName : LTEXT("");
+	m_pCache->m_nCharPxWidthCache.fill(0);
+	m_pCache->m_nCharWidthCacheTest = 0x12345678;
+}
+
+#endif
 bool CCharWidthCache::CalcHankakuByFont(WCHAR c)
 {
 	return CalcPxWidthByFont(c) <= m_han_size.cx;
 }
 
+#if defined(_WIN32)
 int CCharWidthCache::QueryPixelWidth(WCHAR c) const
 {
 	std::lock_guard lock(m_mtx);
@@ -187,6 +244,30 @@ int CCharWidthCache::QueryPixelWidth(WCHAR c) const
 	return std::max<int>(1, size.cx);
 }
 
+#else
+int CCharWidthCache::QueryPixelWidth(WCHAR c) const
+{
+	std::lock_guard lock(m_mtx);
+
+	const LOGFONT& font = (m_bMultiFont && WCODE::GetFontNo(c)) ? m_lfFull : m_lf;
+	int cx = sakura::platform::MeasureTextWidth(font, &c, 1);
+
+	// 2014.12.21 コントロールコードの表示・NULが1px幅になるのをスペース幅にする（Windows 版と同じ）
+	if (WCODE::IsControlCode(c)) {
+		const WCHAR proxyChar = ((LCHAR('\0') == c) ? LCHAR(' ') : LCHAR('･'));
+		const LOGFONT& proxyFont = (m_bMultiFont && WCODE::GetFontNo(proxyChar)) ? m_lfFull : m_lf;
+		return t_max<int>(cx, sakura::platform::MeasureTextWidth(proxyFont, &proxyChar, 1));
+	}
+
+	// 等幅フォントで半角より少しでも幅が広い場合は半角幅の2倍に揃える（Windows 版と同じ）
+	if ((WORD(m_lf.lfPitchAndFamily) & FIXED_PITCH) && m_han_size.cx < cx) {
+		cx = 2 * m_han_size.cx;
+	}
+
+	return std::max<int>(1, cx);
+}
+
+#endif
 int CCharWidthCache::CalcPxWidthByFont(WCHAR c) {
 	// キャッシュから文字の情報を取得する。情報がなければ、計算して登録する。
 	if (!m_pCache->m_nCharPxWidthCache[c]) {
@@ -195,6 +276,7 @@ int CCharWidthCache::CalcPxWidthByFont(WCHAR c) {
 	return m_pCache->m_nCharPxWidthCache[c];
 }
 
+#if defined(_WIN32)
 int CCharWidthCache::CalcPxWidthByFont2(const WCHAR* pc2) const
 {
 	SIZE size={m_han_size.cx*2,0};
@@ -208,6 +290,15 @@ int CCharWidthCache::CalcPxWidthByFont2(const WCHAR* pc2) const
 {
 	return m_hdc2 && WCODE::GetFontNo(c) ? m_hdc2 : m_hdc1;
 }
+
+#else
+int CCharWidthCache::CalcPxWidthByFont2(const WCHAR* pc2) const
+{
+	std::lock_guard lock(m_mtx);
+	// サロゲートは全角フォント
+	return t_max<int>(1, sakura::platform::MeasureTextWidth(m_bMultiFont ? m_lfFull : m_lf, pc2, 2));
+}
+#endif
 
 namespace WCODE {
 	class CacheSelector{
@@ -238,7 +329,13 @@ namespace WCODE {
 
 			pcache = &m_localcache[fMode];
 			if( cmode == CWM_CACHE_SHARE ){
+#if defined(_WIN32)
 				pcache->SelectCache( &(GetDllShareData().m_sCharWidth) );
+#else
+				// Mac 版は単一プロセスなので、共有キャッシュはプロセス内に 1 つ持つ
+				static SCharWidthCache s_sharedCache{};
+				pcache->SelectCache( &s_sharedCache );
+#endif
 			}else{
 				if( m_parCache[fMode] == 0 ){
 					m_parCache[fMode] = new SCharWidthCache;
@@ -278,9 +375,13 @@ namespace WCODE {
 //	文字幅の動的計算用キャッシュの初期化。	2007/5/18 Uchi
 void InitCharWidthCache( const LOGFONT &lf, ECharWidthFontMode fMode )
 {
+#if defined(_WIN32)
 	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
 	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
 	WCODE::selector.Init( lf, lf, fMode, hdc );
+#else
+	WCODE::selector.Init( lf, lf, fMode, nullptr );
+#endif
 }
 
 void InitCharWidthCacheFromDC( const LOGFONT* lfs, ECharWidthFontMode fMode, HDC hdcOrg )

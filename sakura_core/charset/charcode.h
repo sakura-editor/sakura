@@ -227,10 +227,12 @@ enum ECharWidthCacheMode {
 	1文字当たり2バイトで文字のピクセル幅を保存しておく。
 */
 class CCharWidthCache {
+#if defined(_WIN32)
 private:
 	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
 	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
 	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
+#endif
 
 public:
 	CCharWidthCache() = default;
@@ -256,12 +258,18 @@ private:
 	int QueryPixelWidth(WCHAR c) const;
 	[[nodiscard]] HDC SelectHDC(WCHAR c) const;
 
+#if defined(_WIN32)
 	MemDcHolder m_hdc1 = nullptr;
 	MemDcHolder m_hdc2 = nullptr;
 	FontHolder m_hFont1 = nullptr;
 	FontHolder m_hFont2 = nullptr;
 	SelectionHolder m_hFont1Old{ m_hdc1 };
 	SelectionHolder m_hFont2Old{ m_hdc2 };
+#else
+	// Mac 版：文字幅は Core Text で測る（第 26・27 步で実装）
+	LOGFONT m_lf{};
+	LOGFONT m_lfFull{};
+#endif
 	bool m_bMultiFont = false;
 	SIZE m_han_size{};
 

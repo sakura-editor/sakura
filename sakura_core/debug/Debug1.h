@@ -101,7 +101,7 @@ void DebugOutW(
 
 //トレース出力（トレース箇所のファイルパスと行番号を出力してエラー解析を容易にする目的）
 #ifdef _DEBUG
-	#define TRACE( format, ... )	DEBUG_TRACE( _T("%hs(%d): ") _T(format) _T("\n"), __FILE__, __LINE__, __VA_ARGS__ )
+	#define TRACE( format, ... )	DEBUG_TRACE( LTEXT("%hs(%d): ") LTEXT(format) LTEXT("\n"), __FILE__, __LINE__, __VA_ARGS__ )
 #else
 	#define TRACE( ... )
 #endif

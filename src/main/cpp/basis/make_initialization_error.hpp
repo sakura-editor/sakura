@@ -21,7 +21,7 @@ namespace basis {
  * @throws std::invalid_argument メッセージがSJISに変換できない文字を含んでいた場合
  */
 initialization_error make_initialization_error(
-	std::wstring_view message,
+	sakura::wstring_view message,
 	std::optional<int> optExitCode = std::nullopt
 );
 

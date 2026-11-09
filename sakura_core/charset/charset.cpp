@@ -128,7 +128,7 @@ sakura::wstring CCodeTypeName::Bracket() const
 	}
 
 	// 値で返すので組み立て用の共有バッファは要らない
-	return std::format(LTEXT("  [{}]"), pszShort);
+	return sakura::format(LTEXT("  [{}]"), pszShort);
 }
 
 bool CCodeTypeName::UseBom()

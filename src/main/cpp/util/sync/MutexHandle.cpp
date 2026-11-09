@@ -25,7 +25,7 @@ namespace cxx {
 /* static */ MutexHandle MutexHandle::CreateMutexW(
 	_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
 	bool bInitialOwner,
-	std::wstring_view name
+	sakura::wstring_view name
 )
 {
 	// 引数はNUL終端文字列として扱う

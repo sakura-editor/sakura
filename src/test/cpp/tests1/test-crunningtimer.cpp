@@ -13,15 +13,15 @@
 TEST( CRunningTimer, Basic )
 {
 	CRunningTimer t0;
-	CRunningTimer t1( L"t1" );
-	CRunningTimer t2( L"t2", CRunningTimer::OutputMode::OnExitScope );
-	CRunningTimer t3( L"t3", CRunningTimer::OutputMode::OnWriteTrace, CRunningTimer::OutputStyle::Conventional );
+	CRunningTimer t1( LTEXT("t1") );
+	CRunningTimer t2( LTEXT("t2"), CRunningTimer::OutputMode::OnExitScope );
+	CRunningTimer t3( LTEXT("t3"), CRunningTimer::OutputMode::OnWriteTrace, CRunningTimer::OutputStyle::Conventional );
 	std::vector<CRunningTimer*> vt { &t1, &t2, &t3 };
 	for( auto t : vt ){
 		t->WriteTrace();
-		t->WriteTrace( L"test" );
+		t->WriteTrace( LTEXT("test") );
 		t->WriteTrace( 1234567890 );
-		t->WriteTraceFormat( L"%s:%d", L"test", 1234567890 );
+		t->WriteTraceFormat( LTEXT("%s:%d"), LTEXT("test"), 1234567890 );
 		t->Read();
 		t->Reset();
 	}
@@ -32,10 +32,10 @@ TEST( CRunningTimer, Basic )
  */
 TEST( CRunningTimer, LongString )
 {
-	auto str = L"012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+	auto str = LTEXT("012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789");
 	CRunningTimer t( str );
 	t.WriteTrace( str );
 	t.WriteTrace( INT32_MAX );
 	t.WriteTrace( INT32_MIN );
-	t.WriteTraceFormat( L"%s%s%s", str, str, str );
+	t.WriteTraceFormat( LTEXT("%s%s%s"), str, str, str );
 }

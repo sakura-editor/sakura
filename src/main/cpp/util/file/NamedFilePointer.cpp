@@ -14,7 +14,7 @@ namespace cxx {
 //! Cストリームとパスを紐付ける
 NamedFilePointer::NamedFilePointer(
 	FilePointer&& file,
-	std::wstring_view path
+	sakura::wstring_view path
 )
 	: Base(std::move(file))
 	, m_Path{ path }

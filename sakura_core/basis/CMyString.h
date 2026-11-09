@@ -65,7 +65,7 @@ public:
 	[[nodiscard]] sakura::wstring GetDirPath() const
 	{
 		std::filesystem::path path{ *this };
-		return path.remove_filename();
+		return sakura::path_to_wstring(path.remove_filename());
 	}
 
 	//拡張子を取得する

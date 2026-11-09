@@ -166,7 +166,7 @@ void ShowReadPercent( IGrepProgress* pProgress, const WCHAR* pszFile, int nPerce
 		return;
 	}
 	nOldPercent = nPercent;
-	pProgress->SetFileName( std::format( LTEXT("{} ({:3d}%)"), pszFile, nPercent ) );
+	pProgress->SetFileName( sakura::format( LTEXT("{} ({:3d}%)"), pszFile, nPercent ) );
 }
 
 /*!

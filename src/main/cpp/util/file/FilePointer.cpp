@@ -29,7 +29,7 @@
 
 namespace cxx {
 
-std::wstring GetTempPath2W();
+sakura::wstring GetTempPath2W();
 
 template <typename T>
 [[nodiscard]] NTSTATUS BCryptGenRandom(
@@ -115,7 +115,7 @@ void resize_file(int fd, int64_t fileSize)
  * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
  */
 /* static */ NamedFilePointer FilePointer::CreateFilePath(
-	std::wstring_view path
+	sakura::wstring_view path
 )
 {
 	// ファイルポインターを返却する
@@ -135,7 +135,7 @@ void resize_file(int fd, int64_t fileSize)
 		// OSのファイルハンドルを作成できた場合
 		if (hFile) {
 			// OSのファイルハンドルから Cストリーム を開く
-			fp = OpenFileHandle(std::move(hFile), L"wb");
+			fp = OpenFileHandle(std::move(hFile), LTEXT("wb"));
 		}
 	}
 	// エラーが発生した場合
@@ -165,14 +165,14 @@ void resize_file(int fd, int64_t fileSize)
  * @param[in, opt] optExt 一時ファイルの拡張子。指定しない場合は "tmp" を使う。
  */
 /* static */ NamedFilePointer FilePointer::CreateTempFile(
-	const std::optional<std::wstring>& optPrefix,
-	const std::optional<std::wstring>& optTempDir,
+	const std::optional<sakura::wstring>& optPrefix,
+	const std::optional<sakura::wstring>& optTempDir,
 	DWORD dwFlagsAndAttributes,
-	const std::optional<std::wstring>& optExt
+	const std::optional<sakura::wstring>& optExt
 )
 {
 	// 一時ファイルの置き場所を解決する
-	std::filesystem::path tempDir{ optTempDir.value_or(L"") };
+	std::filesystem::path tempDir{ optTempDir.value_or(LTEXT("")) };
 	if (std::error_code ec;
 		tempDir.empty() ||
 		!std::filesystem::exists(tempDir, ec) ||
@@ -184,7 +184,7 @@ void resize_file(int fd, int64_t fileSize)
 
 	// 末尾がパス区切り文字で終わっていたら取り除く
 	if (const auto& dir = tempDir.native();
-		dir.ends_with(LR"(\)") || dir.ends_with(L"/"))
+		dir.ends_with(LTEXT(R"(\)")) || dir.ends_with(LTEXT("/")))
 	{
 		tempDir = tempDir.parent_path();
 	}
@@ -192,12 +192,12 @@ void resize_file(int fd, int64_t fileSize)
 	// 一時ファイルの接頭辞を取得する
 	const auto prefix = optPrefix.value_or(GetExeFileName().stem().native());
 	if (prefix.empty()) throw std::invalid_argument("prefix is required.");
-	if (std::wstring::npos != prefix.find_first_of(LR"(/\)"))  throw std::invalid_argument("prefix should not contain path separators.");
+	if (sakura::wstring::npos != prefix.find_first_of(LTEXT(R"(/\)")))  throw std::invalid_argument("prefix should not contain path separators.");
 
 	// 一時ファイルの拡張子を取得する
-	const auto ext = optExt.value_or(L".tmp");
+	const auto ext = optExt.value_or(LTEXT(".tmp"));
 	if (ext.empty()) throw std::invalid_argument("ext is required.");
-	if (ext[0] != L'.') throw std::invalid_argument("ext must be start with '.'.");
+	if (ext[0] != LCHAR('.')) throw std::invalid_argument("ext must be start with '.'.");
 
 	// ファイルポインターを返却する
 	FilePointer fp{};
@@ -210,7 +210,7 @@ void resize_file(int fd, int64_t fileSize)
 		// 一時ファイルを作成できるまでループ（上限3回。）
 		for (int i = 0; i < 3; ++i) {
 			// 一時ファイルパスを組み立てる
-			path = tempDir / std::format(L"{:s}{:x}{:s}", prefix, cxx::GenerateRandom16(), ext);
+			path = tempDir / sakura::format(LTEXT("{:s}{:x}{:s}"), prefix, cxx::GenerateRandom16(), ext);
 
 			// ファイルハンドルをスマートポインターに入れる
 			FileHandle hFile{};
@@ -224,7 +224,7 @@ void resize_file(int fd, int64_t fileSize)
 			// OSのファイルハンドルを作成できた場合
 			if (hFile) {
 				// OSのファイルハンドルから Cストリーム を開く
-				fp = OpenFileHandle(std::move(hFile), L"wb");
+				fp = OpenFileHandle(std::move(hFile), LTEXT("wb"));
 			}
 
 			// Cストリームを作成できた場合はループを抜ける
@@ -250,7 +250,7 @@ void resize_file(int fd, int64_t fileSize)
  */
 /* static */ FilePointer FilePointer::OpenFileHandle(
 	FileHandle&& hFile,
-	std::wstring_view mode
+	sakura::wstring_view mode
 )
 {
 	// ハンドルの所有権を受け取る
@@ -266,28 +266,28 @@ void resize_file(int fd, int64_t fileSize)
 	int flags = _O_RDONLY;
 
 	// '+' が指定されていたら読み書き両用モード
-	if (std::wstring_view::npos != mode.find(L"+"))
+	if (sakura::wstring_view::npos != mode.find(LTEXT("+")))
 	{
 		flags |= _O_RDWR;
 	}
 	// '+' が指定されず、'a' か 'w' が指定されていたら書き込み専用モード
-	else if (std::wstring_view::npos != mode.find_first_of(L"aw")) flags |= _O_WRONLY;
+	else if (sakura::wstring_view::npos != mode.find_first_of(LTEXT("aw"))) flags |= _O_WRONLY;
 
 	// 'a' が指定されていたら追記モード
-	const auto appendMode = std::wstring_view::npos != mode.find(L"a");
+	const auto appendMode = sakura::wstring_view::npos != mode.find(LTEXT("a"));
 	if (appendMode) flags |= _O_APPEND;
 
 	// 'b' が指定されていたらバイナリモード
-	if (std::wstring_view::npos != mode.find(L"b"))
+	if (sakura::wstring_view::npos != mode.find(LTEXT("b")))
 	{
 		flags |= _O_BINARY;
 	}
 
 	// 古いMSVCランタイムのテキストモードは扱いが難しいので「利用しない方針」になっている。
-	if (std::wstring_view::npos != mode.find(L"t")) throw std::invalid_argument("DO NOT USE text mode.");
+	if (sakura::wstring_view::npos != mode.find(LTEXT("t"))) throw std::invalid_argument("DO NOT USE text mode.");
 
 	// 'w' が指定されていたらファイルを空にするモード
-	const auto truncMode = std::wstring_view::npos != mode.find(L"w");
+	const auto truncMode = sakura::wstring_view::npos != mode.find(LTEXT("w"));
 
 	// OSのファイルハンドルからファイル記述子を開く
 	auto fd = ::_open_osfhandle(
@@ -554,8 +554,8 @@ void FilePointer::write(
  * @return 開いたCストリーム。開けなかった場合は無効なCストリーム。
  */
 /* static */ NamedFilePointer FilePointer::OpenFilePath(
-	std::wstring_view path,
-	std::wstring_view mode
+	sakura::wstring_view path,
+	sakura::wstring_view mode
 )
 {
 	// 入力元はNUL終端文字列として扱う
@@ -594,7 +594,7 @@ void FilePointer::write(
 	DWORD dwShareMode = FILE_SHARE_READ;
 
 	// 書き込み可能モードなら反映する
-	if (std::wstring_view::npos != mode.find_first_of(L"aw+"))
+	if (sakura::wstring_view::npos != mode.find_first_of(LTEXT("aw+")))
 	{
 		dwDesiredAccess |= GENERIC_WRITE;
 		dwShareMode |= FILE_SHARE_WRITE;

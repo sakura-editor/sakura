@@ -8,7 +8,7 @@
 
 namespace cxx {
 
-std::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule = std::nullopt);
+sakura::wstring_view load_string(UINT id, const std::optional<HMODULE>& optModule = std::nullopt);
 
 std::string load_string_as_acp(UINT id, const std::optional<HMODULE>& optModule = std::nullopt);
 

@@ -48,6 +48,25 @@ jobs:
           lipo -archs test_wchar16
           ./test_wchar16
 
+  # 第 16 步：Mac 版核心库（macos/core）的构建和单元测试
+  core-tests-macos:
+    needs: check-encoding
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Configure
+        run: cmake -S macos/core -B build/mac-core -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+
+      - name: Build
+        run: cmake --build build/mac-core -j 4
+
+      - name: Test
+        run: ctest --test-dir build/mac-core --output-on-failure -j 4
+
   wchar16-test-windows:
     needs: check-encoding
     runs-on: windows-latest

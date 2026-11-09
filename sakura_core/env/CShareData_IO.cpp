@@ -1480,8 +1480,8 @@ void ShareData_IO_BlockComments(
 		// From-Toをセットで読み書きする
 		sakura::wstring_view entryKey = LTEXT("szBlockComment");
 		if (const auto keySurfix = 0 < i ? std::to_wstring(i + 1) : LTEXT(""s);
-			!cProfile.IOProfileData(sectionName, std::format(LTEXT("{}From{}"), entryKey, keySurfix), strFrom) ||
-			!cProfile.IOProfileData(sectionName, std::format(LTEXT("{}To{}"),   entryKey, keySurfix), strTo  ))
+			!cProfile.IOProfileData(sectionName, sakura::format(LTEXT("{}From{}"), entryKey, keySurfix), strFrom) ||
+			!cProfile.IOProfileData(sectionName, sakura::format(LTEXT("{}To{}"),   entryKey, keySurfix), strTo  ))
 		{
 			continue;	// 読み込み失敗
 		}
@@ -1543,7 +1543,7 @@ void ShareData_IO_KeyHelpArr(
 		auto& keyHelp = KeyHelpArr[i];
 
 		// 読み書きを実行する
-		if (const auto ret = cProfile.IOProfileData(sectionName, std::format(LTEXT("KDct[{:02d}]"), i), keyHelp);
+		if (const auto ret = cProfile.IOProfileData(sectionName, sakura::format(LTEXT("KDct[{:02d}]"), i), keyHelp);
 			!ret ||
 			keyHelp.m_szPath.empty())
 		{
@@ -1588,8 +1588,8 @@ void ShareData_IO_LineComments(
 
 		// 読み書きを実行する
 		if (const auto keySurfix = 0 < i ? std::to_wstring(i + 1) : LTEXT(""s);
-			!cProfile.IOProfileData(sectionName, std::format(LTEXT("szLineComment{}"),      keySurfix), lineComment) ||
-			!cProfile.IOProfileData(sectionName, std::format(LTEXT("nLineCommentColumn{}"), keySurfix), pos        ))
+			!cProfile.IOProfileData(sectionName, sakura::format(LTEXT("szLineComment{}"),      keySurfix), lineComment) ||
+			!cProfile.IOProfileData(sectionName, sakura::format(LTEXT("nLineCommentColumn{}"), keySurfix), pos        ))
 		{
 			continue;	// 読み込み失敗
 		}
@@ -1761,7 +1761,7 @@ void ShareData_IO_VertLineIdx(
 {
 	for (int i = 0; i < _countof(nVertLineIdx); ++i) {
 		// 読み書きを実行する
-		if (!cProfile.IOProfileData(sectionName, std::format(LTEXT("nVertLineIdx{}"), i + 1), nVertLineIdx[i]))
+		if (!cProfile.IOProfileData(sectionName, sakura::format(LTEXT("nVertLineIdx{}"), i + 1), nVertLineIdx[i]))
 		{
 			continue;	// 読み込み失敗
 		}
@@ -2578,7 +2578,7 @@ bool ShareData_IO_LogFont(
 	// フォント名を読み書きする
 	using SFaceName = StaticString<LF_FACESIZE>;
 	SFaceName szFaceName{ lf.lfFaceName };
-	if (const auto ret = cProfile.IOProfileData(pszSecName, optFaceNameKey.value_or(std::format(LTEXT("{}FaceName"), pszKeyLf)), szFaceName);
+	if (const auto ret = cProfile.IOProfileData(pszSecName, optFaceNameKey.value_or(sakura::format(LTEXT("{}FaceName"), pszKeyLf)), szFaceName);
 		!ret)
 	{
 		return false;
@@ -2637,6 +2637,6 @@ void ShareData_IO_FileTree(
 	SetValueLimit( fileTree.m_nItemCount, int(std::size(fileTree.m_aItems)) );
 
 	for (int i = 0; i < fileTree.m_nItemCount; ++i) {
-		cProfile.IOProfileData(pszSecName, std::format(LTEXT("FileTree({})"), i), fileTree.m_aItems[i]);
+		cProfile.IOProfileData(pszSecName, sakura::format(LTEXT("FileTree({})"), i), fileTree.m_aItems[i]);
 	}
 }

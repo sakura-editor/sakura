@@ -64,7 +64,7 @@ TEST(string_ex, auto_strlenA)
  */
 TEST(string_ex, auto_strlenW)
 {
-	constexpr auto& text = L"abc";
+	constexpr auto& text = LTEXT("abc");
 	ASSERT_THAT(auto_strlen(text), Eq(3));
 }
 
@@ -76,7 +76,7 @@ TEST(string_ex, auto_strnlenA)
 
 TEST(string_ex, auto_strnlenW)
 {
-	constexpr auto& text = L"abc";
+	constexpr auto& text = LTEXT("abc");
 	ASSERT_THAT(auto_strnlen(text, std::size(text)), Eq(3));
 }
 
@@ -98,7 +98,7 @@ TEST(string_ex, auto_strchrA)
  */
 TEST(string_ex, auto_strchrW)
 {
-	constexpr const wchar_t test_data[] = L"abc";
+	constexpr const WCHAR test_data[] = LTEXT("abc");
 	ASSERT_EQ(&test_data[1], auto_strchr(test_data, test_data[1]));
 }
 
@@ -121,9 +121,9 @@ TEST(string_ex, auto_sprintfA)
  */
 TEST(string_ex, auto_sprintfW)
 {
-	wchar_t szText[_MAX_PATH];
-	auto_sprintf(szText, L"%s-%d", L"test", 101);
-	ASSERT_STREQ(L"test-101", szText);
+	WCHAR szText[_MAX_PATH];
+	auto_sprintf(szText, LTEXT("%s-%d"), LTEXT("test"), 101);
+	ASSERT_STREQ(LTEXT("test-101"), szText);
 }
 
 /*!
@@ -149,8 +149,8 @@ TEST(string_ex, auto_sprintf_sA)
 TEST(string_ex, auto_sprintf_sW)
 {
 	SFilePath szText;
-	EXPECT_THAT(auto_sprintf_s(szText, L"%s-%d", L"test", 101), 8);
-	ASSERT_THAT(szText, StrEq(L"test-101"));
+	EXPECT_THAT(auto_sprintf_s(szText, LTEXT("%s-%d"), LTEXT("test"), 101), 8);
+	ASSERT_THAT(szText, StrEq(LTEXT("test-101")));
 }
 
 TEST(string_ex, ConvertPrintfArgReturnsSourcePointerA)
@@ -165,7 +165,7 @@ TEST(string_ex, ConvertPrintfArgReturnsSourcePointerA)
 
 TEST(string_ex, ConvertPrintfArgReturnsSourcePointerW)
 {
-	const auto source = L"test"s;
+	const auto source = LTEXT("test"s);
 
 	EXPECT_THAT(
 		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(source)),
@@ -184,8 +184,8 @@ TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferA)
 TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferW)
 {
 	EXPECT_THAT(
-		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(L"test data"sv.substr(0, 4))),
-		StrEq(L"test")
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(LTEXT("test data"sv).substr(0, 4))),
+		StrEq(LTEXT("test"))
 	);
 }
 
@@ -200,8 +200,8 @@ TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferW)
  */
 TEST(string_ex, strprintf)
 {
-	std::wstring text = strprintf(L"%s-%d", L"test", 101);
-	ASSERT_STREQ(L"test-101", text.c_str());
+	sakura::wstring text = strprintf(LTEXT("%s-%d"), LTEXT("test"), 101);
+	ASSERT_STREQ(LTEXT("test-101"), text.c_str());
 }
 
 /*!
@@ -209,9 +209,9 @@ TEST(string_ex, strprintf)
  */
 TEST(string_ex, strprintfWOutputToArg)
 {
-	std::wstring text(1024, L'\0');
-	strprintf(text, L"%s-%d", L"test", 101);
-	ASSERT_STREQ(L"test-101", text.c_str());
+	sakura::wstring text(1024, LCHAR('\0'));
+	strprintf(text, LTEXT("%s-%d"), LTEXT("test"), 101);
+	ASSERT_STREQ(LTEXT("test-101"), text.c_str());
 }
 
 /*!
@@ -220,7 +220,7 @@ TEST(string_ex, strprintfWOutputToArg)
 TEST(string_ex, strprintfAOutputToArg)
 {
 	std::string text(1024, '\0');
-	strprintf(text, "%ls-of-active-codepage-%d", L"test", 101);
+	strprintf(text, "%ls-of-active-codepage-%d", LTEXT("test"), 101);
 	ASSERT_STREQ("test-of-active-codepage-101", text.c_str());
 }
 
@@ -229,7 +229,7 @@ TEST(string_ex, strprintfAOutputToArg)
  */
 TEST(string_ex, strprintfEmpty)
 {
-	std::wstring text = strprintf(L"%hs", "");
+	sakura::wstring text = strprintf(LTEXT("%hs"), "");
 	ASSERT_TRUE(text.empty());
 }
 
@@ -239,8 +239,8 @@ TEST(string_ex, strprintfEmpty)
 TEST(string_ex, strprintfCLayoutInt)
 {
 	CLayoutInt value{ 25 };
-	std::wstring text = strprintf(L"いちご%d%%", value);
-	EXPECT_THAT(text, StrEq(L"いちご25%"));
+	sakura::wstring text = strprintf(LTEXT("いちご%d%%"), value);
+	EXPECT_THAT(text, StrEq(LTEXT("いちご25%")));
 }
 
 /*!
@@ -251,29 +251,29 @@ TEST(string_ex, strprintfCLayoutInt)
  */
 TEST(string_ex, strprintfW_small_output)
 {
-	std::wstring text;
-	EXPECT_STREQ(L"", text.c_str());
+	sakura::wstring text;
+	EXPECT_STREQ(LTEXT(""), text.c_str());
 
-	text = strprintf(L"%d", 1);
-	EXPECT_STREQ(L"1", text.c_str());
+	text = strprintf(LTEXT("%d"), 1);
+	EXPECT_STREQ(LTEXT("1"), text.c_str());
 
-	text = strprintf(L"%d", 12);
-	EXPECT_STREQ(L"12", text.c_str());
+	text = strprintf(LTEXT("%d"), 12);
+	EXPECT_STREQ(LTEXT("12"), text.c_str());
 
-	text = strprintf(L"%d", 123);
-	EXPECT_STREQ(L"123", text.c_str());
+	text = strprintf(LTEXT("%d"), 123);
+	EXPECT_STREQ(LTEXT("123"), text.c_str());
 
-	text = strprintf(L"%d", 1234);
-	EXPECT_STREQ(L"1234", text.c_str());
+	text = strprintf(LTEXT("%d"), 1234);
+	EXPECT_STREQ(LTEXT("1234"), text.c_str());
 
-	text = strprintf(L"%d", 12345);
-	EXPECT_STREQ(L"12345", text.c_str());
+	text = strprintf(LTEXT("%d"), 12345);
+	EXPECT_STREQ(LTEXT("12345"), text.c_str());
 
-	text = strprintf(L"%d", 123456);
-	EXPECT_STREQ(L"123456", text.c_str());
+	text = strprintf(LTEXT("%d"), 123456);
+	EXPECT_STREQ(LTEXT("123456"), text.c_str());
 
-	text = strprintf(L"%d", 1234567);
-	EXPECT_STREQ(L"1234567", text.c_str());
+	text = strprintf(LTEXT("%d"), 1234567);
+	EXPECT_STREQ(LTEXT("1234567"), text.c_str());
 }
 
 /*!
@@ -359,9 +359,9 @@ TEST(string_ex, strprintfW101)
 
 	// formatは必須。省略したらクラッシュする
 	LPCWSTR format = nullptr;
-	const auto ret = strprintf(format, L"arg");
+	const auto ret = strprintf(format, LTEXT("arg"));
 	EXPECT_THAT(errno, Eq(EINVAL));
-	EXPECT_THAT(ret, StrEq(L""));
+	EXPECT_THAT(ret, StrEq(LTEXT("")));
 }
 
 #endif // defined(_MSC_VER) && defined(_DEBUG)
@@ -386,26 +386,26 @@ TEST(string_ex, strprintfA102)
 TEST(string_ex, strprintfW102)
 {
 	// formatが空なら呼び出す意味はない。
-	auto ret = strprintf(L"", nullptr);
-	EXPECT_THAT(ret, StrEq(L""));
+	auto ret = strprintf(LTEXT(""), nullptr);
+	EXPECT_THAT(ret, StrEq(LTEXT("")));
 
 	WCHAR buf[50]{};
-	::swprintf_s(buf, L"", nullptr);
-	EXPECT_THAT((LPCWSTR)buf, StrEq(L""));
+	::swprintf_s(buf, LTEXT(""), nullptr);
+	EXPECT_THAT((LPCWSTR)buf, StrEq(LTEXT("")));
 
-	LPCWSTR format = L"%s";
+	LPCWSTR format = LTEXT("%s");
 	ret = strprintf(format, (LPCWSTR)nullptr);
-	EXPECT_THAT(ret, StrEq(L"(null)"));
+	EXPECT_THAT(ret, StrEq(LTEXT("(null)")));
 	::swprintf_s(buf, format, (LPCWSTR)nullptr);
-	EXPECT_THAT(buf, StartsWith(L"(null)"));
+	EXPECT_THAT(buf, StartsWith(LTEXT("(null)")));
 }
 
 TEST(string_ex, strprintfW103)
 {
 	// 書式化パラメータには部分文字列を指定できるようにした
 	EXPECT_THAT(
-		strprintf(L"%s", L"test data"sv.substr(0, 4)),
-		StrEq(L"test")
+		strprintf(LTEXT("%s"), LTEXT("test data"sv).substr(0, 4)),
+		StrEq(LTEXT("test"))
 	);
 }
 
@@ -427,9 +427,9 @@ TEST(string_ex, strncmp_literal)
  */
 TEST(string_ex, wcsncmp_literal)
 {
-	constexpr const wchar_t test_data1[] = L"abc";
-	constexpr const wchar_t test_data2[] = L"abc";
-	constexpr const wchar_t test_data3[] = L"xyz";
+	constexpr const WCHAR test_data1[] = LTEXT("abc");
+	constexpr const WCHAR test_data2[] = LTEXT("abc");
+	constexpr const WCHAR test_data3[] = LTEXT("xyz");
 	ASSERT_EQ(0, wcsncmp_literal(test_data1, test_data2));
 	ASSERT_GT(0, wcsncmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, wcsncmp_literal(test_data3, test_data1));
@@ -453,9 +453,9 @@ TEST(string_ex, strnicmp_literal)
  */
 TEST(string_ex, wcsnicmp_literal)
 {
-	constexpr const wchar_t test_data1[] = L"abc";
-	constexpr const wchar_t test_data2[] = L"ABC";
-	constexpr const wchar_t test_data3[] = L"XYZ";
+	constexpr const WCHAR test_data1[] = LTEXT("abc");
+	constexpr const WCHAR test_data2[] = LTEXT("ABC");
+	constexpr const WCHAR test_data3[] = LTEXT("XYZ");
 	ASSERT_EQ(0, wcsnicmp_literal(test_data1, test_data2));
 	ASSERT_GT(0, wcsnicmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, wcsnicmp_literal(test_data3, test_data1));
@@ -470,9 +470,9 @@ TEST(string_ex, wcsnicmp_literal)
  */
 TEST(string_ex, skr_towupper)
 {
-	EXPECT_THAT(skr_towupper(L'a'), Eq(L'A'));
-	EXPECT_THAT(skr_towupper(L'Z'), Eq(L'Z'));
-	EXPECT_THAT(skr_towupper(L' '), Eq(L' '));
+	EXPECT_THAT(skr_towupper(LCHAR('a')), Eq(LCHAR('A')));
+	EXPECT_THAT(skr_towupper(LCHAR('Z')), Eq(LCHAR('Z')));
+	EXPECT_THAT(skr_towupper(LCHAR(' ')), Eq(LCHAR(' ')));
 #ifdef _MSC_VER
 	EXPECT_THAT(skr_towupper(0x009A), Eq(0x009A));
 	EXPECT_THAT(skr_towupper(0x00E0), Eq(0x00C0));
@@ -489,9 +489,9 @@ TEST(string_ex, skr_towupper)
  */
 TEST(string_ex, skr_towlower)
 {
-	EXPECT_THAT(skr_towlower(L'A'), Eq(L'a'));
-	EXPECT_THAT(skr_towlower(L'z'), Eq(L'z'));
-	EXPECT_THAT(skr_towlower(L' '), Eq(L' '));
+	EXPECT_THAT(skr_towlower(LCHAR('A')), Eq(LCHAR('a')));
+	EXPECT_THAT(skr_towlower(LCHAR('z')), Eq(LCHAR('z')));
+	EXPECT_THAT(skr_towlower(LCHAR(' ')), Eq(LCHAR(' ')));
 #ifdef _MSC_VER
 	EXPECT_THAT(skr_towlower(0x008A), Eq(0x008A));
 	EXPECT_THAT(skr_towlower(0x00C0), Eq(0x00E0));

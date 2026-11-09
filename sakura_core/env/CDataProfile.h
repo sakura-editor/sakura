@@ -378,7 +378,7 @@ public:
 		// 有効要素数を読み書きする
 		if (!IOProfileData(
 			sectionName,
-			optCountName.value_or(std::format(LTEXT("_{:s}_Counts"), entrySetName)),
+			optCountName.value_or(sakura::format(LTEXT("_{:s}_Counts"), entrySetName)),
 			count
 		) && IsReadingMode())
 		{
@@ -401,7 +401,7 @@ public:
 		// 配列要素の数だけループする
 		for (int i = 0; i < count; ++i) {
 			// 配列要素を読み書きする
-			IOProfileData(sectionName, std::format(LTEXT("{}[{:02d}]"), entrySetName, i), aEntries[i]);
+			IOProfileData(sectionName, sakura::format(LTEXT("{}[{:02d}]"), entrySetName, i), aEntries[i]);
 		}
 
 		// 有効要素数を読み込めなかった場合、補正を試みる

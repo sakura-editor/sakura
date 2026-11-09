@@ -38,7 +38,7 @@ public:
 	static Me CreateMutexW(
 		_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
 		bool bInitialOwner,
-		std::wstring_view name
+		sakura::wstring_view name
 	);
 
 	/*!
@@ -49,7 +49,7 @@ public:
 	 * @param[in] name ミューテックス名
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static Me CreateMutexW(
 		_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
 		bool bInitialOwner,

@@ -41,7 +41,7 @@ public:
 	 * @param[in] hTemplateFile テンプレートファイルのハンドル
 	 */
 	static Me CreateFileW(
-		std::wstring_view fileName,
+		sakura::wstring_view fileName,
 		_In_ DWORD dwDesiredAccess,
 		_In_ DWORD dwShareMode,
 		_In_opt_ LPSECURITY_ATTRIBUTES lpSecurityAttributes,
@@ -62,7 +62,7 @@ public:
 	 * @param[in] hTemplateFile テンプレートファイルのハンドル
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static Me CreateFileW(
 		const A& path,
 		_In_ DWORD dwDesiredAccess,
@@ -97,7 +97,7 @@ public:
 	 * @throw std::system_error Windowsがエラーを返したとき
 	 */
 	static Me CreateNew(
-		std::wstring_view fileName,
+		sakura::wstring_view fileName,
 		_In_opt_ DWORD dwFlagsAndAttributes = 0
 	);
 
@@ -110,7 +110,7 @@ public:
 	 * @throw std::system_error Windowsがエラーを返したとき
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static Me CreateNew(
 		const A& path,
 		_In_opt_ DWORD dwFlagsAndAttributes = 0
@@ -136,7 +136,7 @@ public:
 	 * @throw std::system_error Windowsがエラーを返したとき
 	 */
 	static Me OpenExisting(
-		std::wstring_view path,
+		sakura::wstring_view path,
 		_In_ DWORD dwDesiredAccess,
 		_In_ DWORD dwShareMode
 	);
@@ -151,7 +151,7 @@ public:
 	 * @throw std::system_error Windowsがエラーを返したとき
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static Me OpenExisting(
 		const A& path,
 		_In_ DWORD dwDesiredAccess,

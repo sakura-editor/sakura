@@ -281,7 +281,7 @@ struct STypeConfigMini
 class CTypeConfig
 {
 public:
-	CTypeConfig()
+	constexpr CTypeConfig()
 #ifdef _DEBUG
 		//元がintだったので、未初期化で使うと問題が発生するように、あえて、変な値を入れておく。
 		: CTypeConfig(1234)
@@ -292,18 +292,18 @@ public:
 	{
 	}
 
-	explicit CTypeConfig(int nType)
+	constexpr explicit CTypeConfig(int nType)
 		: m_nType(nType)
 	{
 	}
 
-	bool IsValidType() const noexcept { return 0 <= m_nType && m_nType < MAX_TYPES; }
+	constexpr bool IsValidType() const noexcept { return 0 <= m_nType && m_nType < MAX_TYPES; }
 
-	int GetIndex() const noexcept { return m_nType; }
+	constexpr int GetIndex() const noexcept { return m_nType; }
 
-	explicit operator bool() const noexcept { return IsValidType(); }
+	constexpr explicit operator bool() const noexcept { return IsValidType(); }
 
-	explicit operator int() const noexcept { return GetIndex(); }
+	constexpr explicit operator int() const noexcept { return GetIndex(); }
 
 private:
 	int m_nType = 0;

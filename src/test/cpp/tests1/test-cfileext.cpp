@@ -9,11 +9,11 @@
 #include "basis/CFileExt.h"
 
 
-static size_t GetFilterLength(const wchar_t* filter)
+static size_t GetFilterLength(const WCHAR* filter)
 {
 	size_t length = 0;
 	size_t i = 0;
-	while (!(filter[i] == L'\0' && filter[i+1] == L'\0')) {
+	while (!(filter[i] == LCHAR('\0') && filter[i+1] == LCHAR('\0'))) {
 		++i;
 	}
 	return i + 2;
@@ -26,17 +26,17 @@ TEST(CFileExt, Construct)
 
 TEST(CFileExt, CreateFilter)
 {
-	wchar_t result[] = L"ユーザー設定 (*.cpp;*.h;*.*)\0*.cpp;*.h;*.*\0テキスト (*.txt)\0*.txt\0すべてのファイル (*.*)\0*.*\0";
+	WCHAR result[] = LTEXT("ユーザー設定 (*.cpp;*.h;*.*)\0*.cpp;*.h;*.*\0テキスト (*.txt)\0*.txt\0すべてのファイル (*.*)\0*.*\0");
 
 	CFileExt cFileExt;
-	cFileExt.AppendExtRaw(L"ユーザー設定", L"*.cpp;*.h;*.*");
-	cFileExt.AppendExtRaw(L"テキスト", L"*.txt");
-	cFileExt.AppendExtRaw(L"すべてのファイル", L"*.*");
+	cFileExt.AppendExtRaw(LTEXT("ユーザー設定"), LTEXT("*.cpp;*.h;*.*"));
+	cFileExt.AppendExtRaw(LTEXT("テキスト"), LTEXT("*.txt"));
+	cFileExt.AppendExtRaw(LTEXT("すべてのファイル"), LTEXT("*.*"));
 
-	const wchar_t* filter = cFileExt.GetExtFilter();
+	const WCHAR* filter = cFileExt.GetExtFilter();
 	size_t length = GetFilterLength(filter);
-	std::wstring expected = {result, int(std::size(result))};
-	std::wstring actual = {filter, length};
+	sakura::wstring expected = {result, int(std::size(result))};
+	sakura::wstring actual = {filter, length};
 	EXPECT_EQ(expected, actual);
 }
 
@@ -44,8 +44,8 @@ TEST(CFileExt, RawLongFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(
-		L"ユーザー設定",
-		L"*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX"
+		LTEXT("ユーザー設定"),
+		LTEXT("*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX")
 	);
 }
 
@@ -53,8 +53,8 @@ TEST(CFileExt, RawManyFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExtRaw(
-		L"ユーザー指定",
-		L"*.extensin_50_0_long_long_long_long_long_long_long_l;*.extensin_50_1_long_long_long_long_long_long_long_l;*.extensin_50_2_long_long_long_long_long_long_long_l;*.extensin_50_3_long_long_long_long_long_long_long_l;*.extensin_50_4_long_long_long_long_long_long_long_l;*.extensin_50_5_long_long_long_long_long_long_long_l;*.extensin_50_6_long_long_long_long_long_long_long_l;*.extensin_50_7_long_long_long_long_long_long_long_l;*.extensin_50_8_long_long_long_long_long_long_long_l;*.extensin_50_9_long_long_long_long_long_long_long_l"
+		LTEXT("ユーザー指定"),
+		LTEXT("*.extensin_50_0_long_long_long_long_long_long_long_l;*.extensin_50_1_long_long_long_long_long_long_long_l;*.extensin_50_2_long_long_long_long_long_long_long_l;*.extensin_50_3_long_long_long_long_long_long_long_l;*.extensin_50_4_long_long_long_long_long_long_long_l;*.extensin_50_5_long_long_long_long_long_long_long_l;*.extensin_50_6_long_long_long_long_long_long_long_l;*.extensin_50_7_long_long_long_long_long_long_long_l;*.extensin_50_8_long_long_long_long_long_long_long_l;*.extensin_50_9_long_long_long_long_long_long_long_l")
 	);
 }
 
@@ -62,7 +62,7 @@ TEST(CFileExt, LongFilter)
 {
 	CFileExt cFileExt;
 	cFileExt.AppendExt(
-		L"ユーザー設定",
-		L"*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX"
+		LTEXT("ユーザー設定"),
+		LTEXT("*.extensin_250_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_longX")
 	);
 }

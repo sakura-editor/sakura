@@ -20,58 +20,58 @@ using namespace testing;
  */
 TEST(CStringRef, CStringRef)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 
 	CStringRef v1;
 	EXPECT_EQ(NULL, v1.GetPtr());
 	EXPECT_EQ(0, v1.GetLength());
 	EXPECT_FALSE(v1.IsValid());
-	EXPECT_EQ(L'\0', v1.At(0));
+	EXPECT_EQ(LCHAR('\0'), v1.At(0));
 
-	EXPECT_THAT(v1, StrEq(L""));
+	EXPECT_THAT(v1, StrEq(LTEXT("")));
 	EXPECT_THAT(v1.empty(), IsTrue());
 	EXPECT_THAT(v1.length(), Eq(0));
 
 	SFilePath p1{ v1 };
-	EXPECT_THAT(p1, StrEq(L""));
+	EXPECT_THAT(p1, StrEq(LTEXT("")));
 
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
 	EXPECT_TRUE(v2.IsValid());
-	EXPECT_EQ(L't', v2.At(0));
-	EXPECT_EQ(L'e', v2.At(1));
-	EXPECT_EQ(L's', v2.At(2));
-	EXPECT_EQ(L't', v2.At(3));
-	EXPECT_EQ(L'\0', v2.At(4));
+	EXPECT_EQ(LCHAR('t'), v2.At(0));
+	EXPECT_EQ(LCHAR('e'), v2.At(1));
+	EXPECT_EQ(LCHAR('s'), v2.At(2));
+	EXPECT_EQ(LCHAR('t'), v2.At(3));
+	EXPECT_EQ(LCHAR('\0'), v2.At(4));
 
-	EXPECT_THAT(v2, StrEq(L"test"));
+	EXPECT_THAT(v2, StrEq(LTEXT("test")));
 	EXPECT_THAT(v2.empty(), IsFalse());
 	EXPECT_THAT(v2.length(), Eq(4));
 
 	p1 = v2;
-	EXPECT_THAT(p1, StrEq(L"test"));
+	EXPECT_THAT(p1, StrEq(LTEXT("test")));
 
 	p1 = nullptr;
-	EXPECT_THAT(p1, StrEq(L""));
+	EXPECT_THAT(p1, StrEq(LTEXT("")));
 
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
 	EXPECT_STREQ(sz, v3.GetPtr());
 	EXPECT_EQ(cch, v3.GetLength());
 	EXPECT_TRUE(v3.IsValid());
-	EXPECT_EQ(L't', v3.At(0));
-	EXPECT_EQ(L'e', v3.At(1));
-	EXPECT_EQ(L's', v3.At(2));
-	EXPECT_EQ(L't', v3.At(3));
-	EXPECT_EQ(L'\0', v3.At(4));
+	EXPECT_EQ(LCHAR('t'), v3.At(0));
+	EXPECT_EQ(LCHAR('e'), v3.At(1));
+	EXPECT_EQ(LCHAR('s'), v3.At(2));
+	EXPECT_EQ(LCHAR('t'), v3.At(3));
+	EXPECT_EQ(LCHAR('\0'), v3.At(4));
 
 	SFilePath p2{ cmem };
-	EXPECT_THAT(p2, StrEq(L"test"));
+	EXPECT_THAT(p2, StrEq(LTEXT("test")));
 
 	CStringRef v4{ p2 };
-	EXPECT_THAT(v4.str(), StrEq(L"test"));
+	EXPECT_THAT(v4.str(), StrEq(LTEXT("test")));
 }
 
 /*!
@@ -96,7 +96,7 @@ TEST(CNativeW, ConstructWithoutParam)
  */
 TEST(CNativeW, ConstructWithStringWithLength)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -112,7 +112,7 @@ TEST(CNativeW, ConstructWithStringWithLength)
  */
 TEST(CNativeW, ConstructWithString)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
@@ -126,7 +126,7 @@ TEST(CNativeW, ConstructWithString)
  */
 TEST(CNativeW, ConstructWithStringEmpty)
 {
-	constexpr const wchar_t sz[] = L"";
+	constexpr const WCHAR sz[] = LTEXT("");
 	CNativeW value(sz);
 	ASSERT_STREQ(sz, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
@@ -156,7 +156,7 @@ TEST(CNativeW, ConstructWithStringNull)
  */
 TEST(CNativeW, ConstructFromOtherByCopy)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	CNativeW other(sz);
 	CNativeW value(other);
 	ASSERT_STREQ(other.GetStringPtr(), value.GetStringPtr());
@@ -174,7 +174,7 @@ TEST(CNativeW, ConstructFromOtherByCopy)
  */
 TEST(CNativeW, ConstructFromOtherByMove)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW other(sz);
 	CNativeW value(std::move(other));
@@ -197,7 +197,7 @@ TEST(CNativeW, ConstructFromOtherByMove)
  */
 TEST(CNativeW, CopyFromOther)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
@@ -219,7 +219,7 @@ TEST(CNativeW, CopyFromOther)
  */
 TEST(CNativeW, MoveFromOther)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	CNativeW other(sz);
@@ -242,7 +242,7 @@ TEST(CNativeW, MoveFromOther)
  */
 TEST(CNativeW, GetCharAtIndex)
 {
-	constexpr const wchar_t sz[] = L"森鷗外";
+	constexpr const WCHAR sz[] = LTEXT("森鷗外");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value(sz, cch);
 	EXPECT_EQ(cch, value.GetStringLength());
@@ -261,7 +261,7 @@ TEST(CNativeW, GetCharAtIndex)
  */
 TEST(CNativeW, AssignString)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value = sz;
@@ -277,7 +277,7 @@ TEST(CNativeW, AssignString)
  */
 TEST(CNativeW, AssignStringNullPointer)
 {
-	CNativeW value(L"test");
+	CNativeW value(LTEXT("test"));
 	value = nullptr;	// NULLではなくnullptrを使うよう修正
 	EXPECT_EQ(0, value.GetStringLength());
 	EXPECT_EQ(NULL, value.GetStringPtr());
@@ -290,7 +290,7 @@ TEST(CNativeW, AssignStringNullPointer)
  */
 TEST(CNativeW, AssignStringNullLiteral)
 {
-	CNativeW value(L"test");
+	CNativeW value(LTEXT("test"));
 	value = nullptr;	// NULLではなくnullptrを使うよう修正
 	ASSERT_EQ(NULL, value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
@@ -304,7 +304,7 @@ TEST(CNativeW, AssignStringNullLiteral)
  */
 TEST(CNativeW, AppendChar)
 {
-	constexpr const wchar_t sz[] = L"X";
+	constexpr const WCHAR sz[] = LTEXT("X");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz[0];
@@ -321,7 +321,7 @@ TEST(CNativeW, AppendChar)
  */
 TEST(CNativeW, AppendString)
 {
-	constexpr const wchar_t sz[] = L"test";
+	constexpr const WCHAR sz[] = LTEXT("test");
 	constexpr auto cch = std::size(sz) - 1;
 	CNativeW value;
 	value += sz;
@@ -339,7 +339,7 @@ TEST(CNativeW, AppendStringF101)
 	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
 
 	// formatは必須。省略したらクラッシュする
-	std::wstring_view format{ nullptr, 0 };
+	sakura::wstring_view format{ nullptr, 0 };
 	CNativeW value;
 
 	// Cランタイムの呼出が失敗したら例外を投げる
@@ -363,8 +363,8 @@ TEST(CNativeW, AppendStringF102)
 	// Cランタイムの呼出が失敗したら例外を投げる
 	EXPECT_THAT(([&] {
 		// エンコードエラーを発生させる。（ShiftJISの後続バイトが欠落）
-		value.AppendStringF(L"%S", "\x81\0"); }),
-		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+		value.AppendStringF(LTEXT("%S"), "\x81\0"); }),
+		ThrowsMessage<std::domain_error>(Eq(std::format("AppendStringF error. errno = {:d}", EILSEQ)))
 	);
 
 	EXPECT_THAT(errno, Eq(EILSEQ));
@@ -376,7 +376,7 @@ TEST(CNativeW, AppendStringF102)
  */
 TEST(CNativeW, AppendStringNullPointer)
 {
-	CNativeW org(L"orz");
+	CNativeW org(LTEXT("orz"));
 	CNativeW value(org);
 	value += nullptr;	// NULLではなくnullptrを使うよう修正
 	EXPECT_EQ(value.GetStringLength(), org.GetStringLength());
@@ -393,37 +393,37 @@ TEST(CNativeW, AppendStringNullPointer)
 TEST(CNativeW, AppendStringWithFormatting)
 {
 	CNativeW value;
-	value.AppendStringF(L"いちご%d%%", 100);
-	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
+	value.AppendStringF(LTEXT("いちご%d%%"), 100);
+	ASSERT_STREQ(LTEXT("いちご100%"), value.GetStringPtr());
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
-	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
+	value = LTEXT("いちご100%"); //テスト前の初期値(念のため再代入しておく
 	value._SetStringLength(0);
-	value.AppendStringF(L"いちご%d%%", 25); //1文字短くなるような指定をしている
-	ASSERT_EQ(L"いちご25%", value);
+	value.AppendStringF(LTEXT("いちご%d%%"), 25); //1文字短くなるような指定をしている
+	ASSERT_EQ(LTEXT("いちご25%"), value);
 
 	// 追加フォーマットが空文字列となるケースをテストする
-	value.AppendStringF(L"%s", L"");
-	ASSERT_EQ(L"いちご25%", value);
+	value.AppendStringF(LTEXT("%s"), LTEXT(""));
+	ASSERT_EQ(LTEXT("いちご25%"), value);
 
 	// 未確保状態からの書式化をテストする
 	value = nullptr; //テスト前の初期値(未確保
-	value.AppendStringF( L"KEY[%03d]", 12 );
-	ASSERT_EQ( L"KEY[012]", value );
+	value.AppendStringF( LTEXT("KEY[%03d]"), 12 );
+	ASSERT_EQ( LTEXT("KEY[012]"), value );
 
 	// 文字列連結(書式でmax長指定)をテストする
-	value.AppendStringF( L"%.3s", L"abcdef" );
-	ASSERT_EQ( L"KEY[012]abc", value );
+	value.AppendStringF( LTEXT("%.3s"), LTEXT("abcdef") );
+	ASSERT_EQ( LTEXT("KEY[012]abc"), value );
 
 	// 文字列連結(書式で出力長指定)をテストする
-	value.AppendStringF( L"%6s", L"abc" );
-	ASSERT_EQ( L"KEY[012]abc   abc", value );
+	value.AppendStringF( LTEXT("%6s"), LTEXT("abc") );
+	ASSERT_EQ( LTEXT("KEY[012]abc   abc"), value );
 
 	// フォーマット出力長2047字を超える条件をテストする
 	{
-		std::wstring longText( 2048, L'=' );
+		sakura::wstring longText( 2048, LCHAR('=') );
 		value = nullptr; //テスト前の初期値(未確保
-		value.AppendStringF( L"%s", longText.c_str() );
+		value.AppendStringF( LTEXT("%s"), longText.c_str() );
 		ASSERT_EQ( longText.c_str(), value );
 	}
 }
@@ -465,8 +465,8 @@ TEST(CNativeW, operatorEqualStringNull)
  */
 TEST(CNativeW, operatorEqualSame)
 {
-	CNativeW value(L"これはテストです。");
-	CNativeW other(L"これはテストです。");
+	CNativeW value(LTEXT("これはテストです。"));
+	CNativeW other(LTEXT("これはテストです。"));
 	ASSERT_EQ(value, other);
 }
 
@@ -491,7 +491,7 @@ TEST(CNativeW, operatorEqualAndNotEqual)
 	EXPECT_FALSE(value != value);
 	ASSERT_EQ(value, value);
 
-	CNativeW other(L"値あり");
+	CNativeW other(LTEXT("値あり"));
 	EXPECT_FALSE(value == other);
 	EXPECT_TRUE(value != other);
 	ASSERT_NE(value, other);
@@ -507,7 +507,7 @@ TEST(CNativeW, operatorEqualAndNotEqual)
 TEST(CNativeW, operatorNotEqualSomeValueVsNull)
 {
 	// 値あり vs NULL
-	CNativeW value(L"これはテストです。");
+	CNativeW value(LTEXT("これはテストです。"));
 	CNativeW other;
 	ASSERT_NE(value, other);
 }
@@ -523,7 +523,7 @@ TEST(CNativeW, operatorNotEqualNullVsSomeValue)
 {
 	// NULL vs 値あり
 	CNativeW value;
-	CNativeW other(L"これはテストです。");
+	CNativeW other(LTEXT("これはテストです。"));
 	ASSERT_NE(value, other);
 }
 
@@ -537,8 +537,8 @@ TEST(CNativeW, operatorNotEqualNullVsSomeValue)
 TEST(CNativeW, operatorNotEqualNotSameLength)
 {
 	// 値あり vs 値あり(文字列長が違う)
-	CNativeW value(L"これはテストです。");
-	CNativeW other(L"これはテスト？");
+	CNativeW value(LTEXT("これはテストです。"));
+	CNativeW other(LTEXT("これはテスト？"));
 	ASSERT_NE(value, other);
 }
 
@@ -552,8 +552,8 @@ TEST(CNativeW, operatorNotEqualNotSameLength)
 TEST(CNativeW, operatorNotEqualNotSameContent)
 {
 	// 値あり vs 値あり(値が違う)
-	CNativeW value(L"これはテストです。");
-	CNativeW other(L"これはテストです？");
+	CNativeW value(LTEXT("これはテストです。"));
+	CNativeW other(LTEXT("これはテストです？"));
 	ASSERT_NE(value, other);
 }
 
@@ -563,7 +563,7 @@ TEST(CNativeW, operatorNotEqualNotSameContent)
  */
 TEST(CNativeW, operatorEqualSameString)
 {
-	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	constexpr const WCHAR text[] = LTEXT("おっす！オラ(ry");
 	CNativeW value(text);
 	LPCWSTR str = text;
 	ASSERT_EQ(value, str);
@@ -575,8 +575,8 @@ TEST(CNativeW, operatorEqualSameString)
  */
 TEST(CNativeW, operatorNotEqualAlmostSameString)
 {
-	CNativeW value(L"おっす！オラ(ry");
-	LPCWSTR str = L"おっと！オラ(ry";
+	CNativeW value(LTEXT("おっす！オラ(ry"));
+	LPCWSTR str = LTEXT("おっと！オラ(ry");
 	ASSERT_NE(value, str);
 }
 
@@ -586,7 +586,7 @@ TEST(CNativeW, operatorNotEqualAlmostSameString)
  */
 TEST(CNativeW, operatorNotEqualNullptr)
 {
-	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	constexpr const WCHAR text[] = LTEXT("おっす！オラ(ry");
 	CNativeW value(text);
 	ASSERT_NE(value, nullptr);	// NULLではなくnullptrを使うよう修正
 }
@@ -597,7 +597,7 @@ TEST(CNativeW, operatorNotEqualNullptr)
  */
 TEST(CNativeW, operatorNotEqualStringNull)
 {
-	constexpr const wchar_t text[] = L"おっす！オラ(ry";
+	constexpr const WCHAR text[] = LTEXT("おっす！オラ(ry");
 	CNativeW value(text);
 	LPCWSTR str = NULL;
 	ASSERT_NE(value, str);
@@ -612,8 +612,8 @@ TEST(CNativeW, operatorNotEqualStringNull)
 TEST(CNativeW, ReplaceOfNullString)
 {
 	CNativeW value;
-	value.Replace(L"置換前", L"置換後");
-	ASSERT_STREQ(L"", value.GetStringPtr());
+	value.Replace(LTEXT("置換前"), LTEXT("置換後"));
+	ASSERT_STREQ(LTEXT(""), value.GetStringPtr());
 	EXPECT_EQ(0, value.GetStringLength());
 	EXPECT_LE(0, value.capacity());
 }
@@ -624,9 +624,9 @@ TEST(CNativeW, ReplaceOfNullString)
  */
 TEST(CNativeW, ReplaceWithSomeChanges)
 {
-	CNativeW value(L"？とは違うのだよ、？とは！");
-	value.Replace(L"？", L"ザク");
-	ASSERT_STREQ(L"ザクとは違うのだよ、ザクとは！", value.GetStringPtr());
+	CNativeW value(LTEXT("？とは違うのだよ、？とは！"));
+	value.Replace(LTEXT("？"), LTEXT("ザク"));
+	ASSERT_STREQ(LTEXT("ザクとは違うのだよ、ザクとは！"), value.GetStringPtr());
 }
 
 /*!
@@ -648,7 +648,7 @@ TEST(CNativeW, ReplaceWithSomeChanges)
 */
 TEST(CNativeW, Clear)
 {
-	constexpr const WCHAR*	fixedPatternStr = L"abc";
+	constexpr const WCHAR*	fixedPatternStr = LTEXT("abc");
 	constexpr const int		fixedPatternLen = 3;
 	
 	CNativeW stringW;
@@ -728,11 +728,11 @@ TEST(CNativeW, CheckEmpty)
 TEST(CNativeW, CompareWithCNativeW)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t szS0[]	= L"a\0b\0c";
-	constexpr const wchar_t szM0[]	= L"a\0a\0c\0";
-	constexpr const wchar_t szM1[]	= L"a\0b\0c\0";
-	constexpr const wchar_t szM2[]	= L"a\0c\0c\0";
-	constexpr const wchar_t szL0[]	= L"a\0b\0c\0d";
+	constexpr const WCHAR szS0[]	= LTEXT("a\0b\0c");
+	constexpr const WCHAR szM0[]	= LTEXT("a\0a\0c\0");
+	constexpr const WCHAR szM1[]	= LTEXT("a\0b\0c\0");
+	constexpr const WCHAR szM2[]	= LTEXT("a\0c\0c\0");
+	constexpr const WCHAR szL0[]	= LTEXT("a\0b\0c\0d");
 
 	// 値なしの変数と文字列定数に対応するCNativeWのインスタンスを用意する
 	CNativeW cN0, cN1
@@ -769,12 +769,12 @@ TEST(CNativeW, CompareWithCNativeW)
 TEST(CNativeW, CompareWithStringPtr)
 {
 	//互いに値の異なる文字列定数を定義する
-	constexpr const wchar_t* pcN0 = NULL;
-	constexpr const wchar_t szS0[] = L"ab";
-	constexpr const wchar_t szM0[] = L"aac";
-	constexpr const wchar_t szM1[] = L"abc";
-	constexpr const wchar_t szM2[] = L"acc";
-	constexpr const wchar_t szL0[] = L"abcd";
+	constexpr const WCHAR* pcN0 = NULL;
+	constexpr const WCHAR szS0[] = LTEXT("ab");
+	constexpr const WCHAR szM0[] = LTEXT("aac");
+	constexpr const WCHAR szM1[] = LTEXT("abc");
+	constexpr const WCHAR szM2[] = LTEXT("acc");
+	constexpr const WCHAR szL0[] = LTEXT("abcd");
 
 	// 定数に対応するCNativeWのインスタンスを用意する
 	CNativeW cN0(pcN0), cM1(szM1);
@@ -798,43 +798,43 @@ TEST(CNativeW, CompareWithStringPtr)
  */
 TEST(CNativeW, comparisonOperators001)
 {
-	CNativeW value{ L"test data" };
+	CNativeW value{ LTEXT("test data") };
 
 	// 同じオブジェクト
 	EXPECT_TRUE(value == value);
 	EXPECT_THAT(value != value, IsFalse());
 
 	// 同じ値
-	EXPECT_TRUE(value == L"test data");
-	EXPECT_THAT(value != L"test data", IsFalse());
+	EXPECT_TRUE(value == LTEXT("test data"));
+	EXPECT_THAT(value != LTEXT("test data"), IsFalse());
 
 	// 異なる値
-	EXPECT_TRUE(value != L"test date");
-	EXPECT_THAT(value == L"test date", IsFalse());
+	EXPECT_TRUE(value != LTEXT("test date"));
+	EXPECT_THAT(value == LTEXT("test date"), IsFalse());
 
 	// 比較対象が空
-	EXPECT_TRUE(L"" < value);
-	EXPECT_TRUE(value > L"");
+	EXPECT_TRUE(LTEXT("") < value);
+	EXPECT_TRUE(value > LTEXT(""));
 
 	// 比較対象がNULL
 	EXPECT_TRUE(nullptr <= value);
 	EXPECT_TRUE(value >= nullptr);
 
 	// 先頭部分が一致、かつ、比較対象より短い
-	EXPECT_TRUE(L"test" < value);
-	EXPECT_TRUE(value > L"test");
+	EXPECT_TRUE(LTEXT("test") < value);
+	EXPECT_TRUE(value > LTEXT("test"));
 
 	// 先頭部分が一致、かつ、比較対象より長い
-	EXPECT_TRUE(value < L"test data1");
-	EXPECT_TRUE(L"test data1" > value);
+	EXPECT_TRUE(value < LTEXT("test data1"));
+	EXPECT_TRUE(LTEXT("test data1") > value);
 
 	// 比較対象より大きい（辞書順で後）
-	EXPECT_TRUE(L"exam" < value);
-	EXPECT_TRUE(value > L"exam");
+	EXPECT_TRUE(LTEXT("exam") < value);
+	EXPECT_TRUE(value > LTEXT("exam"));
 
 	// 比較対象より小さい（辞書順で前）
-	EXPECT_TRUE(value < L"xyz");
-	EXPECT_TRUE(L"xyz" > value);
+	EXPECT_TRUE(value < LTEXT("xyz"));
+	EXPECT_TRUE(LTEXT("xyz") > value);
 }
 
 /*!
@@ -844,13 +844,13 @@ TEST(CNativeW, comparisonOperators001)
  */
 TEST(CNativeW, globalOperatorAdd)
 {
-	CNativeW v1(L"前半");
-	constexpr const wchar_t v2[] = L"後半";
-	EXPECT_STREQ(L"前半後半", (v1 + v2).GetStringPtr());
+	CNativeW v1(LTEXT("前半"));
+	constexpr const WCHAR v2[] = LTEXT("後半");
+	EXPECT_STREQ(LTEXT("前半後半"), (v1 + v2).GetStringPtr());
 
-	constexpr const wchar_t v3[] = L"前半";
-	CNativeW v4(L"後半");
-	EXPECT_STREQ(L"前半後半", (v3 + v4).GetStringPtr());
+	constexpr const WCHAR v3[] = LTEXT("前半");
+	CNativeW v4(LTEXT("後半"));
+	EXPECT_STREQ(LTEXT("前半後半"), (v3 + v4).GetStringPtr());
 }
 
 /*!
@@ -860,36 +860,36 @@ TEST(CNativeW, globalOperatorAdd)
 TEST(CNativeW, GetSizeOfChar)
 {
 	// 基本多言語面の文字ならば1を返す。
-	EXPECT_EQ(CNativeW::GetSizeOfChar(L"a", 1, 0), 1);
-	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"a", 1), 0), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(LTEXT("a"), 1, 0), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(LTEXT("a"), 1), 0), 1);
 	// 範囲外なら0を返す。
-	EXPECT_EQ(CNativeW::GetSizeOfChar(L"", 0, 0), 0);
-	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"", 0), 0), 0);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(LTEXT(""), 0, 0), 0);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(LTEXT(""), 0), 0), 0);
 	// 上位・下位サロゲートの組み合わせであれば2を返す。
-	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 0), 2);
-	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"\xd83c\xdf38", 2), 0), 2);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(LTEXT("\xd83c\xdf38"), 2, 0), 2);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(LTEXT("\xd83c\xdf38"), 2), 0), 2);
 	// 指定位置が下位サロゲートならその他の文字と同様に1を返す。
-	EXPECT_EQ(CNativeW::GetSizeOfChar(L"\xd83c\xdf38", 2, 1), 1);
-	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(L"\xd83c\xdf38", 2), 1), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(LTEXT("\xd83c\xdf38"), 2, 1), 1);
+	EXPECT_EQ(CNativeW::GetSizeOfChar(CStringRef(LTEXT("\xd83c\xdf38"), 2), 1), 1);
 }
 
 TEST(CNativeW, GetSizeOfChar_Empty)
 {
-	const auto& s = L"";
+	const auto& s = LTEXT("");
 	EXPECT_EQ(0, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
 TEST(CNativeW, GetSizeOfChar_SurrogatePair)
 {
 	// 絵文字　男性のシンボル
-	const auto& s = L"\U0001f6b9";
+	const auto& s = LTEXT("\U0001f6b9");
 	EXPECT_EQ(2, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
 TEST(CNativeW, GetSizeOfChar_IVS)
 {
 	// 葛󠄀城市(先頭の文字が異体字)
-	const auto& s = L"葛󠄀城市";
+	const auto& s = LTEXT("葛󠄀城市");
 	EXPECT_EQ(3, CNativeW::GetSizeOfChar(s, int(std::size(s)) - 1, 0));
 }
 
@@ -900,17 +900,17 @@ TEST(CNativeW, GetSizeOfChar_IVS)
 TEST(CNativeW, GetKetaOfChar)
 {
 	// 範囲外なら0を返す。
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"", 0, 0), 0);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"", 0), 0), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT(""), 0, 0), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT(""), 0), 0), 0);
 	// 上位サロゲートなら2を返す。
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 0), 2);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xd83c\xdf38", 2), 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("\xd83c\xdf38"), 2, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("\xd83c\xdf38"), 2), 0), 2);
 	// 上位サロゲートに続く下位サロゲートであれば0を返す。
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xd83c\xdf38", 2, 1), 0);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xd83c\xdf38", 2), 1), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("\xd83c\xdf38"), 2, 1), 0);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("\xd83c\xdf38"), 2), 1), 0);
 	// 下位サロゲートだけなら2を返す。
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdf38", 1, 0), 2);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdf38", 1), 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("\xdf38"), 1, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("\xdf38"), 1), 0), 2);
 
 	// サクラエディタでは Unicode で表現できない文字コードの破壊を防ぐため、
 	// 不明バイトを下位サロゲートにマップして保持している。
@@ -919,26 +919,26 @@ TEST(CNativeW, GetKetaOfChar)
 	//
 	// https://sourceforge.net/p/sakura-editor/patchunicode/57/
 	// http://sakura-editor.sourceforge.net/cgi-bin/cyclamen/cyclamen.cgi?log=unicode&v=833
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdbff", 1, 0), 2);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdbff", 1), 0), 2);
-	for (wchar_t ch = 0xdc00; ch <= 0xdcff; ++ch) {
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("\xdbff"), 1, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("\xdbff"), 1), 0), 2);
+	for (WCHAR ch = 0xdc00; ch <= 0xdcff; ++ch) {
 		EXPECT_EQ(CNativeW::GetKetaOfChar(&ch, 1, 0), 1);
 		EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(&ch, 1), 0), 1);
 	}
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"\xdd00", 1, 0), 2);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"\xdd00", 1), 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("\xdd00"), 1, 0), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("\xdd00"), 1), 0), 2);
 
 	// 文字が半角なら1を返す。
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"a", 1, 0), 1);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"a", 1), 0), 1);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("a"), 1, 0), 1);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("a"), 1), 0), 1);
 
 	// 文字が全角なら2を返す。
 	class FakeCache : public CCharWidthCache {
 	public:
-		bool CalcHankakuByFont(wchar_t c) override { return false; }
+		bool CalcHankakuByFont(WCHAR c) override { return false; }
 	} cache;
-	EXPECT_EQ(CNativeW::GetKetaOfChar(L"あ", 1, 0, cache), 2);
-	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(L"あ", 1), 0, cache), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(LTEXT("あ"), 1, 0, cache), 2);
+	EXPECT_EQ(CNativeW::GetKetaOfChar(CStringRef(LTEXT("あ"), 1), 0, cache), 2);
 }
 
 /*!
@@ -948,45 +948,45 @@ TEST(CNativeW, GetKetaOfChar)
 TEST(CNativeW, GetHabaOfChar)
 {
 	// 範囲外なら0を返す。
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"", 0, 1, false, GetCharWidthCache()), 0);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT(""), 0, 1, false, GetCharWidthCache()), 0);
 
 	// 改行コードなら1を返す。
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 0, false, GetCharWidthCache()), 1);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\r\n", 2, 1, false, GetCharWidthCache()), 1);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\r\n"), 2, 0, false, GetCharWidthCache()), 1);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\r\n"), 2, 1, false, GetCharWidthCache()), 1);
 
 	// CalcPxWidthByFont で計算した結果を返す。
 	class FakeCache1 : public CCharWidthCache {
 	public:
-		int CalcPxWidthByFont(wchar_t ch) override {
-			if (ch == L'a') return 10000;
-			else if (ch == L'b') return 20000;
+		int CalcPxWidthByFont(WCHAR ch) override {
+			if (ch == LCHAR('a')) return 10000;
+			else if (ch == LCHAR('b')) return 20000;
 			else return 0;
 		}
 	} cache1;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 0, false, cache1), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"ab", 2, 1, false, cache1), 20000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("ab"), 2, 0, false, cache1), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("ab"), 2, 1, false, cache1), 20000);
 
 	// サロゲートペアの幅は CalcPxWidthByFont2 で計算する。
 	// 指定された位置が下位サロゲートなら0を返す。
 	class FakeCache2 : public CCharWidthCache {
 	public:
-		int CalcPxWidthByFont2(const wchar_t* pc2) const override {
+		int CalcPxWidthByFont2(const WCHAR* pc2) const override {
 			return 20000;
 		}
 	} cache2;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 0, false, cache2), 20000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83c\xdf38", 2, 1, false, cache2), 0);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\xd83c\xdf38"), 2, 0, false, cache2), 20000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\xd83c\xdf38"), 2, 1, false, cache2), 0);
 
 	// サロゲートペアが片方しかないときは CalcPxWidthByFont で計算している。
 	class FakeCache3 : public CCharWidthCache {
 	public:
-		int CalcPxWidthByFont(wchar_t c) override {
+		int CalcPxWidthByFont(WCHAR c) override {
 			return 10000;
 		}
 	} cache3;
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xd83cあ", 2, 0, false, cache3), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"\xdf38あ", 2, 0, false, cache3), 10000);
-	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(L"あ\xdf38", 2, 1, false, cache3), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\xd83cあ"), 2, 0, false, cache3), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("\xdf38あ"), 2, 0, false, cache3), 10000);
+	EXPECT_EQ((Int)CNativeW::GetHabaOfChar(LTEXT("あ\xdf38"), 2, 1, false, cache3), 10000);
 }
 
 /*!
@@ -994,7 +994,7 @@ TEST(CNativeW, GetHabaOfChar)
  */
 TEST(CNativeW, GetCharNext)
 {
-	constexpr const wchar_t* text = L"a\xd83c\xdf38";
+	constexpr const WCHAR* text = LTEXT("a\xd83c\xdf38");
 	// 次の文字のアドレスを返す。
 	EXPECT_EQ(CNativeW::GetCharNext(text, 3, text), text + 1);
 	// 上位サロゲートが渡された場合は下位サロゲートを飛ばす。
@@ -1008,7 +1008,7 @@ TEST(CNativeW, GetCharNext)
  */
 TEST(CNativeW, GetCharPrev)
 {
-	constexpr const wchar_t* text = L"a\xd83c\xdf38" L"d";
+	constexpr const WCHAR* text = LTEXT("a\xd83c\xdf38") LTEXT("d");
 	// 前の文字のアドレスを返す。
 	EXPECT_EQ(CNativeW::GetCharPrev(text, 4, text + 1), text);
 	// 前の文字が下位サロゲートだった場合は下位サロゲートを飛ばす。
@@ -1023,7 +1023,7 @@ TEST(CNativeW, GetCharPrev)
 TEST(CNativeW, GetCharPrev_Bugs_Preview)
 {
 	// a、カラー絵文字「男性のシンボル」、x
-	constexpr const wchar_t text[] = L"a\U0001F6B9x";
+	constexpr const WCHAR text[] = LTEXT("a\U0001F6B9x");
 
 	// text[0] = L'a'
 	// text[1] = (\U0001F6B9 の1ワード目)
@@ -1054,14 +1054,14 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
  */
 TEST(CNativeW, DISABLED_GetCharPrevPairAtTop)
 {
-	constexpr const wchar_t text[] = L"\U0001F6B9x";	// カラー絵文字「男性のシンボル」、x
+	constexpr const WCHAR text[] = LTEXT("\U0001F6B9x");	// カラー絵文字「男性のシンボル」、x
 	EXPECT_THAT(CNativeW::GetCharPrev(text, 3, text + 2), Eq(text));
 }
 
 TEST(CNativeW, length001)
 {
-	CNativeW mem{ L"test" };
-	EXPECT_THAT(mem, StrEq(L"test"));
+	CNativeW mem{ LTEXT("test") };
+	EXPECT_THAT(mem, StrEq(LTEXT("test")));
 	EXPECT_THAT(mem.empty(), IsFalse());
 	EXPECT_THAT(mem.length(), Eq(4));
 }
@@ -1069,7 +1069,7 @@ TEST(CNativeW, length001)
 TEST(CNativeW, length101)
 {
 	CNativeW mem{};
-	EXPECT_THAT(mem, StrEq(L""));
+	EXPECT_THAT(mem, StrEq(LTEXT("")));
 	EXPECT_THAT(mem.empty(), IsTrue());
 	EXPECT_THAT(mem.length(), Eq(0));
 }
@@ -1106,9 +1106,13 @@ TEST(CNativeA, AppendStringF102)
 
 	// Cランタイムの呼出が失敗したら例外を投げる
 	EXPECT_THAT(([&] {
-		// エンコードエラーを発生させる。（無効な文字値WEOF）
-		value.AppendStringF("%S", L"\xFFFF"); }),
-		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+		// エンコードエラーを発生させる。（Windows: 無効な文字値WEOF、Mac: UTF-8 にできない対のないサロゲート）
+#if defined(_WIN32)
+		value.AppendStringF("%S", LTEXT("\xFFFF")); }),
+#else
+		value.AppendStringF("%S", LTEXT("\xD800")); }),
+#endif
+		ThrowsMessage<std::domain_error>(Eq(std::format("AppendStringF error. errno = {:d}", EILSEQ)))
 	);
 
 	EXPECT_THAT(errno, Eq(EILSEQ));

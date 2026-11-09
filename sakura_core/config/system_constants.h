@@ -554,7 +554,7 @@
 */
 #define N_SHAREDATA_VERSION		183
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
-#define	GSTR_SHAREDATA	(LTEXT("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
+#define	GSTR_SHAREDATA	(LTEXT("SakuraShareData") LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_) LTEXT(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ミューテックス                         //
@@ -564,29 +564,29 @@
 #define	GSTR_MUTEX_SAKURA					LTEXT("MutexSakuraEditor")
 
 //! コントロールプロセス
-#define	GSTR_MUTEX_SAKURA_CP				(LTEXT("MutexSakuraEditorCP")				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_CP				(LTEXT("MutexSakuraEditorCP")				LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //! ノーマルプロセス初期化同期
-#define	GSTR_MUTEX_SAKURA_INIT				(LTEXT("MutexSakuraEditorInit")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_INIT				(LTEXT("MutexSakuraEditorInit")			LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //! ノード操作同期
-#define	GSTR_MUTEX_SAKURA_EDITARR			(LTEXT("MutexSakuraEditorEditArr")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_EDITARR			(LTEXT("MutexSakuraEditorEditArr")			LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //DLLSHARE Work操作同期
-#define	GSTR_MUTEX_SAKURA_SHAREWORK			(LTEXT("MutexSakuraEditorShareWork")		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_SHAREWORK			(LTEXT("MutexSakuraEditorShareWork")		LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //! 強調キーワードロック
-#define	GSTR_MUTEX_SAKURA_KEYWORD			(LTEXT("MutexSakuraEditorKeyword")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_KEYWORD			(LTEXT("MutexSakuraEditorKeyword")			LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //タイプ別設定転送用
-#define	GSTR_MUTEX_SAKURA_DOCTYPE			(LTEXT("MutexSakuraEditorDocType")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_DOCTYPE			(LTEXT("MutexSakuraEditorDocType")			LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 初期化完了イベント
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(LTEXT("EventSakuraEditorCPInitialized")	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(LTEXT("EventSakuraEditorCPInitialized")	LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //! 初期化完了イベント
 inline constexpr sakura::wstring_view GSTR_EVENT_SAKURA_EP_INITIALIZED = LTEXT("EventSakuraEditorEPInitialized_{:d}");
@@ -599,13 +599,13 @@ inline constexpr sakura::wstring_view GSTR_EVENT_SAKURA_GREP_COMPLETED = LTEXT("
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! コントロールトレイ
-#define	GSTR_CEDITAPP		(LTEXT("CControlTray") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
+#define	GSTR_CEDITAPP		(LTEXT("CControlTray") LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)		LTEXT(STR_SHAREDATA_VERSION))
 
 //! メインウィンドウ
-#define	GSTR_EDITWINDOWNAME	(LTEXT("TextEditorWindow") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_EDITWINDOWNAME	(LTEXT("TextEditorWindow") LTEXT(CON_SKR_MACHINE_SUFFIX_) LTEXT(_CODE_SUFFIX_) LTEXT(_DEBUG_SUFFIX_)	LTEXT(STR_SHAREDATA_VERSION))
 
 //! ビュー
-#define	GSTR_VIEWNAME		(LTEXT("SakuraView")												_T(STR_SHAREDATA_VERSION))
+#define	GSTR_VIEWNAME		(LTEXT("SakuraView")												LTEXT(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         リソース                            //

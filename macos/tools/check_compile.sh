@@ -17,7 +17,7 @@ mkdir -p "$OUT/logs" "$STUB" "$GEN"
 
 # Funccode_define.h / Funccode_enum.h 由 hsrc 生成
 python3 "$ROOT/src/main/py/header_make.py" -in="$ROOT/sakura_core/Funccode_x.hsrc" -out="$GEN/Funccode_define.h" -mode=define >/dev/null
-python3 "$ROOT/src/main/py/header_make.py" -in="$ROOT/sakura_core/Funccode_x.hsrc" -out="$GEN/Funccode_enum.h" -mode=enum >/dev/null
+python3 "$ROOT/src/main/py/header_make.py" -in="$ROOT/sakura_core/Funccode_x.hsrc" -out="$GEN/Funccode_enum.h" -mode=enum -enum=EFunctionCode >/dev/null
 
 # Windows SDK / MSVC 专有头文件，以及未检出的子模块头文件，全部用空文件代替
 for h in Windows.h windows.h ntstatus.h windowsx.h bcrypt.h comdef.h CommCtrl.h commctrl.h HtmlHelp.h \

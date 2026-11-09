@@ -129,7 +129,7 @@ struct PrintfArg final
 	template <typename T>
 	static constexpr decltype(auto) ConvertArgPhase2(const T& value)
 	{
-		using ResultW = std::variant<std::nullptr_t, std::wstring_view, std::wstring>;
+		using ResultW = std::variant<std::nullptr_t, sakura::wstring_view, sakura::wstring>;
 		using ResultA = std::variant<std::nullptr_t, std::string_view, std::string>;
 		if constexpr (std::same_as<std::remove_cvref_t<T>, ResultW>) {
 			return std::visit([](const auto& text) -> const WCHAR* {

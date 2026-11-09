@@ -30,7 +30,7 @@ public:
 	MiniDumpWriter() = default;
 
 	void WriteMiniDump(
-		std::wstring_view file,
+		sakura::wstring_view file,
 		PEXCEPTION_POINTERS pExceptionParams
 	) const;
 
