@@ -45,18 +45,19 @@ private:
 
 public:
 	// 生成関数
-	template<typename... Args>
+	template<typename T, typename... Args>
 	static com_pointer_type make_instance(Args&&... args)
-		requires std::constructible_from<Me, Args...>
+		requires std::constructible_from<T, Args...>
 	{
-		return Base::template make_instance<Me>(std::forward<Args>(args)...);
+		return Base::template make_instance<T>(std::forward<Args>(args)...);
 	}
 	
 	/*
 	||  Constructors
 	*/
-	explicit CDropTarget(CEditWnd* pcEditWnd);	// 2008.06.20 ryoji
-	explicit CDropTarget(CEditView* pcEditView);
+	explicit CDropTarget(
+		CEditView* pcEditView = nullptr
+	);
 
 	~CDropTarget() override;
 
@@ -64,7 +65,6 @@ public:
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
-	CEditWnd*		m_pcEditWnd = nullptr;	// 2008.06.20 ryoji
 	CEditView*		m_pcEditView = nullptr;
 
 public:
@@ -76,6 +76,26 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
+};
+
+/*!
+ * @brief 編集ウィンドウのD&Dターゲット実装
+ *
+ * @date 2008/06/20 ryoji 右ボタンドロップ用
+ */
+class CDropTarget_CEditWnd final : public CDropTarget
+{
+private:
+	using Base = CDropTarget;
+	using Me = CDropTarget_CEditWnd;
+
+public:
+	CDropTarget_CEditWnd() = default;
+
+	IFACEMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	IFACEMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	IFACEMETHODIMP	DragLeave() override;
+	IFACEMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 };
 
 /*!

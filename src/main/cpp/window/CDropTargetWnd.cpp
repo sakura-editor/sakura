@@ -82,11 +82,11 @@ bool CDropTargetWnd::AttachDropTarget(
 {
 	if constexpr (std::is_same_v<T, CEditView>)
 	{
-		m_DropTarget = CDropTarget::make_instance(pThis);
+		m_DropTarget = CDropTarget::make_instance<CDropTarget>(pThis);
 	}
 	else if constexpr (std::is_same_v<T, CEditWnd>)
 	{
-		m_DropTarget = CDropTarget::make_instance(pThis);
+		m_DropTarget = CDropTarget::make_instance<CDropTarget_CEditWnd>();
 	}
 
 	// ウィンドウハンドルを取得する

@@ -333,12 +333,6 @@ public:
 	bool GetDragMode() const{ return m_bDragMode; }
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
-	/* IDropTarget実装 */	// 2008.06.20 ryoji
-	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
-	STDMETHODIMP DragOver(DWORD dwKeyState [[maybe_unused]], POINTL pt [[maybe_unused]], LPDWORD pdwEffect) const;
-	STDMETHODIMP DragLeave() const;
-	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-
 	//フォーカス管理
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }

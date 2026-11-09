@@ -195,7 +195,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-statictype.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-StdControl.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-string_ex.cpp" />
-    <ClCompile Include="..\src\test\cpp\tests1\test-window.cpp" />
+    <ClCompile Include="..\src\test\cpp\tests1\test-window.cpp">
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-zoom.cpp" />
     <ClCompile Include="..\src\test\cpp\tests1\test-winmain.cpp" />
   </ItemGroup>
