@@ -118,7 +118,7 @@
 50229	5	skip	50229 (ISO-2022 Traditional Chinese)
 51949	2	table	51949 (EUC-Korean)
 52936	5	skip	52936 (HZ-GB2312 Simplified Chinese)
-54936	4	skip	54936 (GB18030 Simplified Chinese)
+54936	4	table	54936 (GB18030 Simplified Chinese)
 55000	2	table	55000 (SMS GSM 7bit)
 55001	2	table	55001 (SMS GSM 7bit Spanish)
 55002	2	table	55002 (SMS GSM 7bit Portuguese)

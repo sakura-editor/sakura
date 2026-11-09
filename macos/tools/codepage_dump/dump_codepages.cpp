@@ -70,11 +70,21 @@ void WriteMbEntry(Writer& w, UINT cp, const char* src, int len, const WCHAR* alo
 	for (int i = 0; i < 3; ++i) w.u16(i < stored ? out[i] : 0);
 }
 
+//! WideCharToMultiByte 的包装。GB18030（54936）和 UTF-8 一样不接受 lpUsedDefaultChar 和 WC_NO_BEST_FIT_CHARS，
+//! 所以不传这两个，变成替代字符 '?' 时自己判断 used（GB18030 能表示所有 Unicode，没有“最适合”映射）
+int CallWc(UINT cp, DWORD flags, const WCHAR* src, int len, char* out, int cap, BOOL* used)
+{
+	if (cp != 54936) return ::WideCharToMultiByte(cp, flags, src, len, out, cap, nullptr, used);
+	const int n = ::WideCharToMultiByte(cp, 0, src, len, out, cap, nullptr, nullptr);
+	*used = (n == 1 && out[0] == '?' && !(len == 1 && src[0] == L'?')) ? TRUE : FALSE;
+	return n;
+}
+
 void WriteWcResult(Writer& w, UINT cp, const WCHAR* src, int len)
 {
 	char out[8] = {};
 	BOOL used = FALSE;
-	const int n = ::WideCharToMultiByte(cp, 0, src, len, out, 8, nullptr, &used);
+	const int n = CallWc(cp, 0, src, len, out, 8, &used);
 	const int stored = n < 0 ? 0 : (n > 4 ? 4 : n);
 	w.u8(stored);
 	for (int i = 0; i < 4; ++i) w.u8(i < stored ? static_cast<uint8_t>(out[i]) : 0);
@@ -91,7 +101,7 @@ void WriteWcTable(Writer& w, UINT cp, DWORD flags)
 		const WCHAR wc = static_cast<WCHAR>(u);
 		char out[8] = {};
 		BOOL used = FALSE;
-		const int n = ::WideCharToMultiByte(cp, flags, &wc, 1, out, 8, nullptr, &used);
+		const int n = CallWc(cp, flags, &wc, 1, out, 8, &used);
 		if (n <= 0 || used || n > 4) continue;
 		entries.push_back(static_cast<uint8_t>(u & 0xFF)); entries.push_back(static_cast<uint8_t>(u >> 8));
 		entries.push_back(static_cast<uint8_t>(n));
@@ -160,6 +170,27 @@ void PrintWc(const wchar_t* tag, UINT cp, const WCHAR* in, int len)
 //! UTF-7 和 GB18030 的规则。Mac 版的实现按这里的结果核对
 void ProbeUtf7AndGb18030()
 {
+	// 参数检查：哪些代码页、哪些标志接受 lpUsedDefaultChar / lpDefaultChar
+	for (UINT cp : { 54936u, 65000u, 932u }) {
+		const WCHAR wa[] = { L'a' };
+		char out[8];
+		BOOL used = FALSE;
+		for (DWORD fl : { DWORD(0), DWORD(WC_NO_BEST_FIT_CHARS), DWORD(WC_ERR_INVALID_CHARS) }) {
+			SetLastError(0);
+			int n1 = ::WideCharToMultiByte(cp, fl, wa, 1, out, 8, nullptr, nullptr); DWORD e1 = GetLastError();
+			SetLastError(0);
+			int n2 = ::WideCharToMultiByte(cp, fl, wa, 1, out, 8, nullptr, &used); DWORD e2 = GetLastError();
+			SetLastError(0);
+			int n3 = ::WideCharToMultiByte(cp, fl, wa, 1, out, 8, "*", nullptr); DWORD e3 = GetLastError();
+			wprintf(L"param-probe cp=%u flags=%lX plain=%d/%lu used=%d/%lu default=%d/%lu\n", cp, fl, n1, e1, n2, e2, n3, e3);
+		}
+		SetLastError(0);
+		int m = ::MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, "a", 1, nullptr, 0);
+		wprintf(L"param-probe cp=%u MB_ERR_INVALID_CHARS=%d/%lu\n", cp, m, GetLastError());
+		CPINFOEXW info{};
+		::GetCPInfoExW(cp, 0, &info);
+		wprintf(L"param-probe cp=%u MaxCharSize=%u DefaultChar=%02X%02X UnicodeDefaultChar=%04X\n", cp, info.MaxCharSize, info.DefaultChar[0], info.DefaultChar[1], info.UnicodeDefaultChar);
+	}
 	for (WCHAR c = 0; c < 0x80; ++c) PrintWc(L"utf7-probe", CP_UTF7, &c, 1);
 	const WCHAR w1[] = { 0x3042, L'a' }, w2[] = { L'a', L'+', L'b' }, w3[] = { 0x3042, L'-' }, w4[] = { 0x3042, 0x3042 },
 		w5[] = { 0x3042, L'.' }, w6[] = { 0xD83D, 0xDE00 }, w7[] = { 0xD800 }, w8[] = { 0x3042, L' ', 0x3044 };

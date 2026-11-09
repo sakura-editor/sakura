@@ -10,6 +10,7 @@
 */
 #include "pch.h"
 
+#include <cstring>
 #include <string>
 #include <vector>
 
@@ -136,15 +137,107 @@ TEST(MacCodePage, Latin1AndCyrillic)
 	EXPECT_EQ(ToMulti(1252, LTEXT("Ā"), WC_NO_BEST_FIT_CHARS), "?");
 }
 
-TEST(MacCodePage, IconvCodePages)
+namespace {
+
+sakura::wstring W(std::initializer_list<char16_t> units) { return sakura::wstring(units.begin(), units.end()); }
+
+} // namespace
+
+TEST(MacCodePage, Gb18030)
 {
-	// GB18030、ISO-2022-JP、UTF-7 由 iconv 实现
+	// 期待值都是 Windows 上的探测结果（macos/tools/codepage_dump 的 gb18030-probe）
 	EXPECT_EQ(ToWide(54936, "\xC4\xE3\xBA\xC3"), LTEXT("你好"));
+	EXPECT_EQ(ToWide(54936, "\xA1\xA1", MB_ERR_INVALID_CHARS), W({ 0x3000 }));
+	EXPECT_EQ(ToWide(54936, "\x81\x30\x81\x30", MB_ERR_INVALID_CHARS), W({ 0x0080 }));
+	EXPECT_EQ(ToWide(54936, "\x84\x31\xA4\x39", MB_ERR_INVALID_CHARS), W({ 0xFFFF }));
+	EXPECT_EQ(ToWide(54936, "\x94\x39\xFC\x36", MB_ERR_INVALID_CHARS), W({ 0xD83D, 0xDE00 }));
+	EXPECT_EQ(ToWide(54936, "\x90\x30\x81\x30", MB_ERR_INVALID_CHARS), W({ 0xD800, 0xDC00 }));
+	EXPECT_EQ(ToWide(54936, "\xE3\x32\x9A\x35", MB_ERR_INVALID_CHARS), W({ 0xDBFF, 0xDFFF }));
+	// 格式正确但没有对应的 4 字节序列：'?'，严格模式也不算错误
+	EXPECT_EQ(ToWide(54936, "\x84\x31\xA5\x30", MB_ERR_INVALID_CHARS), W({ 0x003F }));
+	EXPECT_EQ(ToWide(54936, "\xE3\x32\x9A\x36", MB_ERR_INVALID_CHARS), W({ 0x003F }));
+	EXPECT_EQ(ToWide(54936, "\xFE\x39\xFE\x39", MB_ERR_INVALID_CHARS), W({ 0x003F }));
+	// 不完整、不正确的序列
+	EXPECT_EQ(ToWide(54936, "\x81\x30"), W({ 0x003F, 0x0030 }));
+	EXPECT_EQ(ToWide(54936, "\x81\x30\x81"), W({ 0x003F, 0x0030, 0x003F }));
+	EXPECT_EQ(ToWide(54936, "\x81\x30\x41\x30"), W({ 0x003F, 0x0030, 0x0041, 0x0030 }));
+	EXPECT_EQ(ToWide(54936, "\x81\x30\x81\x41"), W({ 0x003F, 0x0030, 0x4E04 }));
+	EXPECT_EQ(ToWide(54936, "\x80"), W({ 0x003F }));
+	EXPECT_EQ(ToWide(54936, "\xFF"), W({ 0x003F }));
+	EXPECT_EQ(ToWide(54936, "\x81\x7F"), W({ 0x003F, 0x007F }));
+	for (const char* bad : { "\x81\x30", "\x80", "\xFF", "\x81\x7F" }) {
+		SetLastError(0);
+		EXPECT_EQ(MultiByteToWideChar(54936, MB_ERR_INVALID_CHARS, bad, int(std::strlen(bad)), nullptr, 0), 0) << bad;
+		EXPECT_EQ(GetLastError(), DWORD(ERROR_NO_UNICODE_TRANSLATION));
+	}
+
 	EXPECT_EQ(ToMulti(54936, LTEXT("你好\U0001F600")), "\xC4\xE3\xBA\xC3\x94\x39\xFC\x36");
-	EXPECT_EQ(ToMulti(50220, LTEXT("aあ")), "a\x1B$B$\"\x1B(B");
-	EXPECT_EQ(ToWide(50220, "a\x1B$B$\"\x1B(B"), LTEXT("aあ"));
-	EXPECT_EQ(ToWide(CP_UTF7, "+MEI-"), LTEXT("あ"));
+	EXPECT_EQ(ToMulti(54936, W({ 0xDBFF, 0xDFFF })), "\xE3\x32\x9A\x35");
+	EXPECT_EQ(ToMulti(54936, W({ 0xD800 })), "?");
+	EXPECT_EQ(ToMulti(54936, W({ 0xE5E5 })), "\xA3\xA0");
+	EXPECT_EQ(ToMulti(54936, W({ 0x0080 })), "\x81\x30\x81\x30");
+	EXPECT_EQ(ToMulti(54936, W({ 0xFFFF })), "\x84\x31\xA4\x39");
+
 	CPINFOEX info{};
 	ASSERT_TRUE(GetCPInfoEx(54936, 0, &info));
 	EXPECT_EQ(info.MaxCharSize, 4u);
+}
+
+TEST(MacCodePage, Utf7)
+{
+	// 期待值都是 Windows 上的探测结果（utf7-probe）
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEI-"), LTEXT("あ"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEI"), LTEXT("あ"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEI-x"), LTEXT("あx"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEIw"), LTEXT("あ"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEIwRA"), LTEXT("あい"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+-"), LTEXT("+"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+"), LTEXT("<error>"));
+	EXPECT_EQ(ToWide(CP_UTF7, "a+MEI.b"), LTEXT("aあ.b"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+ZeVnLIqe-"), LTEXT("日本語"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+!"), LTEXT("!"));
+	EXPECT_EQ(ToWide(CP_UTF7, "\x80"), W({ 0x0080 }));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEIAQg-"), LTEXT("あB"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+2D3eAA-"), LTEXT("\U0001F600"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+2D0-"), W({ 0xD83D }));
+	EXPECT_EQ(ToWide(CP_UTF7, "~\\"), LTEXT("~\\"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+AGE-"), LTEXT("a"));
+	SetLastError(0);
+	EXPECT_EQ(MultiByteToWideChar(CP_UTF7, MB_ERR_INVALID_CHARS, "+MEI-", 5, nullptr, 0), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_FLAGS));
+
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("あa")), "+MEI-a");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("a+b")), "a+-b");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("あ-")), "+MEI--");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("ああ")), "+MEIwQg-");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("あ.")), "+MEI-.");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("\U0001F600")), "+2D3eAA-");
+	EXPECT_EQ(ToMulti(CP_UTF7, W({ 0xD800 })), "+2AA-");
+	EXPECT_EQ(ToMulti(CP_UTF7, LTEXT("あ い")), "+MEI- +MEQ-");
+	// ASCII 0x00〜0x7F 全部和 Windows 的结果对照：直接输出的字符以外是 "+AA?-" 形式
+	const std::string direct = std::string(1, '\0') + "\t\n\r '(),-./0123456789:?ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	for (char16_t c = 0; c < 0x80; ++c) {
+		const std::string got = ToMulti(CP_UTF7, sakura::wstring(1, c));
+		if (c == u'+') {
+			EXPECT_EQ(got, "+-");
+		} else if (direct.find(char(c)) != std::string::npos) {
+			EXPECT_EQ(got, std::string(1, char(c))) << int(c);
+		} else {
+			const char* b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+			const std::string want = std::string("+A") + b64[c >> 4] + b64[(c & 0xF) << 2] + "-";
+			EXPECT_EQ(got, want) << int(c);
+		}
+	}
+	EXPECT_EQ(ToMulti(CP_UTF7, W({ 0x005B })), "+AFs-");
+	EXPECT_EQ(ToMulti(CP_UTF7, W({ 0x007F })), "+AH8-");
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(CP_UTF7, WC_ERR_INVALID_CHARS, LTEXT("a"), 1, nullptr, 0, nullptr, nullptr), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_FLAGS));
+}
+
+TEST(MacCodePage, IconvCodePages)
+{
+	// ISO-2022 系、HZ 由 iconv 实现
+	EXPECT_EQ(ToMulti(50220, LTEXT("aあ")), "a\x1B$B$\"\x1B(B");
+	EXPECT_EQ(ToWide(50220, "a\x1B$B$\"\x1B(B"), LTEXT("aあ"));
 }

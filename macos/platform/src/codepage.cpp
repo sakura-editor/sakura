@@ -57,8 +57,9 @@ struct CodePageTable {
 	std::array<MbEntry, 256> single{};
 	std::array<int, 256> leadIndex{};           // 在 pairs 中的序号（-1: 不是前导字节）
 	std::vector<std::array<MbEntry, 256>> pairs;
-	std::vector<uint32_t> wcBestFit;            // 65536 项。0: 没有对应，其他: (len << 16) | (b0 << 8) | b1
-	std::vector<uint32_t> wcNoBestFit;
+	std::vector<uint64_t> wcBestFit;            // 65536 项。0: 没有对应，其他: (len << 32) | (b0 << 24) | (b1 << 16) | (b2 << 8) | b3
+	std::vector<uint64_t> wcNoBestFit;
+	std::map<uint32_t, WCHAR> gb4ToWide;        // GB18030 的 4 字节 BMP 字符（线性序号 → UTF-16），由 wcNoBestFit 反推
 
 	int DefaultCharLen() const { return defaultChar[1] ? 2 : 1; }
 };
@@ -92,18 +93,25 @@ void ReadMbEntry(Reader& r, MbEntry& e)
 	for (auto& c : e.out) c = static_cast<uint16_t>(r.u16());
 }
 
-void ReadWcTable(Reader& r, std::vector<uint32_t>& table)
+void ReadWcTable(Reader& r, std::vector<uint64_t>& table)
 {
 	table.assign(0x10000, 0);
 	const uint32_t n = r.u32();
 	for (uint32_t i = 0; i < n && r.ok(); ++i) {
 		const uint32_t u = r.u16();
-		const uint32_t len = r.u8();
-		const uint32_t b0 = r.u8();
-		const uint32_t b1 = r.u8();
-		table[u] = (len << 16) | (b0 << 8) | b1;
+		const uint64_t len = r.u8();
+		uint64_t bytes = 0;
+		for (int k = 0; k < 4; ++k) bytes = (bytes << 8) | r.u8();
+		table[u] = (len << 32) | bytes;
 	}
 }
+
+//! GB18030 的 4 字节序列 → 线性序号（81 30 81 30 为 0）
+constexpr uint32_t Gb4Linear(uint32_t b1, uint32_t b2, uint32_t b3, uint32_t b4)
+{
+	return (((b1 - 0x81) * 10 + (b2 - 0x30)) * 126 + (b3 - 0x81)) * 10 + (b4 - 0x30);
+}
+constexpr uint32_t kGbSupplementaryBase = Gb4Linear(0x90, 0x30, 0x81, 0x30);   // U+10000
 
 //! 全部代码页的转换表（第一次使用时读入）
 class CodePageRegistry {
@@ -142,7 +150,7 @@ private:
 		Reader r(g_sakuraCodePagesData, g_sakuraCodePagesSize);
 		if (g_sakuraCodePagesSize < 12 || std::memcmp(g_sakuraCodePagesData, "SKCP", 4) != 0) return;
 		r.skip(4);
-		if (r.u32() != 1) return;
+		if (r.u32() != 2) return;
 		const uint32_t count = r.u32();
 		for (uint32_t i = 0; i < count && r.ok(); ++i) {
 			const std::size_t offset = static_cast<std::size_t>(r.pos() - g_sakuraCodePagesData);
@@ -175,6 +183,7 @@ private:
 
 	static bool IsLead(const CodePageTable& t, BYTE b)
 	{
+		if (t.cp == 54936) return 0x81 <= b && b <= 0xFE;   // GB18030（导出工具也按这个范围导出）
 		if (t.maxCharSize != 2) return false;
 		for (int i = 0; i + 1 < 12 && (t.leadByte[i] || t.leadByte[i + 1]); i += 2) {
 			if (t.leadByte[i] <= b && b <= t.leadByte[i + 1]) return true;
@@ -189,7 +198,7 @@ private:
 		r.skip(static_cast<std::size_t>(CountLeadBytes(t, {})) * 256 * 8);
 		for (int k = 0; k < 2 && r.ok(); ++k) {
 			const uint32_t n = r.u32();
-			r.skip(static_cast<std::size_t>(n) * 5);
+			r.skip(static_cast<std::size_t>(n) * 7);
 		}
 	}
 
@@ -211,6 +220,13 @@ private:
 		}
 		ReadWcTable(r, t->wcBestFit);
 		ReadWcTable(r, t->wcNoBestFit);
+		if (t->cp == 54936) {
+			for (uint32_t u = 0; u < 0x10000; ++u) {
+				const uint64_t v = t->wcNoBestFit[u];
+				if ((v >> 32) != 4) continue;
+				t->gb4ToWide.emplace(Gb4Linear((v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF), static_cast<WCHAR>(u));
+			}
+		}
 		if (!r.ok()) return nullptr;
 		return t;
 	}
@@ -238,8 +254,6 @@ constexpr IconvCodePage kIconvCodePages[] = {
 	{ 50227, "ISO-2022-CN",   u"50227 (ISO-2022 Simplified Chinese)", 5 },
 	{ 50229, "ISO-2022-CN-EXT", u"50229 (ISO-2022 Traditional Chinese)", 5 },
 	{ 52936, "HZ-GB-2312",    u"52936 (HZ-GB2312 Simplified Chinese)", 5 },
-	{ 54936, "GB18030",       u"54936 (GB18030 Simplified Chinese)", 4 },
-	{ 65000, "UTF-7",         u"65000 (UTF-7)", 5 },
 };
 
 const IconvCodePage* FindIconv(UINT cp)
@@ -427,6 +441,112 @@ int WideToUtf8(DWORD flags, const WCHAR* src, int n, char* dst, int cap, LPCSTR 
 }
 
 // ---------------------------------------------------------------------------
+// UTF-7（行为按 Windows 上的探测结果实现，见 macos/docs/phase1-charset.md）
+// ---------------------------------------------------------------------------
+constexpr char kBase64Chars[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+int Base64Value(unsigned char c)
+{
+	if ('A' <= c && c <= 'Z') return c - 'A';
+	if ('a' <= c && c <= 'z') return c - 'a' + 26;
+	if ('0' <= c && c <= '9') return c - '0' + 52;
+	if (c == '+') return 62;
+	if (c == '/') return 63;
+	return -1;
+}
+
+//! Windows 不经 base64 直接输出的字符
+bool IsUtf7Direct(char16_t c)
+{
+	if (('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || ('0' <= c && c <= '9')) return true;
+	switch (c) {
+	case 0x00: case u'\t': case u'\n': case u'\r': case u' ':
+	case u'\'': case u'(': case u')': case u',': case u'-': case u'.': case u'/': case u':': case u'?':
+		return true;
+	default:
+		return false;
+	}
+}
+
+int Utf7ToWide(DWORD flags, const unsigned char* src, int n, WCHAR* dst, int cap)
+{
+	if (flags != 0) return Fail(ERROR_INVALID_FLAGS);   // MB_ERR_INVALID_CHARS 也是 1004（与 Windows 相同）
+	Output<WCHAR> out(dst, cap);
+	for (int i = 0; i < n;) {
+		const unsigned char c = src[i];
+		if (c != '+') {
+			if (!out.push(c)) break;          // 0x80 以上的字节也按 Latin-1 原样输出
+			++i;
+			continue;
+		}
+		++i;
+		if (i < n && src[i] == '-') {         // "+-" → '+'
+			if (!out.push(u'+')) break;
+			++i;
+			continue;
+		}
+		uint32_t bits = 0;
+		int nbits = 0;
+		bool full = false;
+		for (; i < n; ++i) {
+			const int v = Base64Value(src[i]);
+			if (v < 0) break;
+			bits = (bits << 6) | static_cast<uint32_t>(v);
+			nbits += 6;
+			if (nbits >= 16) {
+				nbits -= 16;
+				if (!out.push(static_cast<WCHAR>((bits >> nbits) & 0xFFFF))) { full = true; break; }
+			}
+			bits &= (1u << nbits) - 1;
+		}
+		if (full) break;
+		if (i < n && src[i] == '-') ++i;      // 结束标志 '-' 被吸收，其他字符保留
+	}
+	if (out.overflow()) return Fail(ERROR_INSUFFICIENT_BUFFER);
+	return out.count();
+}
+
+int WideToUtf7(DWORD flags, const WCHAR* src, int n, char* dst, int cap, LPCSTR lpDefaultChar, BOOL* lpUsedDefaultChar)
+{
+	if (flags != 0) return Fail(ERROR_INVALID_FLAGS);
+	(void)lpUsedDefaultChar;
+	if (lpDefaultChar) return Fail(ERROR_INVALID_PARAMETER);
+	Output<char> out(dst, cap);
+	for (int i = 0; i < n;) {
+		const char16_t c = src[i];
+		if (c == u'+') {
+			if (!out.push('+') || !out.push('-')) break;
+			++i;
+			continue;
+		}
+		if (IsUtf7Direct(c)) {
+			if (!out.push(static_cast<char>(c))) break;
+			++i;
+			continue;
+		}
+		// 连续的非直接字符合成一个 base64 块（代理也按 16 位原样编码），块总是以 '-' 结束
+		if (!out.push('+')) break;
+		uint32_t bits = 0;
+		int nbits = 0;
+		bool ok = true;
+		for (; i < n && src[i] != u'+' && !IsUtf7Direct(src[i]); ++i) {
+			bits = (bits << 16) | src[i];
+			nbits += 16;
+			while (nbits >= 6 && ok) {
+				nbits -= 6;
+				ok = out.push(kBase64Chars[(bits >> nbits) & 0x3F]);
+			}
+			bits &= (1u << nbits) - 1;
+			if (!ok) break;
+		}
+		if (ok && nbits > 0) ok = out.push(kBase64Chars[(bits << (6 - nbits)) & 0x3F]);
+		if (!ok || !out.push('-')) break;
+	}
+	if (out.overflow()) return Fail(ERROR_INSUFFICIENT_BUFFER);
+	return out.count();
+}
+
+// ---------------------------------------------------------------------------
 // 変換表
 // ---------------------------------------------------------------------------
 int TableToWide(const CodePageTable& t, DWORD flags, const unsigned char* src, int n, WCHAR* dst, int cap)
@@ -436,6 +556,23 @@ int TableToWide(const CodePageTable& t, DWORD flags, const unsigned char* src, i
 	Output<WCHAR> out(dst, cap);
 	for (int i = 0; i < n && !out.overflow();) {
 		const unsigned char b = src[i];
+		// GB18030 的 4 字节字符（格式正确但没有对应的字符变成 '?'，与 Windows 相同，不算错误）
+		if (t.cp == 54936 && 0x81 <= b && b <= 0xFE && i + 3 < n
+			&& 0x30 <= src[i + 1] && src[i + 1] <= 0x39 && 0x81 <= src[i + 2] && src[i + 2] <= 0xFE
+			&& 0x30 <= src[i + 3] && src[i + 3] <= 0x39) {
+			const uint32_t linear = Gb4Linear(b, src[i + 1], src[i + 2], src[i + 3]);
+			if (linear >= kGbSupplementaryBase && linear - kGbSupplementaryBase < 0x100000) {
+				const uint32_t c = linear - kGbSupplementaryBase;
+				if (!out.push(static_cast<WCHAR>(0xD800 + (c >> 10)))) break;
+				if (!out.push(static_cast<WCHAR>(0xDC00 + (c & 0x3FF)))) break;
+			} else if (const auto it = t.gb4ToWide.find(linear); it != t.gb4ToWide.end()) {
+				if (!out.push(it->second)) break;
+			} else {
+				if (!out.push(u'?')) break;
+			}
+			i += 4;
+			continue;
+		}
 		const MbEntry* e = &t.single[b];
 		int consumed = 1;
 		if (t.leadIndex[b] >= 0 && i + 1 < n) {
@@ -487,17 +624,29 @@ int TableToMulti(const CodePageTable& t, DWORD flags, const WCHAR* src, int n, c
 	for (int i = 0; i < n && !out.overflow(); ++i) {
 		const char16_t u = src[i];
 		if (0xD800 <= u && u <= 0xDBFF && i + 1 < n && 0xDC00 <= src[i + 1] && src[i + 1] <= 0xDFFF) {
-			putRecorded(t.surrogatePair);
+			if (t.cp == 54936) {
+				// GB18030：补充平面的字符按公式换成 4 字节
+				uint32_t linear = kGbSupplementaryBase + ((u - 0xD800u) << 10) + (src[i + 1] - 0xDC00u);
+				char bytes[4];
+				bytes[3] = static_cast<char>(0x30 + linear % 10); linear /= 10;
+				bytes[2] = static_cast<char>(0x81 + linear % 126); linear /= 126;
+				bytes[1] = static_cast<char>(0x30 + linear % 10); linear /= 10;
+				bytes[0] = static_cast<char>(0x81 + linear);
+				for (char c : bytes) { if (!out.push(c)) break; }
+			} else {
+				putRecorded(t.surrogatePair);
+			}
 			++i;
 			continue;
 		}
 		if (0xD800 <= u && u <= 0xDBFF) { putRecorded(t.loneHigh); continue; }
 		if (0xDC00 <= u && u <= 0xDFFF) { putRecorded(t.loneLow); continue; }
-		const uint32_t v = table[u];
+		const uint64_t v = table[u];
 		if (v == 0) { putDefault(); continue; }
-		const int len = static_cast<int>(v >> 16);
-		if (!out.push(static_cast<char>((v >> 8) & 0xFF))) break;
-		if (len == 2 && !out.push(static_cast<char>(v & 0xFF))) break;
+		const int len = static_cast<int>(v >> 32);
+		for (int k = 0; k < len; ++k) {
+			if (!out.push(static_cast<char>((v >> (24 - 8 * k)) & 0xFF))) break;
+		}
 	}
 	if (out.overflow()) return Fail(ERROR_INSUFFICIENT_BUFFER);
 	if (lpUsedDefaultChar) *lpUsedDefaultChar = used ? TRUE : FALSE;
@@ -565,7 +714,7 @@ UINT GetOEMCP() { return CP_UTF8; }
 
 BOOL IsValidCodePage(UINT codePage)
 {
-	if (codePage == CP_UTF8) return TRUE;
+	if (codePage == CP_UTF8 || codePage == CP_UTF7) return TRUE;
 	if (CodePageRegistry::Instance().Offsets().contains(codePage)) return TRUE;
 	if (const auto* c = FindIconv(codePage)) return IconvAvailable(*c) ? TRUE : FALSE;
 	return FALSE;
@@ -587,6 +736,13 @@ BOOL GetCPInfoExW(UINT codePage, DWORD dwFlags, LPCPINFOEXW info)
 		info->DefaultChar[0] = '?';
 		info->UnicodeDefaultChar = 0xFFFD;
 		setName(u"65001 (UTF-8)");
+		return TRUE;
+	}
+	if (cp == CP_UTF7) {
+		info->MaxCharSize = 5;
+		info->DefaultChar[0] = '?';
+		info->UnicodeDefaultChar = 0xFFFD;
+		setName(u"65000 (UTF-7)");
 		return TRUE;
 	}
 	CodePageTable t;
@@ -641,6 +797,7 @@ BOOL EnumSystemCodePagesW(CODEPAGE_ENUMPROCW proc, DWORD dwFlags)
 	std::vector<UINT> cps;
 	for (const auto& [cp, offset] : CodePageRegistry::Instance().Offsets()) cps.push_back(cp);
 	for (const auto& c : kIconvCodePages) { if (IconvAvailable(c)) cps.push_back(c.cp); }
+	cps.push_back(CP_UTF7);
 	cps.push_back(CP_UTF8);
 	std::sort(cps.begin(), cps.end());
 	for (UINT cp : cps) {
@@ -657,6 +814,7 @@ int MultiByteToWideChar(UINT codePage, DWORD dwFlags, LPCSTR src, int cbSrc, WCH
 	const UINT cp = ResolveCodePage(codePage);
 	const auto* u = reinterpret_cast<const unsigned char*>(src);
 	if (cp == CP_UTF8) return Utf8ToWide(dwFlags, u, n, dst, cchDst);
+	if (cp == CP_UTF7) return Utf7ToWide(dwFlags, u, n, dst, cchDst);
 	if (const auto* t = CodePageRegistry::Instance().Find(cp)) return TableToWide(*t, dwFlags, u, n, dst, cchDst);
 	if (const auto* c = FindIconv(cp); c && IconvAvailable(*c)) return IconvToWide(*c, dwFlags, src, n, dst, cchDst);
 	return Fail(ERROR_INVALID_PARAMETER);
@@ -669,6 +827,7 @@ int WideCharToMultiByte(UINT codePage, DWORD dwFlags, const WCHAR* src, int cchS
 	if (n < 0) { n = 0; while (src[n]) ++n; ++n; }
 	const UINT cp = ResolveCodePage(codePage);
 	if (cp == CP_UTF8) return WideToUtf8(dwFlags, src, n, dst, cbDst, lpDefaultChar, lpUsedDefaultChar);
+	if (cp == CP_UTF7) return WideToUtf7(dwFlags, src, n, dst, cbDst, lpDefaultChar, lpUsedDefaultChar);
 	if (const auto* t = CodePageRegistry::Instance().Find(cp)) return TableToMulti(*t, dwFlags, src, n, dst, cbDst, lpDefaultChar, lpUsedDefaultChar);
 	if (const auto* c = FindIconv(cp); c && IconvAvailable(*c)) return IconvToMulti(*c, dwFlags, src, n, dst, cbDst, lpDefaultChar, lpUsedDefaultChar);
 	return Fail(ERROR_INVALID_PARAMETER);
