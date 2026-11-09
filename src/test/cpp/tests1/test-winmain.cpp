@@ -1046,9 +1046,17 @@ struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
 	std::wstring trayWndClassName{ GSTR_CEDITAPP };
 
 	/*!
+	 * テストケース実行前のカレントディレクトリ
+	 */
+	std::filesystem::path currentDirectory;
+
+	/*!
 	 * テストが起動される直前に毎回呼ばれる関数
 	 */
 	void SetUp() override {
+		// カレントディレクトリを保存する
+		currentDirectory = std::filesystem::current_path();
+
 		// トレイウインドウを検索する
 		if (const auto hTrayWnd = cxx::FindWindowW(trayWndClassName, trayWndClassName);
 			!hTrayWnd)
@@ -1064,6 +1072,9 @@ struct WinMainFuncTest : public TWinMainTest<::testing::Test> {
 	 */
 	void TearDown() override {
 		Kernel32::resetInstance();
+
+		// カレントディレクトリを復元する
+		std::filesystem::current_path(currentDirectory);
 	}
 
 	std::wstring_view GetProfileName() const override {

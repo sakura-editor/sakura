@@ -19,9 +19,88 @@ env:
   VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
   VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
 
+defaults:
+  run:
+    shell: msys2 {0} # 指定しない限りmsys2シェルを使う
+
 jobs:
+  build-vcpkg:
+    name: Build vcpkg (x64-mingw-static)
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-iconv
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-uv
+            mingw-w64-ucrt-x86_64-7zip
+            mingw-w64-ucrt-x86_64-gdb
+            mingw-w64-ucrt-x86_64-ctags
+            diffutils
+
+      - run: uv venv
+
+      - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+
+      - name: Bootstrap vcpkg
+        run: ./bootstrap-vcpkg.sh -disableMetrics
+        working-directory: ${{ env.VCPKG_ROOT }}
+
+      - name: Configure GitHub Packages for vcpkg
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+          $nuget = & $vcpkg fetch nuget
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+              throw "Failed to obtain nuget.exe."
+          }
+
+          & $nuget sources remove `
+              -Name GitHubPackages `
+              -NonInteractive 2>$null
+
+          & $nuget sources add `
+              -Name GitHubPackages `
+              -Source "$env:VCPKG_NUGET_FEED" `
+              -UserName "$env:VCPKG_NUGET_OWNER" `
+              -Password "$env:GITHUB_TOKEN" `
+              -StorePasswordInClearText `
+              -NonInteractive
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to add the GitHub Packages NuGet source."
+          }
+
+      - name: vcpkg install (x64-mingw-static)
+        run: |
+          "$VCPKG_ROOT/vcpkg.exe" install \
+            --triplet x64-mingw-static \
+            --clean-after-build
+
   mingw:
     runs-on: windows-latest
+    needs: build-vcpkg
     permissions:
       contents: read
       packages: read
@@ -31,10 +110,6 @@ jobs:
     env:
       BuildPlatform: MinGW
       Configuration: ${{ matrix.configuration }}
-
-    defaults:
-      run:
-        shell: msys2 {0} # 指定しない限りmsys2シェルを使う
 
     steps:
       - name: Checkout repository
@@ -57,6 +132,7 @@ jobs:
       # wingetは失敗することがあるので、インストーラー方式も残しておく。
       - name: Install OpenCppCoverage (installer)
         if: ${{ env.Configuration == 'Debug' && steps.install_opencppcoverage_winget.outcome == 'failure' }}
+        shell: pwsh
         working-directory: ${{ runner.temp }}
         run: |
           $installer = '.\OpenCppCoverageSetup.exe'
@@ -79,26 +155,23 @@ jobs:
       - name: Set up MSYS2
         uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
-            mingw-w64-x86_64-iconv
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-python
-            mingw-w64-x86_64-uv
-            mingw-w64-x86_64-7zip
-            mingw-w64-x86_64-gdb
-            mingw-w64-x86_64-ctags
+            mingw-w64-ucrt-x86_64-iconv
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-uv
+            mingw-w64-ucrt-x86_64-7zip
+            mingw-w64-ucrt-x86_64-gdb
+            mingw-w64-ucrt-x86_64-ctags
             diffutils
 
       - run: uv venv
 
       - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
-
-      - name: Show environment variables for debug
-        run: env
 
       - name: Bootstrap vcpkg
         run: ./bootstrap-vcpkg.sh -disableMetrics
