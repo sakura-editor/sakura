@@ -113,10 +113,10 @@ static void test_format()
 	CHECK(u16::format(buf, 128, LTEXT("%n"), nullptr) == -1);
 
 	// 切り詰め（_snwprintf_s と同じ規則）
-	WCHAR small[6];
-	CHECK(call_vsnprintf_s(small, 6, _TRUNCATE, LTEXT("%s"), LTEXT("abc")) == 3 && eq(small, LTEXT("abc")));
-	CHECK(call_vsnprintf_s(small, 6, _TRUNCATE, LTEXT("%s"), LTEXT("abcdefgh")) == -1 && eq(small, LTEXT("abcde")));
-	CHECK(call_vsnprintf_s(small, 6, 2, LTEXT("%s"), LTEXT("abcdefgh")) == -1 && eq(small, LTEXT("ab")));
+	WCHAR sbuf[6];
+	CHECK(call_vsnprintf_s(sbuf, 6, _TRUNCATE, LTEXT("%s"), LTEXT("abc")) == 3 && eq(sbuf, LTEXT("abc")));
+	CHECK(call_vsnprintf_s(sbuf, 6, _TRUNCATE, LTEXT("%s"), LTEXT("abcdefgh")) == -1 && eq(sbuf, LTEXT("abcde")));
+	CHECK(call_vsnprintf_s(sbuf, 6, 2, LTEXT("%s"), LTEXT("abcdefgh")) == -1 && eq(sbuf, LTEXT("ab")));
 }
 
 static void test_utf()
