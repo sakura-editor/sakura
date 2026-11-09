@@ -30,6 +30,43 @@ jobs:
           done < <(git ls-files -z -- 'macos/*.h' 'macos/*.cpp' 'macos/*.mm')
           exit $ng
 
+  # 第 14 步：UTF-16 字符类型（sakura_core/util/wchar16.h）在两个平台上编译并运行测试
+  wchar16-test-macos:
+    needs: check-encoding
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build and run test_wchar16 (clang, universal)
+        run: |
+          clang++ -std=c++20 -Wall -Wextra -DNOMINMAX -arch arm64 -arch x86_64 \
+            -I macos/platform/include -I sakura_core \
+            macos/platform/tests/test_wchar16.cpp -o test_wchar16
+          lipo -archs test_wchar16
+          ./test_wchar16
+
+  wchar16-test-windows:
+    needs: check-encoding
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build and run test_wchar16 (MSVC x64)
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSDIR=%%i"
+          call "%VSDIR%\VC\Auxiliary\Build\vcvars64.bat" || exit /b 1
+          cl /nologo /std:c++20 /EHsc /W4 /utf-8 /DNOMINMAX /DUNICODE /D_UNICODE /I sakura_core macos\platform\tests\test_wchar16.cpp /Fe:test_wchar16.exe || exit /b 1
+          test_wchar16.exe
+
   build:
     needs: check-encoding
     runs-on: macos-latest

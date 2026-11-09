@@ -59,7 +59,12 @@ T t_unit(T t)
 */
 
 //ビルド種に関係なく、UNICODE。
+//Windows 以外では WCHAR が char16_t なので u"" にする（Mac 版移植 第 14 步、util/wchar16.h 参照）。
+#if defined(_WIN32)
 #define __LTEXT(A) L##A
+#else
+#define __LTEXT(A) u##A
+#endif
 #define LTEXT(A) __LTEXT(A)
 #define LCHAR(A) __LTEXT(A)
 

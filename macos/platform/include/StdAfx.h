@@ -77,6 +77,9 @@
 // Win32 兼容定义（非 Windows 平台）
 #include "sakura_platform.h"
 
+// UTF-16 字符串函数（wcslen 等的 char16_t 版本）
+#include "util/wchar16.h"
+
 #if defined(__GNUC__) || defined(__clang__)
 #  define NORETURN __attribute__((noreturn))
 #else

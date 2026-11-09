@@ -7,8 +7,8 @@
 	  核心代码不应真正使用它们，后续步骤会逐步把这类依赖移出核心库。
 	- MSVC 运行库扩展函数：用标准 C/C++ 或 POSIX 函数实现。
 
-	注意：WCHAR 暂时定义为 wchar_t（macOS 上是 4 字节）。
-	第 14、15 步会改成基于 char16_t 的 UTF-16 类型。
+	WCHAR 定义为 char16_t（2 字节 UTF-16，与 Windows 相同）。
+	宽字符串函数（wcslen、_wcsicmp、_swprintf 等）的 char16_t 版本在 sakura_core/util/wchar16.h。
 
 	Copyright (C) 2026, Sakura Editor Organization
 	SPDX-License-Identifier: Zlib
@@ -97,7 +97,7 @@ typedef std::uintptr_t ULONG_PTR;
 typedef std::uintptr_t DWORD_PTR;
 typedef std::size_t    SIZE_T;
 typedef char           CHAR;
-typedef wchar_t        WCHAR;   // TODO(第 14 步)：改为 char16_t 系的 UTF-16 类型
+typedef char16_t       WCHAR;   // UTF-16 码元（第 14 步，见 sakura_core/util/wchar16.h）
 typedef WCHAR          OLECHAR;
 typedef void*          PVOID;
 typedef void*          LPVOID;
@@ -231,8 +231,6 @@ typedef struct tagLOGFONTW {
 #define STRUNCATE  80
 #define _countof(a) (std::size(a))
 
-inline int _wcsicmp(const wchar_t* a, const wchar_t* b) { return ::wcscasecmp(a, b); }
-inline int _wcsnicmp(const wchar_t* a, const wchar_t* b, size_t n) { return ::wcsncasecmp(a, b, n); }
 inline int _stricmp(const char* a, const char* b) { return ::strcasecmp(a, b); }
 inline int _strnicmp(const char* a, const char* b, size_t n) { return ::strncasecmp(a, b, n); }
 inline int _memicmp(const void* a, const void* b, size_t n) {
@@ -244,24 +242,10 @@ inline int _memicmp(const void* a, const void* b, size_t n) {
 	}
 	return 0;
 }
-inline long _wtol(const wchar_t* s) { return std::wcstol(s, nullptr, 10); }
-inline wchar_t* _wcslwr(wchar_t* s) { for (auto p = s; *p; ++p) *p = static_cast<wchar_t>(std::towlower(*p)); return s; }
 inline unsigned short _byteswap_ushort(unsigned short v) { return __builtin_bswap16(v); }
 inline unsigned long _byteswap_ulong(unsigned long v) { return __builtin_bswap32(static_cast<std::uint32_t>(v)); }
 inline int __iscsym(int c) { return std::isalnum(c) || c == '_'; }
 
-// 注意：Windows 的宽字符 printf 中 %s 表示宽字符串，POSIX 中表示窄字符串（宽字符串要用 %ls）。
-// 下列函数只负责签名兼容，格式字符串的差异由第 14、15 步统一处理。
-inline int _vsnwprintf_s(wchar_t* buf, size_t size, size_t count, const wchar_t* fmt, va_list ap) {
-	if (!buf || size == 0) return -1;
-	const size_t limit = (count == _TRUNCATE || count >= size) ? size : count + 1;
-	const int n = std::vswprintf(buf, limit, fmt, ap);
-	if (n < 0) { buf[limit - 1] = L'\0'; return (count == _TRUNCATE) ? -1 : -1; }
-	return n;
-}
-inline int _snwprintf_s(wchar_t* buf, size_t size, size_t count, const wchar_t* fmt, ...) {
-	va_list ap; va_start(ap, fmt); const int n = _vsnwprintf_s(buf, size, count, fmt, ap); va_end(ap); return n;
-}
 inline int _vsnprintf_s(char* buf, size_t size, size_t count, const char* fmt, va_list ap) {
 	if (!buf || size == 0) return -1;
 	const size_t limit = (count == _TRUNCATE || count >= size) ? size : count + 1;
@@ -274,22 +258,6 @@ inline int _snprintf_s(char* buf, size_t size, size_t count, const char* fmt, ..
 }
 inline int _scprintf(const char* fmt, ...) {
 	va_list ap; va_start(ap, fmt); const int n = std::vsnprintf(nullptr, 0, fmt, ap); va_end(ap); return n;
-}
-inline int _scwprintf(const wchar_t* fmt, ...) {
-	// vswprintf 不支持只计数，用逐步扩大的缓冲区求长度。
-	for (size_t size = 256; size <= (size_t(1) << 24); size *= 2) {
-		auto buf = static_cast<wchar_t*>(std::malloc(size * sizeof(wchar_t)));
-		if (!buf) return -1;
-		va_list ap; va_start(ap, fmt);
-		const int n = std::vswprintf(buf, size, fmt, ap);
-		va_end(ap);
-		std::free(buf);
-		if (n >= 0) return n;
-	}
-	return -1;
-}
-inline int _swprintf(wchar_t* buf, const wchar_t* fmt, ...) {
-	va_list ap; va_start(ap, fmt); const int n = std::vswprintf(buf, static_cast<size_t>(-1) / sizeof(wchar_t), fmt, ap); va_end(ap); return n;
 }
 
 #endif /* SAKURA_PLATFORM_H_ */
