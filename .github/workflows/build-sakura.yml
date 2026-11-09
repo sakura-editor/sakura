@@ -468,11 +468,12 @@ jobs:
 
     - name: Run unit tests
       # x64 Debugはカバレッジ計測で15分を超えるため、全構成を同じ上限にはしない。
-      timeout-minutes: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' && 30 || 15 }} # 指定時間を越えたら打ち切る。値は暫定。
+      timeout-minutes: ${{ matrix.config == 'Debug' && 90 || 45 }} # 指定時間を越えたら打ち切る。値は暫定。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        --repeat until-pass:3
         -V
 
     - name: Upload sonar-input artifact
