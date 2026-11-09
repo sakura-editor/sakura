@@ -2,6 +2,8 @@
 
 Mac 版在 `macos` 分支开发，原版代码（`sakura_core/`、`src/test/`）和上游 [sakura-editor/sakura](https://github.com/sakura-editor/sakura) 共用。为了让 Mac 版能编译，第 15 步把原版代码里的宽字符写法机械地换成了在两个平台上都能用的写法（约 1 万行，Windows 上展开后与原来完全相同，见 [phase1-char-type.md](phase1-char-type.md)）。上游新提交的代码仍然用 `L"…"`、`wchar_t`、`std::wstring` 等写法，所以每次合并后都要再替换一次。
 
+> **当前状态（2026-11-09 项目负责人决定）**：暂不合并上游的新更新，`macos` 分支也不再自动运行 Windows 构建。下面的流程留作以后需要时使用。
+
 ## 步骤
 
 1. **更新 `master`**：把上游的 `master` 拉到 fork 的 `master`（GitHub 网页上的 “Sync fork”，或下面的命令）。`master` 不放 Mac 版的修改。
@@ -38,7 +40,7 @@ Mac 版在 `macos` 分支开发，原版代码（`sakura_core/`、`src/test/`）
 
    新出现的、在 Mac 版已编译的文件里的，要改成 `sakura::format`、`sakura::path_to_wstring` 等（见 phase1-char-type.md 的“留到后续步骤”）；在还没编入 Mac 版的文件里的，记到那个表里。
 
-5. **确认**：推送到 `macos` 后，GitHub Actions 会自动跑 Windows（MSVC、MinGW）、Cppcheck、Doxygen 和 macOS 的构建与测试，全部通过后才算合并完成。本地可以先用 `cmake -S macos/core -B build/mac-core && cmake --build build/mac-core && ctest --test-dir build/mac-core` 确认 Mac 版。
+5. **确认**：推送到 `macos` 后，GitHub Actions 自动跑 macOS 的构建与测试。Windows（MSVC、MinGW）、Cppcheck、Doxygen 目前不自动运行，需要确认 Windows 版时在 Actions 页面手动运行（`gh workflow run build-sakura.yml --ref macos` 等）。本地可以先用 `cmake -S macos/core -B build/mac-core && cmake --build build/mac-core && ctest --test-dir build/mac-core` 确认 Mac 版。
 
 6. **代码页转换表**（偶尔）：`build-macos.yml` 的 `codepage-dump-windows` 任务每次都在最新的 Windows 上重新导出转换表，与仓库里的 `macos/platform/data/codepages.bin` 不同时会出警告。出现警告时，用那次的导出结果替换仓库里的文件（见 [phase1-charset.md](phase1-charset.md)）。
 

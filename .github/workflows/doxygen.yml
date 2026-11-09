@@ -2,6 +2,8 @@ name: Doxygen
 
 on:
   push:
+    branches-ignore:
+      - macos # 2026-11-09 项目负责人决定：Mac 版开发分支只跑 build-macos.yml（需要时可以去掉这两行）
     paths-ignore:
       - '**/*.md'
       - '.gitignore'

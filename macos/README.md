@@ -43,7 +43,7 @@ cmake --build build/mac-core -j 4
 ctest --test-dir build/mac-core --output-on-failure
 ```
 
-每次推送到 `macos` 分支，GitHub Actions 都会自动运行：`build-macos.yml`（Mac 版 App 的不签名构建、核心库的单元测试、在 Windows 上导出代码页表），以及从上游继承的 Windows 构建（MSVC、MinGW）、Cppcheck 和 Doxygen，确保对共用代码的修改不影响 Windows 版。
+每次推送到 `macos` 分支，GitHub Actions 自动运行 `build-macos.yml`（Mac 版 App 的不签名构建和启动检查、核心库的单元测试、在 Windows 上导出代码页表）。从上游继承的 Windows 构建（MSVC、MinGW）、Cppcheck、Doxygen 在 `macos` 分支上不自动运行：2026-11-09 项目负责人决定 Mac 版只关注 Mac，不维护 Windows 版（需要时去掉各工作流里 `branches-ignore` 的两行即可恢复，也可以在 Actions 页面手动运行）。
 
 ## 许可证
 
