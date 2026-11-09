@@ -36,6 +36,7 @@ ctest --test-dir build/mac-core --output-on-failure
 | `types/CType.h`：`CTypeConfig` 加上 `constexpr` | clang 要求 constexpr 构造函数的参数是字面量类型 |
 | `basis/CMyString.h`：`path` → 字符串改用 `sakura::path_to_wstring` | Mac 上 `std::filesystem::path` 内部是 UTF-8 |
 | 测试：错误码改为用 `EILSEQ` 生成预期消息；只适用于 Windows 的 `path` 测试用 `_WIN32` 隔开 | `EILSEQ` 在 Windows 上是 42，在 macOS 上是 92 |
+| 测试：`AppendStringF` 抛出异常后再检查 `errno` 的那一项只在 Windows 上做；平台差异的数据放在宏外面 | macOS 在异常展开时会改写 `errno`；MSVC 不允许在宏参数里写 `#if` |
 
 ## 留到后续步骤
 
