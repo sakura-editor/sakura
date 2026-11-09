@@ -135,7 +135,7 @@ IFACEMETHODIMP CDropSource::GiveFeedback(
 }
 
 CDataObject::CDataObject(
-	std::wstring_view text,
+	sakura::wstring_view text,
 	bool bColumnSelect
 )
 {
@@ -150,7 +150,7 @@ CDataObject::CDataObject(
 	@date 2008.03.26 ryoji 複数フォーマット対応
 */
 void CDataObject::SetText(
-	std::wstring_view text,
+	sakura::wstring_view text,
 	bool bColumnSelect
 )
 {

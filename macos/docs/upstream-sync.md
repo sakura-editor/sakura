@@ -2,7 +2,7 @@
 
 Mac 版在 `macos` 分支开发，原版代码（`sakura_core/`、`src/test/`）和上游 [sakura-editor/sakura](https://github.com/sakura-editor/sakura) 共用。为了让 Mac 版能编译，第 15 步把原版代码里的宽字符写法机械地换成了在两个平台上都能用的写法（约 1 万行，Windows 上展开后与原来完全相同，见 [phase1-char-type.md](phase1-char-type.md)）。上游新提交的代码仍然用 `L"…"`、`wchar_t`、`std::wstring` 等写法，所以每次合并后都要再替换一次。
 
-> **当前状态（2026-11-09 项目负责人决定）**：暂不合并上游的新更新，`macos` 分支也不再自动运行 Windows 构建。下面的流程留作以后需要时使用。
+> **当前状态**：2026-11-09 按项目负责人的要求，把上游 `master` 到 `4fe60275c` 为止的全部更新合并进了 `macos` 分支（见下面“合并记录”）。`macos` 分支不自动运行 Windows 构建。之后上游的新更新按下面的流程合并；最晚在计划第 50 步“核对对照表”时再合并一次，让 Mac 版与最新的 Windows 版一致。
 
 ## 步骤
 
@@ -44,9 +44,13 @@ Mac 版在 `macos` 分支开发，原版代码（`sakura_core/`、`src/test/`）
 
 6. **代码页转换表**（偶尔）：`build-macos.yml` 的 `codepage-dump-windows` 任务每次都在最新的 Windows 上重新导出转换表，与仓库里的 `macos/platform/data/codepages.bin` 不同时会出警告。出现警告时，用那次的导出结果替换仓库里的文件（见 [phase1-charset.md](phase1-charset.md)）。
 
-## 试合并的结果（2026-11-09）
+## 合并记录
 
-合并上游 `master` 当时最新的 5 个合并提交（到 `4fe60275c`）：没有冲突；合并后第 3 步替换了 3 个文件里的 5 处 `std::wstring_view`。
+| 日期 | 合并到的上游提交 | 冲突 | 第 3 步替换 | 确认 |
+|---|---|---|---|---|
+| 2026-11-09 | `4fe60275c`（上一次的共同祖先 `52a7f1859` 之后的 21 个提交，其中 13 个是普通提交） | 无 | 3 个文件 5 处 `std::wstring_view`（`CDropTarget.cpp`、`CDropTarget.h`、`CEditView_Mouse.cpp`） | 第 4 步的检查没有新出现的写法；Mac 核心库构建通过，595 个测试全部通过 |
+
+注意：仓库是浅克隆时 `git merge-base` 找不到真正的共同祖先，合并前先用 `git fetch --deepen=300 origin macos` 和 `git fetch --deepen=300 upstream master` 补全历史。
 
 ## 减少分叉
 

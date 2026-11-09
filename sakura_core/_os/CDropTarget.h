@@ -146,7 +146,7 @@ public:
 	}
 
 	explicit CDataObject(
-		std::wstring_view text,
+		sakura::wstring_view text,
 		bool bColumnSelect = false
 	);
 
@@ -161,7 +161,7 @@ public:
 	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
 
 	void SetText(
-		std::wstring_view text,
+		sakura::wstring_view text,
 		bool bColumnSelect = false
 	);
 };

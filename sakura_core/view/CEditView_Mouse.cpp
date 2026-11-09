@@ -2232,7 +2232,7 @@ void CEditView::DragSelection()
 	if (!GetSelectedData(&cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) return;
 
 	// 選択範囲からクリップボードデータを作成する
-	const auto data = CDataObject::make_instance(std::wstring_view(cmemCurText), GetSelectionInfo().IsBoxSelecting());
+	const auto data = CDataObject::make_instance(sakura::wstring_view(cmemCurText), GetSelectionInfo().IsBoxSelecting());
 
 	// ドラッグ開始前のドキュメント操作番号を記憶する
 	const auto nOpe = GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
