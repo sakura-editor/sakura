@@ -3516,10 +3516,11 @@ LRESULT CEditWnd::OnMouseMove( WPARAM wParam, LPARAM lParam )
 			m_IconClicked = icNone;
 
 			if (cxx::com_pointer<IDataObject> pDataObject; SUCCEEDED(GetDocument()->GetDataObject(&pDataObject))) {
-				CDropSource drop(true);
-
 				//移動禁止なので、戻り値を見ない
-				drop.DoDragDrop(pDataObject, DROPEFFECT_COPY | DROPEFFECT_LINK);
+				CDropSource::DoDragDrop(
+					pDataObject,
+					DROPEFFECT_COPY | DROPEFFECT_LINK
+				);
 			}
 		}
 		return 0;

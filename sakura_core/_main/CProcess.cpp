@@ -49,8 +49,8 @@ using namespace cxx;
 		&std::cerr
 	);
 
-	// 強制終了する
-	std::abort();
+	// abortだとCRTの実装依存で終了コードがブレるので、値を指定して終了させる
+	std::_Exit(static_cast<int>(EAppExitCode::Terminated));
 }
 
 /*!

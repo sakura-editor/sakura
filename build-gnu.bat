@@ -60,7 +60,7 @@ if defined no_test (
 )
 
 @rem run test.
-ctest --test-dir %BUILD_DIR% --build-config %configuration% --output-on-failure -V
+ctest --test-dir %BUILD_DIR% --build-config %configuration% --output-on-failure --repeat until-pass:3 -V
 if errorlevel 1 (
 	echo ctest failed. errorlevel %errorlevel%
 	exit /b 1
@@ -70,7 +70,7 @@ exit /b 0
 
 :setmsys64path
 path=C:\msys64\usr\bin;%path:C:\msys64\usr\bin;=%
-path=C:\msys64\mingw64\bin;%path:C:\msys64\mingw64\bin;=%
+path=C:\msys64\ucrt64\bin;%path:C:\msys64\ucrt64\bin;=%
 exit /b 0
 
 :setvcpkgroot

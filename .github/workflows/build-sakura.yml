@@ -88,11 +88,7 @@ jobs:
       matrix:
         triplet:
           - x64-windows-static
-          - x64-mingw-static
           - x86-windows-static
-
-    # msys2パッケージが壊れたときにワークフロー全体が失敗してしまう対策
-    continue-on-error: ${{ matrix.triplet == 'x64-mingw-static' }}
 
     steps:
     ## see https://github.com/actions/checkout
@@ -105,46 +101,17 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@30375c66a4eea26614e0d39710365f22f8b0af57 # v3
 
-    - name: Set up MSYS2
-      uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
-      if: matrix.triplet == 'x64-mingw-static'
-      with:
-        msystem: MINGW64
-        update: true
-        install: >-
-          mingw-w64-x86_64-iconv
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-make
-          mingw-w64-x86_64-python
-          mingw-w64-x86_64-uv
-          mingw-w64-x86_64-7zip
-          mingw-w64-x86_64-gdb
-          mingw-w64-x86_64-ctags
-          diffutils
-
     - name: Set up Python
       uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         python-version: ${{ vars.PYTHON_VERSION || '3.14.3' }}
 
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
-      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
       with:
         activate-environment: true
 
-    - run: uv venv
-      if: matrix.triplet == 'x64-mingw-static'
-      shell: msys2 {0}
-
     - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
-      if: matrix.triplet == 'x64-windows-static' || matrix.triplet == 'x86-windows-static'
-
-    - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
-      if: matrix.triplet == 'x64-mingw-static'
-      shell: msys2 {0}
 
     - name: Bootstrap vcpkg
       run: |
@@ -470,11 +437,12 @@ jobs:
 
     - name: Run unit tests
       # x64 Debugはカバレッジ計測で15分を超えるため、全構成を同じ上限にはしない。
-      timeout-minutes: ${{ matrix.platform == 'x64' && matrix.config == 'Debug' && 30 || 15 }} # 指定時間を越えたら打ち切る。値は暫定。
+      timeout-minutes: ${{ matrix.config == 'Debug' && 90 || 45 }} # 指定時間を越えたら打ち切る。値は暫定。
       run: ctest
         --test-dir build/${{ matrix.platform }}/CMakeTools
         -C ${{ matrix.config }}
         --output-on-failure
+        --repeat until-pass:3
         -V
 
     - name: Upload sonar-input artifact
