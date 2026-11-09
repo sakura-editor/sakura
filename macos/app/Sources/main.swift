@@ -1,3 +1,7 @@
+// Copyright (C) 2026, Sakura Editor Organization
+//
+// SPDX-License-Identifier: Zlib
+
 import AppKit
 
 // 不使用 Storyboard / Nib，菜单和窗口都在代码中构建，

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright (C) 2026, Sakura Editor Organization
+# SPDX-License-Identifier: Zlib
 # 阶段 1 第 12 步：在非 Windows 环境下用 clang 对原版代码做语法检查，统计编译错误。
 #
 # 做法：用空的 Windows SDK 头文件（stub）代替真实头文件，让编译器把所有

@@ -1,3 +1,5 @@
+# Copyright (C) 2026, Sakura Editor Organization
+# SPDX-License-Identifier: Zlib
 import json, re, csv, sys, collections
 rows = json.load(open(sys.argv[1])); out = sys.argv[2]
 D, G, X = '直接移植', '需要改造', '沙盒下不可行'

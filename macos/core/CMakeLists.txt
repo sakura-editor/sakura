@@ -1,6 +1,6 @@
 ﻿# Sakura Editor for Mac：核心库（libsakura_core）和单元测试
 #
-# 阶段 1 第 16 步起使用。macOS 和 Linux 都能构建（Linux 只用于开发时快速检查）。
+# 阶段 1 第 16 步起使用。在 macOS 上构建；Linux 上只能用 clang（只用于开发时快速检查，不支持 GCC）。
 #
 #   cmake -S macos/core -B build/mac-core -DCMAKE_BUILD_TYPE=Debug
 #   cmake --build build/mac-core -j

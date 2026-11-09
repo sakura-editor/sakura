@@ -2,7 +2,7 @@
 
 ## 结果
 
-- 新建 Mac 版核心库的构建 `macos/core/CMakeLists.txt`。macOS（arm64 + x86_64）和 Linux 都能构建。
+- 新建 Mac 版核心库的构建 `macos/core/CMakeLists.txt`。macOS（arm64 + x86_64）上构建；Linux 上只能用 clang 构建（只用于开发时快速检查，GCC 不支持，Windows 版 MinGW 的 GCC 构建不受影响）。
 - 核心库现在包含 `basis`、`config`、`convert`、`debug`、`docplus`、`io`、`mem`、`parse` 八个目录，另外还有 `charset/charcode.cpp`、`util/format.cpp`、`util/string_ex.cpp` 和 `util/string_ex2.cpp`。目录里依赖后续模块的文件见下面的“第 12 步目录的完成情况”。
 - 原版的单元测试（`src/test/cpp/tests1`）里，下列测试在 Mac 版上原样运行：
   `test-clayoutint` `test-cmemory` `test-cnative` `test-crunningtimer` `test-cwordparse` `test-editinfo` `test-format` `test-int2dec` `test-is_mailaddress` `test-statictype` `test-string_ex`

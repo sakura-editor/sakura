@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# Copyright (C) 2026, Sakura Editor Organization
+# SPDX-License-Identifier: Zlib
 """阶段 1 第 15 步：批量替换字符类型。
 
 把 C++ 源码里的

@@ -1,3 +1,5 @@
+# Copyright (C) 2026, Sakura Editor Organization
+# SPDX-License-Identifier: Zlib
 import re, sys, json
 src = open(sys.argv[1], encoding='utf-8-sig').read().splitlines()
 zh = {}

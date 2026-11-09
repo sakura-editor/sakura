@@ -35,7 +35,7 @@ printf 书式按 MSVC 宽字符版的规则处理：`%s` 是宽字符串，`%hs`
 | `L"…"` / `L'x'` | `LTEXT("…")` / `LCHAR('x')` | 约 6,150 / 1,880 |
 | `wchar_t` | `WCHAR` | 约 1,580 |
 | `std::wstring` / `std::wstring_view` | `sakura::wstring` / `sakura::wstring_view` | 约 920 / 370 |
-| `std::format(L"…")`（35 处）、`std::wregex`（5 处）、`std::filesystem::path` 的宽字符串接口 | 逐个处理。标准库不支持 `char16_t` 的 format 和 regex，需要改用本工程自己的函数 | — |
+| `std::format(L"…")`（35 处）、`std::wregex`（5 处，见下文的“留到后续步骤”）、`std::filesystem::path` 的宽字符串接口 | 逐个处理。标准库不支持 `char16_t` 的 format 和 regex，需要改用本工程自己的函数 | — |
 
 另外发现一个需要在第 16 步处理的问题：`basis/primitive.h` 里 `uchar32_t` / `wchar32_t` 定义成 `long` 系类型，在 macOS 上是 8 字节，应改为 `char32_t` / `std::int32_t`。
 
@@ -64,8 +64,24 @@ Mac 编译检查的错误数从 8,722 降到 6,876。
 
 | 问题 | 出现位置 | 处理步骤 |
 |---|---|---|
-| `std::filesystem::path` 和 `sakura::wstring` 的互相转换（Mac 上 path 用 UTF-8） | `util/file.h` 等 | 第 16 步 |
-| `std::format(LTEXT("…"))`：标准库不支持 `char16_t` 的 format | 5 个文件 | 第 16 步，改用本工程的 format |
-| `util/format.h` 的 `PrintfArg` 把字符串对象原样传给可变参数函数 | `util/format.h` | 第 16 步 |
-| `std::wregex`：标准库不支持 `char16_t` 的正则 | 语言 DLL 选择、`DetectIndentationStyle` | 第 16 步 |
-| 单元测试（`src/test/cpp`）还没有替换 | 测试代码 | 移植测试时（第 17、23 步）用同一个工具替换 |
+| `std::filesystem::path` 和 `sakura::wstring` 的互相转换（Mac 上 path 用 UTF-8） | `util/file.h` 等 | 第 16 步已完成（`sakura::path_to_wstring`） |
+| `std::format(LTEXT("…"))`：标准库不支持 `char16_t` 的 format | 5 个文件 | 第 16 步已完成，改用本工程的 format |
+| `util/format.h` 的 `PrintfArg` 把字符串对象原样传给可变参数函数 | `util/format.h` | 第 16 步已完成 |
+| 单元测试（`src/test/cpp`）的替换 | 测试代码 | 每加入一个测试文件时用同一个工具替换（第 16、17 步已替换的见 `macos/core/tests/tests.cmake`） |
+
+标准库不支持 `char16_t` 的 `std::wregex`、`std::to_wstring`、`std::wostringstream` 和 `path.wstring()`，下面 11 处还没改（2026-11-09 统计）。它们所在的文件都还没编入 Mac 版，移植那个文件的步骤里一起改：
+
+| 位置 | 用法 | 处理步骤 |
+|---|---|---|
+| `parse/DetectIndentationStyle.cpp:195` | `configPath.wstring()` | 第 19 步（test-detectindentationstyle） |
+| `util/file.cpp:490` | `std::wregex` | 第 20 步（test-file） |
+| `env/CDataProfile.h:90` | `std::to_wstring` | 第 20 步 |
+| `env/CShareData_IO.cpp:1482`、`:1590` | `std::to_wstring` | 第 20 步 |
+| `_main/CCommandLine.cpp:83` | `std::wregex` | 第 26 步（窗口框架，启动参数） |
+| `util/window.cpp:505` | `std::wostringstream` | 第 26 步（只有 Windows 界面用，可能整段只在 Windows 上编译） |
+| `agent/CGrepAgent.cpp:81` | `std::to_wstring` | 第 43 步（Grep） |
+| `macro/CPythonMacroManager.cpp:156`、`:271` | `std::wregex`、`std::to_wstring` | 第 45 步（宏）。Python 宏在 Mac 版是否支持在那一步决定，不支持就不编译 |
+| `CSelectLang.cpp:83` | `std::wregex`（语言 DLL 文件名） | 第 48 步（界面本地化），Mac 版不用语言 DLL |
+
+`basis/CErrorInfo.h` 的 `path.wstring()` 只用于 COM，Mac 版不编译。替换方法：数字转字符串用 `sakura::format(LTEXT("{}"), n)`，正则用第 18 步编入的 Onigmo，path 用 `sakura::path_to_wstring`。
+

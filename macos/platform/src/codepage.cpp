@@ -1,10 +1,11 @@
 ﻿/*! @file
 	@brief Mac 版的代码页转换（MultiByteToWideChar、WideCharToMultiByte 等）
 
-	- 单字节/双字节代码页：使用在 Windows 上导出的转换表（macos/tools/codepage_dump），
+	- 单字节/双字节代码页：使用在 Windows 上导出的转换表（macos/tools/codepage_dump，格式第 2 版），
 	  结果（含 best fit、替代字符、MB_ERR_INVALID_CHARS 的判定）与 Windows 相同。
-	- UTF-8：按 Windows 的规则实现（不正确序列的处理已在 Windows 上核对，见 DecodeUtf8）。
-	- UTF-7、GB18030、ISO-2022 系、HZ：用 iconv 实现。
+	- GB18030（54936）：1、2 字节和 BMP 的 4 字节字符用导出的表，补充平面按公式计算。
+	- UTF-8、UTF-7：按 Windows 的规则自己实现（不正确序列、参数检查都已在 Windows 上核对）。
+	- ISO-2022 系、HZ：用 iconv 实现（不正确输入的处理可能与 Windows 不同）。ISCII 不支持。
 	- CP_ACP、CP_OEMCP、CP_THREAD_ACP 都是 65001（与 Windows 的 UTF-8 全球语言支持设置相同）。
 */
 /*

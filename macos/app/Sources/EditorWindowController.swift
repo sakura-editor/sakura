@@ -1,3 +1,7 @@
+// Copyright (C) 2026, Sakura Editor Organization
+//
+// SPDX-License-Identifier: Zlib
+
 import AppKit
 
 /// 编辑窗口的空壳。

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026, Sakura Editor Organization
+# SPDX-License-Identifier: Zlib
 """从 Windows 资源文件（sakura_rc.rc）的 STRINGTABLE 生成 Mac 版的字符串表（C++ 源文件）。
 
 Windows 版的 sakura.exe 内含日文字符串，CSelectLang::LoadStringW 从中读取；

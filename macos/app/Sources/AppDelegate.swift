@@ -1,3 +1,7 @@
+// Copyright (C) 2026, Sakura Editor Organization
+//
+// SPDX-License-Identifier: Zlib
+
 import AppKit
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
