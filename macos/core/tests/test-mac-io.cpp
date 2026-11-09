@@ -1,5 +1,5 @@
 ﻿/*! @file
-	@brief Mac 版：文件相关的 Win32 替代函数和 io/CBinaryStream 的测试
+	@brief Mac 版：文件相关的 Win32 替代函数和 io/CBinaryStream、io/CTextStream 的测试
 */
 /*
 	Copyright (C) 2026, Sakura Editor Organization
@@ -8,9 +8,11 @@
 */
 #include "pch.h"
 #include "io/CBinaryStream.h"
+#include "io/CTextStream.h"
 
 #include <filesystem>
 #include <fstream>
+#include <iterator>
 
 #include <unistd.h>
 
@@ -100,4 +102,40 @@ TEST(MacIo, WfopenIgnoresWindowsOnlyModes)
 	fclose(fp);
 	EXPECT_STREQ(buf, "ok");
 	std::filesystem::remove(p);
+}
+
+TEST_F(MacIoTest, TextStreamUtf8WithBom)
+{
+	const auto path = wpath(u8"テキスト_utf8.txt");
+	{
+		CTextOutputStream out(path.c_str(), CODE_UTF8, true, true);
+		ASSERT_TRUE(out.Good());
+		out.WriteString(LTEXT("一行目 abc\r\n二行目\U0001F338\r\n"));
+	}
+	std::ifstream raw(dir / u8"テキスト_utf8.txt", std::ios::binary);
+	std::string bytes((std::istreambuf_iterator<char>(raw)), std::istreambuf_iterator<char>());
+	EXPECT_EQ(bytes, "\xEF\xBB\xBF" "\xE4\xB8\x80\xE8\xA1\x8C\xE7\x9B\xAE abc\r\n" "\xE4\xBA\x8C\xE8\xA1\x8C\xE7\x9B\xAE\xF0\x9F\x8C\xB8\r\n");
+
+	CTextInputStream in(path.c_str());
+	ASSERT_TRUE(in.Good());
+	EXPECT_EQ(in.ReadLineW(), LTEXT("一行目 abc"));
+	EXPECT_EQ(in.ReadLineW(), LTEXT("二行目\U0001F338"));
+}
+
+TEST_F(MacIoTest, TextStreamShiftJis)
+{
+	// 没有 BOM 的文件按 Shift_JIS（CP932）读入（与 Windows 版相同）
+	const auto path = wpath(u8"テキスト_sjis.txt");
+	{
+		CTextOutputStream out(path.c_str(), CODE_SJIS, true, false);
+		ASSERT_TRUE(out.Good());
+		out.WriteString(LTEXT("あ①ｱ\n"));
+	}
+	std::ifstream raw(dir / u8"テキスト_sjis.txt", std::ios::binary);
+	std::string bytes((std::istreambuf_iterator<char>(raw)), std::istreambuf_iterator<char>());
+	EXPECT_EQ(bytes, "\x82\xA0\x87\x40\xB1\r\n");	// WriteString 会把 LF 换成 CRLF（与 Windows 版相同）
+
+	CTextInputStream in(path.c_str());
+	ASSERT_TRUE(in.Good());
+	EXPECT_EQ(in.ReadLineW(), LTEXT("あ①ｱ"));
 }

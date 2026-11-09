@@ -14,10 +14,16 @@
 #include "CSelectLang.h"
 #include "util/MessageBoxF.h"
 
+#include <algorithm>
 #include <atomic>
 #include <cstdio>
 #include <mutex>
 #include <unordered_map>
+
+// sakura_rc.rc 的 STRINGTABLE（日文）。构建时由 macos/tools/rc_strings.py 生成
+struct SakuraResourceString { unsigned int id; const char16_t* text; };
+extern const SakuraResourceString g_sakuraResourceStrings[];
+extern const std::size_t g_sakuraResourceStringCount;
 
 namespace sakura::platform {
 
@@ -75,6 +81,14 @@ void SetStringLoaderFunction(StringLoaderFunction func) noexcept { g_stringLoade
 bool LoadResourceString(UINT id, std::basic_string<WCHAR>& out)
 {
 	if (const auto f = g_stringLoader.load()) return f(id, out);
+	// 默认实现：与 Windows 版 sakura.exe 内置的日文字符串相同
+	const auto* begin = g_sakuraResourceStrings;
+	const auto* end = g_sakuraResourceStrings + g_sakuraResourceStringCount;
+	const auto it = std::lower_bound(begin, end, id, [](const SakuraResourceString& e, UINT v) { return e.id < v; });
+	if (it != end && it->id == id) {
+		out = it->text;
+		return true;
+	}
 	out.clear();
 	return false;
 }
@@ -96,11 +110,11 @@ int MessageBoxS(
 }
 
 // ---------------------------------------------------------------------------
-// CSelectLang.h（文字列の読み込み部分のみ）
+// CSelectLang.h（只有读取字符串的部分）
 // ---------------------------------------------------------------------------
 sakura::wstring_view CSelectLang::LoadStringW(UINT id)
 {
-	// 返したビューが無効にならないよう、読み込んだ文字列は保持し続ける
+	// 为了让返回的视图一直有效，读入的字符串一直保留
 	static std::mutex mtx;
 	static std::unordered_map<UINT, sakura::wstring> cache;
 	std::lock_guard lock(mtx);

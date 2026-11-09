@@ -53,17 +53,25 @@ add_custom_command(
   VERBATIM)
 add_custom_target(sakura_funccode DEPENDS "${GEN_DIR}/Funccode_define.h" "${GEN_DIR}/Funccode_enum.h")
 
+# 界面字符串：从 sakura_rc.rc 的 STRINGTABLE 生成（Windows 版 sakura.exe 内置的日文字符串）
+add_custom_command(
+  OUTPUT "${GEN_DIR}/sakura_rc_strings.cpp"
+  COMMAND Python3::Interpreter "${SAKURA_ROOT}/macos/tools/rc_strings.py"
+    "${SAKURA_CORE}/sakura_rc.rc" "${GEN_DIR}/sakura_rc_strings.cpp"
+    "${SAKURA_ROOT}/src/main/resources/sakura_rc.h" "${GEN_DIR}/Funccode_define.h"
+  DEPENDS "${SAKURA_ROOT}/macos/tools/rc_strings.py" "${SAKURA_CORE}/sakura_rc.rc"
+    "${SAKURA_ROOT}/src/main/resources/sakura_rc.h" "${GEN_DIR}/Funccode_define.h"
+  VERBATIM)
+
 # ---------------------------------------------------------------------------
 # 核心库
 # ---------------------------------------------------------------------------
-set(SAKURA_CORE_DIRS basis config convert debug docplus io mem parse)
+set(SAKURA_CORE_DIRS basis charset config convert debug docplus io mem parse)
 # 暂不编入核心库的文件（依赖尚未移植的模块，或 Mac 版不需要）
 set(SAKURA_CORE_EXCLUDE
   # Mac 版不需要
   basis/CErrorInfo.cpp            # COM 的 IErrorInfo 实现
   io/CZipFile.cpp                 # 用 Windows Shell 解压 zip，只给插件安装用；Mac 版不支持 DLL 插件
-  # 第 17 步（charset）移植后加入
-  io/CTextStream.cpp              # 依赖 util/tchar_convert（代码页转换）
   # 第 19 步（doc、types）移植后加入
   io/CFile.cpp                    # 依赖 window/CEditWnd.h
   io/CFileLoad.cpp                # 依赖 charset/CESI 和 window/CEditWnd.h
@@ -82,10 +90,11 @@ foreach(x ${SAKURA_CORE_EXCLUDE})
 endforeach()
 # 核心目录之外、已经能在 Mac 上编译的单个文件（核心目录依赖它们）
 set(SAKURA_CORE_EXTRA_SOURCES
-  sakura_core/charset/charcode.cpp   # 文字種・文字幅（Mac 版は Core Text の測定関数を使う）
   sakura_core/util/format.cpp
+  sakura_core/util/tchar_convert.cpp
   sakura_core/util/string_ex.cpp
   sakura_core/util/string_ex2.cpp
+  sakura_core/window/CMainStatusBar.cpp   # 只编译 UnicodeToHex（状态栏的字符编码显示），其余是 Windows 界面
 )
 list(TRANSFORM SAKURA_CORE_EXTRA_SOURCES PREPEND "${SAKURA_ROOT}/")
 list(APPEND SAKURA_CORE_SOURCES ${SAKURA_CORE_EXTRA_SOURCES})
@@ -93,7 +102,20 @@ list(APPEND SAKURA_CORE_SOURCES ${SAKURA_CORE_EXTRA_SOURCES})
 add_library(sakura_core STATIC
   ${SAKURA_CORE_SOURCES}
   "${SAKURA_ROOT}/macos/platform/src/win32_api.cpp"
-  "${SAKURA_ROOT}/macos/platform/src/ui_bridge.cpp")
+  "${SAKURA_ROOT}/macos/platform/src/codepage.cpp"
+  "${SAKURA_ROOT}/macos/platform/src/codepage_data.cpp"
+  "${SAKURA_ROOT}/macos/platform/src/ui_bridge.cpp"
+  "${GEN_DIR}/sakura_rc_strings.cpp")
+# 代码页转换表（在 Windows 上导出，见 macos/tools/codepage_dump）。用 .incbin 嵌入
+set(SAKURA_CODEPAGES_BIN "${SAKURA_ROOT}/macos/platform/data/codepages.bin")
+string(REPLACE "\\" "\\\\" _cp_path "${SAKURA_CODEPAGES_BIN}")
+string(REPLACE "\"" "\\\"" _cp_path "${_cp_path}")
+file(WRITE "${GEN_DIR}/codepage_data_path.h.in"
+  "#pragma once\n#define SAKURA_CODEPAGES_INCBIN \".incbin \\\"@_cp_path@\\\"\\n\"\n")
+configure_file("${GEN_DIR}/codepage_data_path.h.in" "${GEN_DIR}/codepage_data_path.h" @ONLY)
+set_source_files_properties("${SAKURA_ROOT}/macos/platform/src/codepage_data.cpp" PROPERTIES
+  OBJECT_DEPENDS "${SAKURA_CODEPAGES_BIN}"
+  SKIP_PRECOMPILE_HEADERS ON)
 add_dependencies(sakura_core sakura_funccode)
 target_include_directories(sakura_core PUBLIC
   "${SAKURA_ROOT}/macos/platform/include"   # Mac 版 StdAfx.h 优先
@@ -130,6 +152,8 @@ if(SAKURA_BUILD_TESTS)
     "${CMAKE_CURRENT_SOURCE_DIR}/tests"          # Mac 版 pch.h 优先
     "${SAKURA_ROOT}/src/test/resources")
   target_link_libraries(sakura_core_tests PRIVATE sakura_core GTest::gmock_main)
+  # 与 MSVC 的预编译头（/Yu"pch.h"）一样，让 pch.h 先于测试文件里的其他头文件
+  target_precompile_headers(sakura_core_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/tests/pch.h")
   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
     target_compile_options(sakura_core_tests PRIVATE -w)
   endif()

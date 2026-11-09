@@ -39,7 +39,7 @@ TEST(CEol, CEol)
 }
 
 //! EOLテストのためのパラメータ型
-using CEolTestParam = std::tuple<EEolType, bool, std::wstring, std::wstring>;
+using CEolTestParam = std::tuple<EEolType, bool, sakura::wstring, sakura::wstring>;
 
 //! EOLテストのためのフィクスチャクラス
 class CEolTest : public ::testing::TestWithParam<CEolTestParam> {};
@@ -69,13 +69,13 @@ TEST_P(CEolTest, test)
 INSTANTIATE_TEST_SUITE_P(CEolCases
 	, CEolTest
 	, ::testing::Values(
-		CEolTestParam{ EEolType::none,                false, L"改行無", {}        },
-		CEolTestParam{ EEolType::cr_and_lf,           true,  L"CRLF",   L"\r\n"   },
-		CEolTestParam{ EEolType::line_feed,           true,  L"LF",     L"\n"     },
-		CEolTestParam{ EEolType::carriage_return,     true,  L"CR",     L"\r"     },
-		CEolTestParam{ EEolType::next_line,           true,  L"NEL",    L"\x85",  },
-		CEolTestParam{ EEolType::line_separator,      true,  L"LS",     L"\u2028" },
-		CEolTestParam{ EEolType::paragraph_separator, true,  L"PS",     L"\u2029" }
+		CEolTestParam{ EEolType::none,                false, LTEXT("改行無"), {}        },
+		CEolTestParam{ EEolType::cr_and_lf,           true,  LTEXT("CRLF"),   LTEXT("\r\n")   },
+		CEolTestParam{ EEolType::line_feed,           true,  LTEXT("LF"),     LTEXT("\n")     },
+		CEolTestParam{ EEolType::carriage_return,     true,  LTEXT("CR"),     LTEXT("\r")     },
+		CEolTestParam{ EEolType::next_line,           true,  LTEXT("NEL"),    LTEXT("\x85"),  },
+		CEolTestParam{ EEolType::line_separator,      true,  LTEXT("LS"),     LTEXT("\u2028") },
+		CEolTestParam{ EEolType::paragraph_separator, true,  LTEXT("PS"),     LTEXT("\u2029") }
 	)
 );
 
@@ -116,20 +116,20 @@ TEST_P(DetectEolTest, test)
 INSTANTIATE_TEST_SUITE_P(DetectEolCases
 	, DetectEolTest
 	, ::testing::Values(
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::none,                L""       },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::cr_and_lf,           L"\r\n"   },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_feed,           L"\n"     },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::carriage_return,     L"\r"     },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::next_line,           L"\x85"   },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_separator,      L"\u2028" },
-		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::paragraph_separator, L"\u2029" },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::none,                L""       },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::cr_and_lf,           L"\r\n"   },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_feed,           L"\n"     },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::carriage_return,     L"\r"     },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::next_line,           L"\x85"   },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_separator,      L"\u2028" },
-		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::paragraph_separator, L"\u2029" }
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::none,                LTEXT("")       },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::cr_and_lf,           LTEXT("\r\n")   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_feed,           LTEXT("\n")     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::carriage_return,     LTEXT("\r")     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::next_line,           LTEXT("\x85")   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::line_separator,      LTEXT("\u2028") },
+		DetectEolTestParam{ ECodeType::CODE_UTF16LE, EEolType::paragraph_separator, LTEXT("\u2029") },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::none,                LTEXT("")       },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::cr_and_lf,           LTEXT("\r\n")   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_feed,           LTEXT("\n")     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::carriage_return,     LTEXT("\r")     },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::next_line,           LTEXT("\x85")   },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::line_separator,      LTEXT("\u2028") },
+		DetectEolTestParam{ ECodeType::CODE_UTF16BE, EEolType::paragraph_separator, LTEXT("\u2029") }
 	)
 );
 

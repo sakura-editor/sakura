@@ -5,8 +5,11 @@
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
+#include <cerrno>
+#if defined(_WIN32)
 #include <locale.h>
 #include <mbstring.h>
+#endif
 #include "charset/codeutil.h"
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
@@ -67,6 +70,7 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 }
 #endif
 
+#if defined(_WIN32)
 /*!
 	@brief 常に使う日本語のロケールを返す
 
@@ -103,6 +107,69 @@ unsigned int _mbcjistojms_j( unsigned int c )
 {
 	return _mbcjistojms_l(c, GetJaLocale());
 }
+
+#else // Mac 版: MSVC の CRT 関数 _mbcjmstojis_l / _mbcjistojms_l（コードページ 932）と同じ計算をする
+
+/*!
+	@brief 常に日本語ロケールを使うSJIS→JIS変換
+
+	SJISコードをJISに変換する．変換できないときは 0 を返し、errno を EILSEQ にする．
+
+	@param c [in] 変換する文字 (Shift JIS)
+*/
+unsigned int _mbcjmstojis_j( unsigned int c )
+{
+	unsigned int h = (c >> 8) & 0xff;
+	unsigned int l = c & 0xff;
+	const bool isLead = (0x81 <= h && h <= 0x9f) || (0xe0 <= h && h <= 0xfc);
+	const bool isTrail = (0x40 <= l && l <= 0x7e) || (0x80 <= l && l <= 0xfc);
+	if( !isLead || !isTrail ){
+		errno = EILSEQ;
+		return 0;
+	}
+	h -= (h >= 0xa0) ? 0xc1 : 0x81;
+	if( l >= 0x9f ){
+		c = (h << 9) + 0x2200;
+		c |= l - 0x7e;
+	}else{
+		c = (h << 9) + 0x2100;
+		c |= l - ((l <= 0x7e) ? 0x1f : 0x20);
+	}
+	if( c > 0x7e7e ){
+		errno = EILSEQ;
+		return 0;
+	}
+	return c;
+}
+
+/*!
+	@brief 常に日本語ロケールを使うJIS→SJIS変換
+
+	JISコードをSJISに変換する．変換できないときは 0 を返し、errno を EILSEQ にする．
+
+	@param c [in] 変換する文字 (JIS)
+*/
+unsigned int _mbcjistojms_j( unsigned int c )
+{
+	unsigned int h = (c >> 8) & 0xff;
+	unsigned int l = c & 0xff;
+	if( h < 0x21 || h > 0x7e || l < 0x21 || l > 0x7e ){
+		errno = EILSEQ;
+		return 0;
+	}
+	if( h & 0x01 ){
+		l += (l <= 0x5f) ? 0x1f : 0x20;
+	}else{
+		l += 0x7e;
+	}
+	h = ((h - 0x21) >> 1) + 0x81;
+	if( h > 0x9f ){
+		h += 0x40;
+	}
+	return (h << 8) | l;
+}
+
+#endif // defined(_WIN32)
 
 /*
 	判別テーブル   WinAPI 関数 WideCharToMultiByte の特殊な変換（相互変換できない変換）か

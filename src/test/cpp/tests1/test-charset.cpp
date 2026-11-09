@@ -28,16 +28,16 @@ TEST(CCodeTypeName, ReturnsNamesForKnownCode)
 {
 	for (const auto code : codes) {
 		const CCodeTypeName name(code);
-		const wchar_t* pszNormal = name.Normal();
-		const wchar_t* pszShort = name.Short();
-		const std::wstring bracket = name.Bracket();
+		const WCHAR* pszNormal = name.Normal();
+		const WCHAR* pszShort = name.Short();
+		const sakura::wstring bracket = name.Bracket();
 
 		ASSERT_NE(nullptr, pszNormal);
 		ASSERT_NE(nullptr, pszShort);
 		ASSERT_FALSE(bracket.empty());
 
 		// Bracket() は Short() を "  [" と "]" で囲んだもの
-		EXPECT_THAT(bracket, std::wstring(L"  [") + pszShort + L"]");
+		EXPECT_THAT(bracket, sakura::wstring(LTEXT("  [")) + pszShort + LTEXT("]"));
 	}
 }
 
@@ -71,15 +71,15 @@ TEST(CCodeTypeName, BracketFromMultipleThreads_NotCorrupted)
 	constexpr int nIterations = 20000;
 
 	// 期待値はメインスレッドで先に確定させる(ここで InitCodeSet() も済む)
-	std::vector<std::wstring> expected;
+	std::vector<sakura::wstring> expected;
 	for (const auto code : codes) {
-		const wchar_t* pszShort = CCodeTypeName(code).Short();
+		const WCHAR* pszShort = CCodeTypeName(code).Short();
 		ASSERT_NE(nullptr, pszShort);
-		expected.emplace_back(std::wstring(L"  [") + pszShort + L"]");
+		expected.emplace_back(sakura::wstring(LTEXT("  [")) + pszShort + LTEXT("]"));
 	}
 
 	std::atomic<int> nMismatch{ 0 };
-	std::vector<std::wstring> firstBad(codes.size());	// 各スレッドは自分の添字だけを書く
+	std::vector<sakura::wstring> firstBad(codes.size());	// 各スレッドは自分の添字だけを書く
 	{
 		std::vector<std::jthread> workers;
 		workers.reserve(codes.size());
@@ -87,7 +87,7 @@ TEST(CCodeTypeName, BracketFromMultipleThreads_NotCorrupted)
 			workers.emplace_back([&, i]() {
 				for (int n = 0; n < nIterations; ++n) {
 					// 値で受け取って比較する
-					const std::wstring actual = CCodeTypeName(codes[i]).Bracket();
+					const sakura::wstring actual = CCodeTypeName(codes[i]).Bracket();
 					if (actual != expected[i]) {
 						if (firstBad[i].empty()) firstBad[i] = actual;
 						nMismatch.fetch_add(1);
@@ -98,10 +98,10 @@ TEST(CCodeTypeName, BracketFromMultipleThreads_NotCorrupted)
 	}	// jthread のデストラクタで join される
 
 	// gtest の失敗報告はワーカー内では行わず、join 後にメインスレッドでまとめて行う
-	std::wstring samples;
+	sakura::wstring samples;
 	for (size_t i = 0; i < codes.size(); ++i) {
 		if (!firstBad[i].empty()) {
-			samples += L" [expected=" + expected[i] + L" actual=" + firstBad[i] + L"]";
+			samples += LTEXT(" [expected=") + expected[i] + LTEXT(" actual=") + firstBad[i] + LTEXT("]");
 		}
 	}
 	EXPECT_THAT(nMismatch.load(), 0) << "Bracket() の戻り値が壊れました";
@@ -123,11 +123,11 @@ TEST(CCodePage, GetNameBracketReturnsBracketForKnownCode)
 */
 TEST(CCodePage, GetNameBracketReturnsCodePageName)
 {
-	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPACP), StrEq(L"  [CP_ACP]"));
-	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPOEM), StrEq(L"  [CP_OEM]"));
+	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPACP), StrEq(LTEXT("  [CP_ACP]")));
+	EXPECT_THAT(CCodePage::GetNameBracket(CODE_CPOEM), StrEq(LTEXT("  [CP_OEM]")));
 
 	// それ以外のコードページは番号がそのまま表記される
-	EXPECT_THAT(CCodePage::GetNameBracket(932), StrEq(L"  [CP932]"));
+	EXPECT_THAT(CCodePage::GetNameBracket(932), StrEq(LTEXT("  [CP932]")));
 }
 
 /*!
@@ -135,13 +135,13 @@ TEST(CCodePage, GetNameBracketReturnsCodePageName)
 */
 TEST(CCodePage, GetNameBracketWritesToBuffer)
 {
-	std::array<wchar_t, 100> buffer{};
+	std::array<WCHAR, 100> buffer{};
 
 	EXPECT_THAT(CCodePage::GetNameBracket(buffer, CODE_EUC), 1);
 	EXPECT_THAT(buffer.data(), StrEq(CCodeTypeName(CODE_EUC).Bracket()));
 
 	EXPECT_THAT(CCodePage::GetNameBracket(buffer, CODE_CPACP), 2);
-	EXPECT_THAT(buffer.data(), StrEq(L"  [CP_ACP]"));
+	EXPECT_THAT(buffer.data(), StrEq(LTEXT("  [CP_ACP]")));
 }
 
 /*!

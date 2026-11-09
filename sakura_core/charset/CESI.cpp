@@ -25,8 +25,11 @@
 #include "charset/codeutil.h"
 
 // 非依存推奨
+#include "types/CType.h"	// SEncodingConfig
+#if defined(_WIN32)
 #include "window/CEditWnd.h"
 #include "env/CShareData.h"
+#endif
 
 /*!
 	encodingNameToCode構造体におけるエンコーディング名の定義
@@ -1278,7 +1281,7 @@ ECodeType CESI::CheckKanjiCode(const char* pBuf, size_t nBufLen) noexcept
 	return m_pEncodingConfig->m_eDefaultCodetype;
 }
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(_WIN32)	// Mac 版: 編集中の文書を参照するので、移植計画のステップ 19（文書モデル）で有効にする
 
 /*!
 	収集した情報をダンプする

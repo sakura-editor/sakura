@@ -26,9 +26,10 @@
 
 #include "config/system_constants.h"
 
-#if defined(_WIN32)	// Mac 版: エディタ画面を使うテストと tchar_convert のテストは Windows のみ（tchar_convert は移植計画のステップ 17 で移植する）
-#include "util/os/MockUser32.hpp"
 #include "util/tchar_convert.h"
+
+#if defined(_WIN32)	// Mac 版: エディタ画面を使うテストは Windows のみ
+#include "util/os/MockUser32.hpp"
 
 #include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
@@ -516,9 +517,17 @@ INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 
 #endif // if defined(_MSC_VER) && defined(_DEBUG)
 
-#if defined(_WIN32)	// Mac 版: tchar_convert は移植計画のステップ 17 で移植する
-
 namespace cxx {
+
+#if defined(_WIN32)
+//! UI 言語を日本語にしたときの CP_ACP（Shift_JIS）
+constexpr UINT kJapaneseAcp = CP_ACP;
+inline void SetJapaneseUILanguage() { ::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN)); }
+#else
+// Mac 版の CP_ACP は UTF-8（ナロー文字列リテラルと同じ）なので、Shift_JIS 固有の確認は CP_SJIS を明示する
+constexpr UINT kJapaneseAcp = CP_SJIS;
+inline void SetJapaneseUILanguage() {}
+#endif
 
 TEST(to_achar, test001)
 {
@@ -529,7 +538,7 @@ TEST(to_achar, test001)
 TEST(to_achar, test002)
 {
 	// 日本語を含む文字列
-	EXPECT_THAT(to_achar(LTEXT("あい")), StrEq("あい"));
+	EXPECT_THAT(to_achar(LTEXT("あい")), StrEq("\x82\xA0\x82\xA2"));	// 「あい」の Shift_JIS（Windows 版のナロー文字列リテラルと同じバイト列）
 }
 
 TEST(to_achar, test101)
@@ -559,7 +568,7 @@ TEST(to_string, test001)
 TEST(to_string, test002)
 {
 	// ロケールを設定
-	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+	SetJapaneseUILanguage();
 
 
 	// 日本語を含む文字列
@@ -581,10 +590,10 @@ TEST(to_string, test004)
 TEST(to_string, test101)
 {
 	// ロケールを設定
-	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+	SetJapaneseUILanguage();
 
 	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
-	EXPECT_ANY_THROW(cxx::to_string(LTEXT("\U0001F6B9")));
+	EXPECT_ANY_THROW(cxx::to_string(LTEXT("\U0001F6B9"), kJapaneseAcp));
 }
 
 TEST(to_wchar, test001)
@@ -596,7 +605,7 @@ TEST(to_wchar, test001)
 TEST(to_wchar, test002)
 {
 	// 日本語を含む文字列
-	EXPECT_THAT(to_wchar("あい"), StrEq(LTEXT("あい")));
+	EXPECT_THAT(to_wchar("\x82\xA0\x82\xA2"), StrEq(LTEXT("あい")));	// 「あい」の Shift_JIS
 }
 
 TEST(to_wchar, test101)
@@ -626,7 +635,7 @@ TEST(to_wstring, test001)
 TEST(to_wstring, test002)
 {
 	// ロケールを設定
-	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+	SetJapaneseUILanguage();
 
 
 	// 日本語を含む文字列
@@ -648,19 +657,19 @@ TEST(to_wstring, test004)
 TEST(to_wstring, test101)
 {
 	// ロケールを設定
-	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
+	SetJapaneseUILanguage();
 
 	// SJIS仕様違反 先行バイトのみ
-	EXPECT_ANY_THROW(cxx::to_wstring("\x81"));
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81", kJapaneseAcp));
 
 	// SJIS仕様違反 後続バイト値が不正
-	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x7F"));
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x7F", kJapaneseAcp));
 
 	// SJIS仕様違反 後続バイト値が範囲外1
-	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x3F"));
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\x3F", kJapaneseAcp));
 
 	// SJIS仕様違反 後続バイト値が範囲外2
-	EXPECT_ANY_THROW(cxx::to_wstring("\x81\xFD"));
+	EXPECT_ANY_THROW(cxx::to_wstring("\x81\xFD", kJapaneseAcp));
 }
 
 TEST(WideCharToMultiByte, test101)
@@ -673,5 +682,3 @@ TEST(WideCharToMultiByte, test101)
 }
 
 } // namespace cxx
-
-#endif // defined(_WIN32)

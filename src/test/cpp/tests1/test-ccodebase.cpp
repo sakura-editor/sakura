@@ -22,7 +22,7 @@ std::string ToUtf16LeBytes(std::string_view ascii)
 	return dest;
 }
 
-std::string ToUtf16LeBytes(std::wstring_view wide)
+std::string ToUtf16LeBytes(sakura::wstring_view wide)
 {
 	std::string dest;
 	dest.reserve(wide.size() * 2);
@@ -44,7 +44,7 @@ std::string ToUtf16BeBytes(std::string_view ascii)
 	return dest;
 }
 
-std::string ToUtf16BeBytes(std::wstring_view wide)
+std::string ToUtf16BeBytes(sakura::wstring_view wide)
 {
 	std::string dest;
 	dest.reserve(wide.size() * 2);
@@ -68,7 +68,7 @@ std::string ToUtf32LeBytes(std::string_view ascii)
 	return dest;
 }
 
-std::string ToUtf32LeBytes(std::wstring_view wide)
+std::string ToUtf32LeBytes(sakura::wstring_view wide)
 {
 	std::string dest;
 	dest.reserve(wide.size() * 2);
@@ -94,7 +94,7 @@ std::string ToUtf32BeBytes(std::string_view ascii)
 	return dest;
 }
 
-std::string ToUtf32BeBytes(std::wstring_view wide)
+std::string ToUtf32BeBytes(sakura::wstring_view wide)
 {
 	std::string dest;
 	dest.reserve(wide.size() * 2);
@@ -159,7 +159,7 @@ TEST(CCodeBase, codeSJis)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr const auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -170,7 +170,7 @@ TEST(CCodeBase, codeSJis)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（Shift-JIS仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 	constexpr const auto& mbsKanaKanji = "\xB6\xC5\x82\xA9\x82\xC8\x83\x4A\x83\x69\x8A\xBF\x8E\x9A";
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, mbsKanaKanji);
@@ -196,9 +196,9 @@ TEST(CCodeBase, codeSJis)
 		"\x81\x0A\x81\x7F\x81\xFD\x81\xFE\x81\xFF"	// 第2バイト不正
 		;
 	constexpr const auto& wcsCantConvSJis =
-		L"①\xDCED\xDC40ⅰ"
-		L"\xDC80@\xDCFD@\xDCFE@\xDCFF@"
-		L"\xDC81\n\xDC81\x7F\xDC81\xDCFD\xDC81\xDCFE\xDC81\xDCFF"
+		LTEXT("①\xDCED\xDC40ⅰ")
+		LTEXT("\xDC80@\xDCFD@\xDCFE@\xDCFF@")
+		LTEXT("\xDC81\n\xDC81\x7F\xDC81\xDCFD\xDC81\xDCFE\xDC81\xDCFF")
 		;
 
 	auto result3 = CCodeFactory::LoadFromCode(eCodeType, mbsCantConvSJis);
@@ -206,7 +206,7 @@ TEST(CCodeBase, codeSJis)
 	EXPECT_THAT(result3, IsTrue());	//👈 仕様バグ。変換できないので true が返るべき。
 
 	// Unicodeから変換できない文字（Shift-JIS仕様）
-	constexpr const auto& wcsOGuy = L"森鷗外";
+	constexpr const auto& wcsOGuy = LTEXT("森鷗外");
 	constexpr const auto& mbsOGuy = "\x90\x58\x3F\x8A\x4F"; //森?外
 
 	const auto cresult4 = CCodeFactory::ConvertToCode(eCodeType, wcsOGuy);
@@ -223,12 +223,12 @@ TEST(CCodeBase, codeJis)
 
 	// 7bit ASCII範囲（ISO-2022-JP仕様）
 	constexpr const auto& mbsAscii = "\x1\x2\x3\x4\x5\x6\a\b\t\n\v\f\r\xE\xF\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x1\x2\x3\x4\x5\x6\a\b\t\n\v\f\r\xE\xF\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\xDC1B\xDC1C\xDC1D\xDC1E\xDC1F\xDC20!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x1\x2\x3\x4\x5\x6\a\b\t\n\v\f\r\xE\xF\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\xDC1B\xDC1C\xDC1D\xDC1E\xDC1F\xDC20!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	// 不具合1: 不正なエスケープシーケンスをエラーバイナリに格納してない
 	// 不具合2: C0領域の文字 DEL(0x7F) を取り込めてない
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
-	EXPECT_THAT(result1.destination, StrEq(L"\x1\x2\x3\x4\x5\x6\a\b\t\n\v\f\r\xE\xF\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A???!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~?"));
+	EXPECT_THAT(result1.destination, StrEq(LTEXT("\x1\x2\x3\x4\x5\x6\a\b\t\n\v\f\r\xE\xF\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A???!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~?")));
 	EXPECT_THAT(result1, IsFalse());	// 👈 不正なエスケープシーケンスを検出してるので戻り値は false で正しい。
 
 	result1.destination = wcsAscii;
@@ -239,7 +239,7 @@ TEST(CCodeBase, codeJis)
 	EXPECT_THAT(cresult1, IsFalse());	// 👈 エラーバイナリの復元はエラーではないので true を返すべき。
 
 	// かな漢字の変換（ISO-2022-JP仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 	constexpr const auto& mbsKanaKanji = "\x1B(I6E\x1B$B$+$J%+%J4A;z\x1B(B";
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, mbsKanaKanji);
@@ -257,7 +257,7 @@ TEST(CCodeBase, codeJis)
 	EXPECT_THAT(CCodeFactory::LoadFromCode(eCodeType, "\x1B(D33\x1B(B").result, RESULT_LOSESOME);
 
 	// Shift-Jisに変換できない文字
-	EXPECT_THAT(CCodeFactory::ConvertToCode(eCodeType, L"\u9DD7").result, RESULT_LOSESOME);	// 森鴎外の鷗
+	EXPECT_THAT(CCodeFactory::ConvertToCode(eCodeType, LTEXT("\u9DD7")).result, RESULT_LOSESOME);	// 森鴎外の鷗
 }
 
 /*!
@@ -270,7 +270,7 @@ TEST(CCodeBase, codeEucJp)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr const auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -281,7 +281,7 @@ TEST(CCodeBase, codeEucJp)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（EUC-JP仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 	constexpr const auto& mbsKanaKanji = "\x8E\xB6\x8E\xC5\xA4\xAB\xA4\xCA\xA5\xAB\xA5\xCA\xB4\xC1\xBB\xFA";
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, mbsKanaKanji);
@@ -299,8 +299,8 @@ TEST(CCodeBase, codeEucJp)
 		""	// 第2バイト不正
 		;
 	constexpr const auto& wcsCantConvEucJp =
-		L""
-		L""
+		LTEXT("")
+		LTEXT("")
 		;
 
 	auto result3 = CCodeFactory::LoadFromCode(eCodeType, mbsCantConvEucJp);
@@ -308,7 +308,7 @@ TEST(CCodeBase, codeEucJp)
 	//ASSERT_THAT(result3.losesome, IsFalse());
 
 	// Unicodeから変換できない文字（EUC-JP仕様）
-	constexpr const auto& wcsOGuy = L"森鷗外";
+	constexpr const auto& wcsOGuy = LTEXT("森鷗外");
 	constexpr const auto& mbsOGuy = "\xBF\xB9\x3F\xB3\xB0"; //森?外
 
 	// 本来のEUC-JPは「森鷗外」を正確に表現できるため、不具合と考えられる。
@@ -329,7 +329,7 @@ TEST(CCodeBase, codeLatin1)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr const auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -342,14 +342,14 @@ TEST(CCodeBase, codeLatin1)
 	// Latin1はかな漢字変換非サポートなので、0x80以上の変換できる文字をチェックする
 	// 符号位置 81, 8D, 8F, 90, および 9D は未使用だが、そのまま出力される。
 	constexpr const auto& wcsLatin1ExtChars =
-		L"€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F"
-		L"\x90‘’“”•–—˜™š›œ\x9DžŸ"
-		L"\xA0¡¢£¤¥¦§¨©ª«¬\xAD®¯"
-		L"°±²³´µ¶·¸¹º»¼½¾¿"
-		L"ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ"
-		L"ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß"
-		L"àáâãäåæçèéêëìíîï"
-		L"ðñòóôõö÷øùúûüýþÿ"
+		LTEXT("€\x81‚ƒ„…†‡ˆ‰Š‹Œ\x8DŽ\x8F")
+		LTEXT("\x90‘’“”•–—˜™š›œ\x9DžŸ")
+		LTEXT("\xA0¡¢£¤¥¦§¨©ª«¬\xAD®¯")
+		LTEXT("°±²³´µ¶·¸¹º»¼½¾¿")
+		LTEXT("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏ")
+		LTEXT("ÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß")
+		LTEXT("àáâãäåæçèéêëìíîï")
+		LTEXT("ðñòóôõö÷øùúûüýþÿ")
 		;
 	constexpr const auto& mbsLatin1ExtChars =
 		"\x80\x81\x82\x83\x84\x85\x86\x87\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"
@@ -373,7 +373,7 @@ TEST(CCodeBase, codeLatin1)
 	// Unicodeに変換できない文字はない（Latin1仕様）
 
 	// Unicodeから変換できない文字（Latin1仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 	constexpr const auto& mbsKanaKanji = "????????";
 
 	const auto cresult4 = CCodeFactory::ConvertToCode(eCodeType, wcsKanaKanji);
@@ -391,7 +391,7 @@ TEST(CCodeBase, codeUtf8)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr const auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -403,7 +403,7 @@ TEST(CCodeBase, codeUtf8)
 
 	// かな漢字の変換（UTF-8仕様）
 	constexpr const auto& mbsKanaKanji = u8"ｶﾅかなカナ漢字";
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, (LPCSTR)mbsKanaKanji);
 	EXPECT_THAT(result2.destination, StrEq(wcsKanaKanji));
@@ -424,7 +424,7 @@ TEST(CCodeBase, codeUtf8_OracleImplementation)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr const auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -436,7 +436,7 @@ TEST(CCodeBase, codeUtf8_OracleImplementation)
 
 	// かな漢字の変換（UTF-8仕様）
 	constexpr const auto& mbsKanaKanji = u8"ｶﾅかなカナ漢字";
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, (LPCSTR)mbsKanaKanji);
 	EXPECT_THAT(result2.destination, StrEq(wcsKanaKanji));
@@ -456,7 +456,7 @@ TEST(CCodeBase, codeUtf7)
 
 	// 7bit ASCII範囲（UTF-7仕様）
 	constexpr const auto& mbsAscii = "+AAEAAgADAAQABQAGAAcACA-\t\n+AAsADA-\r+AA4ADwAQABEAEgATABQAFQAWABcAGAAZABoAGwAcAB0AHgAf- +ACEAIgAjACQAJQAm-'()+ACoAKw-,-./0123456789:+ADsAPAA9AD4-?+AEA-ABCDEFGHIJKLMNOPQRSTUVWXYZ+AFsAXABdAF4AXwBg-abcdefghijklmnopqrstuvwxyz+AHsAfAB9AH4Afw-";
-	constexpr const auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr const auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, mbsAscii);
 	EXPECT_THAT(result1.destination, StrEq(wcsAscii));
@@ -467,7 +467,7 @@ TEST(CCodeBase, codeUtf7)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（UTF-7仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 	constexpr const auto& mbsKanaKanji = "+/3b/hTBLMGowqzDKbyJbVw-";
 
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, mbsKanaKanji);
@@ -479,7 +479,7 @@ TEST(CCodeBase, codeUtf7)
 	EXPECT_THAT(cresult2, IsTrue());
 
 	// UTF-7仕様
-	constexpr const auto& wcsPlusPlus = L"C++";
+	constexpr const auto& wcsPlusPlus = LTEXT("C++");
 	constexpr const auto& mbsPlusPlus = "C+-+-";
 
 	auto result5 = CCodeFactory::LoadFromCode(eCodeType, mbsPlusPlus);
@@ -500,7 +500,7 @@ TEST(CCodeBase, codeUtf16Le)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	const auto bytesAscii = ToUtf16LeBytes(mbsAscii);
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, bytesAscii);
@@ -512,7 +512,7 @@ TEST(CCodeBase, codeUtf16Le)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（UTF-16LE仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	const auto bytesKanaKanji = ToUtf16LeBytes(wcsKanaKanji);
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, bytesKanaKanji);
@@ -533,7 +533,7 @@ TEST(CCodeBase, codeUtf16Be)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	const auto bytesAscii = ToUtf16BeBytes(mbsAscii);
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, bytesAscii);
@@ -545,7 +545,7 @@ TEST(CCodeBase, codeUtf16Be)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（UTF-16BE仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	const auto bytesKanaKanji = ToUtf16BeBytes(wcsKanaKanji);
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, bytesKanaKanji);
@@ -566,7 +566,7 @@ TEST(CCodeBase, codeUtf32Le)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	const auto bytesAscii = ToUtf32LeBytes(mbsAscii);
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, bytesAscii);
@@ -578,7 +578,7 @@ TEST(CCodeBase, codeUtf32Le)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（UTF-32LE仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	const auto bytesKanaKanji = ToUtf32LeBytes(wcsKanaKanji);
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, bytesKanaKanji);
@@ -599,7 +599,7 @@ TEST(CCodeBase, codeUtf32Be)
 
 	// 7bit ASCII範囲（等価変換）
 	constexpr auto& mbsAscii = "\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
-	constexpr auto& wcsAscii = L"\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F";
+	constexpr auto& wcsAscii = LTEXT("\x01\x02\x03\x04\x05\x06\a\b\t\n\v\f\r\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\x7F");
 
 	const auto bytesAscii = ToUtf32BeBytes(mbsAscii);
 	auto result1 = CCodeFactory::LoadFromCode(eCodeType, bytesAscii);
@@ -611,7 +611,7 @@ TEST(CCodeBase, codeUtf32Be)
 	EXPECT_THAT(cresult1, IsTrue());
 
 	// かな漢字の変換（UTF-32BE仕様）
-	constexpr const auto& wcsKanaKanji = L"ｶﾅかなカナ漢字";
+	constexpr const auto& wcsKanaKanji = LTEXT("ｶﾅかなカナ漢字");
 
 	const auto bytesKanaKanji = ToUtf32BeBytes(wcsKanaKanji);
 	auto result2 = CCodeFactory::LoadFromCode(eCodeType, bytesKanaKanji);
@@ -836,7 +836,7 @@ void PrintTo(ESettingType eSettingType, std::ostream* os)
  * @param caretChars キャレット位置の文字列
  * @param expected 期待される表示用16進変換の結果
  */
-using UnicoceToHexTestParam = std::tuple<ESettingType, ECodeType, std::wstring, std::wstring>;
+using UnicoceToHexTestParam = std::tuple<ESettingType, ECodeType, sakura::wstring, sakura::wstring>;
 
 //! 表示用16進変換テストのためのフィクスチャクラス
 struct UnicodeToHexTest : public ::testing::TestWithParam<UnicoceToHexTestParam> {
@@ -881,156 +881,156 @@ INSTANTIATE_TEST_SUITE_P(UnicodeToHexCases
 	, UnicodeToHexTest
 	, ::testing::Values(
 		// ASCII文字「J」
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"J", L"4A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"J", L"4A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"J", L"4A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"J", L"U+004A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"J", L"U+004A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"J", L"U+004A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"J", L"U+004A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"J", L"4A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"J", L"U+004A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"J", L"4A" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"J", L"4a" },		// Latin1だけ英字が小文字。（おそらく仕様。）
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("J"), LTEXT("4A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("J"), LTEXT("4A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("J"), LTEXT("4A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("J"), LTEXT("U+004A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("J"), LTEXT("U+004A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("J"), LTEXT("U+004A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("J"), LTEXT("U+004A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("J"), LTEXT("4A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("J"), LTEXT("U+004A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("J"), LTEXT("4A") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("J"), LTEXT("4a") },		// Latin1だけ英字が小文字。（おそらく仕様。）
 
 		// 空文字
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"", L"U+0000" },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"", L"U+0000" },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"", L"U+0000" },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"", L"U+0000" },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"", L"U+0000" },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"", L"00" },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT(""), LTEXT("U+0000") },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT(""), LTEXT("U+0000") },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT(""), LTEXT("U+0000") },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT(""), LTEXT("U+0000") },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT(""), LTEXT("U+0000") },		// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT(""), LTEXT("00") },			// 👈バグ。サイズゼロなので終端NULにアクセスしてはならない。
 
 		// コードページでサポートされない文字「鷗」（SJISで定義されていない）
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"鷗", L"U+9DD7" },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("鷗"), LTEXT("U+9DD7") },
 
 		// コードページでサポートされない文字「鷗」（JIS X 0212には非対応）
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"鷗", L"U+9DD7" },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("鷗"), LTEXT("U+9DD7") },
 
 		// コードページでサポートされない文字「鷗」（補助漢字には非対応）
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"鷗", L"U+9DD7" },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("鷗"), LTEXT("U+9DD7") },
 
 		// エラーバイナリ
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"\xDCEF", L"?EF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"\xDCEF", L"?EF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"\xDCEF", L"?EF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"\xDCEF", L"U+DCEF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"\xDCEF", L"?EF" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"\xDCEF", L"?ef" },		// Latin1だけ英字が小文字。（おそらく仕様。）
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("\xDCEF"), LTEXT("?EF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("\xDCEF"), LTEXT("?EF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("\xDCEF"), LTEXT("?EF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("\xDCEF"), LTEXT("U+DCEF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("\xDCEF"), LTEXT("?EF") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("\xDCEF"), LTEXT("?ef") },		// Latin1だけ英字が小文字。（おそらく仕様。）
 
 		// 日本語 ひらがな「あ」
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"あ", L"82A0" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"あ", L"2422" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"あ", L"A4A2" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"あ", L"E38182" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"あ", L"E38182" },
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"あ", L"U+3042" },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("あ"), LTEXT("82A0") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("あ"), LTEXT("2422") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("あ"), LTEXT("A4A2") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("あ"), LTEXT("E38182") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("あ"), LTEXT("E38182") },
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("あ"), LTEXT("U+3042") },
 
 		// 日本語 ひらがな「あ」（コードポイント表示なら文字セットがサポートしない文字でも統一仕様）
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   L"あ", L"U+3042" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  L"あ", L"U+3042" },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   LTEXT("あ"), LTEXT("U+3042") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  LTEXT("あ"), LTEXT("U+3042") },
 
 		// サロゲートペア：カラー絵文字「男性のシンボル」
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"\U0001F6B9", L"D83DDEB9" },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"\U0001F6B9", L"D83DDEB9" },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"\U0001F6B9", L"D83DDEB9" },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"\U0001F6B9", L"D83DDEB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"\U0001F6B9", L"D83DDEB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"\U0001F6B9", L"D83DDEB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"\U0001F6B9", L"D83DDEB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"\U0001F6B9", L"F09F9AB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"\U0001F6B9", L"D83DDEB9" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"\U0001F6B9", L"EDA0BDEDBAB9" },	// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"\U0001F6B9", L"D83DDEB9" },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("\U0001F6B9"), LTEXT("F09F9AB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("\U0001F6B9"), LTEXT("EDA0BDEDBAB9") },	// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("\U0001F6B9"), LTEXT("D83DDEB9") },		// 👈バグ。コードページがサポートしない文字なので、コードポイントで表示すべき。
 
 		// サロゲートペア：コードポイント表示なら文字セットがサポートしない文字でも統一仕様
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   L"\U0001F6B9", L"U+1F6B9" },
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  L"\U0001F6B9", L"U+1F6B9" },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  LTEXT("\U0001F6B9"), LTEXT("U+1F6B9") },
 
 		// 結合文字「ぽ」（平仮名「ほ」＋結合文字半濁点）
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"ぽ", L"82D9" },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"ぽ", L"245B" },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"ぽ", L"A4DB" },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"ぽ", L"E381BB" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"ぽ", L"E381BB" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("ぽ"), LTEXT("82D9") },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("ぽ"), LTEXT("245B") },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("ぽ"), LTEXT("A4DB") },		// 👈バグ。結合文字をサポートする文字セットなのに1文字分しか見えていない。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("ぽ"), LTEXT("E381BB") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("ぽ"), LTEXT("E381BB") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
 
 		// コードポイント表示： 結合文字「ぽ」（平仮名「ほ」＋結合文字半濁点）
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  L"ぽ", L"U+307B" },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  LTEXT("ぽ"), LTEXT("U+307B") },	// 👈バグ。結合文字が捨てられている。
 
 		// IVS(Ideographic Variation Sequence) 「葛󠄀」（葛󠄀城市の葛󠄀、下がヒ）
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    L"\x845B\U000E0100", L"8A8B" },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     L"\x845B\U000E0100", L"336B" },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     L"\x845B\U000E0100", L"B3EB" },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    L"\x845B\U000E0100", L"E8919BF3A08480" },		// 2文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   L"\x845B\U000E0100", L"E8919BEDAD80EDB480" },	// 3文字分だが、区切りが分かりづらい
-		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  L"\x845B\U000E0100", L"845B, DB40DD00" },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_SJIS,    LTEXT("\x845B\U000E0100"), LTEXT("8A8B") },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_JIS,     LTEXT("\x845B\U000E0100"), LTEXT("336B") },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_EUC,     LTEXT("\x845B\U000E0100"), LTEXT("B3EB") },				// 👈バグ。IVSをサポートしない文字セットなのに正常っぽく見えている。
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16LE, LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF16BE, LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32LE, LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF32BE, LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF8,    LTEXT("\x845B\U000E0100"), LTEXT("E8919BF3A08480") },		// 2文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_UTF7,    LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_CESU8,   LTEXT("\x845B\U000E0100"), LTEXT("E8919BEDAD80EDB480") },	// 3文字分だが、区切りが分かりづらい
+		UnicoceToHexTestParam{ ESettingType::Default,       CODE_LATIN1,  LTEXT("\x845B\U000E0100"), LTEXT("845B, DB40DD00") },		// 3文字分だが、区切りが分かりづらい
 
 		// コードポイント表示： IVS(Ideographic Variation Sequence) 「葛󠄀」（葛󠄀城市の葛󠄀、下がヒ）
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   L"\x845B\U000E0100", L"845B, U+E0100" },	// 👈バグ。1文字目がコードポイントであることを示せていない。
-		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  L"\x845B\U000E0100", L"845B, U+E0100" }	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_SJIS,    LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_JIS,     LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_EUC,     LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16LE, LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF16BE, LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32LE, LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF32BE, LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF8,    LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_UTF7,    LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_CESU8,   LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") },	// 👈バグ。1文字目がコードポイントであることを示せていない。
+		UnicoceToHexTestParam{ ESettingType::DispCodepoint, CODE_LATIN1,  LTEXT("\x845B\U000E0100"), LTEXT("845B, U+E0100") }	// 👈バグ。1文字目がコードポイントであることを示せていない。
 	)
 );
 

@@ -13,10 +13,14 @@
 #include "CCodePage.h"
 #include "charcode.h"
 #include "codechecker.h"
+#if defined(_WIN32)
 #include "dlg/CDialog.h"
+#endif
 #include "util/tchar_convert.h"
 #include <algorithm>
+#if defined(_WIN32)
 #include "apiwrap/StdControl.h"
+#endif
 
 typedef BOOL (WINAPI *pfn_GetCPInfoExT_t)(UINT, DWORD, CPINFOEX*);
 
@@ -415,6 +419,7 @@ BOOL CALLBACK CCodePage::CallBackEnumCodePages( LPCWSTR pCodePageString )
 	return TRUE;
 }
 
+#if defined(_WIN32)	// Mac 版のコードページ選択リストは AppKit 側で GetCodePageList() から作る
 int CCodePage::AddComboCodePages([[maybe_unused]] HWND hwnd, HWND combo, int nSelCode)
 {
 	int nSel = -1;
@@ -446,6 +451,7 @@ int CCodePage::AddComboCodePages([[maybe_unused]] HWND hwnd, HWND combo, int nSe
 	::SetFocus(combo);
 	return nSel;
 }
+#endif // defined(_WIN32)
 
 int CCodePage::MultiByteToWideChar2( UINT codepage, int flags, const char* pSrc, int nSrcLen, WCHAR* pDst, int nDstLen )
 {

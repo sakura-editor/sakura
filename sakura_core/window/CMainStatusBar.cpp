@@ -6,10 +6,12 @@
 */
 #include "StdAfx.h"
 #include "CMainStatusBar.h"
+#if defined(_WIN32)
 #include "window/CEditWnd.h"
 #include "CEditApp.h"
 #include "apiwrap/CommonControl.h"
 #include "apiwrap/DarkMode.h"
+#endif
 
 #include "charset/CCodeFactory.h"
 
@@ -38,6 +40,9 @@
 
 	return buffer;
 }
+
+// Mac 版: ステータスバー本体は AppKit で作るので、文字コードの16進表示（UnicodeToHex）だけをコアライブラリに含める
+#if defined(_WIN32)
 
 CMainStatusBar::CMainStatusBar(CEditWnd* pOwner)
 : m_pOwner(pOwner)
@@ -224,3 +229,5 @@ void CMainStatusBar::ShowProgressBar(bool bShow) const {
 		::UpdateWindow(m_hwndStatusBar);
 	}
 }
+
+#endif // defined(_WIN32)

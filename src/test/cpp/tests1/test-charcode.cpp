@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <cstring>
 #include <string>
+
+#if defined(_WIN32)	// GDI で文字幅を測るテスト。Mac 版は macos/core/tests/test-mac-charcode.cpp で測定関数を差し替えて確認する
 #include <Windows.h>
 
 class CharWidthCache : public testing::Test {
@@ -16,13 +18,13 @@ protected:
 	void SetUp() override {
 		lf1 = LOGFONT();
 		lf1.lfCharSet = DEFAULT_CHARSET;
-		std::wcscpy(lf1.lfFaceName, L"MS Gothic");
+		std::wcscpy(lf1.lfFaceName, LTEXT("MS Gothic"));
 		lf2 = LOGFONT();
 		lf2.lfCharSet = DEFAULT_CHARSET;
-		std::wcscpy(lf2.lfFaceName, L"Meiryo");
+		std::wcscpy(lf2.lfFaceName, LTEXT("Meiryo"));
 		lf3 = LOGFONT();
 		lf3.lfCharSet = DEFAULT_CHARSET;
-		std::wcscpy(lf3.lfFaceName, L"MS Gothic"); // UD デジタル 教科書体 N-B
+		std::wcscpy(lf3.lfFaceName, LTEXT("MS Gothic")); // UD デジタル 教科書体 N-B
 		lf3.lfPitchAndFamily = FIXED_PITCH;
 		lf3.lfHeight = 10;
 		lf3.lfWeight = FW_BOLD;
@@ -53,11 +55,11 @@ TEST_F(CharWidthCache, IsHankaku)
 	// ここではキャッシュを初期化しない。
 
 	// Basic Latin と Control Codes (C0, C1)
-	for (wchar_t ch = 0x00; ch <= 0xa0; ++ch) {
+	for (WCHAR ch = 0x00; ch <= 0xa0; ++ch) {
 		EXPECT_TRUE(WCODE::IsHankaku(ch));
 	}
 	// 半角カタカナ
-	for (wchar_t ch = 0xff61; ch <= 0xff9f; ++ch) {
+	for (WCHAR ch = 0xff61; ch <= 0xff9f; ++ch) {
 		EXPECT_TRUE(WCODE::IsHankaku(ch));
 	}
 
@@ -67,26 +69,26 @@ TEST_F(CharWidthCache, IsHankaku)
 	CCharWidthCache& cache = GetCharWidthCache();
 
 	// 漢字・ハングル・外字の場合、コード表の一番目の文字の幅がすべての文字に適用される。
-	bool kanjiWidth = cache.CalcHankakuByFont(L'一');
+	bool kanjiWidth = cache.CalcHankakuByFont(LCHAR('一'));
 
 	// CJK統合漢字。Unicode 5.1 以降の文字には未対応。
-	for (wchar_t ch = 0x4e00; ch <= 0x9fbb; ++ch) {
+	for (WCHAR ch = 0x4e00; ch <= 0x9fbb; ++ch) {
 		EXPECT_EQ(WCODE::IsHankaku(ch, cache), kanjiWidth);
 	}
 	// CJK統合漢字拡張A。Unicode 13.0 の追加分には対応していない。
-	for (wchar_t ch = 0x3400; ch <= 0x4d85; ++ch) {
+	for (WCHAR ch = 0x3400; ch <= 0x4d85; ++ch) {
 		EXPECT_EQ(WCODE::IsHankaku(ch, cache), kanjiWidth);
 	}
 
 	// ハングル
-	bool hangulWidth = cache.CalcHankakuByFont(L'가');
-	for (wchar_t ch = 0xac00; ch <= 0xd7a3; ++ch) {
+	bool hangulWidth = cache.CalcHankakuByFont(LCHAR('가'));
+	for (WCHAR ch = 0xac00; ch <= 0xd7a3; ++ch) {
 		EXPECT_EQ(WCODE::IsHankaku(ch, cache), hangulWidth);
 	}
 
 	// 外字
 	bool privateUseWidth = cache.CalcHankakuByFont(0xe000);
-	for (wchar_t ch = 0xe000; ch <= 0xe8ff; ++ch) {
+	for (WCHAR ch = 0xe000; ch <= 0xe8ff; ++ch) {
 		EXPECT_EQ(WCODE::IsHankaku(ch, cache), privateUseWidth);
 	}
 }
@@ -95,8 +97,8 @@ TEST_F(CharWidthCache, IsZenkaku) {
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
 
-	EXPECT_EQ(WCODE::IsZenkaku(L'a'), !WCODE::IsHankaku(L'a'));
-	EXPECT_EQ(WCODE::IsZenkaku(L'あ'), !WCODE::IsHankaku(L'あ'));
+	EXPECT_EQ(WCODE::IsZenkaku(LCHAR('a')), !WCODE::IsHankaku(LCHAR('a')));
+	EXPECT_EQ(WCODE::IsZenkaku(LCHAR('あ')), !WCODE::IsHankaku(LCHAR('あ')));
 }
 
 TEST_F(CharWidthCache, CalcHankakuByFont)
@@ -105,8 +107,8 @@ TEST_F(CharWidthCache, CalcHankakuByFont)
 	InitCharWidthCache(lf1);
 	CCharWidthCache& cache = GetCharWidthCache();
 
-	EXPECT_TRUE(cache.CalcHankakuByFont(L'a'));
-	EXPECT_FALSE(cache.CalcHankakuByFont(L'あ'));
+	EXPECT_TRUE(cache.CalcHankakuByFont(LCHAR('a')));
+	EXPECT_FALSE(cache.CalcHankakuByFont(LCHAR('あ')));
 }
 
 TEST_F(CharWidthCache, CalcPxWidthByFont)
@@ -116,22 +118,22 @@ TEST_F(CharWidthCache, CalcPxWidthByFont)
 	CCharWidthCache& cache = GetCharWidthCache();
 
 	SIZE size;
-	GetTextExtentPoint32(dc, L"a", 1, &size);
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'a'), size.cx);
-	GetTextExtentPoint32(dc, L"あ", 1, &size);
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'あ'), size.cx);
+	GetTextExtentPoint32(dc, LTEXT("a"), 1, &size);
+	EXPECT_EQ(cache.CalcPxWidthByFont(LCHAR('a')), size.cx);
+	GetTextExtentPoint32(dc, LTEXT("あ"), 1, &size);
+	EXPECT_EQ(cache.CalcPxWidthByFont(LCHAR('あ')), size.cx);
 
 	// コントロールコードの幅を普通に計算すると1pxになることがあるため、
 	// スペース・中黒の幅と比較して大きい方をとることになっている。
 	SIZE sizeOfSpace;
-	GetTextExtentPoint32(dc, L" ", 1, &sizeOfSpace);
+	GetTextExtentPoint32(dc, LTEXT(" "), 1, &sizeOfSpace);
 	SIZE sizeOfNakaguro;
-	GetTextExtentPoint32(dc, L"･", 1, &sizeOfNakaguro);
+	GetTextExtentPoint32(dc, LTEXT("･"), 1, &sizeOfNakaguro);
 
 	// 理由はわからないが、NULとそれ以外で違う文字の幅を採用している。
-	GetTextExtentPoint32(dc, L"\0", 1, &size);
+	GetTextExtentPoint32(dc, LTEXT("\0"), 1, &size);
 	EXPECT_EQ(cache.CalcPxWidthByFont('\0'), std::max(size.cx, sizeOfSpace.cx));
-	GetTextExtentPoint32(dc, L"\x01", 1, &size);
+	GetTextExtentPoint32(dc, LTEXT("\x01"), 1, &size);
 	EXPECT_EQ(cache.CalcPxWidthByFont('\x01'), std::max(size.cx, sizeOfNakaguro.cx));
 }
 
@@ -142,8 +144,8 @@ TEST_F(CharWidthCache, CalcPxWidthByFont2)
 	CCharWidthCache& cache = GetCharWidthCache();
 
 	SIZE size;
-	GetTextExtentPoint32(dc, L"\xd83c\xdf38", 2, &size);
-	EXPECT_EQ(cache.CalcPxWidthByFont2(L"\xd83c\xdf38"), size.cx);
+	GetTextExtentPoint32(dc, LTEXT("\xd83c\xdf38"), 2, &size);
+	EXPECT_EQ(cache.CalcPxWidthByFont2(LTEXT("\xd83c\xdf38")), size.cx);
 }
 
 TEST_F(CharWidthCache, CalcPxWidthByFont3)
@@ -155,9 +157,9 @@ TEST_F(CharWidthCache, CalcPxWidthByFont3)
 
 	// 半角×2≠全角となることを確認する
 	SIZE size = {};
-	GetTextExtentPoint32(dc, L"a", 1, &size);
+	GetTextExtentPoint32(dc, LTEXT("a"), 1, &size);
 	EXPECT_EQ(6, size.cx);
-	GetTextExtentPoint32(dc, L"あ", 1, &size);
+	GetTextExtentPoint32(dc, LTEXT("あ"), 1, &size);
 	EXPECT_EQ(11, size.cx);
 
 	// フォントを元に戻しておく
@@ -171,8 +173,8 @@ TEST_F(CharWidthCache, CalcPxWidthByFont3)
 	// 半角×2＝全角となることを確認する
 	constexpr auto halfWidth = 6;
 	constexpr auto fullWidth = halfWidth * 2;
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'a'), halfWidth);
-	EXPECT_EQ(cache.CalcPxWidthByFont(L'あ'), fullWidth);
+	EXPECT_EQ(cache.CalcPxWidthByFont(LCHAR('a')), halfWidth);
+	EXPECT_EQ(cache.CalcPxWidthByFont(LCHAR('あ')), fullWidth);
 }
 
 TEST_F(CharWidthCache, FontNo)
@@ -186,8 +188,8 @@ TEST_F(CharWidthCache, FontNo)
 	SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_LOCAL);
 	InitCharWidthCache(lf1);
 
-	EXPECT_EQ(WCODE::GetFontNo(L'a'), 0);
-	EXPECT_EQ(WCODE::GetFontNo(L'あ'), 0);
+	EXPECT_EQ(WCODE::GetFontNo(LCHAR('a')), 0);
+	EXPECT_EQ(WCODE::GetFontNo(LCHAR('あ')), 0);
 	EXPECT_EQ(WCODE::GetFontNo2(0xd83c, 0xdf38), 0);
 
 	// InitCharWidthCacheFromDC に2つの異なるLOGFONTを与えた場合、
@@ -196,9 +198,9 @@ TEST_F(CharWidthCache, FontNo)
 	LOGFONT lfs[] = {lf1, lf2};
 	InitCharWidthCacheFromDC(lfs, CWM_FONT_PRINT, dc);
 
-	EXPECT_EQ(WCODE::GetFontNo(L'a'), 0);
+	EXPECT_EQ(WCODE::GetFontNo(LCHAR('a')), 0);
 	EXPECT_EQ(WCODE::GetFontNo(0xe0), 1);  // 「à」。Latin-1 は全角扱いらしい…。
-	EXPECT_EQ(WCODE::GetFontNo(L'あ'), 1);
+	EXPECT_EQ(WCODE::GetFontNo(LCHAR('あ')), 1);
 	EXPECT_EQ(WCODE::GetFontNo2(0xd83c, 0xdf38), 1);
 }
 
@@ -219,13 +221,15 @@ TEST_F(CharWidthCache, GetCharWidthCache)
 	EXPECT_EQ(&edit1, &edit2);
 }
 
+#endif // defined(_WIN32)
+
 TEST(charcode, IS_KEYWORD_CHAR)
 {
-	for (wchar_t ch = 0; ch < gm_keyword_char.size(); ++ch) {
+	for (WCHAR ch = 0; ch < gm_keyword_char.size(); ++ch) {
 		EXPECT_EQ(IS_KEYWORD_CHAR(ch),
 			gm_keyword_char[ch] == CK_CSYM || gm_keyword_char[ch] == CK_UDEF);
 	}
-	EXPECT_FALSE(IS_KEYWORD_CHAR(static_cast<wchar_t>(-1)));
+	EXPECT_FALSE(IS_KEYWORD_CHAR(static_cast<WCHAR>(-1)));
 }
 
 // 以下、関数が判定している文字がすべてASCII範囲内であれば総当たりテストを実施する。
@@ -233,17 +237,17 @@ TEST(charcode, IS_KEYWORD_CHAR)
 
 TEST(charcode, IsAZ)
 {
-	const std::wstring chars = L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-	for (wchar_t ch = 0; ch < 128; ++ch) {
-		EXPECT_EQ(WCODE::IsAZ(ch), chars.find(ch) != std::wstring::npos);
+	const sakura::wstring chars = LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+	for (WCHAR ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsAZ(ch), chars.find(ch) != sakura::wstring::npos);
 	}
 }
 
 TEST(charcode, Is09)
 {
-	const std::wstring chars = L"0123456789";
-	for (wchar_t ch = 0; ch < 128; ++ch) {
-		EXPECT_EQ(WCODE::Is09(ch), chars.find(ch) != std::wstring::npos);
+	const sakura::wstring chars = LTEXT("0123456789");
+	for (WCHAR ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::Is09(ch), chars.find(ch) != sakura::wstring::npos);
 	}
 }
 
@@ -270,8 +274,8 @@ TEST(charcode, IsLineDelimiter)
 	EXPECT_TRUE(WCODE::IsLineDelimiter(0x2028, true));
 	EXPECT_TRUE(WCODE::IsLineDelimiter(0x2029, true));
 
-	EXPECT_FALSE(WCODE::IsLineDelimiter(L'a', false));
-	EXPECT_FALSE(WCODE::IsLineDelimiter(L'a', true));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(LCHAR('a'), false));
+	EXPECT_FALSE(WCODE::IsLineDelimiter(LCHAR('a'), true));
 }
 
 TEST(charcode, IsLineDelimiterBasic)
@@ -281,7 +285,7 @@ TEST(charcode, IsLineDelimiterBasic)
 	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x85));
 	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x2028));
 	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(0x2029));
-	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(L'a'));
+	EXPECT_FALSE(WCODE::IsLineDelimiterBasic(LCHAR('a')));
 }
 
 TEST(charcode, IsLineDelimiterExt) {
@@ -290,55 +294,55 @@ TEST(charcode, IsLineDelimiterExt) {
 	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x85));
 	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x2028));
 	EXPECT_TRUE(WCODE::IsLineDelimiterExt(0x2029));
-	EXPECT_FALSE(WCODE::IsLineDelimiterExt(L'a'));
+	EXPECT_FALSE(WCODE::IsLineDelimiterExt(LCHAR('a')));
 }
 
 TEST(charcode, IsWordDelimiter)
 {
-	EXPECT_TRUE(WCODE::IsWordDelimiter(L' '));
-	EXPECT_TRUE(WCODE::IsWordDelimiter(L'\t'));
-	EXPECT_TRUE(WCODE::IsWordDelimiter(L'　'));
-	EXPECT_FALSE(WCODE::IsWordDelimiter(L'a'));
-	EXPECT_FALSE(WCODE::IsWordDelimiter(L'あ'));
+	EXPECT_TRUE(WCODE::IsWordDelimiter(LCHAR(' ')));
+	EXPECT_TRUE(WCODE::IsWordDelimiter(LCHAR('\t')));
+	EXPECT_TRUE(WCODE::IsWordDelimiter(LCHAR('　')));
+	EXPECT_FALSE(WCODE::IsWordDelimiter(LCHAR('a')));
+	EXPECT_FALSE(WCODE::IsWordDelimiter(LCHAR('あ')));
 }
 
 TEST(charcode, IsIndentChar)
 {
-	EXPECT_TRUE(WCODE::IsIndentChar(L' ', false));
-	EXPECT_TRUE(WCODE::IsIndentChar(L'\t', false));
-	EXPECT_FALSE(WCODE::IsIndentChar(L'　', false));
+	EXPECT_TRUE(WCODE::IsIndentChar(LCHAR(' '), false));
+	EXPECT_TRUE(WCODE::IsIndentChar(LCHAR('\t'), false));
+	EXPECT_FALSE(WCODE::IsIndentChar(LCHAR('　'), false));
 
-	EXPECT_TRUE(WCODE::IsIndentChar(L' ', true));
-	EXPECT_TRUE(WCODE::IsIndentChar(L'\t', true));
-	EXPECT_TRUE(WCODE::IsIndentChar(L'　', true));
+	EXPECT_TRUE(WCODE::IsIndentChar(LCHAR(' '), true));
+	EXPECT_TRUE(WCODE::IsIndentChar(LCHAR('\t'), true));
+	EXPECT_TRUE(WCODE::IsIndentChar(LCHAR('　'), true));
 
-	EXPECT_FALSE(WCODE::IsIndentChar(L'a', false));
-	EXPECT_FALSE(WCODE::IsIndentChar(L'あ', false));
-	EXPECT_FALSE(WCODE::IsIndentChar(L'a', true));
-	EXPECT_FALSE(WCODE::IsIndentChar(L'あ', true));
+	EXPECT_FALSE(WCODE::IsIndentChar(LCHAR('a'), false));
+	EXPECT_FALSE(WCODE::IsIndentChar(LCHAR('あ'), false));
+	EXPECT_FALSE(WCODE::IsIndentChar(LCHAR('a'), true));
+	EXPECT_FALSE(WCODE::IsIndentChar(LCHAR('あ'), true));
 }
 
 TEST(charcode, IsBlank)
 {
-	EXPECT_TRUE(WCODE::IsBlank(L' '));
-	EXPECT_TRUE(WCODE::IsBlank(L'\t'));
-	EXPECT_TRUE(WCODE::IsBlank(L'　'));
-	EXPECT_FALSE(WCODE::IsBlank(L'a'));
-	EXPECT_FALSE(WCODE::IsBlank(L'あ'));
+	EXPECT_TRUE(WCODE::IsBlank(LCHAR(' ')));
+	EXPECT_TRUE(WCODE::IsBlank(LCHAR('\t')));
+	EXPECT_TRUE(WCODE::IsBlank(LCHAR('　')));
+	EXPECT_FALSE(WCODE::IsBlank(LCHAR('a')));
+	EXPECT_FALSE(WCODE::IsBlank(LCHAR('あ')));
 }
 
 TEST(charcode, IsValidFileNameChar)
 {
-	const std::wstring chars(L"\0<>?\"|*", 7);
-	for (wchar_t ch = 0; ch < 128; ++ch) {
-		EXPECT_EQ(WCODE::IsValidFilenameChar(ch), chars.find(ch) == std::wstring::npos);
+	const sakura::wstring chars(LTEXT("\0<>?\"|*"), 7);
+	for (WCHAR ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsValidFilenameChar(ch), chars.find(ch) == sakura::wstring::npos);
 	}
 }
 
 TEST(charcode, IsTabAvailableCode)
 {
-	const std::wstring chars(L"\0\r\n\t", 4);
-	for (wchar_t ch = 0; ch < 128; ++ch) {
-		EXPECT_EQ(WCODE::IsTabAvailableCode(ch), chars.find(ch) == std::wstring::npos);
+	const sakura::wstring chars(LTEXT("\0\r\n\t"), 4);
+	for (WCHAR ch = 0; ch < 128; ++ch) {
+		EXPECT_EQ(WCODE::IsTabAvailableCode(ch), chars.find(ch) == sakura::wstring::npos);
 	}
 }

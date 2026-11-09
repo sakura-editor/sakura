@@ -66,32 +66,6 @@ bool IsValidSystemTime(const SYSTEMTIME& st)
 
 } // namespace
 
-BOOL IsValidCodePage(UINT codePage)
-{
-	// Windows で一般的に使える代表的なコードページ。第 17 步で iconv による判定に置き換える。
-	switch (codePage) {
-	case 37: case 437: case 500: case 708: case 720: case 737: case 775:
-	case 850: case 852: case 855: case 857: case 858: case 860: case 861: case 862: case 863:
-	case 864: case 865: case 866: case 869: case 874: case 875:
-	case 932: case 936: case 949: case 950:
-	case 1026: case 1047: case 1140: case 1141: case 1142: case 1143: case 1144: case 1145:
-	case 1146: case 1147: case 1148: case 1149:
-	case 1250: case 1251: case 1252: case 1253: case 1254: case 1255: case 1256: case 1257: case 1258:
-	case 1361:
-	case 10000: case 10001: case 10002: case 10003: case 10004: case 10005: case 10006: case 10007:
-	case 10008: case 10010: case 10017: case 10021: case 10029: case 10079: case 10081: case 10082:
-	case 20127: case 20866: case 20932: case 20936: case 20949: case 21866:
-	case 28591: case 28592: case 28593: case 28594: case 28595: case 28596: case 28597: case 28598:
-	case 28599: case 28603: case 28605:
-	case 50220: case 50221: case 50222: case 50225: case 51932: case 51936: case 51949:
-	case 52936: case 54936:
-	case 65000: case 65001:
-		return TRUE;
-	default:
-		return FALSE;
-	}
-}
-
 BOOL FileTimeToSystemTime(const FILETIME* lpFileTime, LPSYSTEMTIME lpSystemTime)
 {
 	if (!lpFileTime || !lpSystemTime) { errno = EINVAL; return FALSE; }

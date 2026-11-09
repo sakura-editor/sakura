@@ -177,6 +177,11 @@ typedef struct _GUID {
 #define LF_FACESIZE 32
 #define DEFAULT_PITCH 0
 #define FIXED_PITCH   1
+#define ANSI_CHARSET     0
+#define DEFAULT_CHARSET  1
+#define SHIFTJIS_CHARSET 128
+#define FW_NORMAL 400
+#define FW_BOLD   700
 #define VARIABLE_PITCH 2
 typedef struct tagLOGFONTW {
 	LONG lfHeight; LONG lfWidth; LONG lfEscapement; LONG lfOrientation; LONG lfWeight;
@@ -194,9 +199,51 @@ typedef struct tagLOGFONTW {
 #define _MAX_FNAME 256
 #define _MAX_EXT  256
 
-#define CP_ACP   0
-#define CP_UTF7  65000
-#define CP_UTF8  65001
+#define CP_ACP        0
+#define CP_OEMCP      1
+#define CP_MACCP      2
+#define CP_THREAD_ACP 3
+#define CP_SYMBOL     42
+#define CP_UTF7       65000
+#define CP_UTF8       65001
+
+#define MB_PRECOMPOSED       0x00000001
+#define MB_COMPOSITE         0x00000002
+#define MB_USEGLYPHCHARS     0x00000004
+#define MB_ERR_INVALID_CHARS 0x00000008
+
+#define WC_DISCARDNS         0x00000010
+#define WC_SEPCHARS          0x00000020
+#define WC_DEFAULTCHAR       0x00000040
+#define WC_ERR_INVALID_CHARS 0x00000080
+#define WC_COMPOSITECHECK    0x00000200
+#define WC_NO_BEST_FIT_CHARS 0x00000400
+
+#define MAX_LEADBYTES     12
+#define MAX_DEFAULTCHAR   2
+
+#define CP_INSTALLED  0x00000001
+#define CP_SUPPORTED  0x00000002
+
+typedef struct _cpinfo {
+	UINT MaxCharSize;
+	BYTE DefaultChar[MAX_DEFAULTCHAR];
+	BYTE LeadByte[MAX_LEADBYTES];
+} CPINFO, *LPCPINFO;
+
+typedef struct _cpinfoexW {
+	UINT  MaxCharSize;
+	BYTE  DefaultChar[MAX_DEFAULTCHAR];
+	BYTE  LeadByte[MAX_LEADBYTES];
+	WCHAR UnicodeDefaultChar;
+	UINT  CodePage;
+	WCHAR CodePageName[MAX_PATH];
+} CPINFOEXW, *LPCPINFOEXW;
+typedef CPINFOEXW CPINFOEX;
+typedef LPCPINFOEXW LPCPINFOEX;
+
+typedef BOOL (CALLBACK* CODEPAGE_ENUMPROCW)(WCHAR*);
+typedef CODEPAGE_ENUMPROCW CODEPAGE_ENUMPROC;
 
 #define MB_OK                0x00000000L
 #define MB_OKCANCEL          0x00000001L
@@ -256,8 +303,22 @@ inline int __iscsym(int c) { return std::isalnum(c) || c == '_'; }
 // Win32 API 的替代实现（macos/platform/src/win32_api.cpp）
 // 只提供核心代码需要的少数函数，行为与 Windows 相同。
 // ---------------------------------------------------------------------------
-//! 代码页是否可用（第 17 步改为按 iconv 的实际支持情况判断）
+/* ---- 代码页转换（macos/platform/src/codepage.cpp） ----
+ * 单字节/双字节代码页按在 Windows 上导出的转换表（macos/platform/data/codepages.bin）实现，结果与 Windows 一致。
+ * UTF-8 由代码实现。UTF-7、GB18030、ISO-2022 系等少数代码页用 iconv 实现。
+ * CP_ACP、CP_OEMCP 与 Windows 的“使用 Unicode UTF-8 提供全球语言支持”设置相同，都是 65001。 */
 BOOL IsValidCodePage(UINT codePage);
+UINT GetACP();
+UINT GetOEMCP();
+BOOL GetCPInfo(UINT codePage, LPCPINFO lpCPInfo);
+BOOL GetCPInfoExW(UINT codePage, DWORD dwFlags, LPCPINFOEXW lpCPInfoEx);
+#define GetCPInfoEx GetCPInfoExW
+BOOL IsDBCSLeadByteEx(UINT codePage, BYTE testChar);
+BOOL IsDBCSLeadByte(BYTE testChar);
+BOOL EnumSystemCodePagesW(CODEPAGE_ENUMPROCW lpCodePageEnumProc, DWORD dwFlags);
+#define EnumSystemCodePages EnumSystemCodePagesW
+int MultiByteToWideChar(UINT codePage, DWORD dwFlags, LPCSTR lpMultiByteStr, int cbMultiByte, WCHAR* lpWideCharStr, int cchWideChar);
+int WideCharToMultiByte(UINT codePage, DWORD dwFlags, const WCHAR* lpWideCharStr, int cchWideChar, LPSTR lpMultiByteStr, int cbMultiByte, LPCSTR lpDefaultChar, BOOL* lpUsedDefaultChar);
 //! FILETIME（1601-01-01 起的 100 纳秒数，UTC）→ SYSTEMTIME（UTC）
 BOOL FileTimeToSystemTime(const FILETIME* lpFileTime, LPSYSTEMTIME lpSystemTime);
 //! SYSTEMTIME → FILETIME
@@ -290,6 +351,9 @@ void SetLastError(DWORD dwErrCode);
 #define ERROR_FILE_NOT_FOUND      2L
 #define ERROR_ACCESS_DENIED       5L
 #define ERROR_INVALID_PARAMETER   87L
+#define ERROR_INSUFFICIENT_BUFFER 122L
+#define ERROR_INVALID_FLAGS       1004L
+#define ERROR_NO_UNICODE_TRANSLATION 1113L
 #define FILE_ATTRIBUTE_READONLY   0x00000001
 #define FILE_ATTRIBUTE_HIDDEN     0x00000002
 #define FILE_ATTRIBUTE_SYSTEM     0x00000004

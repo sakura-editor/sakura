@@ -283,6 +283,7 @@ std::string to_string(sakura::wstring_view source, _In_opt_ UINT codePage) {
 		return "";
 	}
 
+#if defined(_WIN32)	// Mac 版の CP_ACP は UTF-8（ナロー文字列リテラルと同じ）なので、UI 言語から決めない
 	if (CP_ACP == codePage) {
 		const auto langId = ::GetThreadUILanguage();
 		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
@@ -294,6 +295,7 @@ std::string to_string(sakura::wstring_view source, _In_opt_ UINT codePage) {
 			codePage = CP_SJIS;
 		}
 	}
+#endif
 
 	// 変換に必要な出力バッファを確保する
 	std::string buffer;
@@ -315,6 +317,7 @@ sakura::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 		return LTEXT("");
 	}
 
+#if defined(_WIN32)	// Mac 版の CP_ACP は UTF-8（ナロー文字列リテラルと同じ）なので、UI 言語から決めない
 	if (CP_ACP == codePage) {
 		const auto langId = ::GetThreadUILanguage();
 		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
@@ -326,6 +329,7 @@ sakura::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 			codePage = CP_SJIS;
 		}
 	}
+#endif
 
 	// 変換に必要な出力バッファを確保する
 	sakura::wstring buffer;
