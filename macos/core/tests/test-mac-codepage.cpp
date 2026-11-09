@@ -135,3 +135,16 @@ TEST(MacCodePage, Latin1AndCyrillic)
 	EXPECT_EQ(ToMulti(1252, LTEXT("Ā")), "A");
 	EXPECT_EQ(ToMulti(1252, LTEXT("Ā"), WC_NO_BEST_FIT_CHARS), "?");
 }
+
+TEST(MacCodePage, IconvCodePages)
+{
+	// GB18030、ISO-2022-JP、UTF-7 由 iconv 实现
+	EXPECT_EQ(ToWide(54936, "\xC4\xE3\xBA\xC3"), LTEXT("你好"));
+	EXPECT_EQ(ToMulti(54936, LTEXT("你好\U0001F600")), "\xC4\xE3\xBA\xC3\x94\x39\xFC\x36");
+	EXPECT_EQ(ToMulti(50220, LTEXT("aあ")), "a\x1B$B$\"\x1B(B");
+	EXPECT_EQ(ToWide(50220, "a\x1B$B$\"\x1B(B"), LTEXT("aあ"));
+	EXPECT_EQ(ToWide(CP_UTF7, "+MEI-"), LTEXT("あ"));
+	CPINFOEX info{};
+	ASSERT_TRUE(GetCPInfoEx(54936, 0, &info));
+	EXPECT_EQ(info.MaxCharSize, 4u);
+}
