@@ -42,3 +42,30 @@ printf 书式按 MSVC 宽字符版的规则处理：`%s` 是宽字符串，`%hs`
 ## 对编译检查的影响
 
 WCHAR 改成 `char16_t` 以后，原版代码里的 `L"…"`、`wchar_t` 和 WCHAR 不再是同一种类型，所以第 12 步编译检查的错误数暂时从 6,845 增加到 8,722。第 15 步批量替换后，这部分错误会消失。
+
+## 第 15 步的结果（批量替换）
+
+用 `macos/tools/convert_wchar.py` 机械地替换了 `sakura_core` 下的 410 个文件。工具会跳过注释、字符串和字符字面量的内部，也能正确处理原始字符串（`LR"(…)"`）、带后缀的字面量（`L"…"sv` → `LTEXT("…"sv)`）和数字里的分隔符（`1'000`）。
+
+| 替换 | 数量 |
+|---|---:|
+| `L"…"` → `LTEXT("…")` | 5,868 |
+| `LR"(…)"` → `LTEXT(R"(…)")` | 7 |
+| `L'x'` → `LCHAR('x')` | 1,835 |
+| `wchar_t` → `WCHAR` | 1,549 |
+| `std::wstring` → `sakura::wstring` | 913 |
+| `std::wstring_view` → `sakura::wstring_view` | 370 |
+
+`sakura_core/StdAfx.h` 增加了对 `util/std_macro.h` 和 `util/wchar16.h` 的引用，使所有文件都能用到 `LTEXT` 和 `sakura::wstring`。
+
+Mac 编译检查的错误数从 8,722 降到 6,876。
+
+### 留到后续步骤处理的字符相关问题
+
+| 问题 | 出现位置 | 处理步骤 |
+|---|---|---|
+| `std::filesystem::path` 和 `sakura::wstring` 的互相转换（Mac 上 path 用 UTF-8） | `util/file.h` 等 | 第 16 步 |
+| `std::format(LTEXT("…"))`：标准库不支持 `char16_t` 的 format | 5 个文件 | 第 16 步，改用本工程的 format |
+| `util/format.h` 的 `PrintfArg` 把字符串对象原样传给可变参数函数 | `util/format.h` | 第 16 步 |
+| `std::wregex`：标准库不支持 `char16_t` 的正则 | 语言 DLL 选择、`DetectIndentationStyle` | 第 16 步 |
+| 单元测试（`src/test/cpp`）还没有替换 | 测试代码 | 移植测试时（第 17、23 步）用同一个工具替换 |
