@@ -270,7 +270,9 @@ public:
 
 		if (additional < 0) {
 			const auto e = errno;
-			throw std::domain_error(std::format("AppendStringF error. errno = {:d}", e));
+			std::domain_error error(std::format("AppendStringF error. errno = {:d}", e));
+			errno = e;	// メッセージの組み立てで errno が変わる環境（macOS）があるので戻す
+			throw error;
 		}
 
 		if (additional <= 0) return;
