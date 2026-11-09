@@ -59,7 +59,7 @@ struct CodePageTable {
 	std::vector<std::array<MbEntry, 256>> pairs;
 	std::vector<uint64_t> wcBestFit;            // 65536 项。0: 没有对应，其他: (len << 32) | (b0 << 24) | (b1 << 16) | (b2 << 8) | b3
 	std::vector<uint64_t> wcNoBestFit;
-	std::map<uint32_t, WCHAR> gb4ToWide;        // GB18030 的 4 字节 BMP 字符（线性序号 → UTF-16），由 wcNoBestFit 反推
+	std::map<uint32_t, WCHAR> gb4ToWide;        // GB18030 的 4 字节 BMP 字符（线性序号 → UTF-16），由 wcBestFit 反推
 
 	int DefaultCharLen() const { return defaultChar[1] ? 2 : 1; }
 };
@@ -222,7 +222,7 @@ private:
 		ReadWcTable(r, t->wcNoBestFit);
 		if (t->cp == 54936) {
 			for (uint32_t u = 0; u < 0x10000; ++u) {
-				const uint64_t v = t->wcNoBestFit[u];
+				const uint64_t v = t->wcBestFit[u];
 				if ((v >> 32) != 4) continue;
 				t->gb4ToWide.emplace(Gb4Linear((v >> 24) & 0xFF, (v >> 16) & 0xFF, (v >> 8) & 0xFF, v & 0xFF), static_cast<WCHAR>(u));
 			}
@@ -509,8 +509,7 @@ int Utf7ToWide(DWORD flags, const unsigned char* src, int n, WCHAR* dst, int cap
 int WideToUtf7(DWORD flags, const WCHAR* src, int n, char* dst, int cap, LPCSTR lpDefaultChar, BOOL* lpUsedDefaultChar)
 {
 	if (flags != 0) return Fail(ERROR_INVALID_FLAGS);
-	(void)lpUsedDefaultChar;
-	if (lpDefaultChar) return Fail(ERROR_INVALID_PARAMETER);
+	if (lpDefaultChar || lpUsedDefaultChar) return Fail(ERROR_INVALID_PARAMETER);   // 与 UTF-8 不同，lpUsedDefaultChar 也不接受（Windows 上已确认）
 	Output<char> out(dst, cap);
 	for (int i = 0; i < n;) {
 		const char16_t c = src[i];
@@ -592,9 +591,15 @@ int TableToWide(const CodePageTable& t, DWORD flags, const unsigned char* src, i
 
 int TableToMulti(const CodePageTable& t, DWORD flags, const WCHAR* src, int n, char* dst, int cap, LPCSTR lpDefaultChar, BOOL* lpUsedDefaultChar)
 {
+	const bool gb18030 = (t.cp == 54936);
+	if (gb18030) {
+		// GB18030 与 UTF-8 相近：lpDefaultChar、lpUsedDefaultChar 都不接受，标志只接受 WC_ERR_INVALID_CHARS（Windows 上已确认）
+		if (lpDefaultChar || lpUsedDefaultChar) return Fail(ERROR_INVALID_PARAMETER);
+		if (flags & ~static_cast<DWORD>(WC_ERR_INVALID_CHARS)) return Fail(ERROR_INVALID_FLAGS);
+	}
 	// WC_SEPCHARS、WC_DISCARDNS、WC_DEFAULTCHAR 只在与 WC_COMPOSITECHECK 一起使用时才有意义。
 	// 转换表只处理已合成的字符，所以接受这些标志但不做处理
-	if (flags & ~static_cast<DWORD>(WC_NO_BEST_FIT_CHARS | WC_COMPOSITECHECK | WC_DEFAULTCHAR | WC_SEPCHARS | WC_DISCARDNS)) return Fail(ERROR_INVALID_FLAGS);
+	else if (flags & ~static_cast<DWORD>(WC_NO_BEST_FIT_CHARS | WC_COMPOSITECHECK | WC_DEFAULTCHAR | WC_SEPCHARS | WC_DISCARDNS)) return Fail(ERROR_INVALID_FLAGS);
 	const auto& table = (flags & WC_NO_BEST_FIT_CHARS) ? t.wcNoBestFit : t.wcBestFit;
 	// 替代字符
 	char def[2] = { static_cast<char>(t.defaultChar[0]), static_cast<char>(t.defaultChar[1]) };
@@ -623,8 +628,10 @@ int TableToMulti(const CodePageTable& t, DWORD flags, const WCHAR* src, int n, c
 	};
 	for (int i = 0; i < n && !out.overflow(); ++i) {
 		const char16_t u = src[i];
-		if (0xD800 <= u && u <= 0xDBFF && i + 1 < n && 0xDC00 <= src[i + 1] && src[i + 1] <= 0xDFFF) {
-			if (t.cp == 54936) {
+		const bool pair = 0xD800 <= u && u <= 0xDBFF && i + 1 < n && 0xDC00 <= src[i + 1] && src[i + 1] <= 0xDFFF;
+		if (gb18030 && !pair && 0xD800 <= u && u <= 0xDFFF && (flags & WC_ERR_INVALID_CHARS)) return Fail(ERROR_NO_UNICODE_TRANSLATION);
+		if (pair) {
+			if (gb18030) {
 				// GB18030：补充平面的字符按公式换成 4 字节
 				uint32_t linear = kGbSupplementaryBase + ((u - 0xD800u) << 10) + (src[i + 1] - 0xDC00u);
 				char bytes[4];

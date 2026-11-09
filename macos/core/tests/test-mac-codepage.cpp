@@ -181,6 +181,26 @@ TEST(MacCodePage, Gb18030)
 	CPINFOEX info{};
 	ASSERT_TRUE(GetCPInfoEx(54936, 0, &info));
 	EXPECT_EQ(info.MaxCharSize, 4u);
+	EXPECT_EQ(info.UnicodeDefaultChar, 0x003F);
+
+	// 参数检查（param-probe）：lpUsedDefaultChar / lpDefaultChar 是 87，WC_NO_BEST_FIT_CHARS 是 1004，WC_ERR_INVALID_CHARS 可以用
+	char out[8];
+	BOOL used = FALSE;
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(54936, 0, LTEXT("a"), 1, out, 8, nullptr, &used), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_PARAMETER));
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(54936, 0, LTEXT("a"), 1, out, 8, "*", nullptr), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_PARAMETER));
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(54936, WC_NO_BEST_FIT_CHARS, LTEXT("a"), 1, out, 8, nullptr, nullptr), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_FLAGS));
+	EXPECT_EQ(ToMulti(54936, LTEXT("a"), WC_ERR_INVALID_CHARS), "a");
+	EXPECT_EQ(ToWide(54936, "a", MB_ERR_INVALID_CHARS), LTEXT("a"));
+	// 932 不接受 WC_ERR_INVALID_CHARS
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(932, WC_ERR_INVALID_CHARS, LTEXT("a"), 1, out, 8, nullptr, nullptr), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_FLAGS));
 }
 
 TEST(MacCodePage, Utf7)
@@ -230,6 +250,18 @@ TEST(MacCodePage, Utf7)
 	}
 	EXPECT_EQ(ToMulti(CP_UTF7, W({ 0x005B })), "+AFs-");
 	EXPECT_EQ(ToMulti(CP_UTF7, W({ 0x007F })), "+AH8-");
+	char out[8];
+	BOOL used = FALSE;
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(CP_UTF7, 0, LTEXT("a"), 1, out, 8, nullptr, &used), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_PARAMETER));
+	SetLastError(0);
+	EXPECT_EQ(WideCharToMultiByte(CP_UTF7, 0, LTEXT("a"), 1, out, 8, "*", nullptr), 0);
+	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_PARAMETER));
+	CPINFOEX info{};
+	ASSERT_TRUE(GetCPInfoEx(CP_UTF7, 0, &info));
+	EXPECT_EQ(info.MaxCharSize, 5u);
+	EXPECT_EQ(info.UnicodeDefaultChar, 0xFFFD);
 	SetLastError(0);
 	EXPECT_EQ(WideCharToMultiByte(CP_UTF7, WC_ERR_INVALID_CHARS, LTEXT("a"), 1, nullptr, 0, nullptr, nullptr), 0);
 	EXPECT_EQ(GetLastError(), DWORD(ERROR_INVALID_FLAGS));

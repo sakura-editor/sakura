@@ -6,26 +6,37 @@
 - 原版的编码相关测试在 Mac 上原样运行并全部通过：
   `test-ccodebase` `test-charset` `test-codechecker` `test-charcode` `test-ceol` `test-cconvert` `test-cdecode`
 - Mac 版专用测试：`macos/core/tests/test-mac-codepage.cpp`（代码页转换）、`test-mac-charcode.cpp`（文字宽度缓存）、`test-mac-io.cpp` 增加了 `CTextStream` 的读写。
-- 本地（Linux + clang）合计 591 项测试全部通过；macOS CI 同样运行。
+- 本地（Linux + clang）合计 594 项测试全部通过；macOS CI 同样运行。
 
 ## 代码页转换的做法
 
 原版的编码转换大量依赖 Windows 的 `MultiByteToWideChar` / `WideCharToMultiByte`（Shift_JIS、EUC、Latin-1，以及用户可以选的任意代码页）。为了让结果与 Windows 完全一致，Mac 版不用 ICU 或 iconv 的表，而是用在 Windows 上实测得到的表：
 
-1. `macos/tools/codepage_dump/dump_codepages.cpp` 在 Windows 上对每个单字节/双字节代码页逐字符调用真正的 API，记录：
+1. `macos/tools/codepage_dump/dump_codepages.cpp` 在 Windows 上对每个单字节/双字节代码页和 GB18030 逐字符调用真正的 API，记录：
    - 每个字节、每个双字节组合的转换结果，以及加 `MB_ERR_INVALID_CHARS` 时是否成功
    - 每个 UTF-16 字符的转换结果（默认和 `WC_NO_BEST_FIT_CHARS` 两种），从而包含 best fit 和替代字符
    - 代码页名称、替代字符、前导字节范围、代理项的处理
 2. `build-macos.yml` 的 `codepage-dump-windows` 任务每次都在 Windows 上重新导出，并与仓库里的表比较，不一致时给出警告。
-3. 导出结果 `macos/platform/data/codepages.bin`（118 个代码页，约 6.9 MB）用 `.incbin` 嵌入核心库，由 `macos/platform/src/codepage.cpp` 读取。
+3. 导出结果 `macos/platform/data/codepages.bin`（格式第 2 版，119 个代码页，约 9.3 MB）用 `.incbin` 嵌入核心库，由 `macos/platform/src/codepage.cpp` 读取。
 
-其他代码页：
+其他代码页（GB18030 和 UTF-7 起初用 macOS 的 iconv，但 macOS 自带的 libiconv 版本较旧，GB18030 无法转换表情符号等补充平面字符、UTF-7 的 `-` 处理也与 Windows 不同，所以改为自己实现）：
 
 | 代码页 | 实现 | 与 Windows 的差异 |
 |---|---|---|
 | 65001 UTF-8 | 代码实现 | 无。不正确序列的处理已在 Windows 上实测核对（导出工具的 `utf8-probe`） |
-| 50220/50221/50222 ISO-2022-JP、50225、50227、50229、52936 HZ、54936 GB18030、65000 UTF-7 | macOS 的 iconv | 不正确输入、无法转换字符的处理可能与 Windows 不同。原版的 JIS（50220 系）读写用自己的 `CJis`，不受影响 |
+| 54936 GB18030 | 转换表 + 代码 | 无。1、2 字节和 BMP 的 4 字节字符来自 Windows 导出的表，补充平面按公式计算；不正确序列、参数检查按 `gb18030-probe` / `param-probe` 核对 |
+| 65000 UTF-7 | 代码实现 | 无。直接输出的字符、base64 块的开始和结束、不正确输入、参数检查都按 `utf7-probe` / `param-probe` 核对 |
+| 50220/50221/50222 ISO-2022-JP、50225、50227、50229、52936 HZ | macOS 的 iconv | 不正确输入、无法转换字符的处理可能与 Windows 不同。原版的 JIS（50220 系）读写用自己的 `CJis`，不受影响 |
 | 57002〜57011 ISCII | 不支持 | iconv 也不支持，代码页列表里不出现 |
+
+导出工具在 Windows 上确认的参数规则（Mac 版照此实现）：
+
+| 代码页 | `lpDefaultChar` | `lpUsedDefaultChar` | `WC_NO_BEST_FIT_CHARS` | `WC_ERR_INVALID_CHARS` | `MB_ERR_INVALID_CHARS` |
+|---|---|---|---|---|---|
+| 65001 UTF-8 | 错误 87 | 接受但不使用 | 错误 1004 | 可用 | 可用 |
+| 54936 GB18030 | 错误 87 | 错误 87 | 错误 1004 | 可用 | 可用 |
+| 65000 UTF-7 | 错误 87 | 错误 87 | 错误 1004 | 错误 1004 | 错误 1004 |
+| 932 等转换表代码页 | 可用 | 可用 | 可用 | 错误 1004 | 可用 |
 
 `CP_ACP`、`CP_OEMCP` 都是 65001（UTF-8），与 Windows 的“Beta: 使用 Unicode UTF-8 提供全球语言支持”设置相同。这与 Mac 版窄字符串字面量是 UTF-8 一致（第 14 步）。原版中明确指定 Shift_JIS（`CP_SJIS`）的地方，例如标签文件的读取，仍然按 Shift_JIS 处理。
 
