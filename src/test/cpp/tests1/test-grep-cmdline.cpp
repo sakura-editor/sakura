@@ -2503,6 +2503,28 @@ TEST_F(GrepParallelTest, CancelWhileSearching)
 	agent.m_nMaxGrepThreads = oldMaxThreads;
 }
 
+/*!
+	並列で検索するときも、検索しているフォルダーを表示する
+
+	ワーカーは表示に触らないので、メインスレッドがフォルダーごとに表示する。
+	フォルダー → サブフォルダー → (サブフォルダーから戻って)フォルダー の順になる。
+*/
+TEST_F(GrepParallelTest, ShowsCurrentFolder)
+{
+	AddManyFiles();
+	auto& agent = *CEditApp::getInstance()->m_pcGrepAgent;
+	const auto oldMaxThreads = std::exchange(agent.m_nMaxGrepThreads, 4);
+	FakeGrepProgress progress;
+	FakeGrepOutput output;
+	const auto hitCount = GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XS")), &progress);
+	agent.m_nMaxGrepThreads = oldMaxThreads;
+	EXPECT_THAT(hitCount, Eq(86u));
+	EXPECT_THAT(progress.folders, ::testing::ElementsAre(
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder"),
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder\\sub"),
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder")));
+}
+
 //! ワーカー用の進み具合は、毎回確かめる時機で、中断はフラグに従う。ファイル名を表示する時機は来ず、表示の関数は呼んでも何もしない
 TEST(GrepWorkerProgressTest, FollowsCancelFlag)
 {

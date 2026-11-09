@@ -1247,6 +1247,7 @@ int CGrepAgent::DoGrepFilesParallel(
 )
 {
 	IGrepProgress* const	pProgress = out.pProgress;
+	pProgress->SetFolder( folder.pszFolder );
 	const size_t			nWorkers = std::min( cond.workerRegexps.size(), vFiles.size() );
 	int			nWork = 0;
 	int			nHitCountOld = -100;
