@@ -68,6 +68,15 @@ using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
+namespace cxx {
+
+HRESULT MakeDataObject(
+	_Outptr_ LPDATAOBJECT *ppDataObject,
+	const std::filesystem::path& path
+);
+
+}	// namespace cxx
+
 namespace dialog {
 
 constexpr auto& title1 = L"検索";
@@ -2022,6 +2031,63 @@ TEST_F(EditWndTest, DiffComponents001)
 
 	auto pcDiffLineMgr = std::make_unique<CDiffLineMgr>(pcDocLineMgr);
 	ASSERT_THAT(pcDiffLineMgr, NotNull());
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget002)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget_CEditWnd>();
+
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	const auto data = CDataObject::make_instance(L"data", true);
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	//DragEnterのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	dwEffect = DROPEFFECT_COPY;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, MK_LBUTTON, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_THAT(dwEffect, Eq(DROPEFFECT_NONE));
+
+	dwEffect = DROPEFFECT_COPY;
+	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_THAT(dwEffect, Eq(DROPEFFECT_NONE));
+
+	//DragOverのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->DragOver(dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	//常にS_OKを返す
+	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
+
+	//Dropのパラメーターエラー仕様をチェックする
+	EXPECT_HRESULT_EQ(target->Drop(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
+	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, nullptr), E_INVALIDARG);
+
+	//DragEnter～DragOverを実行させる(1回目)
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+	EXPECT_TRUE(dwEffect & DROPEFFECT_LINK);
+
+	//1回目はDragLeaveでキャンセルさせる
+	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
+
+	//DragEnter～DragOverを実行させる(2回目)
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	//2回目はドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
 }
 
 /*!

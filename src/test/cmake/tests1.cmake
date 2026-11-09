@@ -322,6 +322,7 @@ add_executable(tests1
 if(MSVC)
   set_source_files_properties(
     "${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/test-csakuraenvironment.cpp"
+    "${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/test-window.cpp"
     PROPERTIES
       COMPILE_OPTIONS "/bigobj"
   )

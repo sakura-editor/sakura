@@ -24,12 +24,6 @@
 #include "CClipboard.h"
 #include "CSelectLang.h"
 
-CDropTarget::CDropTarget(CEditWnd* pCEditWnd)
-	: m_pcEditWnd{ pCEditWnd }
-{
-	return;
-}
-
 CDropTarget::CDropTarget(CEditView* pCEditView)
 	: m_pcEditView{ pCEditView }
 {
@@ -49,9 +43,6 @@ IFACEMETHODIMP CDropTarget::DragEnter(
 )
 {
 	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
-	if( m_pcEditWnd ){	// 2008.06.20 ryoji
-		return m_pcEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
-	}
 	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
@@ -61,17 +52,11 @@ IFACEMETHODIMP CDropTarget::DragOver(
 	LPDWORD pdwEffect
 )
 {
-	if( m_pcEditWnd ){	// 2008.06.20 ryoji
-		return m_pcEditWnd->DragOver( dwKeyState, pt, pdwEffect );
-	}
 	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
 
 IFACEMETHODIMP CDropTarget::DragLeave()
 {
-	if( m_pcEditWnd ){	// 2008.06.20 ryoji
-		return m_pcEditWnd->DragLeave();
-	}
 	return m_pcEditView->DragLeave();
 }
 
@@ -82,9 +67,6 @@ IFACEMETHODIMP CDropTarget::Drop(
 	LPDWORD pdwEffect
 )
 {
-	if( m_pcEditWnd ){	// 2008.06.20 ryoji
-		return m_pcEditWnd->Drop( pDataObject, dwKeyState, pt, pdwEffect );
-	}
 	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
