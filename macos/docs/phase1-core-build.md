@@ -25,9 +25,20 @@ ctest --test-dir build/mac-core --output-on-failure
 | debug | 3 | 3 | — |
 | docplus | 4 | 2 | `CDiffManager.cpp`（依赖窗口和绘制）、`CModifyManager.cpp`（依赖 `CEditDoc` 和 COM 的 VARIANT）：第 19 步 |
 | io | 7 | 3 | `CTextStream.cpp`（代码页转换）：第 17 步；`CFile.cpp`、`CFileLoad.cpp`（依赖 `CEditWnd.h`）：第 19 步；`CZipFile.cpp`：只给插件安装用，Mac 版不支持 DLL 插件，不移植 |
-| grep | 1 | 0 | `GrepMessageFormat.cpp` 依赖共享内存 `DLLSHAREDATA`：第 20 步 |
+| grep | 1（另有 7 个头文件） | 0 | `GrepMessageFormat.cpp` 依赖共享内存 `DLLSHAREDATA`：第 20 步。`CGrepEnum*.h` 等头文件用 Win32 的 `FindFirstFile` 和 Windows 路径（盘符、`\`），要按 Mac 的路径规则和沙盒授权改写：第 43 步（Grep） |
 | mem | 5 | 5 | — |
 | parse | 2 | 2 | — |
+
+### 这 9 个目录对应的原版测试
+
+| 测试 | 现状 |
+|---|---|
+| `test-clayoutint` `test-cmemory` `test-cnative` `test-crunningtimer` `test-cwordparse` `test-editinfo` `test-int2dec` `test-is_mailaddress` `test-statictype` `test-string_ex` `test-format` | 在 Mac 上运行，全部通过 |
+| `test-cconvert` `test-cdecode` `test-ceol` `test-file` | 链接需要 charset（`CEol` → `CCodeFactory`）或 `CTextStream`：第 17 步 |
+| `test-detectindentationstyle` `test-csearchagent` | 依赖 `doc/logic` 和 `agent`：第 19 步 |
+| `test-cfileext` `test-grepmessageformat` | 依赖 env（`CDocTypeManager`、`DLLSHAREDATA`）：第 20 步 |
+| `test-cgrepenumkeys` `test-grepenum` `test-grep-exclude-regex` `test-grepinfo` | 依赖 Windows 的路径规则、文件查找和 Grep 对话框：第 43 步 |
+| `test-cerrorinfo` `test-czipfile` | Mac 版不需要（COM、插件 zip） |
 
 第 12 步把这 9 个目录当作“纯逻辑”，实际编译后发现上面这些文件依赖 charset、doc、env 或界面，只能在对应模块移植后再加入。
 
