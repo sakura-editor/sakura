@@ -92,7 +92,7 @@ void WriteWcTable(Writer& w, UINT cp, DWORD flags)
 		BOOL used = FALSE;
 		const int n = ::WideCharToMultiByte(cp, flags, &wc, 1, out, 8, nullptr, &used);
 		if (n <= 0 || used || n > 2) continue;
-		entries.push_back(u & 0xFF); entries.push_back(u >> 8);
+		entries.push_back(static_cast<uint8_t>(u & 0xFF)); entries.push_back(static_cast<uint8_t>(u >> 8));
 		entries.push_back(static_cast<uint8_t>(n));
 		entries.push_back(static_cast<uint8_t>(out[0]));
 		entries.push_back(n == 2 ? static_cast<uint8_t>(out[1]) : 0);

@@ -108,6 +108,12 @@ jobs:
           mkdir out
           dump_codepages.exe out\codepages.bin out\codepages.tsv || exit /b 1
           ver > out\windows-version.txt
+          tar -czf codepages.tgz -C out codepages.bin codepages.tsv windows-version.txt || exit /b 1
+          certutil -f -encode codepages.tgz codepages.b64 > nul || exit /b 1
+
+      # artifact を取り出せない環境のために、ログにも base64 で出す（BEGIN/END の行の間）
+      - name: Print table as base64
+        run: type codepages.b64
 
       - name: Upload
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
