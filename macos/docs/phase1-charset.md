@@ -5,8 +5,8 @@
 - `sakura_core/charset` 的全部 19 个文件编入 Mac 核心库，另外加入 `util/tchar_convert.cpp`、`io/CTextStream.cpp` 和 `window/CMainStatusBar.cpp` 中的 `UnicodeToHex`。
 - 原版的编码相关测试在 Mac 上原样运行并全部通过：
   `test-ccodebase` `test-charset` `test-codechecker` `test-charcode` `test-ceol` `test-cconvert` `test-cdecode`
-- Mac 版专用测试：`macos/core/tests/test-mac-codepage.cpp`（代码页转换）、`test-mac-charcode.cpp`（文字宽度缓存）、`test-mac-io.cpp` 增加了 `CTextStream` 的读写。
-- 本地（Linux + clang）合计 594 项测试全部通过；macOS CI 同样运行。
+- Mac 版专用测试：`macos/core/tests/test-mac-codepage.cpp`（代码页转换，以及原版没有直接测试的 `CCodePage` 类）、`test-mac-charcode.cpp`（文字宽度缓存）、`test-mac-io.cpp` 增加了 `CTextStream` 的读写。
+- 本地（Linux + clang）合计 595 项测试全部通过；macOS CI 同样运行。
 
 ## 代码页转换的做法
 
@@ -65,11 +65,13 @@
 | `util/tchar_convert.cpp`：`CP_ACP` 按界面语言换成 Shift_JIS 的处理只在 Windows 上做 | Mac 版的 `CP_ACP` 就是 UTF-8 |
 | `io/CTextStream.cpp`：`CTextInputStream_AbsIni` 只在 Windows 上编译 | 依赖设置文件位置（util/file），第 20 步加入 |
 | `window/CMainStatusBar.cpp`：Mac 版只编译 `UnicodeToHex` | 状态栏本身是 Windows 界面 |
+| `charset/CESI.h`：加上 `class CNativeW;` 前置声明 | 调试用函数的声明用到它；Windows 版靠预编译头间接引入，Mac 版的预编译头不含它。这样头文件可以单独包含 |
 | 测试 `test-cconvert`：`to_achar` / `to_wchar` 的预期值写成 Shift_JIS 字节；Shift_JIS 专有的检查在 Mac 上明确指定 `CP_SJIS` | Windows 版的窄字符串字面量是 Shift_JIS，Mac 版是 UTF-8 |
 | 测试 `test-charcode`：用 GDI 测宽度的部分只在 Windows 上运行 | Mac 版由 `test-mac-charcode.cpp` 用假的测量函数确认相同的计算规则 |
 
 ## 留到后续步骤
 
+- `test-cconvert` 里的 `ConvTest`（原版也只在 MSVC Debug 下运行）要打开编辑器窗口执行转换命令，随编辑器界面（阶段 2）加入。
 - `test-file`：测试对象主要是 `util/file`（设置文件位置等），移到第 20 步。
 - `CESI::GetDebugInfo`：第 19 步。
 - 代码页名称目前是英文（导出时的 Windows 语言），界面本地化时（第 48 步）换成各语言的名称。

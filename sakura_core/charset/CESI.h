@@ -18,6 +18,7 @@
 #pragma once
 
 struct SEncodingConfig;
+class CNativeW;
 
 #include "_main/global.h"
 

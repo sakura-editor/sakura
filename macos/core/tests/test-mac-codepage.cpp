@@ -10,6 +10,10 @@
 */
 #include "pch.h"
 
+#include "charset/CCodePage.h"
+#include "mem/CMemory.h"
+#include "mem/CNativeW.h"
+
 #include <cstring>
 #include <string>
 #include <vector>
@@ -272,4 +276,56 @@ TEST(MacCodePage, IconvCodePages)
 	// ISO-2022 系、HZ 由 iconv 实现
 	EXPECT_EQ(ToMulti(50220, LTEXT("aあ")), "a\x1B$B$\"\x1B(B");
 	EXPECT_EQ(ToWide(50220, "a\x1B$B$\"\x1B(B"), LTEXT("aあ"));
+}
+
+// 原版没有直接测试 CCodePage 类（任意代码页的读写）的用例，Mac 版在这里补上
+namespace {
+
+EConvertResult CpToUni(int cp, std::string_view bytes, sakura::wstring& out)
+{
+	CMemory src(bytes.data(), int(bytes.size()));
+	CNativeW dst;
+	const auto r = CCodePage::CPToUnicode(src, &dst, cp);
+	out.assign(dst.GetStringPtr(), size_t(dst.GetStringLength()));
+	return r;
+}
+
+EConvertResult UniToCp(int cp, sakura::wstring_view text, std::string& out)
+{
+	CNativeW src(text.data(), text.size());
+	CMemory dst;
+	const auto r = CCodePage::UnicodeToCP(src, &dst, cp);
+	out.assign(reinterpret_cast<const char*>(dst.GetRawPtr()), size_t(dst.GetRawLength()));
+	return r;
+}
+
+} // namespace
+
+TEST(MacCodePage, CCodePageClass)
+{
+	sakura::wstring w;
+	std::string m;
+	EXPECT_EQ(CpToUni(932, "\x82\xA0\x8A\xBF", w), RESULT_COMPLETE);
+	EXPECT_EQ(w, LTEXT("あ漢"));
+	EXPECT_EQ(UniToCp(932, LTEXT("あ漢"), m), RESULT_COMPLETE);
+	EXPECT_EQ(m, "\x82\xA0\x8A\xBF");
+	EXPECT_EQ(CpToUni(54936, "\xC4\xE3\x94\x39\xFC\x36", w), RESULT_COMPLETE);
+	EXPECT_EQ(w, LTEXT("你\U0001F600"));
+	EXPECT_EQ(UniToCp(1252, LTEXT("caf\u00E9"), m), RESULT_COMPLETE);
+	EXPECT_EQ(m, "caf\xE9");
+	EXPECT_EQ(UniToCp(CP_UTF7, LTEXT("あa"), m), RESULT_COMPLETE);
+	EXPECT_EQ(m, "+MEI-a");
+	// CODE_CPACP は Mac 版では UTF-8（GetACP() == 65001）
+	EXPECT_EQ(CpToUni(CODE_CPACP, "\xE3\x81\x82", w), RESULT_COMPLETE);
+	EXPECT_EQ(w, LTEXT("あ"));
+	// 独自実装の UTF-32
+	EXPECT_EQ(UniToCp(12000, LTEXT("a"), m), RESULT_COMPLETE);
+	EXPECT_EQ(m, std::string("a\0\0\0", 4));
+
+	// 代码页一览：系统代码页 + UTF-32，按代码页排序
+	const auto& list = CCodePage::GetCodePageList();
+	auto has = [&](int cp) { return std::any_of(list.begin(), list.end(), [&](const auto& e) { return e.first == cp; }); };
+	for (int cp : { 437, 932, 936, 949, 950, 1252, 54936, 65000, 65001, 12000, 12001, 50220 }) EXPECT_TRUE(has(cp)) << cp;
+	EXPECT_TRUE(std::is_sorted(list.begin(), list.end(), [](const auto& a, const auto& b) { return a.first < b.first; }));
+	for (const auto& e : list) EXPECT_FALSE(e.second.empty()) << e.first;
 }
