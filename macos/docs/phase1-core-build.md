@@ -34,7 +34,8 @@ ctest --test-dir build/mac-core --output-on-failure
 | 测试 | 现状 |
 |---|---|
 | `test-clayoutint` `test-cmemory` `test-cnative` `test-crunningtimer` `test-cwordparse` `test-editinfo` `test-int2dec` `test-is_mailaddress` `test-statictype` `test-string_ex` `test-format` | 在 Mac 上运行，全部通过 |
-| `test-cconvert` `test-cdecode` `test-ceol` `test-file` | 链接需要 charset（`CEol` → `CCodeFactory`）或 `CTextStream`：第 17 步 |
+| `test-cconvert` `test-cdecode` `test-ceol` | 链接需要 charset（`CEol` → `CCodeFactory`）：第 17 步已加入（见 phase1-charset.md） |
+| `test-file` | 主要测试 `util/file`（设置文件位置等）：第 20 步（第 17 步核对时从第 17 步改到这里） |
 | `test-detectindentationstyle` `test-csearchagent` | 依赖 `doc/logic` 和 `agent`：第 19 步 |
 | `test-cfileext` `test-grepmessageformat` | 依赖 env（`CDocTypeManager`、`DLLSHAREDATA`）：第 20 步 |
 | `test-cgrepenumkeys` `test-grepenum` `test-grep-exclude-regex` `test-grepinfo` | 依赖 Windows 的路径规则、文件查找和 Grep 对话框：第 43 步 |
