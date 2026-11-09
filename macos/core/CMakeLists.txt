@@ -1,4 +1,4 @@
-# Sakura Editor for Mac：核心库（libsakura_core）和单元测试
+﻿# Sakura Editor for Mac：核心库（libsakura_core）和单元测试
 #
 # 阶段 1 第 16 步起使用。macOS 和 Linux 都能构建（Linux 只用于开发时快速检查）。
 #
@@ -56,11 +56,21 @@ add_custom_target(sakura_funccode DEPENDS "${GEN_DIR}/Funccode_define.h" "${GEN_
 # ---------------------------------------------------------------------------
 # 核心库
 # ---------------------------------------------------------------------------
-set(SAKURA_CORE_DIRS basis config debug mem parse)
-# 依赖 COM 等 Windows 专有机制、Mac 版不需要的文件
+set(SAKURA_CORE_DIRS basis config convert debug docplus io mem parse)
+# 暂不编入核心库的文件（依赖尚未移植的模块，或 Mac 版不需要）
 set(SAKURA_CORE_EXCLUDE
-  basis/CErrorInfo.cpp            # COM の IErrorInfo 実装
+  # Mac 版不需要
+  basis/CErrorInfo.cpp            # COM 的 IErrorInfo 实现
+  io/CZipFile.cpp                 # 用 Windows Shell 解压 zip，只给插件安装用；Mac 版不支持 DLL 插件
+  # 第 17 步（charset）移植后加入
+  io/CTextStream.cpp              # 依赖 util/tchar_convert（代码页转换）
+  # 第 19 步（doc、types）移植后加入
+  io/CFile.cpp                    # 依赖 window/CEditWnd.h
+  io/CFileLoad.cpp                # 依赖 charset/CESI 和 window/CEditWnd.h
+  docplus/CDiffManager.cpp        # 依赖 window/CEditWnd.h 和绘制
+  docplus/CModifyManager.cpp      # 依赖 doc/CEditDoc 和 COM 的 VARIANT（宏接口）
 )
+# grep/GrepMessageFormat.cpp 依赖 env/DLLSHAREDATA，第 20 步（env）移植后把 grep 加进 SAKURA_CORE_DIRS
 
 set(SAKURA_CORE_SOURCES)
 foreach(d ${SAKURA_CORE_DIRS})

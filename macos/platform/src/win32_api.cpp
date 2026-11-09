@@ -16,6 +16,7 @@
 #include <thread>
 
 #include <dlfcn.h>
+#include <sys/stat.h>
 
 #if defined(__APPLE__)
 #  include <os/log.h>
@@ -220,4 +221,50 @@ DWORD GetLastError()
 void SetLastError(DWORD dwErrCode)
 {
 	t_lastError = dwErrCode;
+}
+
+// ---------------------------------------------------------------------------
+// 文件
+// ---------------------------------------------------------------------------
+
+DWORD GetFileAttributesW(const WCHAR* lpFileName)
+{
+	if (!lpFileName) { SetLastError(ERROR_INVALID_PARAMETER); return INVALID_FILE_ATTRIBUTES; }
+	const std::string path = sakura::u16::to_utf8(lpFileName);
+	struct stat st {};
+	if (::stat(path.c_str(), &st) != 0) { SetLastError(ERROR_FILE_NOT_FOUND); return INVALID_FILE_ATTRIBUTES; }
+	DWORD attr = 0;
+	if (S_ISDIR(st.st_mode)) attr |= FILE_ATTRIBUTE_DIRECTORY;
+	if ((st.st_mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) attr |= FILE_ATTRIBUTE_READONLY;
+	const auto slash = path.find_last_of('/');
+	const auto name = slash == std::string::npos ? path : path.substr(slash + 1);
+	if (name.size() > 1 && name[0] == '.' && name != "..") attr |= FILE_ATTRIBUTE_HIDDEN;
+	return attr ? attr : FILE_ATTRIBUTE_NORMAL;
+}
+
+BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes)
+{
+	if (!lpFileName) { SetLastError(ERROR_INVALID_PARAMETER); return FALSE; }
+	const std::string path = sakura::u16::to_utf8(lpFileName);
+	struct stat st {};
+	if (::stat(path.c_str(), &st) != 0) { SetLastError(ERROR_FILE_NOT_FOUND); return FALSE; }
+	mode_t mode = st.st_mode & 07777;
+	if (dwFileAttributes & FILE_ATTRIBUTE_READONLY) {
+		mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
+	} else if ((mode & (S_IWUSR | S_IWGRP | S_IWOTH)) == 0) {
+		mode |= S_IWUSR;
+	}
+	if (mode != (st.st_mode & 07777) && ::chmod(path.c_str(), mode) != 0) { SetLastError(ERROR_ACCESS_DENIED); return FALSE; }
+	return TRUE;
+}
+
+FILE* _wfopen(const WCHAR* filename, const WCHAR* mode)
+{
+	if (!filename || !mode) { errno = EINVAL; return nullptr; }
+	// 去掉 Windows 专有的模式（ccs=… 和文本模式 t），macOS 的 fopen 不需要
+	std::string m;
+	for (const WCHAR* p = mode; *p && *p != u','; ++p) {
+		if (*p != u't' && *p != u' ') m.push_back(static_cast<char>(*p));
+	}
+	return std::fopen(sakura::u16::to_utf8(filename).c_str(), m.c_str());
 }

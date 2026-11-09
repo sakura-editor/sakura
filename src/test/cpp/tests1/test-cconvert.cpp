@@ -25,80 +25,83 @@
 #include "convert/CConvert_ZenkataToHankata.h"
 
 #include "config/system_constants.h"
+
+#if defined(_WIN32)	// Mac 版: エディタ画面を使うテストと tchar_convert のテストは Windows のみ（tchar_convert は移植計画のステップ 17 で移植する）
 #include "util/os/MockUser32.hpp"
 #include "util/tchar_convert.h"
 
 #include "dlg/ModalDialogCloser.hpp"
 #include "env/ShareDataTestSuite.hpp"
 #include "window/EditorTestSuite.hpp"
+#endif
 
 TEST(CConvert, ZenkataToHankata)
 {
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポ。、「」・ ");
-	expected.SetString(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｲｴｦﾝｧｨｩｪｫｯｬｭｮﾜｶｹｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ｡､｢｣･ ");
+	actual.SetString(LTEXT("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポ。、「」・ "));
+	expected.SetString(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｲｴｦﾝｧｨｩｪｫｯｬｭｮﾜｶｹｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ｡､｢｣･ "));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 長音符は前の文字がカタカナだった場合に限って変換する。
 	// 長音符が連続する場合は前の文字と同様に処理する。
-	actual.SetString(L"ーーナーーベーーパーー。ー");
-	expected.SetString(L"ーーﾅｰｰﾍﾞｰｰﾊﾟｰｰ｡ー");
+	actual.SetString(LTEXT("ーーナーーベーーパーー。ー"));
+	expected.SetString(LTEXT("ーーﾅｰｰﾍﾞｰｰﾊﾟｰｰ｡ー"));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 濁点・半濁点は清音の後に現れた場合のみ変換する。
-	actual.SetString(L"゛゜\u3099\u309A");
-	expected.SetString(L"゛゜\u3099\u309A");
+	actual.SetString(LTEXT("゛゜\u3099\u309A"));
+	expected.SetString(LTEXT("゛゜\u3099\u309A"));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"サ゛゛フ゜゜サ\u3099\u3099フ\u309A\u309A");
-	expected.SetString(L"ｻﾞ゛ﾌﾟ゜ｻﾞ\u3099ﾌﾟ\u309A");
+	actual.SetString(LTEXT("サ゛゛フ゜゜サ\u3099\u3099フ\u309A\u309A"));
+	expected.SetString(LTEXT("ｻﾞ゛ﾌﾟ゜ｻﾞ\u3099ﾌﾟ\u309A"));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ザ゛プ゜ザ\u3099プ\u309A");
-	expected.SetString(L"ｻﾞ゛ﾌﾟ゜ｻﾞ\u3099ﾌﾟ\u309A");
+	actual.SetString(LTEXT("ザ゛プ゜ザ\u3099プ\u309A"));
+	expected.SetString(LTEXT("ｻﾞ゛ﾌﾟ゜ｻﾞ\u3099ﾌﾟ\u309A"));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ー゛・゜");
-	expected.SetString(L"ー゛･゜");
+	actual.SetString(LTEXT("ー゛・゜"));
+	expected.SetString(LTEXT("ー゛･゜"));
 	EXPECT_TRUE(CConvert_ZenkataToHankata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
 
 TEST(CConvert, HankataToZenkata)
 {
-	CNativeW actual(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･");
-	CNativeW expected(L"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポー゛゜。、「」・");
+	CNativeW actual(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･"));
+	CNativeW expected(LTEXT("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポー゛゜。、「」・"));
 	EXPECT_TRUE(CConvert_HankataToZenkata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
 
 TEST(CConvert, HankataToZenhira)
 {
-	CNativeW actual(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･ ");
-	CNativeW expected(L"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんぁぃぅぇぉっゃゅょゔがぎぐげござじずぜぞだぢづでどばびぶべぼわ゛ヸヹを゛ぱぴぷぺぽー゛゜。、「」・ ");
+	CNativeW actual(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･ "));
+	CNativeW expected(LTEXT("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんぁぃぅぇぉっゃゅょゔがぎぐげござじずぜぞだぢづでどばびぶべぼわ゛ヸヹを゛ぱぴぷぺぽー゛゜。、「」・ "));
 	EXPECT_TRUE(CConvert_HankataToZenhira().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
 
 TEST(CConvert, HaneisuToZeneisu)
 {
-	CNativeW actual(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_");
-	CNativeW expected(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿");
+	CNativeW actual(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_"));
+	CNativeW expected(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿"));
 	EXPECT_TRUE(CConvert_HaneisuToZeneisu().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
 
 TEST(CConvert, ZeneisuToHaneisu)
 {
-	CNativeW actual(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿");
-	CNativeW expected(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_");
+	CNativeW actual(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿"));
+	CNativeW expected(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_"));
 	EXPECT_TRUE(CConvert_ZeneisuToHaneisu().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -108,55 +111,55 @@ TEST(CConvert, ToLower)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-	expected.SetString(L"abcdefghijklmnopqrstuvwxyz");
+	actual.SetString(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+	expected.SetString(LTEXT("abcdefghijklmnopqrstuvwxyz"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ");
-	expected.SetString(L"ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ");
+	actual.SetString(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ"));
+	expected.SetString(LTEXT("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// ギリシャ文字
-	actual.SetString(L"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ");
-	expected.SetString(L"αβγδεζηθικλμνξοπρστυφχψω");
+	actual.SetString(LTEXT("ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"));
+	expected.SetString(LTEXT("αβγδεζηθικλμνξοπρστυφχψω"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// キリル文字
-	actual.SetString(L"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ");
-	expected.SetString(L"абвгдежзийклмнопрстуфхцчшщъыьэюя");
+	actual.SetString(LTEXT("АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"));
+	expected.SetString(LTEXT("абвгдежзийклмнопрстуфхцчшщъыьэюя"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 拡張キリル文字
-	actual.SetString(L"ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ");
-	expected.SetString(L"ѐёђѓєѕіїјљњћќѝўџ");
+	actual.SetString(LTEXT("ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ"));
+	expected.SetString(LTEXT("ѐёђѓєѕіїјљњћќѝўџ"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin-1
-	actual.SetString(L"ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß");
-	expected.SetString(L"àáâãäåæçèéêëìíîïðñòóôõö×øùúûüýþß");
+	actual.SetString(LTEXT("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞß"));
+	expected.SetString(LTEXT("àáâãäåæçèéêëìíîïðñòóôõö×øùúûüýþß"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended-A
-	actual.SetString(L"ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ");
-	expected.SetString(L"āāăăąąććĉĉċċččďďđđēēĕĕėėęęěěĝĝğğġġģģĥĥħħĩĩīīĭĭįįiıĳĳĵĵķķĸĺĺļļľľŀŀłłńńņņňňŉŋŋōōŏŏőőœœŕŕŗŗřřśśŝŝşşššţţťťŧŧũũūūŭŭůůűűųųŵŵŷŷÿźźżżžžſ");
+	actual.SetString(LTEXT("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"));
+	expected.SetString(LTEXT("āāăăąąććĉĉċċččďďđđēēĕĕėėęęěěĝĝğğġġģģĥĥħħĩĩīīĭĭįįiıĳĳĵĵķķĸĺĺļļľľŀŀłłńńņņňňŉŋŋōōŏŏőőœœŕŕŗŗřřśśŝŝşşššţţťťŧŧũũūūŭŭůůűűųųŵŵŷŷÿźźżżžžſ"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended-B
-	actual.SetString(L"ƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ");
-	expected.SetString(L"ƁƁƃƃƅƅƆƈƈƊƊƌƌƍǝƏƐƒƒƓƔƕƖƗƙƙƚƛƜƝƞƟơơƣƣƥƥƦƨƨƩƪƫƭƭƮưưƱƲƴƴƶƶƷƹƹƺƻƽƽƾƿǀǁǂǃǆǆǆǉǉǉǌǌǌǎǎǐǐǒǒǔǔǖǖǘǘǚǚǜǜǝǟǟǡǡǣǣǥǥǧǧǩǩǫǫǭǭǯǯǰǳǳǳǵǵƕƿǹǹǻǻǽǽǿǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ");
+	actual.SetString(LTEXT("ƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"));
+	expected.SetString(LTEXT("ƁƁƃƃƅƅƆƈƈƊƊƌƌƍǝƏƐƒƒƓƔƕƖƗƙƙƚƛƜƝƞƟơơƣƣƥƥƦƨƨƩƪƫƭƭƮưưƱƲƴƴƶƶƷƹƹƺƻƽƽƾƿǀǁǂǃǆǆǆǉǉǉǌǌǌǎǎǐǐǒǒǔǔǖǖǘǘǚǚǜǜǝǟǟǡǡǣǣǥǥǧǧǩǩǫǫǭǭǯǯǰǳǳǳǵǵƕƿǹǹǻǻǽǽǿǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended Additional
-	actual.SetString(L"ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ");
-	expected.SetString(L"ḁḁḃḃḅḅḇḇḉḉḋḋḍḍḏḏḑḑḓḓḕḕḗḗḙḙḛḛḝḝḟḟḡḡḣḣḥḥḧḧḩḩḫḫḭḭḯḯḱḱḳḳḵḵḷḷḹḹḻḻḽḽḿḿṁṁṃṃṅṅṇṇṉṉṋṋṍṍṏṏṑṑṓṓṕṕṗṗṙṙṛṛṝṝṟṟṡṡṣṣṥṥṧṧṩṩṫṫṭṭṯṯṱṱṳṳṵṵṷṷṹṹṻṻṽṽṿṿẁẁẃẃẅẅẇẇẉẉẋẋẍẍẏẏẑẑẓẓẕẕẖẗẘẙẚẛẜẝẞẟạạảảấấầầẩẩẫẫậậắắằằẳẳẵẵặặẹẹẻẻẽẽếếềềểểễễệệỉỉịịọọỏỏốốồồổổỗỗộộớớờờởởỡỡợợụụủủứứừừửửữữựựỳỳỵỵỷỷỹỹỻỻỽỽỿỿ");
+	actual.SetString(LTEXT("ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ"));
+	expected.SetString(LTEXT("ḁḁḃḃḅḅḇḇḉḉḋḋḍḍḏḏḑḑḓḓḕḕḗḗḙḙḛḛḝḝḟḟḡḡḣḣḥḥḧḧḩḩḫḫḭḭḯḯḱḱḳḳḵḵḷḷḹḹḻḻḽḽḿḿṁṁṃṃṅṅṇṇṉṉṋṋṍṍṏṏṑṑṓṓṕṕṗṗṙṙṛṛṝṝṟṟṡṡṣṣṥṥṧṧṩṩṫṫṭṭṯṯṱṱṳṳṵṵṷṷṹṹṻṻṽṽṿṿẁẁẃẃẅẅẇẇẉẉẋẋẍẍẏẏẑẑẓẓẕẕẖẗẘẙẚẛẜẝẞẟạạảảấấầầẩẩẫẫậậắắằằẳẳẵẵặặẹẹẻẻẽẽếếềềểểễễệệỉỉịịọọỏỏốốồồổổỗỗộộớớờờởởỡỡợợụụủủứứừừửửữữựựỳỳỵỵỷỷỹỹỻỻỽỽỿỿ"));
 	EXPECT_TRUE(CConvert_ToLower().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -166,55 +169,55 @@ TEST(CConvert, ToUpper)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"abcdefghijklmnopqrstuvwxyz");
-	expected.SetString(L"ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+	actual.SetString(LTEXT("abcdefghijklmnopqrstuvwxyz"));
+	expected.SetString(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ");
-	expected.SetString(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ");
+	actual.SetString(LTEXT("ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ"));
+	expected.SetString(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// ギリシャ文字
-	actual.SetString(L"αβγδεζηθικλμνξοπρστυφχψω");
-	expected.SetString(L"ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ");
+	actual.SetString(LTEXT("αβγδεζηθικλμνξοπρστυφχψω"));
+	expected.SetString(LTEXT("ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// キリル文字
-	actual.SetString(L"абвгдежзийклмнопрстуфхцчшщъыьэюя");
-	expected.SetString(L"АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ");
+	actual.SetString(LTEXT("абвгдежзийклмнопрстуфхцчшщъыьэюя"));
+	expected.SetString(LTEXT("АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 拡張キリル文字
-	actual.SetString(L"ѐёђѓєѕіїјљњћќѝўџ");
-	expected.SetString(L"ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ");
+	actual.SetString(LTEXT("ѐёђѓєѕіїјљњћќѝўџ"));
+	expected.SetString(LTEXT("ЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin-1
-	actual.SetString(L"àáâãäåæçèéêëìíîïðñòóôõö×øùúûüýþÿ");
-	expected.SetString(L"ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞŸ");
+	actual.SetString(LTEXT("àáâãäåæçèéêëìíîïðñòóôõö×øùúûüýþÿ"));
+	expected.SetString(LTEXT("ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞŸ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended-A
-	actual.SetString(L"ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ");
-	expected.SetString(L"ĀĀĂĂĄĄĆĆĈĈĊĊČČĎĎĐĐĒĒĔĔĖĖĘĘĚĚĜĜĞĞĠĠĢĢĤĤĦĦĨĨĪĪĬĬĮĮİIĲĲĴĴĶĶĸĹĹĻĻĽĽĿĿŁŁŃŃŅŅŇŇŉŊŊŌŌŎŎŐŐŒŒŔŔŖŖŘŘŚŚŜŜŞŞŠŠŢŢŤŤŦŦŨŨŪŪŬŬŮŮŰŰŲŲŴŴŶŶŸŹŹŻŻŽŽſ");
+	actual.SetString(LTEXT("ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſ"));
+	expected.SetString(LTEXT("ĀĀĂĂĄĄĆĆĈĈĊĊČČĎĎĐĐĒĒĔĔĖĖĘĘĚĚĜĜĞĞĠĠĢĢĤĤĦĦĨĨĪĪĬĬĮĮİIĲĲĴĴĶĶĸĹĹĻĻĽĽĿĿŁŁŃŃŅŅŇŇŉŊŊŌŌŎŎŐŐŒŒŔŔŖŖŘŘŚŚŜŜŞŞŠŠŢŢŤŤŦŦŨŨŪŪŬŬŮŮŰŰŲŲŴŴŶŶŸŹŹŻŻŽŽſ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended-B
-	actual.SetString(L"ƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ");
-	expected.SetString(L"ƀƀƂƂƄƄƆƇƇƉƉƋƋƍƎƏƐƑƑƓƔǶƖƗƘƘƚƛƜƝƞƟƠƠƢƢƤƤƦƧƧƩƪƫƬƬƮƯƯƱƲƳƳƵƵƷƸƸƺƻƼƼƾǷǀǁǂǃǄǄǄǇǇǇǊǊǊǍǍǏǏǑǑǓǓǕǕǗǗǙǙǛǛƎǞǞǠǠǢǢǤǤǦǦǨǨǪǪǬǬǮǮǰǱǱǱǴǴǶǷǸǸǺǺǼǼǾǾȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ");
+	actual.SetString(LTEXT("ƀƁƂƃƄƅƆƇƈƉƊƋƌƍƎƏƐƑƒƓƔƕƖƗƘƙƚƛƜƝƞƟƠơƢƣƤƥƦƧƨƩƪƫƬƭƮƯưƱƲƳƴƵƶƷƸƹƺƻƼƽƾƿǀǁǂǃǄǅǆǇǈǉǊǋǌǍǎǏǐǑǒǓǔǕǖǗǘǙǚǛǜǝǞǟǠǡǢǣǤǥǦǧǨǩǪǫǬǭǮǯǰǱǲǳǴǵǶǷǸǹǺǻǼǽǾǿȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"));
+	expected.SetString(LTEXT("ƀƀƂƂƄƄƆƇƇƉƉƋƋƍƎƏƐƑƑƓƔǶƖƗƘƘƚƛƜƝƞƟƠƠƢƢƤƤƦƧƧƩƪƫƬƬƮƯƯƱƲƳƳƵƵƷƸƸƺƻƼƼƾǷǀǁǂǃǄǄǄǇǇǇǊǊǊǍǍǏǏǑǑǓǓǕǕǗǗǙǙǛǛƎǞǞǠǠǢǢǤǤǦǦǨǨǪǪǬǬǮǮǰǱǱǱǴǴǶǷǸǸǺǺǼǼǾǾȀȁȂȃȄȅȆȇȈȉȊȋȌȍȎȏȐȑȒȓȔȕȖȗȘșȚțȜȝȞȟȠȡȢȣȤȥȦȧȨȩȪȫȬȭȮȯȰȱȲȳȴȵȶȷȸȹȺȻȼȽȾȿɀɁɂɃɄɅɆɇɈɉɊɋɌɍɎɏ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// Latin Extended Additional
-	actual.SetString(L"ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ");
-	expected.SetString(L"ḀḀḂḂḄḄḆḆḈḈḊḊḌḌḎḎḐḐḒḒḔḔḖḖḘḘḚḚḜḜḞḞḠḠḢḢḤḤḦḦḨḨḪḪḬḬḮḮḰḰḲḲḴḴḶḶḸḸḺḺḼḼḾḾṀṀṂṂṄṄṆṆṈṈṊṊṌṌṎṎṐṐṒṒṔṔṖṖṘṘṚṚṜṜṞṞṠṠṢṢṤṤṦṦṨṨṪṪṬṬṮṮṰṰṲṲṴṴṶṶṸṸṺṺṼṼṾṾẀẀẂẂẄẄẆẆẈẈẊẊẌẌẎẎẐẐẒẒẔẔẖẗẘẙẚẛẜẝẞẟẠẠẢẢẤẤẦẦẨẨẪẪẬẬẮẮẰẰẲẲẴẴẶẶẸẸẺẺẼẼẾẾỀỀỂỂỄỄỆỆỈỈỊỊỌỌỎỎỐỐỒỒỔỔỖỖỘỘỚỚỜỜỞỞỠỠỢỢỤỤỦỦỨỨỪỪỬỬỮỮỰỰỲỲỴỴỶỶỸỸỺỺỼỼỾỾ");
+	actual.SetString(LTEXT("ḀḁḂḃḄḅḆḇḈḉḊḋḌḍḎḏḐḑḒḓḔḕḖḗḘḙḚḛḜḝḞḟḠḡḢḣḤḥḦḧḨḩḪḫḬḭḮḯḰḱḲḳḴḵḶḷḸḹḺḻḼḽḾḿṀṁṂṃṄṅṆṇṈṉṊṋṌṍṎṏṐṑṒṓṔṕṖṗṘṙṚṛṜṝṞṟṠṡṢṣṤṥṦṧṨṩṪṫṬṭṮṯṰṱṲṳṴṵṶṷṸṹṺṻṼṽṾṿẀẁẂẃẄẅẆẇẈẉẊẋẌẍẎẏẐẑẒẓẔẕẖẗẘẙẚẛẜẝẞẟẠạẢảẤấẦầẨẩẪẫẬậẮắẰằẲẳẴẵẶặẸẹẺẻẼẽẾếỀềỂểỄễỆệỈỉỊịỌọỎỏỐốỒồỔổỖỗỘộỚớỜờỞởỠỡỢợỤụỦủỨứỪừỬửỮữỰựỲỳỴỵỶỷỸỹỺỻỼỽỾỿ"));
+	expected.SetString(LTEXT("ḀḀḂḂḄḄḆḆḈḈḊḊḌḌḎḎḐḐḒḒḔḔḖḖḘḘḚḚḜḜḞḞḠḠḢḢḤḤḦḦḨḨḪḪḬḬḮḮḰḰḲḲḴḴḶḶḸḸḺḺḼḼḾḾṀṀṂṂṄṄṆṆṈṈṊṊṌṌṎṎṐṐṒṒṔṔṖṖṘṘṚṚṜṜṞṞṠṠṢṢṤṤṦṦṨṨṪṪṬṬṮṮṰṰṲṲṴṴṶṶṸṸṺṺṼṼṾṾẀẀẂẂẄẄẆẆẈẈẊẊẌẌẎẎẐẐẒẒẔẔẖẗẘẙẚẛẜẝẞẟẠẠẢẢẤẤẦẦẨẨẪẪẬẬẮẮẰẰẲẲẴẴẶẶẸẸẺẺẼẼẾẾỀỀỂỂỄỄỆỆỈỈỊỊỌỌỎỎỐỐỒỒỔỔỖỖỘỘỚỚỜỜỞỞỠỠỢỢỤỤỦỦỨỨỪỪỬỬỮỮỰỰỲỲỴỴỶỶỸỸỺỺỼỼỾỾ"));
 	EXPECT_TRUE(CConvert_ToUpper().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -224,18 +227,18 @@ TEST(CConvert, ToZenhira)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･");
-	expected.SetString(L"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんぁぃぅぇぉっゃゅょゔがぎぐげござじずぜぞだぢづでどばびぶべぼヷヸヹヺぱぴぷぺぽー゛゜。、「」・");
+	actual.SetString(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･"));
+	expected.SetString(LTEXT("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんぁぃぅぇぉっゃゅょゔがぎぐげござじずぜぞだぢづでどばびぶべぼヷヸヹヺぱぴぷぺぽー゛゜。、「」・"));
 	EXPECT_TRUE(CConvert_ToZenhira().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポ。、「」・ﾞﾟ｡､｢｣･");
-	expected.SetString(L"あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんぁぃぅぇぉっゃゅょゎヵヶゔがぎぐげござじずぜぞだぢづでどばびぶべぼヷヸヹヺぱぴぷぺぽ。、「」・゛゜。、「」・");
+	actual.SetString(LTEXT("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポ。、「」・ﾞﾟ｡､｢｣･"));
+	expected.SetString(LTEXT("あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんぁぃぅぇぉっゃゅょゎヵヶゔがぎぐげござじずぜぞだぢづでどばびぶべぼヷヸヹヺぱぴぷぺぽ。、「」・゛゜。、「」・"));
 	EXPECT_TRUE(CConvert_ToZenhira().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_");
-	expected.SetString(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿");
+	actual.SetString(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_"));
+	expected.SetString(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿"));
 	EXPECT_TRUE(CConvert_ToZenhira().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -245,18 +248,18 @@ TEST(CConvert, ToZenkata)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･");
-	expected.SetString(L"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポー゛゜。、「」・");
+	actual.SetString(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｦﾝｧｨｩｪｫｯｬｭｮｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟｰﾞﾟ｡､｢｣･"));
+	expected.SetString(LTEXT("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォッャュョヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポー゛゜。、「」・"));
 	EXPECT_TRUE(CConvert_ToZenkata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖゝゞ");
-	expected.SetString(L"ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヽヾ");
+	actual.SetString(LTEXT("ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖゝゞ"));
+	expected.SetString(LTEXT("ァアィイゥウェエォオカガキギクグケゲコゴサザシジスズセゼソゾタダチヂッツヅテデトドナニヌネノハバパヒビピフブプヘベペホボポマミムメモャヤュユョヨラリルレロヮワヰヱヲンヴヵヶヽヾ"));
 	EXPECT_TRUE(CConvert_ToZenkata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_");
-	expected.SetString(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿");
+	actual.SetString(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_"));
+	expected.SetString(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿"));
 	EXPECT_TRUE(CConvert_ToZenkata().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -266,23 +269,23 @@ TEST(CConvert, ToHankaku)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿");
-	expected.SetString(L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_");
+	actual.SetString(LTEXT("ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ０１２３４５６７８９　，．＋－＊／％＝｜＆＾￥＠；：”‘’＜＞（）｛｝［］！？＃＄￣＿"));
+	expected.SetString(LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ,.+-*/%=|&^\\@;:\"`'<>(){}[]!?#$~_"));
 	EXPECT_TRUE(CConvert_ToHankaku().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖゝゞ");
-	expected.SetString(L"ｧｱｨｲｩｳｪｴｫｵｶｶﾞｷｷﾞｸｸﾞｹｹﾞｺｺﾞｻｻﾞｼｼﾞｽｽﾞｾｾﾞｿｿﾞﾀﾀﾞﾁﾁﾞｯﾂﾂﾞﾃﾃﾞﾄﾄﾞﾅﾆﾇﾈﾉﾊﾊﾞﾊﾟﾋﾋﾞﾋﾟﾌﾌﾞﾌﾟﾍﾍﾞﾍﾟﾎﾎﾞﾎﾟﾏﾐﾑﾒﾓｬﾔｭﾕｮﾖﾗﾘﾙﾚﾛﾜﾜｲｴｦﾝｳﾞｶｹゝゞ");
+	actual.SetString(LTEXT("ぁあぃいぅうぇえぉおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもゃやゅゆょよらりるれろゎわゐゑをんゔゕゖゝゞ"));
+	expected.SetString(LTEXT("ｧｱｨｲｩｳｪｴｫｵｶｶﾞｷｷﾞｸｸﾞｹｹﾞｺｺﾞｻｻﾞｼｼﾞｽｽﾞｾｾﾞｿｿﾞﾀﾀﾞﾁﾁﾞｯﾂﾂﾞﾃﾃﾞﾄﾄﾞﾅﾆﾇﾈﾉﾊﾊﾞﾊﾟﾋﾋﾞﾋﾟﾌﾌﾞﾌﾟﾍﾍﾞﾍﾟﾎﾎﾞﾎﾟﾏﾐﾑﾒﾓｬﾔｭﾕｮﾖﾗﾘﾙﾚﾛﾜﾜｲｴｦﾝｳﾞｶｹゝゞ"));
 	EXPECT_TRUE(CConvert_ToHankaku().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポヽヾ");
-	expected.SetString(L"ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｲｴｦﾝｧｨｩｪｫｯｬｭｮﾜｶｹｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟヽヾ");
+	actual.SetString(LTEXT("アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲンァィゥェォッャュョヮヵヶヴガギグゲゴザジズゼゾダヂヅデドバビブベボヷヸヹヺパピプペポヽヾ"));
+	expected.SetString(LTEXT("ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜｲｴｦﾝｧｨｩｪｫｯｬｭｮﾜｶｹｳﾞｶﾞｷﾞｸﾞｹﾞｺﾞｻﾞｼﾞｽﾞｾﾞｿﾞﾀﾞﾁﾞﾂﾞﾃﾞﾄﾞﾊﾞﾋﾞﾌﾞﾍﾞﾎﾞﾜﾞｲﾞｴﾞｦﾞﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟヽヾ"));
 	EXPECT_TRUE(CConvert_ToHankaku().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
-	actual.SetString(L"。、「」・ﾞﾟ｡､｢｣･");
-	expected.SetString(L"｡､｢｣･ﾞﾟ｡､｢｣･");
+	actual.SetString(LTEXT("。、「」・ﾞﾟ｡､｢｣･"));
+	expected.SetString(LTEXT("｡､｢｣･ﾞﾟ｡､｢｣･"));
 	EXPECT_TRUE(CConvert_ToHankaku().DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -292,30 +295,30 @@ TEST(CConvert, TabToSpace)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"");
+	actual.SetString(LTEXT(""));
 	EXPECT_FALSE(CConvert_TabToSpace(4, 0, false).DoConvert(&actual));
 
 	// タブだけ変換
-	actual.SetString(L"\t");
-	expected.SetString(L"    ");
+	actual.SetString(LTEXT("\t"));
+	expected.SetString(LTEXT("    "));
 	EXPECT_TRUE(CConvert_TabToSpace(4, 0, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// タブを中途桁から変換
-	actual.SetString(L"\t");
-	expected.SetString(L" ");
+	actual.SetString(LTEXT("\t"));
+	expected.SetString(LTEXT(" "));
 	EXPECT_TRUE(CConvert_TabToSpace(4, 3, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// タブの前に文字
-	actual.SetString(L"a\t");
-	expected.SetString(L"a   ");
+	actual.SetString(LTEXT("a\t"));
+	expected.SetString(LTEXT("a   "));
 	EXPECT_TRUE(CConvert_TabToSpace(4, 0, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 複数行
-	actual.SetString(L"\t\n\t");
-	expected.SetString(L"    \n    ");
+	actual.SetString(LTEXT("\t\n\t"));
+	expected.SetString(LTEXT("    \n    "));
 	EXPECT_TRUE(CConvert_TabToSpace(4, 0, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -324,38 +327,38 @@ TEST(CConvert, SpaceToTab)
 {
 	class FakeCache : public CCharWidthCache {
 	public:
-		bool CalcHankakuByFont(wchar_t ch) override {
-			return ch != L'あ';
+		bool CalcHankakuByFont(WCHAR ch) override {
+			return ch != LCHAR('あ');
 		}
 	} cache;
 
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"");
+	actual.SetString(LTEXT(""));
 	EXPECT_FALSE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 
 	// 空白をタブに変換
-	actual.SetString(L"        ");
-	expected.SetString(L"\t\t");
+	actual.SetString(LTEXT("        "));
+	expected.SetString(LTEXT("\t\t"));
 	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// タブは変換しない
-	actual.SetString(L"\t\t");
-	expected.SetString(L"\t\t");
+	actual.SetString(LTEXT("\t\t"));
+	expected.SetString(LTEXT("\t\t"));
 	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 空白の数がタブ幅より少ない場合は変換しない
-	actual.SetString(L"  ");
-	expected.SetString(L"  ");
+	actual.SetString(LTEXT("  "));
+	expected.SetString(LTEXT("  "));
 	EXPECT_TRUE(CConvert_SpaceToTab(4, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// 文字と空白の混在
-	actual.SetString(L" aあ     b ");
-	expected.SetString(L" aあ\t b ");
+	actual.SetString(LTEXT(" aあ     b "));
+	expected.SetString(LTEXT(" aあ\t b "));
 	EXPECT_TRUE(CConvert_SpaceToTab(8, 0, false, cache).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -365,18 +368,18 @@ TEST(CConvert, Trim)
 	CNativeW actual;
 	CNativeW expected;
 
-	actual.SetString(L"");
+	actual.SetString(LTEXT(""));
 	EXPECT_TRUE(CConvert_Trim(false, false).DoConvert(&actual));
 
 	// bLeftがtrueなら左の空白を削除する。
-	actual.SetString(L"  やよ  ");
-	expected.SetString(L"  やよ");
+	actual.SetString(LTEXT("  やよ  "));
+	expected.SetString(LTEXT("  やよ"));
 	EXPECT_TRUE(CConvert_Trim(false, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 
 	// bLeftがfalseなら右の空白を削除する。
-	actual.SetString(L"  やよ  ");
-	expected.SetString(L"やよ  ");
+	actual.SetString(LTEXT("  やよ  "));
+	expected.SetString(LTEXT("やよ  "));
 	EXPECT_TRUE(CConvert_Trim(true, false).DoConvert(&actual));
 	EXPECT_EQ(actual, expected);
 }
@@ -384,7 +387,7 @@ TEST(CConvert, Trim)
 #if defined(_MSC_VER) && defined(_DEBUG)
 
 //!変換テストのためのテストパラメータ型
-using ConvTestParamType = std::tuple<EFunctionCode, std::wstring_view, std::wstring_view>;
+using ConvTestParamType = std::tuple<EFunctionCode, sakura::wstring_view, sakura::wstring_view>;
 
 //!変換テストのためのフィクスチャクラス
 struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public window::EditorTestSuite, public window::UiaTestSuite {
@@ -445,7 +448,7 @@ struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public win
  */
 TEST_P(ConvTest, test)
 {
-	const std::wstring expected{ std::get<2>(GetParam()) };
+	const sakura::wstring expected{ std::get<2>(GetParam()) };
 
 	const auto hWnd = pcEditWnd->GetHwnd();
 
@@ -470,7 +473,7 @@ TEST_P(ConvTest, test)
 
 	// 全データを取得する
 	const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
-	std::wstring_view actual{ std::data(buffer), nLineLen };
+	sakura::wstring_view actual{ std::data(buffer), nLineLen };
 	EXPECT_THAT(actual, StrEq(expected));
 }
 
@@ -481,56 +484,58 @@ TEST_P(ConvTest, test)
 INSTANTIATE_TEST_CASE_P(ParameterizedTestConv
 	, ConvTest
 	, ::testing::Values(
-		ConvTestParamType{ F_TOLOWER,					L"AbＣｄ",			L"abｃｄ" },
-		ConvTestParamType{ F_TOUPPER,					L"AbＣｄ",			L"ABＣＤ" },
-		ConvTestParamType{ F_TOHANKAKU,					L"カナかなｶﾅ",		L"ｶﾅｶﾅｶﾅ" },
-		ConvTestParamType{ F_TOHANKATA,					L"カナかなｶﾅ",		L"ｶﾅかなｶﾅ" },
-		ConvTestParamType{ F_TOZENEI,					L"AbＣｄ",			L"ＡｂＣｄ" },
-		ConvTestParamType{ F_TOHANEI,					L"AbＣｄ",			L"AbCd" },
-		ConvTestParamType{ F_TOZENKAKUKATA,				L"カナかなｶﾅ",		L"カナカナカナ" },
-		ConvTestParamType{ F_TOZENKAKUHIRA,				L"カナかなｶﾅ",		L"かなかなかな" },
-		ConvTestParamType{ F_HANKATATOZENKATA,			L"カナかなｶﾅ",		L"カナかなカナ" },
-		ConvTestParamType{ F_HANKATATOZENHIRA,			L"カナかなｶﾅ",		L"カナかなかな" },
-		ConvTestParamType{ F_TABTOSPACE,				L"\t",				L"    " },
-		ConvTestParamType{ F_SPACETOTAB,				L"    ",			L"\t" },
-		ConvTestParamType{ F_LTRIM,						L" x ",				L"x " },
-		ConvTestParamType{ F_RTRIM,						L" x ",				L" x" },
-		ConvTestParamType{ F_CODECNV_EMAIL,				L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_EUC2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_UNICODE2SJIS,		L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ。
-		ConvTestParamType{ F_CODECNV_UNICODEBE2SJIS,	L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_UTF82SJIS,			L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_UTF72SJIS,			L"+UxYwUTDpMMMwvwAhACE-",		L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"化けラッタ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"\x1b$B2=$1%i%C%?\x1b(B!!",	L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			L"ｲｽ､ｱ･鬣ﾃ･ｿ!!",				L"化けラッタ!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2JIS,			L"化けラッタ!!",				L"\x1b$B2=$1%i%C%?\x1b(B!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2EUC,			L"化けラッタ!!",				L"ｲｽ､ｱ･鬣ﾃ･ｿ!!" },
-		ConvTestParamType{ F_CODECNV_SJIS2UTF8,			L"",							L"" },							//FIXME: 機能しないため、呼出確認のみ
-		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			L"化けラッタ!!",				L"+UxYwUTDpMMMwvwAhACE-" }
+		ConvTestParamType{ F_TOLOWER,					LTEXT("AbＣｄ"),			LTEXT("abｃｄ") },
+		ConvTestParamType{ F_TOUPPER,					LTEXT("AbＣｄ"),			LTEXT("ABＣＤ") },
+		ConvTestParamType{ F_TOHANKAKU,					LTEXT("カナかなｶﾅ"),		LTEXT("ｶﾅｶﾅｶﾅ") },
+		ConvTestParamType{ F_TOHANKATA,					LTEXT("カナかなｶﾅ"),		LTEXT("ｶﾅかなｶﾅ") },
+		ConvTestParamType{ F_TOZENEI,					LTEXT("AbＣｄ"),			LTEXT("ＡｂＣｄ") },
+		ConvTestParamType{ F_TOHANEI,					LTEXT("AbＣｄ"),			LTEXT("AbCd") },
+		ConvTestParamType{ F_TOZENKAKUKATA,				LTEXT("カナかなｶﾅ"),		LTEXT("カナカナカナ") },
+		ConvTestParamType{ F_TOZENKAKUHIRA,				LTEXT("カナかなｶﾅ"),		LTEXT("かなかなかな") },
+		ConvTestParamType{ F_HANKATATOZENKATA,			LTEXT("カナかなｶﾅ"),		LTEXT("カナかなカナ") },
+		ConvTestParamType{ F_HANKATATOZENHIRA,			LTEXT("カナかなｶﾅ"),		LTEXT("カナかなかな") },
+		ConvTestParamType{ F_TABTOSPACE,				LTEXT("\t"),				LTEXT("    ") },
+		ConvTestParamType{ F_SPACETOTAB,				LTEXT("    "),			LTEXT("\t") },
+		ConvTestParamType{ F_LTRIM,						LTEXT(" x "),				LTEXT("x ") },
+		ConvTestParamType{ F_RTRIM,						LTEXT(" x "),				LTEXT(" x") },
+		ConvTestParamType{ F_CODECNV_EMAIL,				LTEXT("\x1b$B2=$1%i%C%?\x1b(B!!"),	LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_EUC2SJIS,			LTEXT("ｲｽ､ｱ･鬣ﾃ･ｿ!!"),				LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_UNICODE2SJIS,		LTEXT(""),							LTEXT("") },							//FIXME: 機能しないため、呼出確認のみ。
+		ConvTestParamType{ F_CODECNV_UNICODEBE2SJIS,	LTEXT(""),							LTEXT("") },							//FIXME: 機能しないため、呼出確認のみ
+		ConvTestParamType{ F_CODECNV_UTF82SJIS,			LTEXT(""),							LTEXT("") },							//FIXME: 機能しないため、呼出確認のみ
+		ConvTestParamType{ F_CODECNV_UTF72SJIS,			LTEXT("+UxYwUTDpMMMwvwAhACE-"),		LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			LTEXT("化けラッタ!!"),				LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			LTEXT("\x1b$B2=$1%i%C%?\x1b(B!!"),	LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_AUTO2SJIS,			LTEXT("ｲｽ､ｱ･鬣ﾃ･ｿ!!"),				LTEXT("化けラッタ!!") },
+		ConvTestParamType{ F_CODECNV_SJIS2JIS,			LTEXT("化けラッタ!!"),				LTEXT("\x1b$B2=$1%i%C%?\x1b(B!!") },
+		ConvTestParamType{ F_CODECNV_SJIS2EUC,			LTEXT("化けラッタ!!"),				LTEXT("ｲｽ､ｱ･鬣ﾃ･ｿ!!") },
+		ConvTestParamType{ F_CODECNV_SJIS2UTF8,			LTEXT(""),							LTEXT("") },							//FIXME: 機能しないため、呼出確認のみ
+		ConvTestParamType{ F_CODECNV_SJIS2UTF7,			LTEXT("化けラッタ!!"),				LTEXT("+UxYwUTDpMMMwvwAhACE-") }
 	)
 );
 
 #endif // if defined(_MSC_VER) && defined(_DEBUG)
+
+#if defined(_WIN32)	// Mac 版: tchar_convert は移植計画のステップ 17 で移植する
 
 namespace cxx {
 
 TEST(to_achar, test001)
 {
 	// ASCIIのみの文字列
-	EXPECT_THAT(to_achar(L"abc123"), StrEq("abc123"));
+	EXPECT_THAT(to_achar(LTEXT("abc123")), StrEq("abc123"));
 }
 
 TEST(to_achar, test002)
 {
 	// 日本語を含む文字列
-	EXPECT_THAT(to_achar(L"あい"), StrEq("あい"));
+	EXPECT_THAT(to_achar(LTEXT("あい")), StrEq("あい"));
 }
 
 TEST(to_achar, test101)
 {
 	// 空文字列
-	EXPECT_THAT(to_achar(L""), StrEq(""));
+	EXPECT_THAT(to_achar(LTEXT("")), StrEq(""));
 }
 
 TEST(to_achar, test102)
@@ -548,7 +553,7 @@ TEST(to_achar, test103)
 TEST(to_string, test001)
 {
 	// 空文字列
-	EXPECT_THAT(cxx::to_string(L""), StrEq(""));
+	EXPECT_THAT(cxx::to_string(LTEXT("")), StrEq(""));
 }
 
 TEST(to_string, test002)
@@ -558,19 +563,19 @@ TEST(to_string, test002)
 
 
 	// 日本語を含む文字列
-	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生"), StrEq("ABCabc123あいう愛生"));
+	EXPECT_THAT(cxx::to_string(LTEXT("ABCabc123あいう愛生")), StrEq("ABCabc123あいう愛生"));
 }
 
 TEST(to_string, test003)
 {
 	// 日本語を含む文字列をUTF8に変換
-	EXPECT_THAT(cxx::to_string(L"ABCabc123あいう愛生", CP_UTF8), StrEq((LPCSTR)u8"ABCabc123あいう愛生"));
+	EXPECT_THAT(cxx::to_string(LTEXT("ABCabc123あいう愛生"), CP_UTF8), StrEq((LPCSTR)u8"ABCabc123あいう愛生"));
 }
 
 TEST(to_string, test004)
 {
 	// カラー絵文字「男性のシンボル」をUTF8に変換
-	EXPECT_THAT(cxx::to_string(L"\U0001F6B9", CP_UTF8), StrEq((LPCSTR)u8"\U0001F6B9"));
+	EXPECT_THAT(cxx::to_string(LTEXT("\U0001F6B9"), CP_UTF8), StrEq((LPCSTR)u8"\U0001F6B9"));
 }
 
 TEST(to_string, test101)
@@ -579,43 +584,43 @@ TEST(to_string, test101)
 	::SetThreadUILanguage(MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN));
 
 	// カラー絵文字「男性のシンボル」（サロゲートペアはSJISに変換できない）
-	EXPECT_ANY_THROW(cxx::to_string(L"\U0001F6B9"));
+	EXPECT_ANY_THROW(cxx::to_string(LTEXT("\U0001F6B9")));
 }
 
 TEST(to_wchar, test001)
 {
 	// ASCIIのみの文字列
-	EXPECT_THAT(to_wchar("abc123"), StrEq(L"abc123"));
+	EXPECT_THAT(to_wchar("abc123"), StrEq(LTEXT("abc123")));
 }
 
 TEST(to_wchar, test002)
 {
 	// 日本語を含む文字列
-	EXPECT_THAT(to_wchar("あい"), StrEq(L"あい"));
+	EXPECT_THAT(to_wchar("あい"), StrEq(LTEXT("あい")));
 }
 
 TEST(to_wchar, test101)
 {
 	// 空文字列
-	EXPECT_THAT(to_wchar(""), StrEq(L""));
+	EXPECT_THAT(to_wchar(""), StrEq(LTEXT("")));
 }
 
 TEST(to_wchar, test102)
 {
 	// 長さ0の文字列
-	EXPECT_THAT(to_wchar(nullptr, 0), StrEq(L""));
+	EXPECT_THAT(to_wchar(nullptr, 0), StrEq(LTEXT("")));
 }
 
 TEST(to_wchar, test103)
 {
 	// 不正値(NULL)
-	EXPECT_THAT(to_wchar(nullptr), StrEq(L""));
+	EXPECT_THAT(to_wchar(nullptr), StrEq(LTEXT("")));
 }
 
 TEST(to_wstring, test001)
 {
 	// 空文字列
-	EXPECT_THAT(cxx::to_wstring(""), StrEq(L""));
+	EXPECT_THAT(cxx::to_wstring(""), StrEq(LTEXT("")));
 }
 
 TEST(to_wstring, test002)
@@ -625,19 +630,19 @@ TEST(to_wstring, test002)
 
 
 	// 日本語を含む文字列
-	EXPECT_THAT(cxx::to_wstring("ABCabc123あいう愛生"), StrEq(L"ABCabc123あいう愛生"));
+	EXPECT_THAT(cxx::to_wstring("ABCabc123あいう愛生"), StrEq(LTEXT("ABCabc123あいう愛生")));
 }
 
 TEST(to_wstring, test003)
 {
 	// 日本語を含む文字列をUTF8に変換
-	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"ABCabc123あいう愛生", CP_UTF8), StrEq(L"ABCabc123あいう愛生"));
+	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"ABCabc123あいう愛生", CP_UTF8), StrEq(LTEXT("ABCabc123あいう愛生")));
 }
 
 TEST(to_wstring, test004)
 {
 	// カラー絵文字「男性のシンボル」をUTF8に変換
-	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"\U0001F6B9", CP_UTF8), StrEq(L"\U0001F6B9"));
+	EXPECT_THAT(cxx::to_wstring((LPCSTR)u8"\U0001F6B9", CP_UTF8), StrEq(LTEXT("\U0001F6B9")));
 }
 
 TEST(to_wstring, test101)
@@ -663,8 +668,10 @@ TEST(WideCharToMultiByte, test101)
 	std::string buffer = "dummy";
 
 	// 空文字列
-	EXPECT_THAT(cxx::WideCharToMultiByte(CP_UTF8, L"", buffer), Eq(0));
+	EXPECT_THAT(cxx::WideCharToMultiByte(CP_UTF8, LTEXT(""), buffer), Eq(0));
 	EXPECT_THAT(buffer, StrEq(""));
 }
 
 } // namespace cxx
+
+#endif // defined(_WIN32)

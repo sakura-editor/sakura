@@ -286,4 +286,24 @@ BOOL FreeLibrary(HMODULE hLibModule);
 DWORD GetLastError();
 void SetLastError(DWORD dwErrCode);
 
+/* ---- 文件 ---- */
+#define ERROR_FILE_NOT_FOUND      2L
+#define ERROR_ACCESS_DENIED       5L
+#define ERROR_INVALID_PARAMETER   87L
+#define FILE_ATTRIBUTE_READONLY   0x00000001
+#define FILE_ATTRIBUTE_HIDDEN     0x00000002
+#define FILE_ATTRIBUTE_SYSTEM     0x00000004
+#define FILE_ATTRIBUTE_DIRECTORY  0x00000010
+#define FILE_ATTRIBUTE_ARCHIVE    0x00000020
+#define FILE_ATTRIBUTE_NORMAL     0x00000080
+#define INVALID_FILE_ATTRIBUTES   ((DWORD)-1)
+//! 文件属性。macOS 上只返回只读、目录、隐藏（文件名以 . 开头）；文件不存在时返回 INVALID_FILE_ATTRIBUTES
+DWORD GetFileAttributesW(const WCHAR* lpFileName);
+//! 设置文件属性。macOS 上只处理只读属性（写权限），其余属性忽略
+BOOL SetFileAttributesW(const WCHAR* lpFileName, DWORD dwFileAttributes);
+#define GetFileAttributes GetFileAttributesW
+#define SetFileAttributes SetFileAttributesW
+//! 用 UTF-16 的路径和模式打开文件（路径转换为 UTF-8 后调用 fopen）
+FILE* _wfopen(const WCHAR* filename, const WCHAR* mode);
+
 #endif /* SAKURA_PLATFORM_H_ */
