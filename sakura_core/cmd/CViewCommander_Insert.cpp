@@ -69,8 +69,8 @@ void CViewCommander::Command_CtrlCode_Dialog( void )
 // 最近使ったファイル挿入
 void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
 {
-	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
-	std::wstring s;
+	sakura::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
+	sakura::wstring s;
 	CMRUFile cMRUFile;
 	auto list = cMRUFile.GetPathList();
 	for (auto item : list) {
@@ -83,8 +83,8 @@ void CViewCommander::Command_INS_FILE_USED_RECENTLY( void )
 // 最近使ったフォルダー挿入
 void CViewCommander::Command_INS_FOLDER_USED_RECENTLY( void )
 {
-	std::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
-	std::wstring s;
+	sakura::wstring eol = GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2();
+	sakura::wstring s;
 	CMRUFolder cMRUFolder;
 	auto list = cMRUFolder.GetPathList();
 	for (auto item : list) {

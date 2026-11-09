@@ -153,7 +153,7 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 	}
 
 	if( IsWctombcNonroundtrip(pSrc[0]) != true ){
-		nret = ::WideCharToMultiByte( 932, 0, reinterpret_cast<const wchar_t*>(pSrc), nsrclen, reinterpret_cast<char*>(pDst), 4, nullptr, &blost );
+		nret = ::WideCharToMultiByte( 932, 0, reinterpret_cast<const WCHAR*>(pSrc), nsrclen, reinterpret_cast<char*>(pDst), 4, nullptr, &blost );
 		if( blost != FALSE ){
 			nret = 0;
 		}
@@ -175,7 +175,7 @@ inline int MyMultiByteToWideChar_JP( const unsigned char* pSrc, const int nSrcLe
 	int nret;
 	unsigned char czenkaku[4];
 
-	nret = ::MultiByteToWideChar( 932, 0, reinterpret_cast<const char*>(pSrc), nSrcLen, reinterpret_cast<wchar_t*>(pDst), 4 );
+	nret = ::MultiByteToWideChar( 932, 0, reinterpret_cast<const char*>(pSrc), nSrcLen, reinterpret_cast<WCHAR*>(pDst), 4 );
 	if( nret > 0 &&	bKeepRt == true ){
 		MyWideCharToMultiByte_JP( pDst, nret, czenkaku );
 		if( nSrcLen == 2 ){

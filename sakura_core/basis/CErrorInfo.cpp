@@ -11,8 +11,8 @@
  * コンストラクタ
  */
 CErrorInfo::CErrorInfo(
-	std::wstring_view source,		//!< [in] ソース
-	std::wstring_view description	//!< [in] 説明
+	sakura::wstring_view source,		//!< [in] ソース
+	sakura::wstring_view description	//!< [in] 説明
 )
 	: bstrSource_(source.data())
 	, bstrDescription_(description.data())

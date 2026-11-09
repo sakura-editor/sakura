@@ -36,7 +36,7 @@ CRecentEditNode::CRecentEditNode()
 */
 const WCHAR* CRecentEditNode::GetItemText( [[maybe_unused]] int nIndex ) const
 {
-	return L"WIN"; //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
+	return LTEXT("WIN"); //※テキスト情報は無い (GetWindowTextしてあげても良いけど、この関数は実行されないので、意味は無い)
 }
 
 bool CRecentEditNode::DataToReceiveType( const EditNode** dst, const EditNode* src ) const
@@ -70,6 +70,6 @@ void CRecentEditNode::DeleteItemByHwnd(HWND hwnd)
 		DeleteItem(n);
 	}
 	else{
-		DEBUG_TRACE( L"DeleteItemByHwnd失敗\n" );
+		DEBUG_TRACE( LTEXT("DeleteItemByHwnd失敗\n") );
 	}
 }

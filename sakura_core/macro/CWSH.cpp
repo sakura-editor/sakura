@@ -86,7 +86,7 @@ public:
 	    /* [out] */ ITypeInfo **ppti) override
 	{
 #ifdef TEST
-		wcout << L"GetItemInfo:" << pstrName << endl;
+		wcout << LTEXT("GetItemInfo:") << pstrName << endl;
 #endif
 		//指定された名前のインターフェースオブジェクトを検索
 		const CWSHClient::List& objects = m_Client->GetInterfaceObjects();
@@ -156,7 +156,7 @@ public:
 			{
 				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[auto_sprintf]に修正
 				const auto pszDesc = Info.bstrDescription;
-				const auto msg = strprintf(L"[Line %d] %s", Line + 1, pszDesc);
+				const auto msg = strprintf(LTEXT("[Line %d] %s"), Line + 1, pszDesc);
 				::SysReAllocString(&Info.bstrDescription, msg.c_str());
 			}
 			m_Client->Error(Info.bstrDescription, Info.bstrSource);
@@ -217,7 +217,7 @@ CWSHClient::CWSHClient(
 	else
 	{
 #ifdef USE_JSCRIPT9
-		if( 0 == wcscmp( AEngine, L"JScript" ) ){
+		if( 0 == wcscmp( AEngine, LTEXT("JScript") ) ){
 			ClassID = CLSID_JSScript9;
 		}
 #endif
@@ -262,7 +262,7 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 	//停止ダイアログ表示前に数秒待つ
 	if(::WaitForSingleObject(pParam->hEvent, pParam->nCancelTimer * 1000) == WAIT_TIMEOUT){
 		//停止ダイアログ表示
-		DEBUG_TRACE(L"AbortMacro: Show Dialog\n");
+		DEBUG_TRACE(LTEXT("AbortMacro: Show Dialog\n"));
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
@@ -290,26 +290,26 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 				break;
 			}
 			if(!bCanceled && cDlgCancel.IsCanceled()){
-				DEBUG_TRACE(L"Canceld\n");
+				DEBUG_TRACE(LTEXT("Canceld\n"));
 				bCanceled = true;
 				cDlgCancel.CloseDialog( 0 );
 			}
 			if(cDlgCancel.GetHwnd() == nullptr){
-				DEBUG_TRACE(L"Close\n");
+				DEBUG_TRACE(LTEXT("Close\n"));
 				break;
 			}
 		}
 
-		DEBUG_TRACE(L"AbortMacro: Try Interrupt\n");
+		DEBUG_TRACE(LTEXT("AbortMacro: Try Interrupt\n"));
 		pParam->pEngine->InterruptScriptThread(SCRIPTTHREADID_BASE, nullptr, 0);
-		DEBUG_TRACE(L"AbortMacro: Done\n");
+		DEBUG_TRACE(LTEXT("AbortMacro: Done\n"));
 	}
 
-	DEBUG_TRACE(L"AbortMacro: Exit\n");
+	DEBUG_TRACE(LTEXT("AbortMacro: Exit\n"));
 	return 0;
 }
 
-bool CWSHClient::Execute(const std::wstring& WScript)
+bool CWSHClient::Execute(const sakura::wstring& WScript)
 {
 	bool bRet = false;
 	cxx::com_pointer<IActiveScriptParse> Parser = nullptr;
@@ -349,7 +349,7 @@ bool CWSHClient::Execute(const std::wstring& WScript)
 				if( 0 < sThreadParam.nCancelTimer ){
 					sThreadParam.hEvent = ::CreateEvent(nullptr, TRUE, FALSE, nullptr);
 					hThread = (HANDLE)_beginthreadex( nullptr, 0, AbortMacroProc, (LPVOID)&sThreadParam, 0, &nThreadId );
-					DEBUG_TRACE(L"Start AbortMacroProc 0x%08x\n", nThreadId);
+					DEBUG_TRACE(LTEXT("Start AbortMacroProc 0x%08x\n"), nThreadId);
 				}
 
 				//マクロ実行
@@ -374,7 +374,7 @@ bool CWSHClient::Execute(const std::wstring& WScript)
 					::SetEvent(sThreadParam.hEvent);
 
 					//マクロ停止スレッドの終了待ち
-					DEBUG_TRACE(L"Waiting for AbortMacroProc to finish\n");
+					DEBUG_TRACE(LTEXT("Waiting for AbortMacroProc to finish\n"));
 					::WaitForSingleObject(hThread, INFINITE); 
 					::CloseHandle(hThread);
 					::CloseHandle(sThreadParam.hEvent);
@@ -392,9 +392,9 @@ void CWSHClient::Error(BSTR Description, BSTR Source)
 		m_OnError(Description, Source, m_Data);
 }
 
-void CWSHClient::Error(const wchar_t* Description)
+void CWSHClient::Error(const WCHAR* Description)
 {
-	BSTR S = SysAllocString(L"WSH");
+	BSTR S = SysAllocString(LTEXT("WSH"));
 	BSTR D = SysAllocString(Description);
 	Error(D, S);
 	SysFreeString(S);

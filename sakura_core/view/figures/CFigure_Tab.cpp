@@ -19,7 +19,7 @@ void _DrawTabArrow( CGraphics& gr, int nPosX, int nPosY, int nWidth, int nHeight
 //                         CFigure_Tab                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Tab::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
+bool CFigure_Tab::Match(const WCHAR* pText, [[maybe_unused]] int nTextLen) const
 {
 	if( pText[0] == WCODE::TAB ){
 		return true;
@@ -73,9 +73,9 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() && TABARROW_STRING == m_pTypeData->m_bTabArrow ){	//タブ通常表示	//@@@ 2003.03.26 MIK
-			std::wstring szForeViewString{ m_pTypeData->m_szTabViewString };
+			sakura::wstring szForeViewString{ m_pTypeData->m_szTabViewString };
 			if (szForeViewString.length() < nTabDispWidth) {
-				szForeViewString.append(nTabDispWidth - szForeViewString.length(), L' ');
+				szForeViewString.append(nTabDispWidth - szForeViewString.length(), LCHAR(' '));
 			}
 			int fontNo = WCODE::GetFontNo(szForeViewString[0]);
 			if( fontNo ){
@@ -101,7 +101,7 @@ void CFigure_Tab::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcView,
 			}
 		}else{
 			//背景
-			std::wstring szBackViewString(nTabDispWidth, L' ');
+			sakura::wstring szBackViewString(nTabDispWidth, LCHAR(' '));
 			::ExtTextOut(
 				gr,
 				sPos.GetDrawPos().x,

@@ -23,7 +23,7 @@ using namespace std::literals::string_view_literals;
 	@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 */
 bool CWordParse::WhereCurrentWord_2(
-	const wchar_t*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
+	const WCHAR*	pLine,			//!< [in]  調べるメモリ全体の先頭アドレス
 	size_t			cchLine,		//!< [in]  調べるメモリ全体の有効長
 	size_t			index,			//!< [in]  調査開始地点:pLineからの相対的な位置
 	bool			bEnableExtEol,	//!< [in]  Unicode改行文字を改行とみなすかどうか
@@ -101,7 +101,7 @@ bool CWordParse::WhereCurrentWord_2(
 }
 
 //! 識別子に使用可能な文字かどうか
-inline bool isCSymbol(wchar_t c)
+inline bool isCSymbol(WCHAR c)
 {
 	//return
 	//	(c==L'_') ||
@@ -112,18 +112,18 @@ inline bool isCSymbol(wchar_t c)
 }
 
 //! 全角版、識別子に使用可能な文字かどうか
-inline bool isCSymbolZen(wchar_t c)
+inline bool isCSymbolZen(WCHAR c)
 {
 	return
-		(c==L'＿') ||
-		(c>=L'０' && c<=L'９') ||
-		(c>=L'Ａ' && c<=L'Ｚ') ||
-		(c>=L'ａ' && c<=L'ｚ');
+		(c==LCHAR('＿')) ||
+		(c>=LCHAR('０') && c<=LCHAR('９')) ||
+		(c>=LCHAR('Ａ') && c<=LCHAR('Ｚ')) ||
+		(c>=LCHAR('ａ') && c<=LCHAR('ｚ'));
 }
 
 //! 現在位置の文字の種類を調べる
 ECharKind CWordParse::WhatKindOfChar(
-	const wchar_t*	pData,
+	const WCHAR*	pData,
 	size_t			cchData,
 	size_t			index
 )
@@ -137,7 +137,7 @@ ECharKind CWordParse::WhatKindOfChar(
 	if(const auto nCharChars = CNativeW::GetSizeOfChar(pData, pDataLen, nIdx);
 		nCharChars == 1)
 	{
-		wchar_t c=pData[nIdx];
+		WCHAR c=pData[nIdx];
 
 		//今までの半角
 		if( c<gm_keyword_char.size() ) return (ECharKind)gm_keyword_char[c];
@@ -154,8 +154,8 @@ ECharKind CWordParse::WhatKindOfChar(
 
 		//その他
 		if( IsZenkakuSpace(c)    )return CK_ZEN_SPACE;	// 全角スペース
-		if( c==L'ー'             )return CK_ZEN_NOBASU;	// 伸ばす記号 'ー'
-		if( c==L'゛' || c==L'゜' )return CK_ZEN_DAKU;	// 全角濁点 「゛゜」
+		if( c==LCHAR('ー')             )return CK_ZEN_NOBASU;	// 伸ばす記号 'ー'
+		if( c==LCHAR('゛') || c==LCHAR('゜') )return CK_ZEN_DAKU;	// 全角濁点 「゛゜」
 		if( isCSymbolZen(c)      )return CK_ZEN_CSYM;	// 全角版、識別子に使用可能な文字 
 		if( IsZenkakuKigou(c)    )return CK_ZEN_KIGO;	// 全角の記号
 		if( IsHiragana(c)        )return CK_HIRA;		// ひらがな
@@ -180,7 +180,7 @@ ECharKind CWordParse::WhatKindOfChar(
 	}
 	// IVS（正字 + 異体字セレクタ）
 	else if (nCharChars == 3 &&
-		IsVariationSelector(std::wstring_view(pData + nIdx + 1, pDataLen - (nIdx + 1))))
+		IsVariationSelector(sakura::wstring_view(pData + nIdx + 1, pDataLen - (nIdx + 1))))
 	{
 		ret = CK_ZEN_ETC;				// 全角のその他(漢字など)
 	}
@@ -245,7 +245,7 @@ ECharKind CWordParse::WhatKindOfTwoChars4KW( ECharKind kindPre, ECharKind kindCu
 	探し始める位置はnIdxで指定。方向は後方に限定。単語の両端で止まらない（関係ないから）
 */
 bool CWordParse::SearchNextWordPosition(
-	const wchar_t*	pLine,
+	const WCHAR*	pLine,
 	size_t			cchLine,
 	size_t			index,			//	桁数
 	CLogicInt*		pnColumnNew,	//	見つかった位置
@@ -294,7 +294,7 @@ bool CWordParse::SearchNextWordPosition(
 	探し始める位置はnIdxで指定。方向は後方に限定。単語の両端で止まらない（関係ないから）
 */
 bool CWordParse::SearchNextWordPosition4KW(
-	const wchar_t*	pLine,
+	const WCHAR*	pLine,
 	size_t			cchLine,
 	size_t			index,			//	桁数
 	CLogicInt*		pnColumnNew,	//	見つかった位置
@@ -339,7 +339,7 @@ bool CWordParse::SearchNextWordPosition4KW(
 }
 
 bool CWordParse::SearchPrevWordPosition(
-	const wchar_t* pLine,
+	const WCHAR* pLine,
 	size_t cchLine,
 	size_t index,
 	CLogicInt* pnColumnNew,
@@ -393,7 +393,7 @@ bool CWordParse::SearchPrevWordPosition(
 
 struct _url_table_t {
 	constexpr explicit _url_table_t(
-		std::wstring_view schema,
+		sakura::wstring_view schema,
 		bool with_double_slash_ = true
 	) noexcept
 		: name(schema)
@@ -402,13 +402,13 @@ struct _url_table_t {
 	}
 
 	/*! @brief このエントリがメールアドレスのものかどうか */
-	constexpr bool is_mail() const noexcept { return L"mailto" == name; }
+	constexpr bool is_mail() const noexcept { return LTEXT("mailto") == name; }
 
 	/*! @brief このエントリの長さ（schema + "://" の長さ） */
 	constexpr size_t length() const noexcept { return name.length() + (with_double_slash ? 3 : 1); }
 
 	constexpr bool match(
-		std::wstring_view line
+		sakura::wstring_view line
 	) const noexcept
 	{
 		if (line.length() < length() ||
@@ -420,49 +420,49 @@ struct _url_table_t {
 		line = line.substr(name.size());
 
 		if (!with_double_slash) {
-			return line.starts_with(L":"sv);
+			return line.starts_with(LTEXT(":"sv));
 		}
 
-		return line.starts_with(L"://"sv);
+		return line.starts_with(LTEXT("://"sv));
 	}
 
-	std::wstring_view	name;
+	sakura::wstring_view	name;
 	bool				with_double_slash;
 };
 
 /* アルファベット順 */
 constexpr std::array url_table = {
-	_url_table_t{ L"file" }, /* 1 */
-	_url_table_t{ L"ftp" }, /* 2 */
-	_url_table_t{ L"gopher" }, /* 3 */
-	_url_table_t{ L"http" }, /* 4 */
-	_url_table_t{ L"https" }, /* 5 */
-	_url_table_t{ L"mailto", false }, /* 6 */
-	_url_table_t{ L"news", false }, /* 7 */
-	_url_table_t{ L"nntp" }, /* 8 */
-	_url_table_t{ L"prospero" }, /* 9 */
-	_url_table_t{ L"telnet" }, /* 10 */
-	_url_table_t{ L"tp" }, /* 11 */
-	_url_table_t{ L"ttp" }, /* 12 */
-	_url_table_t{ L"wais" }, /* 13 */
-	_url_table_t{ L"{", false }  /* 14 */  /* '{' is 'z'+1 : terminate */
+	_url_table_t{ LTEXT("file") }, /* 1 */
+	_url_table_t{ LTEXT("ftp") }, /* 2 */
+	_url_table_t{ LTEXT("gopher") }, /* 3 */
+	_url_table_t{ LTEXT("http") }, /* 4 */
+	_url_table_t{ LTEXT("https") }, /* 5 */
+	_url_table_t{ LTEXT("mailto"), false }, /* 6 */
+	_url_table_t{ LTEXT("news"), false }, /* 7 */
+	_url_table_t{ LTEXT("nntp") }, /* 8 */
+	_url_table_t{ LTEXT("prospero") }, /* 9 */
+	_url_table_t{ LTEXT("telnet") }, /* 10 */
+	_url_table_t{ LTEXT("tp") }, /* 11 */
+	_url_table_t{ LTEXT("ttp") }, /* 12 */
+	_url_table_t{ LTEXT("wais") }, /* 13 */
+	_url_table_t{ LTEXT("{"), false }  /* 14 */  /* '{' is 'z'+1 : terminate */
 };
 
-constexpr auto get_index_of(std::wstring_view urlHeader)
+constexpr auto get_index_of(sakura::wstring_view urlHeader)
 {
 	const auto it = std::ranges::find_if(url_table, [&urlHeader](const _url_table_t& v) { return v.name == urlHeader; } );
 	return static_cast<char>(std::distance(url_table.begin(), it));
 }
 
 // テーブルの保守性を高めるための定義
-constexpr auto urF = get_index_of(L"file") + 1;
-constexpr auto urG = get_index_of(L"gopher") + 1;
-constexpr auto urH = get_index_of(L"http") + 1;
-constexpr auto urM = get_index_of(L"mailto") + 1;
-constexpr auto urN = get_index_of(L"news") + 1;
-constexpr auto urP = get_index_of(L"prospero") + 1;
-constexpr auto urT = get_index_of(L"telnet") + 1;
-constexpr auto urW = get_index_of(L"wais") + 1;
+constexpr auto urF = get_index_of(LTEXT("file")) + 1;
+constexpr auto urG = get_index_of(LTEXT("gopher")) + 1;
+constexpr auto urH = get_index_of(LTEXT("http")) + 1;
+constexpr auto urM = get_index_of(LTEXT("mailto")) + 1;
+constexpr auto urN = get_index_of(LTEXT("news")) + 1;
+constexpr auto urP = get_index_of(LTEXT("prospero")) + 1;
+constexpr auto urT = get_index_of(LTEXT("telnet")) + 1;
+constexpr auto urW = get_index_of(LTEXT("wais")) + 1;
 
 constexpr char url_char[] = {
 // clang-format off
@@ -484,7 +484,7 @@ constexpr char url_char[] = {
 };
 
 //! wcがasciiなら0-127のまま返す。それ以外は0を返す。
-uchar_t wc_to_c(wchar_t wc)
+uchar_t wc_to_c(WCHAR wc)
 {
 #if 0
 //! wcがSJIS1バイト文字ならcharに変換して0～255を返す。SJIS2バイト文字なら0を返す。
@@ -516,13 +516,13 @@ uchar_t wc_to_c(wchar_t wc)
 	2007.10.23 kobake UNICODE対応。//$ wchar_t専用のテーブル(または判定ルーチン)を用意したほうが効率は上がるはずです。
 */
 BOOL IsURL(
-	const wchar_t*	pszLine,	//!< [in]  文字列
+	const WCHAR*	pszLine,	//!< [in]  文字列
 	int				offset,		//!< [in]  検査を開始する位置。
 	size_t			cchLine,	//!< [in]  文字列の長さ
 	int*			pnMatchLen	//!< [out] URLの長さ。offset からの距離。
 )
 {
-	const auto line  = std::wstring_view(pszLine, cchLine).substr(offset);
+	const auto line  = sakura::wstring_view(pszLine, cchLine).substr(offset);
 
 	const auto ch = wc_to_c(line.front());
 	if (0 == ch) return FALSE;	/* 2バイト文字 */
@@ -559,14 +559,14 @@ BOOL IsURL(
 /* 現在位置がメールアドレスならば、NULL以外と、その長さを返す
 	@date 2016.04.27 記号類を許可
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAddressLength )
+BOOL IsMailAddress( const WCHAR* pszBuf, int offset, size_t cchBuf, int* pnAddressLength )
 {
 	auto nBufLen = int(cchBuf);
 
 	struct {
-		bool operator()(const wchar_t ch)
+		bool operator()(const WCHAR ch)
 		{
-			return 0x21 <= ch && ch <= 0x7E && nullptr == wcschr(L"\"(),:;<>@[\\]", ch);
+			return 0x21 <= ch && ch <= 0x7E && nullptr == wcschr(LTEXT("\"(),:;<>@[\\]"), ch);
 		}
 	} IsValidChar;
 
@@ -587,7 +587,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAdd
 
 
 	j = 0;
-	if(pszBuf[j] != L'.' && IsValidChar(pszBuf[j])){
+	if(pszBuf[j] != LCHAR('.') && IsValidChar(pszBuf[j])){
 		j++;
 	}else{
 		return FALSE;
@@ -598,7 +598,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAdd
 	if( j == 0 || j >= nBufLen - 2  ){
 		return FALSE;
 	}
-	if( L'@' != pszBuf[j] ){
+	if( LCHAR('@') != pszBuf[j] ){
 		return FALSE;
 	}
 //	nAtPos = j;
@@ -611,11 +611,11 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAdd
 		nBgn = j;
 		while( j < nBufLen &&
 			(
-			(pszBuf[j] >= L'a' && pszBuf[j] <= L'z')
-		 || (pszBuf[j] >= L'A' && pszBuf[j] <= L'Z')
-		 || (pszBuf[j] >= L'0' && pszBuf[j] <= L'9')
-		 || (pszBuf[j] == L'-')
-		 || (pszBuf[j] == L'_')
+			(pszBuf[j] >= LCHAR('a') && pszBuf[j] <= LCHAR('z'))
+		 || (pszBuf[j] >= LCHAR('A') && pszBuf[j] <= LCHAR('Z'))
+		 || (pszBuf[j] >= LCHAR('0') && pszBuf[j] <= LCHAR('9'))
+		 || (pszBuf[j] == LCHAR('-'))
+		 || (pszBuf[j] == LCHAR('_'))
 			)
 		){
 			j++;
@@ -623,7 +623,7 @@ BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t cchBuf, int* pnAdd
 		if( 0 == j - nBgn ){
 			return FALSE;
 		}
-		if( L'.' != pszBuf[j] ){
+		if( LCHAR('.') != pszBuf[j] ){
 			if( 0 == nDotCount ){
 				return FALSE;
 			}else{

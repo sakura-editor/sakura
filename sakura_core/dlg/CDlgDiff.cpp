@@ -124,7 +124,7 @@ BOOL CDlgDiff::OnBnClicked( int wID )
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
-				L"*.*",
+				LTEXT("*.*"),
 				m_szFile1 /*m_szFile2*/
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) )
@@ -357,7 +357,7 @@ int CDlgDiff::GetData( void )
 	m_pShareData->m_nDiffFlgOpt = m_nDiffFlgOpt;
 
 	//相手ファイル名
-	m_szFile2[0] = L'\0';
+	m_szFile2[0] = LCHAR('\0');
 	m_hWnd_Dst = nullptr;
 	m_bIsModifiedDst = false;
 	if( ::IsDlgButtonChecked( GetHwnd(), IDC_RADIO_DIFF_DST1 ) == BST_CHECKED )

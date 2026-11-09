@@ -38,12 +38,12 @@ inline ACHAR _GetHexChar( ACHAR c )
 }
 inline WCHAR _GetHexChar( WCHAR c )
 {
-	if( (c >= L'0' && c <= L'9') || (c >= L'A' && c <= L'F') ){
+	if( (c >= LCHAR('0') && c <= LCHAR('9')) || (c >= LCHAR('A') && c <= LCHAR('F')) ){
 		return c;
-	}else if( c >= L'a' && c <= L'f' ){
-		return  c - (L'a' - L'A');
+	}else if( c >= LCHAR('a') && c <= LCHAR('f') ){
+		return  c - (LCHAR('a') - LCHAR('A'));
 	}else{
-		return L'\0';
+		return LCHAR('\0');
 	}
 }
 
@@ -60,10 +60,10 @@ inline int _HexToInt( ACHAR c )
 }
 inline int _HexToInt( WCHAR c )
 {
-	if( c <= L'9' ){
-		return c - L'0';
+	if( c <= LCHAR('9') ){
+		return c - LCHAR('0');
 	}else{
-		return c - L'A' + 10;
+		return c - LCHAR('A') + 10;
 	}
 }
 
@@ -80,7 +80,7 @@ size_t _DecodeQP( const CHAR_TYPE* pS, size_t nLen, char* pDst )
 	while( pr < pS + nLen ){
 		/* =XX の形式でない部分をデコード */
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			if( *pr != L'=' ){
+			if( *pr != LCHAR('=') ){
 				*pw = static_cast<char>( *pr );
 				pw += 1;
 				pr += 1;
@@ -204,7 +204,7 @@ int _DecodeBase64( const CHAR_TYPE *pSrc, size_t nSrcLen, char *pDest )
 		bool bret;
 		for( ; i < nsrclen; i++ ){
 			if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-				bret = ( pSrc[nsrclen-1-i] == L'=' );
+				bret = ( pSrc[nsrclen-1-i] == LCHAR('=') );
 			}else{
 				bret = ( pSrc[nsrclen-1-i] == '=' );
 			}
@@ -319,8 +319,8 @@ end
 inline BYTE _UUDECODE_CHAR( WCHAR c )
 {
 	BYTE c_ = (c & 0xff);
-	if( c_ == L'`' || c_ == L'~' ){
-		c_ = L' ';
+	if( c_ == LCHAR('`') || c_ == LCHAR('~') ){
+		c_ = LCHAR(' ');
 	}
 	return static_cast<BYTE>((static_cast<BYTE>(c_) - 0x20) & 0x3f);
 }
@@ -389,7 +389,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	
 	if( nLen < 1 ){
 		if( pszFilename ){
-			pszFilename[0] = L'\0';
+			pszFilename[0] = LCHAR('\0');
 		}
 		return false;
 	}
@@ -398,7 +398,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	for( nstartidx = 0; nstartidx < nLen; ++nstartidx ){
 		CHAR_TYPE c = pSrc[nstartidx];
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			if( c != L'\r' && c != L'\n' && c != L' ' && c != L'\t' ){
+			if( c != LCHAR('\r') && c != LCHAR('\n') && c != LCHAR(' ') && c != LCHAR('\t') ){
 				break;
 			}
 		}else{
@@ -422,7 +422,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 		return false;
 	}
 	if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-		if( wcsncmp_literal(pwstart, L"begin") != 0 ){
+		if( wcsncmp_literal(pwstart, LTEXT("begin")) != 0 ){
 			// error.
 			return false;
 		}
@@ -443,7 +443,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	for( int i = 0; i < nwlen; i++ ){
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
 			// WCHAR の場合の処理
-			if( !iswdigit(pwstart[i]) || (pwstart[i] == L'8' || pwstart[i] == L'9') ){
+			if( !iswdigit(pwstart[i]) || (pwstart[i] == LCHAR('8') || pwstart[i] == LCHAR('9')) ){
 				// error.
 				return false;
 			}
@@ -463,7 +463,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	for( ; nwlen > 0; --nwlen ){
 		CHAR_TYPE c = pwstart[nwlen-1];
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			if( !WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t' ){
+			if( !WCODE::IsLineDelimiterBasic(c) && c != LCHAR(' ') && c != LCHAR('\t') ){
 				break;
 			}
 		}else{
@@ -479,7 +479,7 @@ bool CheckUUHeader( const CHAR_TYPE *pSrc, const int nLen, WCHAR *pszFilename )
 	// ファイル名を格納
 	if( pszFilename ){
 		strtotcs( pszFilename, pwstart, (size_t)nwlen );
-		pszFilename[nwlen] = L'\0';
+		pszFilename[nwlen] = LCHAR('\0');
 	}
 
 	return true;
@@ -505,7 +505,7 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 		CHAR_TYPE c = pS[nstartidx];
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
 			// WCHAR の場合の処理
-			if( c != L'\r' && c != L'\n' && c != L' ' && c != L'\t' ){
+			if( c != LCHAR('\r') && c != LCHAR('\n') && c != LCHAR(' ') && c != LCHAR('\t') ){
 				break;
 			}
 		}else{
@@ -524,7 +524,7 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 		return false;
 	}
 	if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-		if( wcsncmp_literal(&pS[nstartidx], L"end") != 0 ){
+		if( wcsncmp_literal(&pS[nstartidx], LTEXT("end")) != 0 ){
 			// error.
 			return false;
 		}
@@ -541,7 +541,7 @@ bool CheckUUFooter( const CHAR_TYPE *pS, const int nLen )
 		CHAR_TYPE c = psrc[i];
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
 			// WCHAR の場合の処理
-			if( !WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t' ){
+			if( !WCODE::IsLineDelimiterBasic(c) && c != LCHAR(' ') && c != LCHAR('\t') ){
 				return false;
 			}
 		}else{
@@ -596,7 +596,7 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, size_t nSrcLen, CMemory* pcMem_alt
 	if( pSrc+14 < pSrc+nSrcLen ){
 		// JIS の場合
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcsnicmp_literal( &pSrc[0], L"=?ISO-2022-JP?" );
+			ncmpresult = wcsnicmp_literal( &pSrc[0], LTEXT("=?ISO-2022-JP?") );
 		}else{
 			ncmpresult = strnicmp_literal( &pSrc[0], "=?ISO-2022-JP?" );
 		}
@@ -609,7 +609,7 @@ int _DecodeMimeHeader( const CHAR_TYPE* pSrc, size_t nSrcLen, CMemory* pcMem_alt
 	if( pSrc+8 < pSrc+nSrcLen ){
 		// UTF-8 の場合
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcsnicmp_literal( &pSrc[0], L"=?UTF-8?" );
+			ncmpresult = wcsnicmp_literal( &pSrc[0], LTEXT("=?UTF-8?") );
 		}else{
 			ncmpresult = strnicmp_literal( &pSrc[0], "=?UTF-8?" );
 		}
@@ -643,8 +643,8 @@ finish_first_detect:;
 		return 0;
 	}
 	if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-		ncmpresult1 = wcsnicmp_literal( &pSrc[nLen_part1], L"B?" );
-		ncmpresult2 = wcsnicmp_literal( &pSrc[nLen_part1], L"Q?" );
+		ncmpresult1 = wcsnicmp_literal( &pSrc[nLen_part1], LTEXT("B?") );
+		ncmpresult2 = wcsnicmp_literal( &pSrc[nLen_part1], LTEXT("Q?") );
 	}else{
 		ncmpresult1 = strnicmp_literal( &pSrc[nLen_part1], "B?" );
 		ncmpresult2 = strnicmp_literal( &pSrc[nLen_part1], "Q?" );
@@ -667,7 +667,7 @@ finish_first_detect:;
 	pr = pSrc + nLen_part1 + nLen_part2;
 	for( ; pr < pSrc+nSrcLen-1; ++pr ){
 		if constexpr ( sizeof(CHAR_TYPE) == 2 ){
-			ncmpresult = wcsncmp_literal( pr, L"?=" );
+			ncmpresult = wcsncmp_literal( pr, LTEXT("?=") );
 		}else{
 			ncmpresult = strncmp_literal( pr, "?=" );
 		}

@@ -26,21 +26,21 @@ constexpr int CP_SJIS = 932;
 //UNICODE定数
 namespace WCODE{
 	//文字
-	constexpr wchar_t BOM   = L'\ufeff';
-	constexpr wchar_t TAB   = L'\t';
-	constexpr wchar_t SPACE = L' ';
-	constexpr wchar_t CR    = L'\r';
-	constexpr wchar_t LF    = L'\n';
-	constexpr wchar_t NEL   = L'\x85';
-	constexpr wchar_t PS_   = L'\u2028';
-	constexpr wchar_t LS_   = L'\u2029';
-	constexpr wchar_t ESC   = L'\x1b';
+	constexpr WCHAR BOM   = LCHAR('\ufeff');
+	constexpr WCHAR TAB   = LCHAR('\t');
+	constexpr WCHAR SPACE = LCHAR(' ');
+	constexpr WCHAR CR    = LCHAR('\r');
+	constexpr WCHAR LF    = LCHAR('\n');
+	constexpr WCHAR NEL   = LCHAR('\x85');
+	constexpr WCHAR PS_   = LCHAR('\u2028');
+	constexpr WCHAR LS_   = LCHAR('\u2029');
+	constexpr WCHAR ESC   = LCHAR('\x1b');
 
 	//文字列
-	constexpr wchar_t CRLF[] = L"\r\n";
+	constexpr WCHAR CRLF[] = LTEXT("\r\n");
 
 	//特殊 (BREGEXP)
-	constexpr wchar_t BREGEXP_DELIMITER = (wchar_t)0xFFFF;
+	constexpr WCHAR BREGEXP_DELIMITER = (WCHAR)0xFFFF;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -54,7 +54,7 @@ extern const std::array<unsigned char, 128> gm_keyword_char;
 //Nov.  9, 2000 JEPRO  HSP Keyword のために'@'を追加
 //Oct. 18, 2007 kobake UNICODE用に書き直し
 //Nov. 27, 2010 syat   速度改善のためテーブルに変更
-[[nodiscard]] inline bool IS_KEYWORD_CHAR(wchar_t wc)
+[[nodiscard]] inline bool IS_KEYWORD_CHAR(WCHAR wc)
 {
 	if(static_cast<std::size_t>(wc) < gm_keyword_char.size() && (gm_keyword_char[wc] == CK_CSYM||gm_keyword_char[wc] == CK_UDEF) )
 		return true;
@@ -65,55 +65,55 @@ extern const std::array<unsigned char, 128> gm_keyword_char;
 //UNICODE判定関数群
 namespace WCODE
 {
-	[[nodiscard]] inline bool IsAZ(wchar_t wc)
+	[[nodiscard]] inline bool IsAZ(WCHAR wc)
 	{
-		return (wc>=L'A' && wc<=L'Z') || (wc>=L'a' && wc<=L'z');
+		return (wc>=LCHAR('A') && wc<=LCHAR('Z')) || (wc>=LCHAR('a') && wc<=LCHAR('z'));
 	}
-	[[nodiscard]] inline bool Is09(wchar_t wc)
+	[[nodiscard]] inline bool Is09(WCHAR wc)
 	{
-		return (wc>=L'0' && wc<=L'9');
+		return (wc>=LCHAR('0') && wc<=LCHAR('9'));
 	}
-	[[nodiscard]] inline bool IsInRange(wchar_t c, wchar_t front, wchar_t back)
+	[[nodiscard]] inline bool IsInRange(WCHAR c, WCHAR front, WCHAR back)
 	{
 		return c>=front && c<=back;
 	}
 
 	//!使用フォント番号を返す
 	// (0:半角/1:全角)
-	int GetFontNo(wchar_t c);
-	int GetFontNo2(wchar_t wc1, wchar_t wc2);
+	int GetFontNo(WCHAR c);
+	int GetFontNo2(WCHAR wc1, WCHAR wc2);
 
 	//!全角スペースかどうか判定
-	[[nodiscard]] inline bool IsZenkakuSpace(wchar_t wc)
+	[[nodiscard]] inline bool IsZenkakuSpace(WCHAR wc)
 	{
 		return wc == 0x3000; //L'　'
 	}
 
 	//!制御文字であるかどうか
-	bool IsControlCode(wchar_t wc);
+	bool IsControlCode(WCHAR wc);
 
 	//!改行文字であるかどうか
-	[[nodiscard]] inline bool IsLineDelimiter(wchar_t wc, bool ext)
+	[[nodiscard]] inline bool IsLineDelimiter(WCHAR wc, bool ext)
 	{
 		return wc==CR || wc==LF || (ext && (wc==0x85 || wc==0x2028 || wc==0x2029));
 	}
-	[[nodiscard]] inline bool IsLineDelimiterBasic(wchar_t wc)
+	[[nodiscard]] inline bool IsLineDelimiterBasic(WCHAR wc)
 	{
 		return wc==CR || wc==LF;
 	}
-	[[nodiscard]] inline bool IsLineDelimiterExt(wchar_t wc)
+	[[nodiscard]] inline bool IsLineDelimiterExt(WCHAR wc)
 	{
 		return wc==CR || wc==LF || wc==0x85 || wc==0x2028 || wc==0x2029;
 	}
 
 	//!単語の区切り文字であるかどうか
-	[[nodiscard]] inline bool IsWordDelimiter(wchar_t wc)
+	[[nodiscard]] inline bool IsWordDelimiter(WCHAR wc)
 	{
 		return wc==SPACE || wc==TAB || IsZenkakuSpace(wc);
 	}
 
 	//!インデント構成要素であるかどうか。bAcceptZenSpace: 全角スペースを含めるかどうか
-	[[nodiscard]] inline bool IsIndentChar(wchar_t wc,bool bAcceptZenSpace)
+	[[nodiscard]] inline bool IsIndentChar(WCHAR wc,bool bAcceptZenSpace)
 	{
 		if(wc==TAB || wc==SPACE)return true;
 		if(bAcceptZenSpace && IsZenkakuSpace(wc))return true;
@@ -121,70 +121,70 @@ namespace WCODE
 	}
 
 	//!空白かどうか
-	[[nodiscard]] inline bool IsBlank(wchar_t wc)
+	[[nodiscard]] inline bool IsBlank(WCHAR wc)
 	{
 		return wc==TAB || wc==SPACE || IsZenkakuSpace(wc);
 	}
 
 	//!ファイル名に使える文字であるかどうか
-	inline bool IsValidFilenameChar(const wchar_t wc)
+	inline bool IsValidFilenameChar(const WCHAR wc)
 	{
-		constexpr const wchar_t table[] = L"<>?\"|*";
+		constexpr const WCHAR table[] = LTEXT("<>?\"|*");
 
 		//table内の文字が含まれていたら、ダメ。
 		return !wcschr(table, wc);
 	}
 
 	//!タブ表示に使える文字かどうか
-	[[nodiscard]] inline bool IsTabAvailableCode(wchar_t wc)
+	[[nodiscard]] inline bool IsTabAvailableCode(WCHAR wc)
 	{
 		//$$要検証
-		if(wc==L'\0')return false;
-		if(wc==L'\r')return false;
-		if(wc==L'\n')return false;
-		if(wc==L'\t')return false;
+		if(wc==LCHAR('\0'))return false;
+		if(wc==LCHAR('\r'))return false;
+		if(wc==LCHAR('\n'))return false;
+		if(wc==LCHAR('\t'))return false;
 		return true;
 	}
 
 	//! 半角カナかどうか
-	[[nodiscard]] inline bool IsHankakuKatakana(wchar_t c)
+	[[nodiscard]] inline bool IsHankakuKatakana(WCHAR c)
 	{
 		//参考: http://ash.jp/code/unitbl1.htm
 		return c>=0xFF61 && c<=0xFF9F;
 	}
 
 	//! 全角記号かどうか
-	[[nodiscard]] inline bool IsZenkakuKigou(wchar_t c)
+	[[nodiscard]] inline bool IsZenkakuKigou(WCHAR c)
 	{
 		//$ 他にも全角記号はあると思うけど、とりあえずANSI版時代の判定を踏襲。パフォーマンス悪し。
 		// 2009.06.26 syat 「ゝゞ（ひらがな）」「ヽヾ（カタカナ）」「゛゜（全角濁点）」「仝々〇（漢字）」「ー（長音）」を除外
 		// 2009.10.10 syat ANSI版の修正にあわせて「〆」を記号→漢字にする
-		constexpr const wchar_t table[] = L"　、。，．・：；？！´｀¨＾￣＿〃―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬Å‰♯♭♪†‡¶◯";
+		constexpr const WCHAR table[] = LTEXT("　、。，．・：；？！´｀¨＾￣＿〃―‐／＼～∥｜…‥‘’“”（）〔〕［］｛｝〈〉《》「」『』【】＋－±×÷＝≠＜＞≦≧∞∴♂♀°′″℃￥＄￠￡％＃＆＊＠§☆★○●◎◇◆□■△▲▽▼※〒→←↑↓〓∈∋⊆⊇⊂⊃∪∩∧∨￢⇒⇔∀∃∠⊥⌒∂∇≡≒≪≫√∽∝∵∫∬Å‰♯♭♪†‡¶◯");
 		return wcschr(table,c);
 	}
 
 	//! ひらがなかどうか
-	[[nodiscard]] inline bool IsHiragana(wchar_t c)
+	[[nodiscard]] inline bool IsHiragana(WCHAR c)
 	{
 		// 2009.06.26 syat 「ゝゞ」を追加
 		return (c>=0x3041 && c<=0x3096) || (c>=0x309D && c<=0x309E);
 	}
 
 	//! カタカナかどうか
-	[[nodiscard]] inline bool IsZenkakuKatakana(wchar_t c)
+	[[nodiscard]] inline bool IsZenkakuKatakana(WCHAR c)
 	{
 		// 2009.06.26 syat 「ヽヾ」を追加
 		return (c>=0x30A1 && c<=0x30FA) || (c>=0x30FD && c<=0x30FE);
 	}
 
 	//! ギリシャ文字かどうか
-	[[nodiscard]] inline bool IsGreek(wchar_t c)
+	[[nodiscard]] inline bool IsGreek(WCHAR c)
 	{
 		return c>=0x0391 && c<=0x03C9;
 	}
 
 	//! キリル文字かどうか
-	[[nodiscard]] inline bool IsCyrillic(wchar_t c)
+	[[nodiscard]] inline bool IsCyrillic(WCHAR c)
 	{
 		return (c>=0x0400 && c<=0x052F)  // Cyrillic, Cyrillic Supplement
 			|| (c>=0x2DE0 && c<=0x2DFF)  // Cyrillic Extended-A
@@ -192,7 +192,7 @@ namespace WCODE
 	}
 
 	//! BOX DRAWING 文字 かどうか
-	[[nodiscard]] inline bool IsBoxDrawing(wchar_t c)
+	[[nodiscard]] inline bool IsBoxDrawing(WCHAR c)
 	{
 		return c>=0x2500 && c<=0x257F;
 	}
@@ -245,16 +245,16 @@ public:
 	[[nodiscard]] bool GetMultiFont() const noexcept { return m_bMultiFont; }
 
 	//!文字が半角かどうかを取得(DLLSHARE/フォント依存)
-	virtual bool CalcHankakuByFont(wchar_t c);
+	virtual bool CalcHankakuByFont(WCHAR c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
-	virtual int CalcPxWidthByFont(wchar_t c);
+	virtual int CalcPxWidthByFont(WCHAR c);
 	//!文字のpx幅を取得(DLLSHARE/フォント依存)
-	virtual int CalcPxWidthByFont2(const wchar_t* pc2) const;
+	virtual int CalcPxWidthByFont2(const WCHAR* pc2) const;
 
 private:
 	void DeleteLocalData();
-	int QueryPixelWidth(wchar_t c) const;
-	[[nodiscard]] HDC SelectHDC(wchar_t c) const;
+	int QueryPixelWidth(WCHAR c) const;
+	[[nodiscard]] HDC SelectHDC(WCHAR c) const;
 
 	MemDcHolder m_hdc1 = nullptr;
 	MemDcHolder m_hdc2 = nullptr;
@@ -278,9 +278,9 @@ void InitCharWidthCacheFromDC(const LOGFONT* lfs, ECharWidthFontMode fMode, HDC 
 
 namespace WCODE {
 	//!半角文字(縦長長方形)かどうか判定
-	bool IsHankaku(wchar_t wc, CCharWidthCache& cache = GetCharWidthCache());
+	bool IsHankaku(WCHAR wc, CCharWidthCache& cache = GetCharWidthCache());
 	//!全角文字(正方形)かどうか判定
-	inline bool IsZenkaku(wchar_t wc, CCharWidthCache& cache = GetCharWidthCache()) {
+	inline bool IsZenkaku(WCHAR wc, CCharWidthCache& cache = GetCharWidthCache()) {
 		return !IsHankaku(wc, cache);
 	}
 }

@@ -40,7 +40,7 @@
 	@param line [in] 読み込んだ行
 */
 void CProfile::_ReadOneline(
-	std::wstring_view line
+	sakura::wstring_view line
 )
 {
 	//	空行を読み飛ばす
@@ -48,14 +48,14 @@ void CProfile::_ReadOneline(
 		return;
 
 	//コメント行を読みとばす
-	if (';' == line.front() || line.starts_with(L"//")) {
+	if (';' == line.front() || line.starts_with(LTEXT("//"))) {
 		return;
 	}
 
 	// セクション取得
-	if (2 < line.length() && L'[' == line.front() && L']' == line.back()) {
+	if (2 < line.length() && LCHAR('[') == line.front() && LCHAR(']') == line.back()) {
 		if (const auto sectionName{ line.substr(1, line.length() - 2) };
-			std::wstring_view::npos == sectionName.find(L'=')) {
+			sakura::wstring_view::npos == sectionName.find(LCHAR('='))) {
 			m_ProfileData.emplace_back(sectionName);
 			return;
 		}
@@ -67,8 +67,8 @@ void CProfile::_ReadOneline(
 	}
 
 	// エントリ取得
-	if (const auto pos = line.find(L'='); std::wstring_view::npos != pos && 0 < pos && pos + 1 <= line.length()) {
-		m_ProfileData.back().m_Entries.try_emplace(std::wstring{ line.substr(0, pos) }, line.substr(pos + 1));
+	if (const auto pos = line.find(LCHAR('=')); sakura::wstring_view::npos != pos && 0 < pos && pos + 1 <= line.length()) {
+		m_ProfileData.back().m_Entries.try_emplace(sakura::wstring{ line.substr(0, pos) }, line.substr(pos + 1));
 	}
 }
 
@@ -99,7 +99,7 @@ bool CProfile::ReadProfile(
 	}
 
 	try{
-		std::wstring line;
+		sakura::wstring line;
 
 		while (in) {
 			//1行読込
@@ -128,7 +128,7 @@ bool CProfile::ReadProfile(
 
 	1行300文字までに制限
 */
-bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vector<std::wstring>* pData )
+bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vector<sakura::wstring>* pData )
 {
 	static const BYTE UTF8_BOM[]={0xEF,0xBB,0xBF};
 	HRSRC		hRsrc;
@@ -139,7 +139,7 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 	char		sLine[300+1];
 	char*		pn;
 	size_t		lnsz;
-	std::wstring line;
+	sakura::wstring line;
 	CMemory cmLine;
 	CNativeW cmLineW;
 	//m_strProfileName = L"-Res-";
@@ -199,7 +199,7 @@ bool CProfile::ReadProfileRes( const WCHAR* pName, const WCHAR* pType, std::vect
 */
 bool CProfile::WriteProfile(
 	const std::optional<std::filesystem::path>& optProfilePath,
-	const std::optional<std::wstring>& optComment
+	const std::optional<sakura::wstring>& optComment
 )
 {
 	if (optProfilePath.has_value()) {
@@ -214,17 +214,17 @@ bool CProfile::WriteProfile(
 		std::filesystem::create_directories(m_ProfilePath.parent_path());
 	}
     
-	std::vector<std::wstring> lines;
+	std::vector<sakura::wstring> lines;
 	if (optComment.has_value()) {
-		lines.emplace_back(L";" + optComment.value());		// //->;	2008/5/24 Uchi
+		lines.emplace_back(LTEXT(";") + optComment.value());		// //->;	2008/5/24 Uchi
 		lines.emplace_back();
 	}
 	for(const auto& section : m_ProfileData) {
 		//セクション名を書き込む
-		lines.emplace_back( L"[" + section.m_Name + L"]" );
+		lines.emplace_back( LTEXT("[") + section.m_Name + LTEXT("]") );
 		for(const auto& [key, val] : section.m_Entries) {
 			//エントリを書き込む
-			lines.emplace_back(key + L"=" + val);
+			lines.emplace_back(key + LTEXT("=") + val);
 		}
 		lines.emplace_back();
 	}
@@ -238,8 +238,8 @@ bool CProfile::WriteProfile(
 		lpszName - szPath + 11 < std::ssize(szMirrorFile)	// path\preuuuu.TMP
 	)
 	{
-		*lpszName = L'\0';
-		szMirrorFile = GetTempFilePath(L"sak", std::filesystem::path{ szPath });
+		*lpszName = LCHAR('\0');
+		szMirrorFile = GetTempFilePath(LTEXT("sak"), std::filesystem::path{ szPath });
 	}
 
 	if( !_WriteFile(szMirrorFile.empty() ? m_ProfilePath : std::filesystem::path{ szMirrorFile }, lines))
@@ -271,7 +271,7 @@ bool CProfile::WriteProfile(
 */
 bool CProfile::_WriteFile(
 	const std::filesystem::path&	path,	//!< [in]  ファイル名
-	std::span<const std::wstring>	lines			//!< [out] 文字列格納先
+	std::span<const sakura::wstring>	lines			//!< [out] 文字列格納先
 )
 {
 	CTextOutputStream out(path.c_str());
@@ -282,7 +282,7 @@ bool CProfile::_WriteFile(
 	for(const auto &line : lines){
 		// 出力
 		out.WriteString(line.c_str());
-		out.WriteString(L"\n");
+		out.WriteString(LTEXT("\n"));
 	}
 
 	out.Close();
@@ -298,9 +298,9 @@ bool CProfile::_WriteFile(
 	@date 2003-10-22 D.S.Koba 作成
 */
 bool CProfile::GetProfileData(
-	std::wstring_view	sectionName,	//!< [in] セクション名
-	std::wstring_view	entryKey,		//!< [in] エントリ名
-	std::wstring&		strEntryValue	//!< [out] エントリ値
+	sakura::wstring_view	sectionName,	//!< [in] セクション名
+	sakura::wstring_view	entryKey,		//!< [in] エントリ名
+	sakura::wstring&		strEntryValue	//!< [out] エントリ値
 ) const
 {
 	// セクション名が一致するセクションを探す
@@ -327,9 +327,9 @@ bool CProfile::GetProfileData(
 	@date 2003-10-21 D.S.Koba 作成
 */
 void CProfile::SetProfileData(
-	std::wstring_view	sectionName,	//!< [in] セクション名
-	std::wstring_view	entryKey,		//!< [in] エントリ名
-	std::wstring_view	entryValue		//!< [in] エントリ値
+	sakura::wstring_view	sectionName,	//!< [in] セクション名
+	sakura::wstring_view	entryKey,		//!< [in] エントリ名
+	sakura::wstring_view	entryValue		//!< [in] エントリ値
 )
 {
 	// セクション名が一致するセクションがない場合、空のセクションを追加する
@@ -344,21 +344,21 @@ void CProfile::SetProfileData(
 	}
 
 	// エントリに指定された値を書き込む
-	foundSection->m_Entries[std::wstring(entryKey)] = entryValue;
+	foundSection->m_Entries[sakura::wstring(entryKey)] = entryValue;
 }
 
 void CProfile::DUMP( void )
 {
 #ifdef _DEBUG
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
-	MYTRACE( L"\n\nCProfile::DUMP()======================" );
+	MYTRACE( LTEXT("\n\nCProfile::DUMP()======================") );
 	for (const auto& section : m_ProfileData) {
-		MYTRACE( L"\n■strSectionName=%ls", section.m_Name.c_str() );
+		MYTRACE( LTEXT("\n■strSectionName=%ls"), section.m_Name.c_str() );
 		for (const auto& [key, val] : section.m_Entries) {
-			MYTRACE( L"\"%ls\" = \"%ls\"\n", key.c_str(), val.c_str() );
+			MYTRACE( LTEXT("\"%ls\" = \"%ls\"\n"), key.c_str(), val.c_str() );
 		}
 	}
-	MYTRACE( L"========================================\n" );
+	MYTRACE( LTEXT("========================================\n") );
 #endif
 	return;
 }

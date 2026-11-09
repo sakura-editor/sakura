@@ -13,7 +13,7 @@
 
 class CColor_Quote : public CColorStrategy{
 public:
-	CColor_Quote(wchar_t cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(-1),m_nColorTypeIndex(0) {
+	CColor_Quote(WCHAR cQuote) : m_cQuote(cQuote), m_nCOMMENTEND(-1),m_nColorTypeIndex(0) {
 		m_szQuote[0] = cQuote;
 		m_szQuote[1] = cQuote;
 		m_szQuote[2] = cQuote;
@@ -27,14 +27,14 @@ public:
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[this->GetStrategyColor()].m_bDisp; }
 
 	static bool IsCppRawString(const CStringRef& cStr, int nPos);
-	static int Match_Quote( wchar_t wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = nullptr );
-	static int Match_QuoteStr( const wchar_t* szQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape );
+	static int Match_Quote( WCHAR wcQuote, int nPos, const CStringRef& cLineStr, int escapeType, bool* pbEscapeEnd = nullptr );
+	static int Match_QuoteStr( const WCHAR* szQuote, int nQuoteLen, int nPos, const CStringRef& cLineStr, bool bEscape );
 private:
 
-	wchar_t m_cQuote;
-	wchar_t m_szQuote[3];
+	WCHAR m_cQuote;
+	WCHAR m_szQuote[3];
 	int m_nCOMMENTEND;
-	std::wstring m_tag;
+	sakura::wstring m_tag;
 
 	int m_nStringType;
 	int m_nEscapeType;
@@ -46,13 +46,13 @@ protected:
 
 class CColor_SingleQuote final : public CColor_Quote{
 public:
-	CColor_SingleQuote() : CColor_Quote(L'\'') { }
+	CColor_SingleQuote() : CColor_Quote(LCHAR('\'')) { }
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_SSTRING; }
 };
 
 class CColor_DoubleQuote final : public CColor_Quote{
 public:
-	CColor_DoubleQuote() : CColor_Quote(L'"') { }
+	CColor_DoubleQuote() : CColor_Quote(LCHAR('"')) { }
 	EColorIndexType GetStrategyColor() const override{ return COLORIDX_WSTRING; }
 };
 #endif /* SAKURA_CCOLOR_QUOTE_DA1E69BE_19D1_4B16_BCF0_1516B00565D1_H_ */

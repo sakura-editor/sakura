@@ -71,8 +71,8 @@ static EConvertResult _CheckSavingCharcode(const CDocLineMgr& pcDocLineMgr, ECod
 			const int nDocLineLen = (Int)pcDocLine->GetLengthWithEOL();
 			const int nConvertLen = (Int)cmemTmp2.GetStringLength();
 			const int nDataMinLen = t_min(nDocLineLen, nConvertLen);
-			const wchar_t* p = pcDocLine->GetPtr();
-			const wchar_t* r = cmemTmp2.GetStringPtr();
+			const WCHAR* p = pcDocLine->GetPtr();
+			const WCHAR* r = cmemTmp2.GetStringPtr();
 			int nPos = -1;
 			for( int i = 0; i < nDataMinLen; i++ ){
 				if( p[i] != r[i] ){
@@ -162,7 +162,7 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 
 	//指定文字コードで安全に保存できるかどうか判定
 	CLogicPoint point;
-	CNativeW cmemChar(L"", 0);
+	CNativeW cmemChar(LTEXT(""), 0);
 	EConvertResult nTmpResult = _CheckSavingCharcode(
 		pcDoc->m_cDocLineMgr, pSaveInfo->eCharCode,
 		point, cmemChar
@@ -174,12 +174,12 @@ ECallbackResult CCodeChecker::OnCheckSave(SSaveInfo* pSaveInfo)
 		WCHAR  szLineNum[60];  // 123桁
 		WCHAR  szCharCode[12]; // U+12ab or 1234abcd
 		CCodePage::GetNameNormal(szCpName, pSaveInfo->eCharCode);
-		szCharCode[0] = L'\0';
-		szLineNum[0] = L'\0';
+		szCharCode[0] = LCHAR('\0');
+		szLineNum[0] = LCHAR('\0');
 		if( point.x == -1 ){
 			cmemChar.SetString(LS(STR_ERR_CSHAREDATA22));
 		}else{
-			auto_sprintf( szLineNum, L"%d", (int)((Int)point.x) + 1 );
+			auto_sprintf( szLineNum, LTEXT("%d"), (int)((Int)point.x) + 1 );
 			wcscat( szLineNum, LS(STR_DLGFNCLST_LIST_COL) );
 			CUnicode().UnicodeToHex( cmemChar.GetStringPtr(), cmemChar.GetStringLength(),
 				szCharCode, &GetDllShareData().m_Common.m_sStatusbar );

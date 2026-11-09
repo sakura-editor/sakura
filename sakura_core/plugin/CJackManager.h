@@ -18,7 +18,7 @@
 #include "plugin/CPlugin.h"
 #include "util/design_template.h"
 
-#define PP_COMMAND_STR	L"Command"
+#define PP_COMMAND_STR	LTEXT("Command")
 
 // ジャック（＝プラグイン可能箇所）
 enum EJack {
@@ -63,12 +63,12 @@ public:
 	CJackManager();
 
 	//操作
-	ERegisterPlugResult RegisterPlug(std::wstring_view jackName, CPlug* plug);	//プラグをジャックに関連付ける
-	bool	UnRegisterPlug(std::wstring_view jackName, const CPlug* plug);	//プラグの関連付けを解除する
+	ERegisterPlugResult RegisterPlug(sakura::wstring_view jackName, CPlug* plug);	//プラグをジャックに関連付ける
+	bool	UnRegisterPlug(sakura::wstring_view jackName, const CPlug* plug);	//プラグの関連付けを解除する
 	bool GetUsablePlug( EJack jack, PlugId plugId, CPlug::Array* plugs );	//利用可能なプラグを検索する
 	void InvokePlugins( EJack jack, CEditView* view );		//プラグインを列挙して呼び出し
 private:
-	EJack	GetJackFromName(std::wstring_view sName) const;	//ジャック名をジャック番号に変換する
+	EJack	GetJackFromName(sakura::wstring_view sName) const;	//ジャック名をジャック番号に変換する
 
 	//属性
 public:

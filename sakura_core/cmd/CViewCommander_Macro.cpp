@@ -91,7 +91,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	WCHAR			szPath[_MAX_PATH + 1];
 	SFilePath szInitDir;
-	szPath[0] = L'\0';
+	szPath[0] = LCHAR('\0');
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	if( _IS_REL_PATH( GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER ) ){
@@ -103,7 +103,7 @@ void CViewCommander::Command_SAVEKEYMACRO( void )
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
-		L"*.mac",
+		LTEXT("*.mac"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetSaveFileName( szPath ) ){
@@ -135,7 +135,7 @@ void CViewCommander::Command_LOADKEYMACRO() const
 	SFilePath szPath;
 	SFilePath szInitDir;
 	const WCHAR*		pszFolder;
-	szPath[0] = L'\0';
+	szPath[0] = LCHAR('\0');
 	pszFolder = GetDllShareData().m_Common.m_sMacro.m_szMACROFOLDER;
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -150,7 +150,7 @@ void CViewCommander::Command_LOADKEYMACRO() const
 		m_pCommanderView->GetHwnd(),
 // 2005/02/20 novice デフォルトの拡張子変更
 // 2005/07/13 novice 多様なマクロをサポートしているのでデフォルトは全て表示にする
-		L"*.*",
+		LTEXT("*.*"),
 		szInitDir
 	);
 	if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
@@ -230,10 +230,10 @@ void CViewCommander::Command_EXECEXTMACRO( const WCHAR* pszPath, const WCHAR* ps
 		cDlgOpenFile.Create(
 			G_AppInstance(),
 			m_pCommanderView->GetHwnd(),
-			L"*.*",
+			LTEXT("*.*"),
 			szInitDir
 		);
-		szPath[0] = L'\0';
+		szPath[0] = LCHAR('\0');
 		if( !cDlgOpenFile.DoModal_GetOpenFileName( szPath, EFITER_MACRO ) ){
 			return;
 		}
@@ -304,7 +304,7 @@ void CViewCommander::Command_EXECCOMMAND_DIALOG( void )
 	const WCHAR* cmd_string = cDlgExec.m_szCommand;
 	const WCHAR* curDir = cDlgExec.m_szCurDir;
 	const WCHAR* pszDir = curDir;
-	if( curDir[0] == L'\0' ){
+	if( curDir[0] == LCHAR('\0') ){
 		pszDir = nullptr;
 	}else{
 		CRecentCurDir cRecentCurDir;
@@ -326,12 +326,12 @@ void CViewCommander::Command_EXECCOMMAND( LPCWSTR cmd_string, const int nFlgOpt,
 	//	From Here Aug. 21, 2001 genta
 	//	パラメータ置換 (超暫定)
 	const int bufmax = 1024;
-	wchar_t buf[bufmax + 1];
+	WCHAR buf[bufmax + 1];
 	CSakuraEnvironment::ExpandParameter(cmd_string, buf, bufmax);
 
 	// 子プロセスの標準出力をリダイレクトする
-	std::wstring buf2 = buf;
-	std::wstring buf3;
+	sakura::wstring buf2 = buf;
+	sakura::wstring buf3;
 	if( pszCurDir ){
 		buf3 = pszCurDir;
 	}

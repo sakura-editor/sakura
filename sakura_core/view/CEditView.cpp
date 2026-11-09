@@ -190,7 +190,7 @@ BOOL CEditView::Create(
 	m_crBack  = COLORREF(-1);				/* テキストの背景色 */			// 2006.12.16 ryoji
 	m_crBack2 = COLORREF(-1);
 
-	m_szComposition[0] = L'\0';
+	m_szComposition[0] = LCHAR('\0');
 
 	/* ルーラー表示 */
 	GetTextArea().SetAreaTop(GetTextArea().GetAreaTop()+DpiScaleY(GetDllShareData().m_Common.m_sWindow.m_nRulerHeight));	/* ルーラー高さ */
@@ -350,8 +350,8 @@ BOOL CEditView::Create(
 	m_bHideMouse = false;
 	CRegKey reg;
 	BYTE bUserPref[8] = {0};
-	reg.Open(HKEY_CURRENT_USER, L"Control Panel\\Desktop" );
-	reg.GetValueBINARY( L"UserPreferencesMask", bUserPref, sizeof(bUserPref) );
+	reg.Open(HKEY_CURRENT_USER, LTEXT("Control Panel\\Desktop") );
+	reg.GetValueBINARY( LTEXT("UserPreferencesMask"), bUserPref, sizeof(bUserPref) );
 	if( (bUserPref[2] & 0x01) == 1 ){
 		m_bHideMouse = true;
 	}
@@ -480,7 +480,7 @@ LRESULT CEditView::DispatchEvent(
 		return 0L;
 	case WM_CHAR:
 		// コントロールコード入力禁止
-		if( WCODE::IsControlCode((wchar_t)wParam) ){
+		if( WCODE::IsControlCode((WCHAR)wParam) ){
 			ErrorBeep();
 		}else{
 			GetCommander().HandleCommand( F_WCHAR, true, WCHAR(wParam), 0, 0, 0 );
@@ -500,7 +500,7 @@ LRESULT CEditView::DispatchEvent(
 			HGLOBAL hstr;
 			hIMC = ImmGetContext( hwnd );
 
-			m_szComposition[0] = L'\0';
+			m_szComposition[0] = LCHAR('\0');
 
 			if( !hIMC ){
 				return 0;
@@ -551,7 +551,7 @@ LRESULT CEditView::DispatchEvent(
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_IME_ENDCOMPOSITION:
-		m_szComposition[0] = L'\0';
+		m_szComposition[0] = LCHAR('\0');
 		return DefWindowProc( hwnd, uMsg, wParam, lParam );
 
 	case WM_IME_CHAR:
@@ -849,7 +849,7 @@ LRESULT CEditView::DispatchEvent(
 	{
 		// wParam RedoUndoフラグは無視する
 		if( lParam ){
-			GetCommander().HandleCommand( F_INSTEXT_W, true, lParam, wcslen((wchar_t*)lParam), TRUE, 0 );
+			GetCommander().HandleCommand( F_INSTEXT_W, true, lParam, wcslen((WCHAR*)lParam), TRUE, 0 );
 		}
 		return 0L; // not use.
 	}
@@ -1176,18 +1176,18 @@ void CEditView::MoveCursorSelecting(
 bool CEditView::IsCurrentPositionURL(
 	const CLayoutPoint&	ptCaretPos,		//!< [in]  カーソル位置
 	CLogicRange*		pUrlRange,		//!< [out] URL範囲。ロジック単位。
-	std::wstring*		pstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
+	sakura::wstring*		pstrURL		//!< [out] URL文字列受け取り先。NULLを指定した場合はURL文字列を受け取らない。
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::IsCurrentPositionURL" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditView::IsCurrentPositionURL") );
 
 	// URLを強調表示するかどうかチェックする	// 2009.05.27 ryoji
 	bool bDispUrl = CTypeSupport(this,COLORIDX_URL).IsDisp();
 	bool bUseRegexKeyword = false;
 	if( m_pTypeData->m_bUseRegexKeyword ){
-		const wchar_t* pKeyword = m_pTypeData->m_RegexKeywordList;
+		const WCHAR* pKeyword = m_pTypeData->m_RegexKeywordList;
 		for( int i = 0; i < MAX_REGEX_KEYWORD; i++ ){
-			if( *pKeyword == L'\0' )
+			if( *pKeyword == LCHAR('\0') )
 				break;
 			if( m_pTypeData->m_RegexKeywordArr[i].m_nColorIndex == COLORIDX_URL ){
 				bUseRegexKeyword = true;	// URL色指定の正規表現キーワードがある
@@ -1218,7 +1218,7 @@ bool CEditView::IsCurrentPositionURL(
 		&ptXY
 	);
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
+	const WCHAR*	pLine = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptXY.GetY2()), &nLineLen); //2007.10.09 kobake レイアウト・ロジック混在バグ修正
 
 	bool		bMatch;
 	int			nMatchColor;
@@ -1315,7 +1315,7 @@ void CEditView::ConvSelectedArea( EFunctionCode nFuncCode )
 	CLogicInt	nDelLen;
 	CLogicInt	nDelPosNext;
 	CLogicInt	nDelLenNext;
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nLineLen2;
 	CWaitCursor cWaitCursor( GetHwnd() );
@@ -1497,12 +1497,12 @@ void CEditView::AddKeyHelpMenu(HMENU hMenu, EKeyHelpRMenuType eRmenuType)
 		RECT rc;
 		if( FALSE != KeyWordHelpSearchDict( LID_SKH_POPUPMENU_R, &po, &rc ) ){	// 2006.04.10 fon
 			if( eRmenuType == KEYHELP_RMENU_BOTTOM ){
-				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, L"" );
+				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, LTEXT("") );
 			}
-			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, LS(STR_MENU_KEYWORDINFO), L"K" );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
-			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, LS(STR_MENU_OPENKEYWORDDIC), L"L" );	// 2006.04.10 fon
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_COPYDICINFO, LS(STR_MENU_KEYWORDINFO), LTEXT("K") );	// 2006.04.10 fon ToolTip内容を直接表示するのをやめた
+			cMenuDrawer.MyAppendMenu( hMenu, 0, IDM_JUMPDICT, LS(STR_MENU_OPENKEYWORDDIC), LTEXT("L") );	// 2006.04.10 fon
 			if( eRmenuType == KEYHELP_RMENU_TOP ){
-				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, L"" );
+				cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, LTEXT("") );
 			}
 		}
 	}
@@ -1552,7 +1552,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus,
 		bool bAppend = false;
 		if( F_0 == code ){
 			// 2010.07.24 メニュー配列に入れる
-			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, L"" );
+			cMenuDrawer.MyAppendMenuSep( hMenu, MF_SEPARATOR, F_0, LTEXT("") );
 			bAppend = true;
 		}else if( F_MENU_RBUTTON == code || (F_CUSTMENU_1 <= code && code <= F_CUSTMENU_LAST) ){
 			int nCustIdx = 0;
@@ -1573,7 +1573,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus,
 			if( !bMenuLoop ){
 				WCHAR buf[ MAX_CUSTOM_MENU_NAME_LEN + 1 ];
 				LPCWSTR p = GetDocument()->m_cFuncLookup.Custmenu2Name( nCustIdx, buf, int(std::size(buf)) );
-				wchar_t keys[2];
+				WCHAR keys[2];
 				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
 				keys[1] = 0;
 				HMENU hMenuPopUp = ::CreatePopupMenu();
@@ -1591,7 +1591,7 @@ int	CEditView::CreatePopUpMenuSub( HMENU hMenu, int nMenuIdx, int* pParentMenus,
 			if( F_SPECIAL_FIRST <= code && code <= F_SPECIAL_LAST ){
 				GetEditWnd().InitMenu_Special( hMenu, code );
 			}else{
-				wchar_t keys[2];
+				WCHAR keys[2];
 				keys[0] = GetDllShareData().m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nMenuIdx][i];
 				keys[1] = 0;
 				GetEditWnd().InitMenu_Function( hMenu, code, szLabel, keys );
@@ -1782,28 +1782,28 @@ bool CEditView::GetSelectedDataSimple( CNativeW &cmemBuf )
 bool CEditView::GetSelectedData(
 	IWBuffer*		buffer,
 	BOOL			bLineOnly,
-	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	const WCHAR*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
 )
 {
 	const size_t quoteLen = (nullptr != pszQuote) ? wcslen(pszQuote) : 0;
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLayoutInt		nLineNum;
 	CLogicInt		nIdxFrom;
 	CLogicInt		nIdxTo;
 	int				nRowNum;
 	int				nLineNumCols = 0;
-	const wchar_t*	pszSpaces = L"                    ";
+	const WCHAR*	pszSpaces = LTEXT("                    ");
 	const CLayout*	pcLayout;
 
 	/* 範囲選択がされていない */
 	if( !GetSelectionInfo().IsTextSelected() ){
 		return false;
 	}
-	std::wstring strLineNum;
+	sakura::wstring strLineNum;
 	if( bWithLineNumber ){	/* 行番号を付与する */
 		/* 行番号表示に必要な桁数を計算 */
 		// 2014.11.30 桁はレイアウト単位である必要がある
@@ -1964,11 +1964,11 @@ bool CEditView::GetSelectedData(
 				continue;
 			}
 
-			if( nullptr != pszQuote && pszQuote[0] != L'\0' ){	/* 先頭に付ける引用符 */
+			if( nullptr != pszQuote && pszQuote[0] != LCHAR('\0') ){	/* 先頭に付ける引用符 */
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				const auto lineNumLen = strprintf(strLineNum, L" %d:", nLineNum + 1);
+				const auto lineNumLen = strprintf(strLineNum, LTEXT(" %d:"), nLineNum + 1);
 				const auto pszLineNum = strLineNum.data();
 				buffer->Append(pszSpaces, nLineNumCols - lineNumLen);
 				buffer->Append(pszLineNum, lineNumLen );
@@ -2013,7 +2013,7 @@ bool CEditView::GetSelectedData(
 bool CEditView::GetSelectedData(
 	CNativeW*		cmemBuf,
 	BOOL			bLineOnly,
-	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	const WCHAR*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
@@ -2024,9 +2024,9 @@ bool CEditView::GetSelectedData(
 }
 
 bool CEditView::GetSelectedData(
-	std::wstring*	wstr,
+	sakura::wstring*	wstr,
 	BOOL			bLineOnly,
-	const wchar_t*	pszQuote,			/* 先頭に付ける引用符 */
+	const WCHAR*	pszQuote,			/* 先頭に付ける引用符 */
 	BOOL			bWithLineNumber,	/* 行番号を付与する */
 	bool			bAddCRLFWhenCopy,	/* 折り返し位置で改行記号を入れる */
 	EEolType		neweol				//	コピー後の改行コード EEolType::noneはコード保存
@@ -2043,7 +2043,7 @@ bool CEditView::GetSelectedData(
 */
 bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdxFrom;
 	CLogicInt		nIdxTo;
@@ -2053,7 +2053,7 @@ bool CEditView::GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen )
 		return false;
 	}
 
-	cmemBuf.SetString(L"");
+	cmemBuf.SetString(LTEXT(""));
 	if( GetSelectionInfo().IsBoxSelecting() ){
 		// 矩形範囲選択(レイアウト処理)
 		const CLayout*	pcLayout;
@@ -2226,7 +2226,7 @@ int CEditView::IsCurrentPositionSelectedTEST(
 
 /* 選択範囲内の全行をクリップボードにコピーする */
 void CEditView::CopySelectedAllLines(
-	const wchar_t*	pszQuote,		//!< 先頭に付ける引用符
+	const WCHAR*	pszQuote,		//!< 先頭に付ける引用符
 	BOOL			bWithLineNumber	//!< 行番号を付与する
 )
 {
@@ -2261,7 +2261,7 @@ void CEditView::CopySelectedAllLines(
 	/* 選択範囲をクリップボードにコピー */
 	/* 選択範囲のデータを取得 */
 	/* 正常時はTRUE,範囲未選択の場合は終了する */
-	std::wstring wstr;
+	sakura::wstring wstr;
 	if( !GetSelectedData(
 		&wstr,
 		FALSE,
@@ -2304,7 +2304,7 @@ bool CEditView::MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, boo
 	return true;
 }
 
-bool CEditView::MyGetClipboardData(std::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect /*= NULL*/)
+bool CEditView::MyGetClipboardData(sakura::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect /*= NULL*/)
 {
 	if (pbColumnSelect)
 		*pbColumnSelect = false;

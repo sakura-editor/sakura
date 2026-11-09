@@ -27,8 +27,8 @@
 void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"テキスト" );
-	wcscpy( pType->m_szTypeExts, L"txt,log,1st,err,ps" );
+	wcscpy( pType->m_szTypeName, LTEXT("テキスト") );
+	wcscpy( pType->m_szTypeExts, LTEXT("txt,log,1st,err,ps") );
 
 	//設定
 	pType->m_nMaxLineKetas = CKetaXInt(120);					/* 折り返し桁数 */
@@ -39,8 +39,8 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 	pType->m_bKinsokuTail = false;								// 行末禁則				//@@@ 2002.04.08 MIK
 	pType->m_bKinsokuRet  = false;								// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	pType->m_bKinsokuKuto = false;								// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	wcscpy( pType->m_szKinsokuHead, L"!%),.:;?]}\xa2°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠" );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
-	wcscpy( pType->m_szKinsokuTail, L"$([\\{\xa3\xa5‘“〈《「『【〔＄（［｛｢￡￥" );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
+	wcscpy( pType->m_szKinsokuHead, LTEXT("!%),.:;?]}\xa2°’”‰′″℃、。々〉》」』】〕゛゜ゝゞ・ヽヾ！％），．：；？］｝｡｣､･ﾞﾟ￠") );		/* 行頭禁則 */	//@@@ 2002.04.13 MIK 
+	wcscpy( pType->m_szKinsokuTail, LTEXT("$([\\{\xa3\xa5‘“〈《「『【〔＄（［｛｢￡￥") );		/* 行末禁則 */	//@@@ 2002.04.08 MIK 
 	// pType->m_szKinsokuKuto（句読点ぶら下げ文字）はここではなく全タイプにデフォルト設定	// 2009.08.07 ryoji 
 
 	//※小さな親切として、C:\～～ や \\～～ などのファイルパスをクリッカブルにする設定を「テキスト」に既定で仕込む
@@ -49,23 +49,23 @@ void CType_Text::InitTypeConfigImp(STypeConfig* pType)
 
 	//正規表現キーワード
 	int keywordPos = 0;
-	wchar_t* pKeyword = pType->m_RegexKeywordList;
+	WCHAR* pKeyword = pType->m_RegexKeywordList;
 	pType->m_bUseRegexKeyword = true;							// 正規表現キーワードを使うか
 	pType->m_RegexKeywordArr[0].m_nColorIndex = COLORIDX_URL;	// 色指定番号
 	::wcsncpy_s(&pKeyword[keywordPos],			// 正規表現キーワード
 		std::size(pType->m_RegexKeywordList) - keywordPos,
-		L"/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k",			//   ""で挟まれた C:\～, \\～ にマッチするパターン
+		LTEXT("/(?<=\")(\\b[a-zA-Z]:|\\B\\\\\\\\)[^\"\\r\\n]*/k"),			//   ""で挟まれた C:\～, \\～ にマッチするパターン
 		_TRUNCATE
 	);
 	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
 	pType->m_RegexKeywordArr[1].m_nColorIndex = COLORIDX_URL;	// 色指定番号
 	::wcsncpy_s(&pKeyword[keywordPos],			// 正規表現キーワード
 		std::size(pType->m_RegexKeywordList) - keywordPos,
-		L"/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k",		//   C:\～, \\～ にマッチするパターン
+		LTEXT("/(\\b[a-zA-Z]:\\\\|\\B\\\\\\\\)[\\w\\-_.\\\\\\/$%~]*/k"),		//   C:\～, \\～ にマッチするパターン
 		_TRUNCATE
 	);
 	keywordPos += int(wcslen(&pKeyword[keywordPos]) + 1);
-	pKeyword[keywordPos] = L'\0';
+	pKeyword[keywordPos] = LCHAR('\0');
 }
 
 /*!	テキスト・トピックリスト作成
@@ -81,7 +81,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	using namespace WCODE;
 
 	//見出し記号
-	const wchar_t*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
+	const WCHAR*	pszStarts = GetDllShareData().m_Common.m_sFormat.m_szMidashiKigou;
 	auto nStartsLen = int(wcslen(pszStarts));
 
 	/*	ネストの深さは、nMaxStackレベルまで、ひとつのヘッダーは、最長32文字まで区別
@@ -89,15 +89,15 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 	*/
 	const int nMaxStack = 32;	//	ネストの最深
 	int nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	wchar_t pszStack[nMaxStack][32];
-	wchar_t szTitle[32];			//	一時領域
+	WCHAR pszStack[nMaxStack][32];
+	WCHAR szTitle[32];			//	一時領域
 	CLogicInt				nLineCount;
 	bool b278a = false;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount )
 	{
 		//行取得
 		CLogicInt		nLineLen;
-		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
+		const WCHAR*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if( nullptr == pLine )break;
 
 		//行頭の空白飛ばし
@@ -131,36 +131,36 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		}
 
 		//見出し種類の判別 -> szTitle
-		if( pLine[i] == L'(' ){
-			     if ( IsInRange(pLine[i + 1], L'0', L'9') ) wcscpy( szTitle, L"(0)" ); //数字
-			else if ( IsInRange(pLine[i + 1], L'A', L'Z') ) wcscpy( szTitle, L"(A)" ); //英大文字
-			else if ( IsInRange(pLine[i + 1], L'a', L'z') ) wcscpy( szTitle, L"(a)" ); //英小文字
+		if( pLine[i] == LCHAR('(') ){
+			     if ( IsInRange(pLine[i + 1], LCHAR('0'), LCHAR('9')) ) wcscpy( szTitle, LTEXT("(0)") ); //数字
+			else if ( IsInRange(pLine[i + 1], LCHAR('A'), LCHAR('Z')) ) wcscpy( szTitle, LTEXT("(A)") ); //英大文字
+			else if ( IsInRange(pLine[i + 1], LCHAR('a'), LCHAR('z')) ) wcscpy( szTitle, LTEXT("(a)") ); //英小文字
 			else continue; //※「(」の次が英数字で無い場合、見出しとみなさない
 		}
-		else if( IsInRange(pLine[i], L'０', L'９') ) wcscpy( szTitle, L"０" ); // 全角数字
-		else if( IsInRange(pLine[i], L'①', L'⑳') || pLine[i] == L'\u24ea'
-			|| IsInRange(pLine[i], L'\u3251', L'\u325f') || IsInRange(pLine[i], L'\u32b1', L'\u32bf') ) wcscpy( szTitle, L"①" ); // ①～⑳ ○0　○21○35　○36○50
-		else if( IsInRange(pLine[i], L'Ⅰ', L'\u216f') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　XIXIILCDM
-		else if( IsInRange(pLine[i], L'ⅰ', L'\u217f') ) wcscpy( szTitle, L"Ⅰ" ); // Ⅰ～Ⅹ　xixiilcdm
-		else if( IsInRange(pLine[i], L'\u2474', L'\u2487') ) wcscpy( szTitle, L"\u2474" ); // (1)-(20)
-		else if( IsInRange(pLine[i], L'\u2488', L'\u249b') ) wcscpy( szTitle, L"\u2488" ); // 1.-20.
-		else if( IsInRange(pLine[i], L'\u249c', L'\u24b5') ) wcscpy( szTitle, L"\u249c" ); // (a)-(z)
-		else if( IsInRange(pLine[i], L'\u24b6', L'\u24cf') ) wcscpy( szTitle, L"\u24b6" ); // ○A-○Z
-		else if( IsInRange(pLine[i], L'\u24d0', L'\u24e9') ) wcscpy( szTitle, L"\u24d0" ); // ○a-○z
-		else if( IsInRange(pLine[i], L'\u24eb', L'\u24f4') ){ // ●11-●20
-			if(b278a){ wcscpy( szTitle, L"\u278a" ); }
-			else{ wcscpy( szTitle, L"\u2776" ); } }
-		else if( IsInRange(pLine[i], L'\u24f5', L'\u24fe') ) wcscpy( szTitle, L"\u24f5" ); // ◎1-◎10
-		else if( IsInRange(pLine[i], L'\u2776', L'\u277f') ) wcscpy( szTitle, L"\u2776" ); // ●1-●10
-		else if( IsInRange(pLine[i], L'\u2780', L'\u2789') ) wcscpy( szTitle, L"\u2780" ); // ○1-○10
-		else if( IsInRange(pLine[i], L'\u278a', L'\u2793') ){ wcscpy( szTitle, L"\u278a" ); b278a = true; } // ●1-●10(SANS-SERIF)
-		else if( IsInRange(pLine[i], L'\u3220', L'\u3229') ) wcscpy( szTitle, L"\ua3220" ); // (一)-(十)
-		else if( IsInRange(pLine[i], L'\u3280', L'\u3289') ) wcscpy( szTitle, L"\u3220" ); // ○一-○十
-		else if( IsInRange(pLine[i], L'\u32d0', L'\u32fe') ) wcscpy( szTitle, L"\u32d0" ); // ○ア-○ヲ
-		else if( wcschr(L"〇一二三四五六七八九十百零壱弐参伍", pLine[i]) ) wcscpy( szTitle, L"一" ); //漢数字
+		else if( IsInRange(pLine[i], LCHAR('０'), LCHAR('９')) ) wcscpy( szTitle, LTEXT("０") ); // 全角数字
+		else if( IsInRange(pLine[i], LCHAR('①'), LCHAR('⑳')) || pLine[i] == LCHAR('\u24ea')
+			|| IsInRange(pLine[i], LCHAR('\u3251'), LCHAR('\u325f')) || IsInRange(pLine[i], LCHAR('\u32b1'), LCHAR('\u32bf')) ) wcscpy( szTitle, LTEXT("①") ); // ①～⑳ ○0　○21○35　○36○50
+		else if( IsInRange(pLine[i], LCHAR('Ⅰ'), LCHAR('\u216f')) ) wcscpy( szTitle, LTEXT("Ⅰ") ); // Ⅰ～Ⅹ　XIXIILCDM
+		else if( IsInRange(pLine[i], LCHAR('ⅰ'), LCHAR('\u217f')) ) wcscpy( szTitle, LTEXT("Ⅰ") ); // Ⅰ～Ⅹ　xixiilcdm
+		else if( IsInRange(pLine[i], LCHAR('\u2474'), LCHAR('\u2487')) ) wcscpy( szTitle, LTEXT("\u2474") ); // (1)-(20)
+		else if( IsInRange(pLine[i], LCHAR('\u2488'), LCHAR('\u249b')) ) wcscpy( szTitle, LTEXT("\u2488") ); // 1.-20.
+		else if( IsInRange(pLine[i], LCHAR('\u249c'), LCHAR('\u24b5')) ) wcscpy( szTitle, LTEXT("\u249c") ); // (a)-(z)
+		else if( IsInRange(pLine[i], LCHAR('\u24b6'), LCHAR('\u24cf')) ) wcscpy( szTitle, LTEXT("\u24b6") ); // ○A-○Z
+		else if( IsInRange(pLine[i], LCHAR('\u24d0'), LCHAR('\u24e9')) ) wcscpy( szTitle, LTEXT("\u24d0") ); // ○a-○z
+		else if( IsInRange(pLine[i], LCHAR('\u24eb'), LCHAR('\u24f4')) ){ // ●11-●20
+			if(b278a){ wcscpy( szTitle, LTEXT("\u278a") ); }
+			else{ wcscpy( szTitle, LTEXT("\u2776") ); } }
+		else if( IsInRange(pLine[i], LCHAR('\u24f5'), LCHAR('\u24fe')) ) wcscpy( szTitle, LTEXT("\u24f5") ); // ◎1-◎10
+		else if( IsInRange(pLine[i], LCHAR('\u2776'), LCHAR('\u277f')) ) wcscpy( szTitle, LTEXT("\u2776") ); // ●1-●10
+		else if( IsInRange(pLine[i], LCHAR('\u2780'), LCHAR('\u2789')) ) wcscpy( szTitle, LTEXT("\u2780") ); // ○1-○10
+		else if( IsInRange(pLine[i], LCHAR('\u278a'), LCHAR('\u2793')) ){ wcscpy( szTitle, LTEXT("\u278a") ); b278a = true; } // ●1-●10(SANS-SERIF)
+		else if( IsInRange(pLine[i], LCHAR('\u3220'), LCHAR('\u3229')) ) wcscpy( szTitle, LTEXT("\ua3220") ); // (一)-(十)
+		else if( IsInRange(pLine[i], LCHAR('\u3280'), LCHAR('\u3289')) ) wcscpy( szTitle, LTEXT("\u3220") ); // ○一-○十
+		else if( IsInRange(pLine[i], LCHAR('\u32d0'), LCHAR('\u32fe')) ) wcscpy( szTitle, LTEXT("\u32d0") ); // ○ア-○ヲ
+		else if( wcschr(LTEXT("〇一二三四五六七八九十百零壱弐参伍"), pLine[i]) ) wcscpy( szTitle, LTEXT("一") ); //漢数字
 		else{
 			wcsncpy( szTitle, &pLine[i], nCharChars );	//	先頭文字をszTitleに保持。
-			szTitle[nCharChars] = L'\0';
+			szTitle[nCharChars] = LCHAR('\0');
 		}
 
 		/*	「見出し記号」に含まれる文字で始まるか、
@@ -169,7 +169,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 		*/
 
 		//行文字列から改行を取り除く pLine -> pszText
-		const wchar_t*	pszText = &pLine[i];
+		const WCHAR*	pszText = &pLine[i];
 		nLineLen -= i;
 		const bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 		for( i = 0; i < nLineLen; ++i ){
@@ -177,7 +177,7 @@ void CDocOutline::MakeTopicList_txt( CFuncInfoArr* pcFuncInfoArr )
 				break;
 			}
 		}
-		std::wstring strText( pszText, i );
+		sakura::wstring strText( pszText, i );
 		pszText = strText.c_str();
 
 		/*
@@ -239,7 +239,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 
 	for(CLogicInt nLineCount=CLogicInt(0);nLineCount<m_pcDocRef->m_cDocLineMgr.GetLineCount();nLineCount++)
 	{
-		const wchar_t*	pLine;
+		const WCHAR*	pLine;
 		CLogicInt		nLineLen;
 
 		pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
@@ -248,14 +248,14 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 			break;
 		}
 		//	May 25, 2003 genta 判定順序変更
-		if( *pLine == L'.' )
+		if( *pLine == LCHAR('.') )
 		{
-			const wchar_t* pPos;	//	May 25, 2003 genta
+			const WCHAR* pPos;	//	May 25, 2003 genta
 			int			nLength;
-			wchar_t		szTitle[1024];
+			WCHAR		szTitle[1024];
 
 			//	ピリオドの数＝階層の深さを数える
-			for( pPos = pLine + 1 ; *pPos == L'.' ; ++pPos )
+			for( pPos = pLine + 1 ; *pPos == LCHAR('.') ; ++pPos )
 				;
 
 			CLayoutPoint ptPos;
@@ -283,14 +283,14 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 			}
 			levelPrev = level;
 
-			nLength = auto_sprintf(szTitle,L"%d - ", level );
+			nLength = auto_sprintf(szTitle,LTEXT("%d - "), level );
 			
-			wchar_t *pDest = szTitle + nLength; // 書き込み先
-			wchar_t *pDestEnd = szTitle + int(std::size(szTitle)) - 2;
+			WCHAR *pDest = szTitle + nLength; // 書き込み先
+			WCHAR *pDestEnd = szTitle + int(std::size(szTitle)) - 2;
 			
 			while( pDest < pDestEnd )
 			{
-				if( WCODE::IsLineDelimiter(*pPos, bExtEol) || *pPos == L'\0')
+				if( WCODE::IsLineDelimiter(*pPos, bExtEol) || *pPos == LCHAR('\0'))
 				{
 					break;
 				}
@@ -298,7 +298,7 @@ void CDocOutline::MakeTopicList_wztxt(CFuncInfoArr* pcFuncInfoArr)
 					*pDest++ = *pPos++;
 				}
 			}
-			*pDest = L'\0';
+			*pDest = LCHAR('\0');
 			pcFuncInfoArr->AppendData(nLineCount+CLogicInt(1),ptPos.GetY2()+CLayoutInt(1),szTitle, 0, level - 1);
 		}
 	}

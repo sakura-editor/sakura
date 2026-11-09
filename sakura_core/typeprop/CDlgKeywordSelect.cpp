@@ -119,7 +119,7 @@ void CDlgKeywordSelect::SetData( void )
 		ApiWrap::Combo_ResetContent( hwndCombo );
 		
 		/* 一行目は空白 */
-		ApiWrap::Combo_AddString( hwndCombo, L" " );
+		ApiWrap::Combo_AddString( hwndCombo, LTEXT(" ") );
 
 		if( m_pCKeyWordSetMgr->m_nKeyWordSetNum > 0 )
 		{

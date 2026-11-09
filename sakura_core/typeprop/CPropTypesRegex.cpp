@@ -171,7 +171,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 			case IDC_BUTTON_REGEX_INS:	/* 挿入 */
 			{
 				//挿入するキー情報を取得する。
-				std::wstring strKeyWord;
+				sakura::wstring strKeyWord;
 				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
 					return FALSE;
 				}
@@ -219,7 +219,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				//最後のキー番号を取得する。
 				nIndex = ListView_GetItemCount( hwndList );
 				//追加するキー情報を取得する。
-				std::wstring strKeyWord;
+				sakura::wstring strKeyWord;
 				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
 					return FALSE;
 				}
@@ -263,7 +263,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 					return FALSE;
 				}
 				//更新するキー情報を取得する。
-				std::wstring strKeyWord;
+				sakura::wstring strKeyWord;
 				if( !ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_REGEX, strKeyWord ) ){
 					return FALSE;
 				}
@@ -464,7 +464,7 @@ INT_PTR CPropTypesRegex::DispatchEvent(
 				if( -1 == nIndex )
 				{
 					/* 初期値を設定する */
-					ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
+					ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, LTEXT("//k") );	/* 正規表現 */
 					hwndCombo = GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
 					for( i = 0, j = 0; i < COLORIDX_LAST; i++ )
 					{
@@ -537,7 +537,7 @@ void CPropTypesRegex::SetData( HWND hwndDlg )
 
 	/* ユーザーがエディット コントロールに入力できるテキストの長さを制限する */
 	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_REGEX ), MAX_REGEX_KEYWORDLEN - 1 );
-	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, L"//k" );	/* 正規表現 */
+	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_REGEX, LTEXT("//k") );	/* 正規表現 */
 
 	/* 色種類のリスト */
 	hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_REGEX_COLOR );
@@ -579,10 +579,10 @@ void CPropTypesRegex::SetDataKeywordList( HWND hwndDlg )
 	ListView_DeleteAllItems(hwndWork);  /* リストを空にする */
 
 	/* データ表示 */
-	wchar_t *pKeyword = &m_Types.m_RegexKeywordList[0];
+	WCHAR *pKeyword = &m_Types.m_RegexKeywordList[0];
 	for(int i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( *pKeyword == L'\0' ) break;
+		if( *pKeyword == LCHAR('\0') ) break;
 		
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = const_cast<WCHAR*>(pKeyword);
@@ -620,15 +620,15 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 	//リストに登録されている情報を配列に取り込む
 	hwndList = GetDlgItem( hwndDlg, IDC_LIST_REGEX );
 	nIndex = ListView_GetItemCount(hwndList);
-	wchar_t* pKeyword = &m_Types.m_RegexKeywordList[0];
-	wchar_t* pKeywordLast = pKeyword + int(std::size(m_Types.m_RegexKeywordList)) - 1;
+	WCHAR* pKeyword = &m_Types.m_RegexKeywordList[0];
+	WCHAR* pKeywordLast = pKeyword + int(std::size(m_Types.m_RegexKeywordList)) - 1;
 	// key1\0key2\0\0 の形式
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
 		if( i < nIndex )
 		{
-			szKeyWord[0]    = L'\0';
-			szColorIndex[0] = L'\0';
+			szKeyWord[0]    = LCHAR('\0');
+			szColorIndex[0] = LCHAR('\0');
 			ListView_GetItemText(hwndList, i, 0, szKeyWord, int(std::size(szKeyWord)) );
 			ListView_GetItemText(hwndList, i, 1, szColorIndex, int(std::size(szColorIndex)));
 			if( pKeyword < pKeywordLast - 1 ){
@@ -645,7 +645,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 				}
 			}
 			if( *pKeyword ){
-				for(; *pKeyword != L'\0'; pKeyword++){}
+				for(; *pKeyword != LCHAR('\0'); pKeyword++){}
 				pKeyword++;
 			}
 		}
@@ -654,7 +654,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 			m_Types.m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 		}
 	}
-	*pKeyword = L'\0'; // 番兵
+	*pKeyword = LCHAR('\0'); // 番兵
 
 	//タイプ設定の変更があった
 	m_Types.m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
@@ -666,7 +666,7 @@ int CPropTypesRegex::GetData( HWND hwndDlg )
 /*!
 	@date 2010.07.11 Moca 今のところCRegexKeyword::RegexKeyCheckSyntaxと同一なので、中身を削除して転送関数に変更
 */
-BOOL CPropTypesRegex::RegexKakomiCheck(const wchar_t *s)
+BOOL CPropTypesRegex::RegexKakomiCheck(const WCHAR *s)
 {
 	return CRegexKeyword::RegexKeyCheckSyntax( s );
 }
@@ -701,7 +701,7 @@ bool CPropTypesRegex::CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, 
 	int nKeywordLen = 0;
 	for(int i = 0; i < nIndex; i++){
 		if( i != nUpdateItem ){
-			szKeyWord[0] = L'\0';
+			szKeyWord[0] = LCHAR('\0');
 			ListView_GetItemText(hwndList, i, 0, szKeyWord, int(std::size(szKeyWord)));
 			if( wcscmp(szNewKeyWord, szKeyWord) == 0 ) 
 			{

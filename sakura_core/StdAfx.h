@@ -183,6 +183,10 @@
 #  define NORETURN
 #endif
 
+// 文字型 WCHAR とワイド文字列リテラル LTEXT/LCHAR、sakura::wstring（Mac 版移植 第 14・15 步）
+#include "util/std_macro.h"
+#include "util/wchar16.h"
+
 // プロジェクト内のファイルだがプリコンパイル対象とする。
 // プリコンパイルの有無がビルドパフォーマンスに大きく影響するため。
 #include "env/DLLSHAREDATA.h"

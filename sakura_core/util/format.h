@@ -187,7 +187,7 @@ int _sprintf_s(
 } // namespace cxx
 
 // 20051121 aroka
-std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime );
+sakura::wstring GetDateTimeFormat( sakura::wstring_view format, const SYSTEMTIME& systime );
 UINT32 ParseVersion( const WCHAR* ver );	//バージョン番号の解析
 int CompareVersion( const WCHAR* verA, const WCHAR* verB );	//バージョン番号の比較
 

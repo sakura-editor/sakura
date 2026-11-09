@@ -59,26 +59,26 @@ ULONGLONG CFileLoad::GetLimitSize()
 
 //! 人にとって見やすいサイズ文字列を作る (例: "2 GB", "10 GB", "400 MB", "32 KB")
 //  …と言いつつ、今のところは MB 単位での表示にします。適宜必要あれば改良してください。
-std::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
+sakura::wstring CFileLoad::GetSizeStringForHuman(ULONGLONG size)
 {
 	// bytes to megabytes
 	ULONGLONG megabytes = size / 1024 / 1024;
 
 	// to string
-	wchar_t buf[32];
-	swprintf_s(buf, std::size(buf), L"%I64u", megabytes);
-	std::wstring str = buf;
+	WCHAR buf[32];
+	swprintf_s(buf, std::size(buf), LTEXT("%I64u"), megabytes);
+	sakura::wstring str = buf;
 
 	// https://stackoverflow.com/questions/7276826/c-format-number-with-commas
 	// コンマ区切り文字列
 	int insertPosition = (int)str.length() - 3;
 	while (insertPosition > 0) {
-		str.insert(insertPosition, L",");
+		str.insert(insertPosition, LTEXT(","));
 		insertPosition -= 3;
 	}
 
 	// 単位付けて返す
-	return str + L" MB";
+	return str + LTEXT(" MB");
 }
 
 /*! コンストラクタ */
@@ -151,7 +151,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 	// FileCloseを呼んでからにしてください
 	if( nullptr != m_hFile ){
 #ifdef _DEBUG
-		::MessageBox( nullptr, L"CFileLoad::FileOpen\nFileCloseを呼んでからにしてください" , nullptr, MB_OK );
+		::MessageBox( nullptr, LTEXT("CFileLoad::FileOpen\nFileCloseを呼んでからにしてください") , nullptr, MB_OK );
 #endif
 		throw CError_FileOpen();
 	}
@@ -261,7 +261,7 @@ ECodeType CFileLoad::FileOpen( LPCWSTR pFileName, bool bBigFile, ECodeType CharC
 
 	m_nReadOffset2 = 0;
 	m_nTempResult = RESULT_FAILURE;
-	m_cLineTemp.SetString(L"");
+	m_cLineTemp.SetString(LTEXT(""));
 	return m_CharCode;
 }
 
@@ -313,7 +313,7 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 		CEol cEol;
 		EConvertResult e = ReadLine_core( &m_cLineTemp, &cEol );
 		if( e == RESULT_FAILURE ){
-			pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+			pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( LTEXT(""), 0 );
 			*pcEol = cEol;
 			return RESULT_FAILURE;
 		}
@@ -323,18 +323,18 @@ EConvertResult CFileLoad::ReadLine( CNativeW* pUnicodeBuffer, CEol* pcEol )
 	int  nOffsetTemp = m_nReadOffset2;
 	int  nRetLineLen;
 	CEol cEolTemp;
-	const wchar_t* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
+	const WCHAR* pRet = GetNextLineW( m_cLineTemp.GetStringPtr(), m_cLineTemp.GetStringLength(),
 				&nRetLineLen, &m_nReadOffset2, &cEolTemp, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
 	if( m_cLineTemp.GetStringLength() == m_nReadOffset2 && nOffsetTemp == 0 ){
 		// 途中に改行がない限りは、swapを使って中身のコピーを省略する
 		pUnicodeBuffer->swap(m_cLineTemp);
 		if( 0 < m_cLineTemp.GetStringLength() ){
-			m_cLineTemp._GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+			m_cLineTemp._GetMemory()->SetRawDataHoldBuffer( LTEXT(""), 0 );
 		}
 		m_nReadOffset2 = 0;
 	}else{
 		// 改行が途中にあった。必要分をコピー
-		pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( L"", 0 );
+		pUnicodeBuffer->_GetMemory()->SetRawDataHoldBuffer( LTEXT(""), 0 );
 		pUnicodeBuffer->AppendString( pRet, nRetLineLen + cEolTemp.GetLen() );
 	}
 	*pcEol = cEolTemp;
@@ -357,7 +357,7 @@ EConvertResult CFileLoad::ReadLine_core(
 
 #ifdef _DEBUG
 	if( m_eMode < FLMODE_READY ){
-		MYTRACE( L"CFileLoad::ReadLine(): m_eMode = %d\n", m_eMode );
+		MYTRACE( LTEXT("CFileLoad::ReadLine(): m_eMode = %d\n"), m_eMode );
 		return RESULT_FAILURE;
 	}
 #endif
@@ -507,10 +507,10 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_UTF16LE:
 		nLen = nDataLen - 1;
 		for( i = nbgn; i < nLen; i += 2 ){
-			wchar_t c = static_cast<wchar_t>((pUData[i + 1] << 8) | pUData[i]);
+			WCHAR c = static_cast<WCHAR>((pUData[i + 1] << 8) | pUData[i]);
 			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_uni( &pData[i], nDataLen - i );
-				neollen = (size_t)pcEol->GetLen() * sizeof(wchar_t);
+				neollen = (size_t)pcEol->GetLen() * sizeof(WCHAR);
 				break;
 			}
 		}
@@ -518,10 +518,10 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_UTF16BE:
 		nLen = nDataLen - 1;
 		for( i = nbgn; i < nLen; i += 2 ){
-			wchar_t c = static_cast<wchar_t>((pUData[i] << 8) | pUData[i + 1]);
+			WCHAR c = static_cast<WCHAR>((pUData[i] << 8) | pUData[i + 1]);
 			if( WCODE::IsLineDelimiter(c, bExtEol) ){
 				pcEol->SetTypeByStringForFile_unibe( &pData[i], nDataLen - i );
-				neollen = (size_t)pcEol->GetLen() * sizeof(wchar_t);
+				neollen = (size_t)pcEol->GetLen() * sizeof(WCHAR);
 				break;
 			}
 		}
@@ -529,18 +529,18 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_UTF32LE:
 		nLen = nDataLen - 3;
 		for( i = nbgn; i < nLen; i += 4 ){
-			wchar_t c = static_cast<wchar_t>((pUData[i+1] << 8) | pUData[i]);
+			WCHAR c = static_cast<WCHAR>((pUData[i+1] << 8) | pUData[i]);
 			if( pUData[i+3] == 0x00 && pUData[i+2] == 0x00 && WCODE::IsLineDelimiter(c, bExtEol) ){
-				wchar_t c2;
+				WCHAR c2;
 				int eolTempLen;
 				if( i + 4 < nLen && pUData[i+7] == 0x00 && pUData[i+6] == 0x00 ){
-					c2 = static_cast<wchar_t>((pUData[i+5] << 8) | pUData[i+4]);
-					eolTempLen = 2 * sizeof(wchar_t);
+					c2 = static_cast<WCHAR>((pUData[i+5] << 8) | pUData[i+4]);
+					eolTempLen = 2 * sizeof(WCHAR);
 				}else{
 					c2 = 0x0000;
-					eolTempLen = 1 * sizeof(wchar_t);
+					eolTempLen = 1 * sizeof(WCHAR);
 				}
-				wchar_t pDataTmp[2] = {c, c2};
+				WCHAR pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
 				neollen = (size_t)pcEol->GetLen() * 4U;
 				break;
@@ -550,18 +550,18 @@ const char* CFileLoad::GetNextLineCharCode(
 	case ENCODING_TRAIT_UTF32BE:
 		nLen = nDataLen - 3;
 		for( i = nbgn; i < nLen; i += 4 ){
-			wchar_t c = static_cast<wchar_t>((pUData[i+2] << 8) | pUData[i+3]);
+			WCHAR c = static_cast<WCHAR>((pUData[i+2] << 8) | pUData[i+3]);
 			if( pUData[i] == 0x00 && pUData[i+1] == 0x00 && WCODE::IsLineDelimiter(c, bExtEol) ){
-				wchar_t c2;
+				WCHAR c2;
 				int eolTempLen;
 				if( i + 4 < nLen && pUData[i+4] == 0x00 && pUData[i+5] == 0x00 ){
-					c2 = static_cast<wchar_t>((pUData[i+6] << 8) | pUData[i+7]);
-					eolTempLen = 2 * sizeof(wchar_t);
+					c2 = static_cast<WCHAR>((pUData[i+6] << 8) | pUData[i+7]);
+					eolTempLen = 2 * sizeof(WCHAR);
 				}else{
 					c2 = 0x0000;
-					eolTempLen = 1 * sizeof(wchar_t);
+					eolTempLen = 1 * sizeof(WCHAR);
 				}
-				wchar_t pDataTmp[2] = {c, c2};
+				WCHAR pDataTmp[2] = {c, c2};
 				pcEol->SetTypeByStringForFile_uni( reinterpret_cast<char *>(pDataTmp), eolTempLen );
 				neollen = (size_t)pcEol->GetLen() * 4U;
 				break;

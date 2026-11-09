@@ -29,10 +29,10 @@ class CPropPlugin;
 #define MAX_LENGTH_VALUE	1024
 
 // 型 
-static const std::wstring	OPTION_TYPE_BOOL = std::wstring( L"bool" );
-static const std::wstring	OPTION_TYPE_INT  = std::wstring( L"int" );
-static const std::wstring	OPTION_TYPE_SEL  = std::wstring( L"sel" );
-static const std::wstring	OPTION_TYPE_DIR  = std::wstring( L"dir" );
+static const sakura::wstring	OPTION_TYPE_BOOL = sakura::wstring( LTEXT("bool") );
+static const sakura::wstring	OPTION_TYPE_INT  = sakura::wstring( LTEXT("int") );
+static const sakura::wstring	OPTION_TYPE_SEL  = sakura::wstring( LTEXT("sel") );
+static const sakura::wstring	OPTION_TYPE_DIR  = sakura::wstring( LTEXT("dir") );
 
 class CDlgPluginOption final : public CDialog
 {
@@ -68,7 +68,7 @@ protected:
 	void	SetToEdit(int iLine);
 	void	SetFromEdit(int iLine);
 	void	SelectEdit(int IDCenable);							// 編集領域の切り替え
-	void	SepSelect(std::wstring sTrg, std::wstring* spView, std::wstring* spValue);	// 選択用文字列分解
+	void	SepSelect(sakura::wstring sTrg, sakura::wstring* spView, sakura::wstring* spValue);	// 選択用文字列分解
 	void	SelectDirectory( int iLine );				// ディレクトリを選択する
 
 private:
@@ -76,6 +76,6 @@ private:
 	CPropPlugin*	m_cPropPlugin;
 	int 			m_ID;			// プラグイン番号（エディタがふる番号）
 	int				m_Line;			// 現在編集中のオプション行番号
-	std::wstring	m_sReadMeName;	// ReadMe ファイル名
+	sakura::wstring	m_sReadMeName;	// ReadMe ファイル名
 };
 #endif /* SAKURA_CDLGPLUGINOPTION_AF75E03E_99DB_4AEF_93AF_BFF669310DE6_H_ */

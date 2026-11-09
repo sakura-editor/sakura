@@ -92,7 +92,7 @@ CDlgFavorite::CDlgFavorite()
 	int	i;
 
 	m_nCurrentTab = 0;
-	m_szMsg[0] = L'\0';
+	m_szMsg[0] = LCHAR('\0');
 
 	/* サイズ変更時に位置を制御するコントロール数 */
 	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
@@ -248,7 +248,7 @@ void CDlgFavorite::SetData( void )
 		SetDataOne( nTab, 0 );
 	}
 
-	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 
 	UpdateUIState();
 
@@ -287,7 +287,7 @@ void CDlgFavorite::SetDataOne( int nIndex, int nLvItemIndex )
 		ListView_InsertItem( hwndList, &lvi );
 
 		const WCHAR	*p = pRecent->GetItemText( i );
-		auto_snprintf_s(tmp, std::size(tmp), L"%s", p ? p : L"" );
+		auto_snprintf_s(tmp, std::size(tmp), LTEXT("%s"), p ? p : LTEXT("") );
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
 		lvi.iSubItem = 1;
@@ -400,7 +400,7 @@ BOOL CDlgFavorite::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetItemClientRect( m_aFavoriteInfo[0].m_nId, rc );
 
 	// リストビューのItem/SubItem幅を計算
-	std::wstring pszFavTest = LS( STR_DLGFAV_FAVORITE );
+	sakura::wstring pszFavTest = LS( STR_DLGFAV_FAVORITE );
 	WCHAR* pszFAVORITE_TEXT = const_cast<WCHAR*>(pszFavTest.c_str());
 	const int nListViewWidthClient = rc.right - rc.left
 		 - CTextWidthCalc::WIDTH_MARGIN_SCROLLBER - ::GetSystemMetrics(SM_CXVSCROLL);
@@ -503,7 +503,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	//すべて削除
 	case IDC_BUTTON_CLEAR:
 		{
-			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 			CRecent	*pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
@@ -520,7 +520,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	//お気に入り以外削除
 	case IDC_BUTTON_DELETE_NOFAVORATE:
 		{
-			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bHaveFavorite ){
 				int const nRet = ConfirmMessage( GetHwnd(), 
 					LS( STR_DLGFAV_CONF_DEL_NOTFAV ),	// "最近使った%sの履歴のお気に入り以外を削除します。\nよろしいですか？"
@@ -539,7 +539,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 	// 存在しない項目 を削除
 	case IDC_BUTTON_DELETE_NOTFOUND:
 		{
-			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 			if( m_aFavoriteInfo[m_nCurrentTab].m_bFilePath ){
 				const int nRet = ConfirmMessage( GetHwnd(), 
 					LS( STR_DLGFAV_CONF_DEL_PATH ),	// "最近使った%sの存在しないパスを削除します。\nよろしいですか？"
@@ -683,7 +683,7 @@ BOOL CDlgFavorite::OnNotify(NMHDR* pNMHDR)
 
 void CDlgFavorite::TabSelectChange(bool bSetFocus)
 {
-	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 	HWND hwndTab = GetItemHwnd( IDC_TAB_FAVORITE );
 	int nIndex = TabCtrl_GetCurSel( hwndTab );
 	if( -1 != nIndex )
@@ -743,8 +743,8 @@ bool CDlgFavorite::RefreshList( void )
 	bool	ret_val = false;
 	WCHAR	msg[1024];
 
-	msg[0] = L'\0';
-	m_szMsg[0] = L'\0';
+	msg[0] = LCHAR('\0');
+	m_szMsg[0] = LCHAR('\0');
 
 	//全リストの現在選択中のアイテムを取得する。
 	for( nTab = 0; nullptr != m_aFavoriteInfo[nTab].m_pRecent; nTab++ )
@@ -754,7 +754,7 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != L'\0' ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
+			if( msg[0] != LCHAR('\0') ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
 			wcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}
@@ -840,7 +840,7 @@ void CDlgFavorite::GetFavorite( int nIndex )
 */
 int CDlgFavorite::DeleteSelected()
 {
-	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 	int     nDelItemCount = 0;
 	CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 	if( pRecent ){
@@ -935,11 +935,11 @@ void CDlgFavorite::AddItem()
 	size_t max_size = recent.GetTextMaxLength();
 	std::vector<WCHAR> vecAddText(max_size);
 	WCHAR* szAddText = &vecAddText[0];
-	szAddText[0] = L'\0';
+	szAddText[0] = LCHAR('\0');
 
 	auto& cDlgInput1 = *CDlgInput1::getInstance();
-	std::wstring strTitle = LS( STR_DLGFAV_ADD );
-	std::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
+	sakura::wstring strTitle = LS( STR_DLGFAV_ADD );
+	sakura::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
 	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
 		return;
 	}
@@ -969,8 +969,8 @@ void CDlgFavorite::EditItem()
 			WCHAR* szText = &vecAddText[0];
 			wcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
 			auto& cDlgInput1 = *CDlgInput1::getInstance();
-			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
-			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
+			sakura::wstring strTitle = LS( STR_DLGFAV_EDIT );
+			sakura::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
 			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 				return;
 			}
@@ -1033,7 +1033,7 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 		break;
 	case MENU_ADD_EXCEPT:
 		{
-			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, L"" );
+			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FAVORITE_MSG, LTEXT("") );
 			CRecent *pRecent = m_aFavoriteInfo[m_nCurrentTab].m_pRecent;
 			if( pRecent ){
 				HWND hwndList = m_aListViewInfo[m_nCurrentTab].hListView;
@@ -1086,9 +1086,9 @@ static int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
 	const auto mod = index % (10 + 26);	// 0,1,2,...,9,A,B,...,Z
-	const auto c = static_cast<WCHAR>((mod < 10 ? L'0' : L'A' - 10) + mod);
+	const auto c = static_cast<WCHAR>((mod < 10 ? LCHAR('0') : LCHAR('A') - 10) + mod);
 
-	return auto_sprintf_s( buffer, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
+	return auto_sprintf_s( buffer, LTEXT("%c %s"), c, (view ? LTEXT("  ") : LS( STR_DLGFAV_HIDDEN )) );
 }
 
 /*!
@@ -1136,8 +1136,8 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 		col.cchTextMax = int(std::size(szHeader));
 		col.iSubItem = 0;
 		ListView_GetColumn( info.hListView, info.nSortColumn, &col );
-		if (const auto nLen = int(wcslen(szHeader) - wcslen(L"▼")); 0 <= nLen) {
-			szHeader[nLen] = L'\0';
+		if (const auto nLen = int(wcslen(szHeader) - wcslen(LTEXT("▼"))); 0 <= nLen) {
+			szHeader[nLen] = LCHAR('\0');
 		}
 		col.mask = LVCF_TEXT;
 		col.pszText = szHeader;
@@ -1150,7 +1150,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.cchTextMax = int(std::size(szHeader)) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
+	wcscat(szHeader, info.bSortAscending ? LTEXT("▼") : LTEXT("▲"));
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;

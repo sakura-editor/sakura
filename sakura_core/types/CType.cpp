@@ -110,29 +110,29 @@ void CShareData::InitKeyword(DLLSHAREDATA* pShareData)
 #pragma push_macro("PopulateKeyword")
 
 #define PopulateKeyword(name, case_sensitive, aryname) \
-	extern const wchar_t* g_ppszKeywords##aryname[]; \
+	extern const WCHAR* g_ppszKeywords##aryname[]; \
 	extern int g_nKeywords##aryname; \
 	pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( (name), (case_sensitive) );	\
 	pShareData->m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordArr( ++nSetCount, g_nKeywords##aryname, g_ppszKeywords##aryname ); \
 	0 /* ←セミコロンを付けないとエラーになるように。 */
 	
-	PopulateKeyword( L"C/C++",			true,	CPP );			/* セット 0の追加 */
-	PopulateKeyword( L"HTML",			false,	HTML );			/* セット 1の追加 */
-	PopulateKeyword( L"PL/SQL",			false,	PLSQL );		/* セット 2の追加 */
-	PopulateKeyword( L"COBOL",			true,	COBOL );		/* セット 3の追加 */
-	PopulateKeyword( L"Java",			true,	JAVA );			/* セット 4の追加 */
-	PopulateKeyword( L"CORBA IDL",		true,	CORBA_IDL );	/* セット 5の追加 */
-	PopulateKeyword( L"AWK",			true,	AWK );			/* セット 6の追加 */
-	PopulateKeyword( L"MS-DOS batch",	false,	BAT );			/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
-	PopulateKeyword( L"Pascal",			false,	PASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
-	PopulateKeyword( L"TeX",			true,	TEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
-	PopulateKeyword( L"TeX2",			true,	TEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
-	PopulateKeyword( L"Perl",			true,	PERL );			/* セット11の追加 */
-	PopulateKeyword( L"Perl2",			true,	PERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
-	PopulateKeyword( L"Visual Basic",	false,	VB );			/* セット13の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( L"Visual Basic2",	false,	VB2 );			/* セット14の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( L"Rich Text",		true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
-	PopulateKeyword( L"Python",			true,	Python);		/* セット16の追加 */
+	PopulateKeyword( LTEXT("C/C++"),			true,	CPP );			/* セット 0の追加 */
+	PopulateKeyword( LTEXT("HTML"),			false,	HTML );			/* セット 1の追加 */
+	PopulateKeyword( LTEXT("PL/SQL"),			false,	PLSQL );		/* セット 2の追加 */
+	PopulateKeyword( LTEXT("COBOL"),			true,	COBOL );		/* セット 3の追加 */
+	PopulateKeyword( LTEXT("Java"),			true,	JAVA );			/* セット 4の追加 */
+	PopulateKeyword( LTEXT("CORBA IDL"),		true,	CORBA_IDL );	/* セット 5の追加 */
+	PopulateKeyword( LTEXT("AWK"),			true,	AWK );			/* セット 6の追加 */
+	PopulateKeyword( LTEXT("MS-DOS batch"),	false,	BAT );			/* セット 7の追加 */	//Oct. 31, 2000 JEPRO 'バッチファイル'→'batch' に短縮
+	PopulateKeyword( LTEXT("Pascal"),			false,	PASCAL );		/* セット 8の追加 */	//Nov. 5, 2000 JEPRO 大・小文字の区別を'しない'に変更
+	PopulateKeyword( LTEXT("TeX"),			true,	TEX );			/* セット 9の追加 */	//Sept. 2, 2000 jepro Tex →TeX に修正 Bool値は大・小文字の区別
+	PopulateKeyword( LTEXT("TeX2"),			true,	TEX2 );			/* セット10の追加 */	//Jan. 19, 2001 JEPRO 追加
+	PopulateKeyword( LTEXT("Perl"),			true,	PERL );			/* セット11の追加 */
+	PopulateKeyword( LTEXT("Perl2"),			true,	PERL2 );		/* セット12の追加 */	//Jul. 10, 2001 JEPRO Perlから変数を分離・独立
+	PopulateKeyword( LTEXT("Visual Basic"),	false,	VB );			/* セット13の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( LTEXT("Visual Basic2"),	false,	VB2 );			/* セット14の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( LTEXT("Rich Text"),		true,	RTF );			/* セット15の追加 */	//Jul. 10, 2001 JEPRO
+	PopulateKeyword( LTEXT("Python"),			true,	Python);		/* セット16の追加 */
 
 // 既存マクロを復元する
 #pragma pop_macro("PopulateKeyword")
@@ -163,22 +163,22 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bInsSpace = false;				/* スペースの挿入 */	// 2001.12.03 hor
 	
 	//@@@ 2002.09.22 YAZAKI 以下、m_cLineCommentとm_cBlockCommentsを使うように修正
-	pType->m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
-	pType->m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
-	pType->m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	pType->m_cBlockComments[0].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ */
-	pType->m_cBlockComments[1].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ2 */
+	pType->m_cLineComment.CopyTo(0, LTEXT(""), -1);	/* 行コメントデリミタ */
+	pType->m_cLineComment.CopyTo(1, LTEXT(""), -1);	/* 行コメントデリミタ2 */
+	pType->m_cLineComment.CopyTo(2, LTEXT(""), -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	pType->m_cBlockComments[0].SetBlockCommentRule(LTEXT(""), LTEXT(""));	/* ブロックコメントデリミタ */
+	pType->m_cBlockComments[1].SetBlockCommentRule(LTEXT(""), LTEXT(""));	/* ブロックコメントデリミタ2 */
 
 	pType->m_nStringType = STRING_LITERAL_CPP;					/* 文字列区切り記号エスケープ方法 0=[\"][\'] 1=[""][''] */
 	pType->m_bStringLineOnly = false;
 	pType->m_bStringEndLine  = false;
 	pType->m_nHeredocType = HEREDOC_PHP;
-	pType->m_szIndentChars[0] = L'\0';		/* その他のインデント対象文字 */
+	pType->m_szIndentChars[0] = LCHAR('\0');		/* その他のインデント対象文字 */
 
 	pType->m_nColorInfoArrNum = COLORIDX_LAST;
 
 	// 2001/06/14 Start by asa-o
-	pType->m_szHokanFile[0] = L'\0';		/* 入力補完 単語ファイル */
+	pType->m_szHokanFile[0] = LCHAR('\0');		/* 入力補完 単語ファイル */
 	// 2001/06/14 End
 
 	pType->m_nHokanType = 0;
@@ -197,8 +197,8 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_encoding.m_bDefaultBom = false;
 
 	//@@@2002.2.4 YAZAKI
-	pType->m_szExtHelp[0] = L'\0';
-	pType->m_szExtHtmlHelp[0] = L'\0';
+	pType->m_szExtHelp[0] = LCHAR('\0');
+	pType->m_szExtHtmlHelp[0] = LCHAR('\0');
 	pType->m_bHtmlHelpIsSingle = true;
 
 	pType->m_bAutoIndent = true;			/* オートインデント */
@@ -224,7 +224,7 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_backImgOpacity = 0xFF;
 	pType->m_bLineNumIsCRLF = true;					// 行番号の表示 false=折り返し単位／true=改行単位
 	pType->m_nLineTermType = 1;						// 行番号区切り 0=なし 1=縦線 2=任意
-	pType->m_cLineTermChar = L':';					// 行番号区切り文字
+	pType->m_cLineTermChar = LCHAR(':');					// 行番号区切り文字
 	pType->m_bWordWrap = false;						// 英文ワードラップをする
 	pType->m_nCurrentPrintSetting = 0;				// 現在選択している印刷設定
 	pType->m_bOutlineDockDisp = false;				// アウトライン解析表示の有無
@@ -245,14 +245,14 @@ void _DefaultConfig(STypeConfig* pType)
 	pType->m_bDetectIndentationStyleOnFileLoad = true;
 	pType->m_nImeState = IME_CMODE_NOCONVERSION;	/* IME入力 */
 
-	pType->m_szOutlineRuleFilename[0] = L'\0';		//Dec. 4, 2000 MIK
+	pType->m_szOutlineRuleFilename[0] = LCHAR('\0');		//Dec. 4, 2000 MIK
 	pType->m_bKinsokuHead = false;					// 行頭禁則				//@@@ 2002.04.08 MIK
 	pType->m_bKinsokuTail = false;					// 行末禁則				//@@@ 2002.04.08 MIK
 	pType->m_bKinsokuRet  = false;					// 改行文字をぶら下げる	//@@@ 2002.04.13 MIK
 	pType->m_bKinsokuKuto = false;					// 句読点をぶら下げる	//@@@ 2002.04.17 MIK
-	pType->m_szKinsokuHead[0] = L'\0';				// 行頭禁則				//@@@ 2002.04.08 MIK
-	pType->m_szKinsokuTail[0] = L'\0';				// 行末禁則				//@@@ 2002.04.08 MIK
-	wcscpy( pType->m_szKinsokuKuto, L"、。，．､｡,." );	// 句読点ぶら下げ文字	// 2009.08.07 ryoji
+	pType->m_szKinsokuHead[0] = LCHAR('\0');				// 行頭禁則				//@@@ 2002.04.08 MIK
+	pType->m_szKinsokuTail[0] = LCHAR('\0');				// 行末禁則				//@@@ 2002.04.08 MIK
+	wcscpy( pType->m_szKinsokuKuto, LTEXT("、。，．､｡,.") );	// 句読点ぶら下げ文字	// 2009.08.07 ryoji
 
 	pType->m_bUseDocumentIcon = false;				// 文書に関連づけられたアイコンを使う
 
@@ -261,7 +261,7 @@ void _DefaultConfig(STypeConfig* pType)
 	{
 		pType->m_RegexKeywordArr[i].m_nColorIndex = COLORIDX_REGEX1;
 	}
-	pType->m_RegexKeywordList[0] = L'\0';
+	pType->m_RegexKeywordList[0] = LCHAR('\0');
 	pType->m_bUseRegexKeyword = false;
 //@@@ 2001.11.17 add end MIK
 	pType->m_nRegexKeyMagicNumber = 0;
@@ -269,8 +269,8 @@ void _DefaultConfig(STypeConfig* pType)
 //@@@ 2006.04.10 fon ADD-start
 	for(int i = 0; i < MAX_KEYHELP_FILE; i++){
 		pType->m_KeyHelpArr[i].m_bUse = false;
-		pType->m_KeyHelpArr[i].m_szAbout[0] = L'\0';
-		pType->m_KeyHelpArr[i].m_szPath[0] = L'\0';
+		pType->m_KeyHelpArr[i].m_szAbout[0] = LCHAR('\0');
+		pType->m_KeyHelpArr[i].m_szPath[0] = LCHAR('\0');
 	}
 	pType->m_bUseKeyWordHelp = false;		// 辞書選択機能の使用可否
 	pType->m_nKeyHelpNum = 0;				// 登録辞書数

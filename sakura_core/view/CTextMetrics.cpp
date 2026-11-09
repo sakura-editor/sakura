@@ -33,7 +33,7 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 	// ただしこのコードはカーニングの影響を受ける
 	auto hFontOld = (HFONT)::SelectObject( hdc, hFont );
 	SIZE  sz;
-	GetTextExtentPoint32(hdc, L"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 52, &sz);
+	GetTextExtentPoint32(hdc, LTEXT("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"), 52, &sz);
 	::SelectObject( hdc, hFontOld );
 
 	m_nCharWidth = (sz.cx / 26 + 1) / 2;
@@ -55,7 +55,7 @@ void CTextMetrics::Update(HDC hdc, HFONT hFont, int nLineSpace, int nColmSpace)
 //! 指定した文字列により文字間隔配列を生成する。
 const int* CTextMetrics::GenerateDxArray(
 	std::vector<int>* pvResultArray, //!< [out] 文字間隔配列の受け取りコンテナ
-	const wchar_t* pText,           //!< [in]  文字列
+	const WCHAR* pText,           //!< [in]  文字列
 	int nLength,                    //!< [in]  文字列長
 	int	nHankakuDx,					//!< [in]  半角文字の文字間隔
 	int	nTabSpace,					//   [in]  TAB幅(CLayoutXInt)
@@ -91,7 +91,7 @@ const int* CTextMetrics::GenerateDxArray(
 		vResultArray.push_back(cache.CalcPxWidthByFont(pText[i]) + spacing);
 		nIndent += vResultArray.back();
 
-		if (IsVariationSelector(std::wstring_view(pText + i + 1, nLength - (i + 1)))) {
+		if (IsVariationSelector(sakura::wstring_view(pText + i + 1, nLength - (i + 1)))) {
 			vResultArray.push_back(0);
 			vResultArray.push_back(0);
 			i += 2;
@@ -102,7 +102,7 @@ const int* CTextMetrics::GenerateDxArray(
 
 //!文字列のピクセル幅を返す。
 int CTextMetrics::CalcTextWidth(
-	const wchar_t*, //!< 文字列
+	const WCHAR*, //!< 文字列
 	int nLength,          //!< 文字列長
 	const int* pnDx       //!< 文字間隔の入った配列
 )
@@ -116,7 +116,7 @@ int CTextMetrics::CalcTextWidth(
 
 //!文字列のピクセル幅を返す。
 int CTextMetrics::CalcTextWidth2(
-	const wchar_t* pText, //!< 文字列
+	const WCHAR* pText, //!< 文字列
 	int nLength,          //!< 文字列長
 	int nHankakuDx,       //!< 半角文字の文字間隔
 	int nCharSpacing,     //!< 文字の隙間
@@ -140,7 +140,7 @@ int CTextMetrics::CalcTextWidth2(
 }
 
 int CTextMetrics::CalcTextWidth3(
-	const wchar_t* pText, //!< 文字列
+	const WCHAR* pText, //!< 文字列
 	int nLength,          //!< 文字列長
 	CCharWidthCache& cache
 ) const

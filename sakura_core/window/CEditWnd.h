@@ -171,13 +171,13 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ファイル名変更通知
-	void	ChangeFileNameNotify(std::wstring_view tabCaption, std::wstring_view tabFilePath, bool bIsGrep) const;
+	void	ChangeFileNameNotify(sakura::wstring_view tabCaption, sakura::wstring_view tabFilePath, bool bIsGrep) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	void InitMenu(HMENU hMenu, UINT uPos, BOOL fSystemMenu);
-	void InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const wchar_t* pszName, const wchar_t* pszKey);
+	void InitMenu_Function(HMENU hMenu, EFunctionCode eFunc, const WCHAR* pszName, const WCHAR* pszKey);
 	bool InitMenu_Special(HMENU hMenu, EFunctionCode eFunc);
 	void InitMenubarMessageFont(void);	//	メニューバーへのメッセージ表示機能をCEditWndより移管	//	Dec. 4, 2002 genta
 	LRESULT WinListMenu(HMENU hMenu, EditNode* pEditNodeArr, int nRowNum, BOOL bFull);	/*!< ウィンドウ一覧メニュー作成処理 */	// 2006.03.23 fon

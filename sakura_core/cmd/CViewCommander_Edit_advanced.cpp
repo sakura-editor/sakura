@@ -34,7 +34,7 @@
 #include "CSelectLang.h"
 
 /* インデント ver1 */
-void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
+void CViewCommander::Command_INDENT( WCHAR wcChar, EIndentType eIndent )
 {
 	using namespace WCODE;
 
@@ -58,7 +58,7 @@ void CViewCommander::Command_INDENT( wchar_t wcChar, EIndentType eIndent )
 	選択された各行の範囲の直前に、与えられた文字列( pData )を挿入する。
 	@param eIndent インデントの種別
 */
-void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt nDataLen, EIndentType eIndent )
+void CViewCommander::Command_INDENT( const WCHAR* const pData, const CLogicInt nDataLen, EIndentType eIndent )
 {
 	if( nDataLen <= 0 ) return;
 
@@ -66,7 +66,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 	CLayoutPoint ptInserted;		//挿入後の挿入位置
 	const struct IsIndentCharSpaceTab{
 		IsIndentCharSpaceTab(){}
-		bool operator()( const wchar_t ch ) const
+		bool operator()( const WCHAR ch ) const
 		{ return ch == WCODE::SPACE || ch == WCODE::TAB; }
 	} IsIndentChar;
 	struct SSoftTabData {
@@ -76,10 +76,10 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		SSoftTabData(SSoftTabData&&) noexcept = delete;
 		SSoftTabData& operator = (SSoftTabData&&) noexcept = delete;
 		~SSoftTabData() { delete []m_szTab; }
-		operator const wchar_t* ()
+		operator const WCHAR* ()
 		{
 			if( !m_szTab ){
-				m_szTab = new wchar_t[m_nTab];
+				m_szTab = new WCHAR[m_nTab];
 				wmemset( m_szTab, WCODE::SPACE, m_nTab );
 			}
 			return m_szTab;
@@ -89,7 +89,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 		// とりあえずCMemoryIterator/CLayoutMgr::GetActualTabSpace互換で計算してx幅での個数分を追加する
 		// nColまでの文字のGetKetaOfCharとGetTabSpaceKetasを使うとTAB指定文字数分になる
 		int Len( CLayoutInt nCol ) { return (m_nTab + m_nXWidth - ((Int)nCol + m_nXWidth) % m_nTab) / m_nSpWidth; }
-		wchar_t* m_szTab;
+		WCHAR* m_szTab;
 		int m_nTab;
 		int m_nXWidth;
 		int m_nSpWidth;
@@ -409,7 +409,7 @@ void CViewCommander::Command_INDENT( const wchar_t* const pData, const CLogicInt
 }
 
 /* 逆インデント */
-void CViewCommander::Command_UNINDENT( wchar_t wcChar )
+void CViewCommander::Command_UNINDENT( WCHAR wcChar )
 {
 	//	Aug. 9, 2003 genta
 	//	選択されていない場合に逆インデントした場合に
@@ -464,7 +464,7 @@ void CViewCommander::Command_UNINDENT( wchar_t wcChar )
 
 			const CLayout*	pcLayout;
 			CLogicInt		nLineLen;
-			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( i, &nLineLen, &pcLayout );
+			const WCHAR*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( i, &nLineLen, &pcLayout );
 			if( nullptr == pcLayout || pcLayout->GetLogicOffset() > 0 ){ //折り返し以降の行はインデント処理を行わない
 				continue;
 			}
@@ -640,7 +640,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 	CLayoutInt	nCF(0), nCT(0);
 	CLayoutInt	nCaretPosYOLD;
 	bool		bBeginBoxSelectOld;
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	int			j;
 	std::vector<SORTDATA*> sta;
@@ -711,13 +711,13 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 				pst->sKey = CStringRef( &pLine[nColumnFrom], nLineLenWithoutEOL-nColumnFrom );
 			}else{
 				// 選択範囲の左端もはみ出している==データなし
-				pst->sKey = CStringRef( L"", 0 );
+				pst->sKey = CStringRef( LTEXT(""), 0 );
 			}
 		}
 		pst->pCmemLine = &cmemLine;
 		sta.push_back(pst);
 	}
-	const wchar_t* pStrLast = nullptr; // 最後の行に改行がなければそのポインタ
+	const WCHAR* pStrLast = nullptr; // 最後の行に改行がなければそのポインタ
 	if( 0 < sta.size() ){
 		pStrLast = sta[sta.size()-1]->pCmemLine->GetStringPtr();
 		int nlen = sta[sta.size()-1]->pCmemLine->GetStringLength();
@@ -823,7 +823,7 @@ void CViewCommander::Command_SORT(BOOL bAsc)	//bAsc:TRUE=昇順,FALSE=降順
 void CViewCommander::Command_MERGE(void)
 {
 	CLayoutInt		nCaretPosYOLD;
-	const wchar_t*	pLinew;
+	const WCHAR*	pLinew;
 	CLogicInt		nLineLen;
 	int			j;
 	CLayoutInt		nMergeLayoutLines;
@@ -882,7 +882,7 @@ void CViewCommander::Command_MERGE(void)
 	bool bMerge = false;
 	lineArr.reserve(sSelectOld.GetTo().y - sSelectOld.GetFrom().GetY2());
 	for( CLogicInt i = sSelectOld.GetFrom().GetY2(); i < sSelectOld.GetTo().y; i++ ){
-		const wchar_t*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
+		const WCHAR*	pLine = GetDocument()->m_cDocLineMgr.GetLine(i)->GetDocLineStrWithEOL(&nLineLen);
 		if( nullptr == pLine ) continue;
 		if( nullptr == pLinew || nLineLen != nLineLenw || wmemcmp(pLine, pLinew, nLineLen) ){
 			lineArr.push_back( CStringRef(pLine, nLineLen) );

@@ -90,7 +90,7 @@ public:
 	 * @param[in] pExceptionParams 例外情報
 	 */
 	static void WriteMiniDumpIgnoringExceptions(
-		std::wstring_view file,
+		sakura::wstring_view file,
 		PEXCEPTION_POINTERS pExceptionParams
 	) noexcept;
 
@@ -102,7 +102,7 @@ public:
 	 * @param[in] pExceptionParams 例外情報
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static void WriteMiniDumpIgnoringExceptions(
 		const A& file,
 		PEXCEPTION_POINTERS pExceptionParams

@@ -77,34 +77,34 @@ static const SAnchorList anchorList[] = {
 	ctags.exe が出力する、拡張子と対応する種類
 */
 static const WCHAR *p_extentions[] = {
-	/*asm*/			L"asm,s",								L"d=define,l=label,m=macro,t=type",
-	/*asp*/			L"asp,asa",								L"f=function,s=sub",
-	/*awk*/			L"awk,gawk,mawk",						L"f=function",
-	/*beta*/		L"bet",									L"f=fragment,p=pattern,s=slot,v=virtual",
-	/*c*/			L"c,h",									L"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*c++*/			L"c++,cc,cp,cpp,cxx,h++,hh,hp,hpp,hxx",	L"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*java*/		L"java",									L"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*vera*/		L"vr,vri,vrh",							L"c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar",
-	/*cobol*/		L"cbl,cob",								L"d=data,f=file,g=group,p=paragraph,P=program,s=section",
-	/*eiffel*/		L"e",									L"c=class,f=feature,l=local",
-	/*fortran*/		L"f,for,ftn,f77,f90,f95",				L"b=block data,c=common,e=entry,f=function,i=interface,k=component,l=label,L=local,m=module,n=namelist,p=program,s=subroutine,t=type,v=variable",
-	/*lisp*/		L"cl,clisp,el,l,lisp,lsp,ml",			L"f=function",
-	/*lua*/			L"lua",									L"f=function",
-	/*makefile*/	L"mak",									L"m=macro",
-	/*pascal*/		L"p,pas",								L"f=function,p=procedure",
-	/*perl*/		L"pl,pm,perl",							L"s=subroutine,p=package",
-	/*php*/			L"php,php3,phtml",						L"c=class,f=function",
-	/*python*/		L"py,python",							L"c=class,f=function,m=member",
-	/*rexx*/		L"cmd,rexx,rx",							L"s=subroutine",
-	/*ruby*/		L"rb",									L"c=class,f=method,F=singleton method,m=mixin",
-	/*scheme*/		L"sch,scheme,scm,sm",					L"f=function,s=set",
-	/*sh*/			L"sh,bsh,bash,ksh,zsh",					L"f=function",
-	/*slang*/		L"sl",									L"f=function,n=namespace",
-	/*sql*/			L"sql",									L"c=cursor,d=prototype,f=function,F=field,l=local,P=package,p=procedure,r=record,s=subtype,t=table,T=trigger,v=variable",
-	/*tcl*/			L"tcl,tk,wish,itcl",						L"p=procedure,c=class,f=method",
-	/*verilog*/		L"v",									L"f=function,m=module,P=parameter,p=port,r=reg,t=task,v=variable,w=wire",
-	/*vim*/			L"vim",									L"f=function,v=variable",
-	/*yacc*/		L"y",									L"l=label",
+	/*asm*/			LTEXT("asm,s"),								LTEXT("d=define,l=label,m=macro,t=type"),
+	/*asp*/			LTEXT("asp,asa"),								LTEXT("f=function,s=sub"),
+	/*awk*/			LTEXT("awk,gawk,mawk"),						LTEXT("f=function"),
+	/*beta*/		LTEXT("bet"),									LTEXT("f=fragment,p=pattern,s=slot,v=virtual"),
+	/*c*/			LTEXT("c,h"),									LTEXT("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*c++*/			LTEXT("c++,cc,cp,cpp,cxx,h++,hh,hp,hpp,hxx"),	LTEXT("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*java*/		LTEXT("java"),									LTEXT("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*vera*/		LTEXT("vr,vri,vrh"),							LTEXT("c=class,d=macro,e=enumerator,f=function,g=enum,m=member,n=namespace,p=prototype,s=struct,t=typedef,u=union,v=variable,x=externvar"),
+	/*cobol*/		LTEXT("cbl,cob"),								LTEXT("d=data,f=file,g=group,p=paragraph,P=program,s=section"),
+	/*eiffel*/		LTEXT("e"),									LTEXT("c=class,f=feature,l=local"),
+	/*fortran*/		LTEXT("f,for,ftn,f77,f90,f95"),				LTEXT("b=block data,c=common,e=entry,f=function,i=interface,k=component,l=label,L=local,m=module,n=namelist,p=program,s=subroutine,t=type,v=variable"),
+	/*lisp*/		LTEXT("cl,clisp,el,l,lisp,lsp,ml"),			LTEXT("f=function"),
+	/*lua*/			LTEXT("lua"),									LTEXT("f=function"),
+	/*makefile*/	LTEXT("mak"),									LTEXT("m=macro"),
+	/*pascal*/		LTEXT("p,pas"),								LTEXT("f=function,p=procedure"),
+	/*perl*/		LTEXT("pl,pm,perl"),							LTEXT("s=subroutine,p=package"),
+	/*php*/			LTEXT("php,php3,phtml"),						LTEXT("c=class,f=function"),
+	/*python*/		LTEXT("py,python"),							LTEXT("c=class,f=function,m=member"),
+	/*rexx*/		LTEXT("cmd,rexx,rx"),							LTEXT("s=subroutine"),
+	/*ruby*/		LTEXT("rb"),									LTEXT("c=class,f=method,F=singleton method,m=mixin"),
+	/*scheme*/		LTEXT("sch,scheme,scm,sm"),					LTEXT("f=function,s=set"),
+	/*sh*/			LTEXT("sh,bsh,bash,ksh,zsh"),					LTEXT("f=function"),
+	/*slang*/		LTEXT("sl"),									LTEXT("f=function,n=namespace"),
+	/*sql*/			LTEXT("sql"),									LTEXT("c=cursor,d=prototype,f=function,F=field,l=local,P=package,p=procedure,r=record,s=subtype,t=table,T=trigger,v=variable"),
+	/*tcl*/			LTEXT("tcl,tk,wish,itcl"),						LTEXT("p=procedure,c=class,f=method"),
+	/*verilog*/		LTEXT("v"),									LTEXT("f=function,m=module,P=parameter,p=port,r=reg,t=task,v=variable,w=wire"),
+	/*vim*/			LTEXT("vim"),									LTEXT("f=function,v=variable"),
+	/*yacc*/		LTEXT("y"),									LTEXT("l=label"),
 //	/*vb*/			L"bas,cls,ctl,dob,dsr,frm,pag",			L"a=attribute,c=class,f=function,l=label,s=procedure,v=variable",
 					nullptr,									nullptr
 };
@@ -289,13 +289,13 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_InsertItem( hwndList, &lvi );
 
 		if( item->baseDirId ){
-			auto_sprintf( tmp, L"(%d)", item->depth );
+			auto_sprintf( tmp, LTEXT("(%d)"), item->depth );
 		}else{
-			auto_sprintf( tmp, L"%d", item->depth );
+			auto_sprintf( tmp, LTEXT("%d"), item->depth );
 		}
 		ListView_SetItemText( hwndList, nIndex, 1, tmp );
 
-		auto_sprintf( tmp, L"%d", item->no );
+		auto_sprintf( tmp, LTEXT("%d"), item->no );
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
 		WCHAR *p = GetNameByType( item->type, item->filename );
@@ -374,8 +374,8 @@ int CDlgTagJumpList::GetData( void )
 		if( m_nIndex == -1 || m_nIndex >= m_pcList->GetCapacity() ){
 			return FALSE;
 		}
-		wchar_t	tmp[MAX_TAG_STRING_LENGTH];
-		tmp[0] = L'\0';
+		WCHAR	tmp[MAX_TAG_STRING_LENGTH];
+		tmp[0] = LCHAR('\0');
 		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, tmp, int(std::size(tmp)) );
 		SetKeyword( tmp );
 
@@ -728,9 +728,9 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	if( dirFileName[0] ){
 		AddLastYenFromDirectoryPath( dirFileName );
 		const WCHAR	*p = fileName;
-		if( p[0] == L'\\' ){
+		if( p[0] == LCHAR('\\') ){
 			wcscpy( dirFileName, p );
-		}else if( iswalpha( p[0] ) && p[1] == L':' ){
+		}else if( iswalpha( p[0] ) && p[1] == LCHAR(':') ){
 			wcscpy( dirFileName, p );
 		}else{
 			// 相対パス：連結する
@@ -742,9 +742,9 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	}
 	bool ret = nullptr != GetFullPathFromDepth( fullPath, count, path, fileNamePath, tempDepth );
 	if(ret){
-		DEBUG_TRACE( L"jump to: %s\n", static_cast<const WCHAR*>(fullPath) );
+		DEBUG_TRACE( LTEXT("jump to: %s\n"), static_cast<const WCHAR*>(fullPath) );
 	}else{
-		DEBUG_TRACE( L"jump to: error\n" );
+		DEBUG_TRACE( LTEXT("jump to: error\n") );
 	}
 	return ret;
 }
@@ -760,20 +760,20 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	//	2005.03.31 MIK
 	WCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
-	p = wcsrchr( name, L'.' );
-	if( ! p ) p = L".c";	//見つからないときは ".c" と想定する。
+	p = wcsrchr( name, LCHAR('.') );
+	if( ! p ) p = LTEXT(".c");	//見つからないときは ".c" と想定する。
 	p++;
 
 	for( i = 0; p_extentions[i]; i += 2 )
 	{
 		wcscpy( tmp, p_extentions[i] );
-		token = _wcstok( tmp, L"," );
+		token = _wcstok( tmp, LTEXT(",") );
 		while( token )
 		{
 			if( _wcsicmp( p, token ) == 0 )
 			{
 				wcscpy( tmp, p_extentions[i+1] );
-				token = _wcstok( tmp, L"," );
+				token = _wcstok( tmp, LTEXT(",") );
 				while( token )
 				{
 					if( token[0] == type )
@@ -781,17 +781,17 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 						return _wcsdup( &token[2] );
 					}
 
-					token = _wcstok( nullptr, L"," );
+					token = _wcstok( nullptr, LTEXT(",") );
 				}
 
-				return _wcsdup( L"" );
+				return _wcsdup( LTEXT("") );
 			}
 
-			token = _wcstok( nullptr, L"," );
+			token = _wcstok( nullptr, LTEXT(",") );
 		}
 	}
 
-	return _wcsdup( L"" );
+	return _wcsdup( LTEXT("") );
 }
 
 /*!
@@ -813,7 +813,7 @@ void CDlgTagJumpList::SetFileName( const WCHAR *pszFileName )
 	検索キーワードの設定
 
 */
-void CDlgTagJumpList::SetKeyword( const wchar_t *pszKeyword )
+void CDlgTagJumpList::SetKeyword( const WCHAR *pszKeyword )
 {
 	if( nullptr == pszKeyword ) return;
 
@@ -869,10 +869,10 @@ int CDlgTagJumpList::SearchBestTag( void )
 	int		i;
 	int		count;
 
-	lpPathInfo->szDriveSrc[0] = L'\0';
-	lpPathInfo->szPathSrc[0] = L'\0';
-	lpPathInfo->szFileSrc[0] = L'\0';
-	lpPathInfo->szExtSrc[0] = L'\0';
+	lpPathInfo->szDriveSrc[0] = LCHAR('\0');
+	lpPathInfo->szPathSrc[0] = LCHAR('\0');
+	lpPathInfo->szFileSrc[0] = LCHAR('\0');
+	lpPathInfo->szExtSrc[0] = LCHAR('\0');
 	_wsplitpath_s( m_pszFileName, lpPathInfo->szDriveSrc, lpPathInfo->szPathSrc, lpPathInfo->szFileSrc, lpPathInfo->szExtSrc );
 	lpPathInfo->nDriveSrc = wcslen(lpPathInfo->szDriveSrc);
 	lpPathInfo->nPathSrc = wcslen(lpPathInfo->szPathSrc);
@@ -884,7 +884,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 	for( i = 0; i < count; i++ )
 	{
 		// タグのファイル名部分をフルパスにする
-		lpPathInfo->szFileNameDst[0] = L'\0';
+		lpPathInfo->szFileNameDst[0] = LCHAR('\0');
 		{
 			WCHAR szPath[_MAX_PATH];
 			GetFullPathAndLine( i, szPath, int(std::size(szPath)), nullptr, nullptr );
@@ -893,10 +893,10 @@ int CDlgTagJumpList::SearchBestTag( void )
 			}
 		}
 
-		lpPathInfo->szDriveDst[0] = L'\0';
-		lpPathInfo->szPathDst[0] = L'\0';
-		lpPathInfo->szFileDst[0] = L'\0';
-		lpPathInfo->szExtDst[0] = L'\0';
+		lpPathInfo->szDriveDst[0] = LCHAR('\0');
+		lpPathInfo->szPathDst[0] = LCHAR('\0');
+		lpPathInfo->szFileDst[0] = LCHAR('\0');
+		lpPathInfo->szExtDst[0] = LCHAR('\0');
 		_wsplitpath_s( lpPathInfo->szFileNameDst, lpPathInfo->szDriveDst, lpPathInfo->szPathDst, lpPathInfo->szFileDst, lpPathInfo->szExtDst );
 		lpPathInfo->nDriveDst = wcslen(lpPathInfo->szDriveDst);
 		lpPathInfo->nPathDst = wcslen(lpPathInfo->szPathDst);
@@ -976,8 +976,8 @@ int CDlgTagJumpList::SearchBestTag( void )
 */
 void CDlgTagJumpList::FindNext( bool bNewFind )
 {
-	wchar_t	szKey[ MAX_TAG_STRING_LENGTH ];
-	szKey[0] = L'\0';
+	WCHAR	szKey[ MAX_TAG_STRING_LENGTH ];
+	szKey[0] = LCHAR('\0');
 	ApiWrap::DlgItem_GetText( GetHwnd(), IDC_KEYWORD, szKey, int(std::size(szKey)) );
 	if( bNewFind ){
 		// 前回のキーワードからの絞込検索のときで、tagsをスキップできるときはスキップ
@@ -1012,7 +1012,7 @@ int CDlgTagJumpList::FindDirectTagJump()
 	);
 }
 
-void CDlgTagJumpList::find_key( const wchar_t* keyword )
+void CDlgTagJumpList::find_key( const WCHAR* keyword )
 {
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_KEYWORD, LS(STR_DLGTAGJMP3) );
 	::UpdateWindow(GetItemHwnd(IDC_STATIC_KEYWORD));
@@ -1048,7 +1048,7 @@ inline void SkipLine(FILE* fp) {
 */
 int CDlgTagJumpList::find_key_core(
 	int  nTop,
-	const wchar_t* keyword,
+	const WCHAR* keyword,
 	bool bTagJumpPartialMatch, // 部分一致
 	bool bTagJumpExactMatch, // 完全一致
 	bool bTagJumpICase,
@@ -1091,24 +1091,24 @@ int CDlgTagJumpList::find_key_core(
 	if( m_psFindPrev->m_nMatchAll <= nTop && -1 < m_psFindPrev->m_nMatchAll ){
 		// 指定ページの検索をスキップ
 		state = *m_psFindPrev;
-		DEBUG_TRACE( L"skip count  d:%d m:%d n:%d\n", state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
+		DEBUG_TRACE( LTEXT("skip count  d:%d m:%d n:%d\n"), state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
 	}else if( 0 <= m_psFind0Match->m_nDepth ){
 		// depthが浅い順にヒットしなかった分をスキップ
 		state = *m_psFind0Match;
-		DEBUG_TRACE( L"skip 0match d:%d m:%d n:%d\n", state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
+		DEBUG_TRACE( LTEXT("skip 0match d:%d m:%d n:%d\n"), state.m_nDepth, state.m_nMatchAll, state.m_nNextMode );
 	}else{
 		// 初回or使えないときはクリア
 		ClearPrevFindInfo();
 		// ファイル名をコピーしたあと、ディレクトリ(最後\)のみにする
 		wcscpy( state.m_szCurPath, GetFilePath() );
-		state.m_szCurPath[ GetFileName() - GetFilePath() ] = L'\0';
+		state.m_szCurPath[ GetFileName() - GetFilePath() ] = LCHAR('\0');
 		state.m_nLoop = m_nLoop;
 	}
 	
 	WCHAR	szTagFile[1024];		//タグファイル
 	WCHAR	szNextPath[1024];		//次検索フォルダー
-	szNextPath[0] = L'\0';
-	vector_ex<std::wstring> seachDirs;
+	szNextPath[0] = LCHAR('\0');
+	vector_ex<sakura::wstring> seachDirs;
 
 	// パスのJumpで循環している場合に最大値を規制する
 	for( ; state.m_nDepth <= state.m_nLoop && state.m_nDepth < (_MAX_PATH/2); state.m_nDepth++ )
@@ -1122,7 +1122,7 @@ int CDlgTagJumpList::find_key_core(
 		if( 2 == state.m_nNextMode && bTagJumpExactMatch && 0 < state.m_nMatchAll ) break; 
 
 		{
-			std::wstring curPath = state.m_szCurPath;
+			sakura::wstring curPath = state.m_szCurPath;
 			if( seachDirs.exist( curPath ) ){
 				// 検索済み =>終了
 				break;
@@ -1131,14 +1131,14 @@ int CDlgTagJumpList::find_key_core(
 		}
 
 		//タグファイル名を作成する。
-		auto_sprintf( szTagFile, L"%s%s", state.m_szCurPath, TAG_FILENAME_T );
-		DEBUG_TRACE( L"tag: %s\n", szTagFile );
+		auto_sprintf( szTagFile, LTEXT("%s%s"), state.m_szCurPath, TAG_FILENAME_T );
+		DEBUG_TRACE( LTEXT("tag: %s\n"), szTagFile );
 		
 		//タグファイルを開く。
-		FILE* fp = _wfopen( szTagFile, L"rb" );
+		FILE* fp = _wfopen( szTagFile, LTEXT("rb") );
 		if( fp )
 		{
-			DEBUG_TRACE( L"open tags\n" );
+			DEBUG_TRACE( LTEXT("open tags\n") );
 			bool bSorted = true;
 			bool bFoldcase = false;
 			bool  bRet;
@@ -1170,14 +1170,14 @@ int CDlgTagJumpList::find_key_core(
 
 			//ファイルを閉じる。
 			fclose( fp );
-			DEBUG_TRACE( L"close m:%d\n ", state.m_nMatchAll );
+			DEBUG_TRACE( LTEXT("close m:%d\n "), state.m_nMatchAll );
 		}
 		
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
 			wcscpy( state.m_szCurPath, szNextPath );
-			std::wstring path = state.m_szCurPath;
-			path += L"\\dummy";
+			sakura::wstring path = state.m_szCurPath;
+			path += LTEXT("\\dummy");
 			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
@@ -1192,14 +1192,14 @@ int CDlgTagJumpList::find_key_core(
 			// (最後に通過したものを保持)
 			*m_psFindPrev = state;
 			++(m_psFindPrev->m_nDepth);
-			DEBUG_TRACE( L"FindPrev udpate: d:%d m:%d n:%d L:%d j:%d\n" , m_psFindPrev->m_nDepth, m_psFindPrev->m_nMatchAll, m_psFindPrev->m_nNextMode, m_psFindPrev->m_nLoop, (int)m_psFindPrev->m_bJumpPath );
+			DEBUG_TRACE( LTEXT("FindPrev udpate: d:%d m:%d n:%d L:%d j:%d\n") , m_psFindPrev->m_nDepth, m_psFindPrev->m_nMatchAll, m_psFindPrev->m_nNextMode, m_psFindPrev->m_nLoop, (int)m_psFindPrev->m_bJumpPath );
 		}
 		if( 0 == state.m_nMatchAll ){
 			// キーワード絞込み用: 次の絞り込み検索では、このtagsの次から検索できる
 			// (最後に通過したものを保持)
 			*m_psFind0Match = state;
 			++(m_psFind0Match->m_nDepth);
-			DEBUG_TRACE( L"Find0Match udpate: d:%d m:%d n:%d L:%d j:%d\n" , m_psFind0Match->m_nDepth, m_psFind0Match->m_nMatchAll, m_psFind0Match->m_nNextMode, m_psFind0Match->m_nLoop, (int)m_psFind0Match->m_bJumpPath );
+			DEBUG_TRACE( LTEXT("Find0Match udpate: d:%d m:%d n:%d L:%d j:%d\n") , m_psFind0Match->m_nDepth, m_psFind0Match->m_nMatchAll, m_psFind0Match->m_nNextMode, m_psFind0Match->m_nLoop, (int)m_psFind0Match->m_bJumpPath );
 		}
 		if( m_bNextItem ){
 			break;
@@ -1573,10 +1573,10 @@ const WCHAR* CDlgTagJumpList::GetFileName( void )
 void CDlgTagJumpList::SetTextDir()
 {
 	if( GetHwnd() ){
-		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, L"" );
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, LTEXT("") );
 		if( GetFileName() ){
-			std::wstring strPath = GetFilePath();
-			strPath[ GetFileName() - GetFilePath() ] = L'\0';
+			sakura::wstring strPath = GetFilePath();
+			strPath[ GetFileName() - GetFilePath() ] = LCHAR('\0');
 			ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_BASEDIR, strPath.c_str() );
 		}
 	}
@@ -1605,21 +1605,21 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	// 出力先を固定長バッファとして扱う
 	auto buffer = std::span(pszOutput, count);
 
-	DEBUG_TRACE( L"base  %s\n", basePath );
-	DEBUG_TRACE( L"file  %s\n", fileName );
-	DEBUG_TRACE( L"depth %d\n",  depth );
+	DEBUG_TRACE( LTEXT("base  %s\n"), basePath );
+	DEBUG_TRACE( LTEXT("file  %s\n"), fileName );
+	DEBUG_TRACE( LTEXT("depth %d\n"),  depth );
 	//完全パス名を作成する。
 	const WCHAR	*p = fileName;
-	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
+	if( p[0] == LCHAR('\\') ){	//ドライブなし絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
-	}else if( iswalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
+	}else if( iswalpha( p[0] ) && p[1] == LCHAR(':') ){	//絶対パスか？
 		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
 			//wcscat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
-		if( -1 == auto_sprintf_s( buffer, L"%s%s", basePath, p ) ){
+		if( -1 == auto_sprintf_s( buffer, LTEXT("%s%s"), basePath, p ) ){
 			return nullptr;
 		}
 	}

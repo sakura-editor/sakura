@@ -151,7 +151,7 @@ HBITMAP ConvertTo32bppBMP(HBITMAP hbmpSrc, uint32_t*& pBits, LONG& bmpWidth, LON
 */
 bool CImageListMgr::Create(HINSTANCE hInstance)
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CImageListMgr::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CImageListMgr::Create") );
 	if( m_hIconBitmap != nullptr ){	//	既に構築済みなら無視する
 		return true;
 	}
@@ -317,7 +317,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 		// DIBセクションを取得する
 		DIBSECTION di = {};
 		if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
-			DEBUG_TRACE( L"GetObject() failed." );
+			DEBUG_TRACE( LTEXT("GetObject() failed.") );
 			::SelectObject( hdcSrc, bmpSrcOld );
 			::DeleteDC( hdcSrc );
 			::DeleteObject( bmpSrc );
@@ -327,7 +327,7 @@ int CImageListMgr::Add( const WCHAR* szPath )
 		nWidth = di.dsBm.bmWidth;
 		nHeight = di.dsBm.bmHeight;
 		if ( nWidth != nHeight ) {
-			DEBUG_TRACE( L"tool bitmap size is unexpected." );
+			DEBUG_TRACE( LTEXT("tool bitmap size is unexpected.") );
 			::SelectObject( hdcSrc, bmpSrcOld );
 			::DeleteDC( hdcSrc );
 			::DeleteObject( bmpSrc );
@@ -371,14 +371,14 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 {
 	// 引数チェック
 	if( bmpSrc == nullptr ){
-		DEBUG_TRACE( L"tool bitmap is required." );
+		DEBUG_TRACE( LTEXT("tool bitmap is required.") );
 		return nullptr;
 	}
 
 	// DIBセクションを取得する
 	DIBSECTION di = {};
 	if ( !::GetObject( bmpSrc, sizeof( di ), &di ) ) {
-		DEBUG_TRACE( L"GetObject() failed." );
+		DEBUG_TRACE( LTEXT("GetObject() failed.") );
 
 		// 変換前Bmpを削除する
 		::DeleteObject( bmpSrc );
@@ -412,7 +412,7 @@ HBITMAP CImageListMgr::ResizeToolIcons(
 	//	使うとモノクロBitmapになる．
 	HGDIOBJ hFOldbmp = ::SelectObject( hdcSrc, bmpSrc );
 	if( hFOldbmp == nullptr ){
-		DEBUG_TRACE( L"SelectObject() failed." );
+		DEBUG_TRACE( LTEXT("SelectObject() failed.") );
 
 		// 変換前Bmpを削除する
 		::DeleteObject( bmpSrc );

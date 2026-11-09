@@ -43,8 +43,8 @@ private:
 	void CreateExtFilter(std::vector<WCHAR>& output) const;
 
 	struct SFileExtInfo {
-		std::wstring	m_sTypeName;	//名前
-		std::wstring	m_sExt;			//拡張子
+		sakura::wstring	m_sTypeName;	//名前
+		sakura::wstring	m_sExt;			//拡張子
 	};
 
 	std::vector<SFileExtInfo>	m_vFileExtInfo;

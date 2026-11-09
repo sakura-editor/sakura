@@ -274,8 +274,8 @@ void DetectIndentationStyle(const CFilePath& cFilePath, const CDocLineMgr& cDocL
 		if (len == 0) {
 			continue;
 		}
-		const wchar_t* str = pLine->GetPtr();
-		wchar_t c = str[0];
+		const WCHAR* str = pLine->GetPtr();
+		WCHAR c = str[0];
 		if (c == '\t') ++nTabUsed;
 		else if (c == ' ') ++nSpaceUsed;
 	}
@@ -298,7 +298,7 @@ void DetectIndentationStyle(const CFilePath& cFilePath, const CDocLineMgr& cDocL
 			if (len == 0) {
 				continue;
 			}
-			const wchar_t* str = pLine->GetPtr();
+			const WCHAR* str = pLine->GetPtr();
 			int width = 0;
 			while (*str++ == ' ')
 				++width;

@@ -70,10 +70,10 @@ int WINAPI wWinMain(
 	::_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF);
 #endif
 
-	MY_RUNNINGTIMER(cRunningTimer, L"WinMain" );
+	MY_RUNNINGTIMER(cRunningTimer, LTEXT("WinMain") );
 	{
 		// 2014.04.24 DLLの検索パスからカレントディレクトリを削除する
-		::SetDllDirectory( L"" );
+		::SetDllDirectory( LTEXT("") );
 		::SetSearchPathMode( BASE_SEARCH_PATH_ENABLE_SAFE_SEARCHMODE | BASE_SEARCH_PATH_PERMANENT );
 	}
 
@@ -84,8 +84,8 @@ int WINAPI wWinMain(
 	if (FAILED(::OleInitialize(nullptr))) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
 
 	//開発情報
-	DEBUG_TRACE(L"-- -- WinMain -- --\n");
-	DEBUG_TRACE(L"sizeof(DLLSHAREDATA) = %d\n",sizeof(DLLSHAREDATA));
+	DEBUG_TRACE(LTEXT("-- -- WinMain -- --\n"));
+	DEBUG_TRACE(LTEXT("sizeof(DLLSHAREDATA) = %d\n"),sizeof(DLLSHAREDATA));
 
 	DarkMode::initDarkMode();
 	DarkMode::setDarkModeConfig();
@@ -107,7 +107,7 @@ int WINAPI wWinMain(
 		// プロセスの生成に失敗したら即終了する
 		if (!process) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
 
-		MY_TRACETIME( cRunningTimer, L"ProcessObject Created" );
+		MY_TRACETIME( cRunningTimer, LTEXT("ProcessObject Created") );
 
 		// プロセス実行(初期化してメッセージループを実行する)
 		exitCode = process->Run(

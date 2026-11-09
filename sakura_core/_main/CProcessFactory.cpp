@@ -52,7 +52,7 @@ CProcessFactory::CProcessFactory(
 	@date 2006/04/10 ryoji
 */
 std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
-	std::wstring_view commandLine
+	sakura::wstring_view commandLine
 ) const
 {
 	// 引数はNUL終端文字列として扱う
@@ -67,7 +67,7 @@ std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
 	auto& cCommandLine = *cmdLineHolder;
 
 	// 実行ファイル名を取得する
-	std::wstring exeFileName{ GetExeFileName() };
+	sakura::wstring exeFileName{ GetExeFileName() };
 	auto szExeFileName = exeFileName.data();
 	const auto cchExeFileName = static_cast<int>(exeFileName.length());
 
@@ -160,7 +160,7 @@ bool CProcessFactory::IsStartingControlProcess() const
 /* static */ bool CProcessFactory::IsExistControlProcess()
 {
 	const auto pszProfileName = GetProfileName();
-	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
+	sakura::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += pszProfileName;
  	HANDLE hMutexCP;
 	hMutexCP = ::OpenMutex( MUTEX_ALL_ACCESS, FALSE, strMutexSakuraCp.c_str() );	// 2006.04.10 ryoji ::CreateMutex() を ::OpenMutex()に変更
@@ -184,7 +184,7 @@ bool CProcessFactory::IsStartingControlProcess() const
 */
 /* static */ bool CProcessFactory::StartControlProcess()
 {
-	MY_RUNNINGTIMER(cRunningTimer,L"StartControlProcess" );
+	MY_RUNNINGTIMER(cRunningTimer,LTEXT("StartControlProcess") );
 
 	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
 
@@ -209,7 +209,7 @@ bool CProcessFactory::IsStartingControlProcess() const
 	s.cb          = sizeof( s );
 	s.lpReserved  = nullptr;
 	s.lpDesktop   = nullptr;
-	s.lpTitle     = const_cast<WCHAR*>(L"sakura control process"); //2007.09.21 kobake デバッグしやすいように、名前を付ける
+	s.lpTitle     = const_cast<WCHAR*>(LTEXT("sakura control process")); //2007.09.21 kobake デバッグしやすいように、名前を付ける
 	s.dwFlags     = STARTF_USESHOWWINDOW;
 	s.wShowWindow = SW_SHOWDEFAULT;
 	s.cbReserved2 = 0;
@@ -220,10 +220,10 @@ bool CProcessFactory::IsStartingControlProcess() const
 
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN -PROF=\"%ls\"",
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), LTEXT("\"%s\" -NOWIN -PROF=\"%ls\""),
 			szEXE, GetProfileName() );
 	}else{
-		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN", szEXE ); // ""付加
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), LTEXT("\"%s\" -NOWIN"), szEXE ); // ""付加
 	}
 
 	//常駐プロセス起動
@@ -256,7 +256,7 @@ bool CProcessFactory::IsStartingControlProcess() const
 						0,
 						nullptr
 		);
-		ErrorMessage( nullptr, L"\'%s\'\nプロセスの起動に失敗しました。\n%s", szEXE, pMsg );
+		ErrorMessage( nullptr, LTEXT("\'%s\'\nプロセスの起動に失敗しました。\n%s"), szEXE, pMsg );
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
 		return false;
 	}

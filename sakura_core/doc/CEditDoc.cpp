@@ -173,7 +173,7 @@ CEditDoc::CEditDoc([[maybe_unused]] CEditApp* pcApp)
 , m_cDocType(this)					// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cDocOutline(this)				// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::CEditDoc" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditDoc::CEditDoc") );
 
 	// レイアウト管理情報の初期化
 	m_cLayoutMgr.Create( this, &m_cDocLineMgr );
@@ -248,7 +248,7 @@ void CEditDoc::Clear()
 	m_cDocLineMgr.DeleteAllLine();
 
 	// ファイルパスとアイコンのクリア
-	SetFilePathAndIcon( L"" );
+	SetFilePathAndIcon( LTEXT("") );
 
 	// ファイルのタイムスタンプのクリア
 	m_cDocFile.ClearFileTime();
@@ -276,7 +276,7 @@ void CEditDoc::Clear()
 void CEditDoc::InitDoc()
 {
 	CAppMode::getInstance()->SetViewMode(false);	// ビューモード $$ 今後OnClearDocを用意したい
-	CAppMode::getInstance()->m_szGrepKey[0] = L'\0';	//$$
+	CAppMode::getInstance()->m_szGrepKey[0] = LCHAR('\0');	//$$
 
 	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode = false;	/* Grepモード */	//$$同上
 	m_cAutoReloadAgent.m_eWatchUpdate = WU_QUERY; // Dec. 4, 2002 genta 更新監視方法 $$
@@ -303,7 +303,7 @@ void CEditDoc::InitDoc()
 	//	Oct. 2, 2005 genta 挿入モード
 	m_cDocEditor.SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
 
-	m_cCookie.DeleteAll(L"document");
+	m_cCookie.DeleteAll(LTEXT("document"));
 }
 
 void CEditDoc::SetBackgroundImage()
@@ -416,14 +416,14 @@ void CEditDoc::InitAllView( void )
 */
 BOOL CEditDoc::Create( void )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditDoc::Create" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditDoc::Create") );
 
 	//	Oct. 2, 2001 genta
 	m_cFuncLookup.Init( GetDllShareData().m_Common.m_sMacro.m_MacroTable, &GetDllShareData().m_Common );
 
 	SetBackgroundImage();
 
-	MY_TRACETIME( cRunningTimer, L"End: PropSheet" );
+	MY_TRACETIME( cRunningTimer, LTEXT("End: PropSheet") );
 
 	return TRUE;
 }
@@ -890,13 +890,13 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
 		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
-			( nLen > cmemDes.GetStringLength() ) ? L"..." : L""
+			( nLen > cmemDes.GetStringLength() ) ? LTEXT("...") : LTEXT("")
 		);
 		pszTitle = szGrepTitle;
 	}
 	if( nullptr == pszTitle ){
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
-		auto_sprintf( szGrepTitle, L"%s%d", LS(STR_NO_TITLE1), node->m_nId );	//(無題)
+		auto_sprintf( szGrepTitle, LTEXT("%s%d"), LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
@@ -991,7 +991,7 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
-			m_cDocFile.SetSaveFilePath(L"");
+			m_cDocFile.SetSaveFilePath(LTEXT(""));
 	}
 	bRunning = false;
 }
@@ -1050,7 +1050,7 @@ HRESULT MakeDataObject(_Outptr_ LPDATAOBJECT *ppDataObject, const std::filesyste
 	cxx::com_pointer<IShellFolder> pDesktop;
 	if (const auto hr = ::SHGetDesktopFolder(&pDesktop); FAILED(hr)) return hr;
 
-	std::wstring directory{ path.parent_path() };
+	sakura::wstring directory{ path.parent_path() };
 
 	const auto unusedArg1 = nullptr;
 
@@ -1062,7 +1062,7 @@ HRESULT MakeDataObject(_Outptr_ LPDATAOBJECT *ppDataObject, const std::filesyste
 	if (const auto hr = pDesktop->BindToObject(PathID, nullptr, IID_PPV_ARGS(&pFolder)); FAILED(hr)) return hr;
 	::CoTaskMemFree(PathID);
 
-	std::wstring title = path.filename();
+	sakura::wstring title = path.filename();
 	LPITEMIDLIST ItemID = nullptr;
 	if (const auto hr = pFolder->ParseDisplayName(nullptr, nullptr, std::data(title), unusedArg1, &ItemID, &Attribs); FAILED(hr)) return hr;
 

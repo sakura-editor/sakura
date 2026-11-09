@@ -18,8 +18,8 @@
 #include "env/DLLSHAREDATA.h"
 #include "config/system_constants.h"
 
-const WCHAR* CDocTypeManager::m_typeExtSeps = L" ;,";	// タイプ別拡張子 区切り文字
-const WCHAR* CDocTypeManager::m_typeExtWildcards = L"*?";	// タイプ別拡張子 ワイルドカード
+const WCHAR* CDocTypeManager::m_typeExtSeps = LTEXT(" ;,");	// タイプ別拡張子 区切り文字
+const WCHAR* CDocTypeManager::m_typeExtWildcards = LTEXT("*?");	// タイプ別拡張子 ワイルドカード
 
 static CMutex g_cDocTypeMutex( FALSE, GSTR_MUTEX_SAKURA_DOCTYPE );
 
@@ -37,7 +37,7 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfPath( const WCHAR* pszFilePath )
 
 	// ファイル名を抽出
 	const WCHAR* pszFileName = pszFilePath;
-	const WCHAR* pszSep = wcsrchr(pszFilePath, L'\\');
+	const WCHAR* pszSep = wcsrchr(pszFilePath, LCHAR('\\'));
 	if (pszSep) {
 		pszFileName = pszSep + 1;
 	}
@@ -162,7 +162,7 @@ bool CDocTypeManager::IsFileNameMatch(const WCHAR* pszTypeExts, const WCHAR* psz
 			if (_wcsicmp(token, pszFileName) == 0) {
 				return true;
 			}
-			const WCHAR* pszExt = wcsrchr(pszFileName, L'.');
+			const WCHAR* pszExt = wcsrchr(pszFileName, LCHAR('.'));
 			if (pszExt != nullptr && _wcsicmp(token, pszExt + 1) == 0) {
 				return true;
 			}
@@ -195,7 +195,7 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 			return;
 		}
 	}
-	szFirstExt[0] = L'\0';
+	szFirstExt[0] = LCHAR('\0');
 	return;
 }
 
@@ -206,34 +206,34 @@ void CDocTypeManager::GetFirstExt(const WCHAR* pszTypeExts, WCHAR szFirstExt[], 
 
 	@date 2014.12.06 syat CFileExtから移動
 */
-std::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt)
+sakura::wstring CDocTypeManager::ConvertTypesExtToDlgExt(const WCHAR *pszSrcExt, const WCHAR* szExt)
 {
 	//	2003.08.14 MIK NULLじゃなくてfalse
-	if (pszSrcExt == nullptr) return L"";
+	if (pszSrcExt == nullptr) return LTEXT("");
 
-	std::wstring destExt;
-	if (szExt != nullptr && szExt[0] != L'\0') {
+	sakura::wstring destExt;
+	if (szExt != nullptr && szExt[0] != LCHAR('\0')) {
 		// ファイルパスがあり、拡張子ありの場合、トップに指定
-		destExt.assign(L"*");
+		destExt.assign(LTEXT("*"));
 		destExt.append(szExt);
 	}
 
-	std::wstring strSrcTokens = pszSrcExt;
+	sakura::wstring strSrcTokens = pszSrcExt;
 	WCHAR* context = nullptr;
 	WCHAR* token = wcstok_s(strSrcTokens.data(), m_typeExtSeps, &context);
 	while( token )
 	{
-		if (szExt == nullptr || szExt[0] == L'\0' || wmemicmp(token, szExt + 1) != 0) {
+		if (szExt == nullptr || szExt[0] == LCHAR('\0') || wmemicmp(token, szExt + 1) != 0) {
 			if (0 < destExt.length()) {
-				destExt.append(L";");
+				destExt.append(LTEXT(";"));
 			}
 			// 拡張子指定なし、またはマッチした拡張子でない
 			if (wcspbrk(token, m_typeExtWildcards) == nullptr) {
-				if (L'.' == *token) {
-					destExt.append(L"*");
+				if (LCHAR('.') == *token) {
+					destExt.append(LTEXT("*"));
 				}
 				else {
-					destExt.append(L"*.");
+					destExt.append(LTEXT("*."));
 				}
 			}
 			destExt.append(token);

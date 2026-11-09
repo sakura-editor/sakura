@@ -49,15 +49,15 @@ struct SEolDefinition
 {
 	EEolType			m_eEolType;
 	WORD				m_wName;
-	std::wstring		m_Data;
+	sakura::wstring		m_Data;
 
 	constexpr SEolDefinition(
 		EEolType eEolType,
 		int wName,
-		std::wstring_view data
+		sakura::wstring_view data
 	);
 
-	const std::wstring&	GetVal() const noexcept;
+	const sakura::wstring&	GetVal() const noexcept;
 	std::string			GetVal(ECodeType eCodeType) const;
 
 	bool StartsWith(LPCWSTR pData, size_t nLen) const noexcept;
@@ -137,7 +137,7 @@ public:
 	CEol& operator = ( EEolType t ) noexcept { SetType( t ); return *this; }
 
 	//文字列内の行終端子を解析
-	void SetTypeByString( const wchar_t* pszData, size_t nDataLen );
+	void SetTypeByString( const WCHAR* pszData, size_t nDataLen );
 	void SetTypeByString( const char* pszData, size_t nDataLen );
 
 	//設定（ファイル読み込み時に使用）

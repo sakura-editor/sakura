@@ -73,8 +73,8 @@ bool CColor_Numeric::EndColor([[maybe_unused]] const CStringRef& cStr, int nPos)
  */
 static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*, int length*/)
 {
-	const wchar_t* p;
-	const wchar_t* q;
+	const WCHAR* p;
+	const WCHAR* q;
 	int i = 0;
 	int d = 0;
 	int f = 0;
@@ -82,17 +82,17 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	p = cStr.GetPtr() + offset;
 	q = cStr.GetPtr() + cStr.GetLength();
 
-	if( *p == L'0' )  /* 10進数,Cの16進数 */
+	if( *p == LCHAR('0') )  /* 10進数,Cの16進数 */
 	{
 		p++; i++;
-		if( ( p < q ) && ( *p == L'x' ) )  /* Cの16進数 */
+		if( ( p < q ) && ( *p == LCHAR('x') ) )  /* Cの16進数 */
 		{
 			p++; i++;
 			while( p < q )
 			{
-				if( ( *p >= L'0' && *p <= L'9' )
-				 || ( *p >= L'A' && *p <= L'F' )
-				 || ( *p >= L'a' && *p <= L'f' ) )
+				if( ( *p >= LCHAR('0') && *p <= LCHAR('9') )
+				 || ( *p >= LCHAR('A') && *p <= LCHAR('F') )
+				 || ( *p >= LCHAR('a') && *p <= LCHAR('f') ) )
 				{
 					p++; i++;
 				}
@@ -107,42 +107,42 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			/* 接尾語 */
 			if( p < q )
 			{
-				if( *p == L'L' || *p == L'l' || *p == L'F' || *p == L'f' )
+				if( *p == LCHAR('L') || *p == LCHAR('l') || *p == LCHAR('F') || *p == LCHAR('f') )
 				{
 					p++; i++;
 				}
 			}
 			return i;
 		}
-		else if( *p >= L'0' && *p <= L'9' )
+		else if( *p >= LCHAR('0') && *p <= LCHAR('9') )
 		{
 			p++; i++;
 			while( p < q )
 			{
-				if( *p < L'0' || *p > L'9' )
+				if( *p < LCHAR('0') || *p > LCHAR('9') )
 				{
-					if( *p == L'.' )
+					if( *p == LCHAR('.') )
 					{
 						if( f == 1 ) break;  /* 指数部に入っている */
 						d++;
 						if( d > 1 )
 						{
-							if( *(p - 1) == L'.' ) break;  /* "." が連続なら中断 */
+							if( *(p - 1) == LCHAR('.') ) break;  /* "." が連続なら中断 */
 						}
 					}
-					else if( *p == L'E' || *p == L'e' )
+					else if( *p == LCHAR('E') || *p == LCHAR('e') )
 					{
 						if( f == 1 ) break;  /* 指数部に入っている */
 						if( p + 2 < q )
 						{
-							if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
-							 && ( *(p + 2) >= L'0' && *(p + 2) <= L'9' ) )
+							if( ( *(p + 1) == LCHAR('+') || *(p + 1) == LCHAR('-') )
+							 && ( *(p + 2) >= LCHAR('0') && *(p + 2) <= LCHAR('9') ) )
 							{
 								p++; i++;
 								p++; i++;
 								f = 1;
 							}
-							else if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+							else if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 							{
 								p++; i++;
 								f = 1;
@@ -154,7 +154,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 						}
 						else if( p + 1 < q )
 						{
-							if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+							if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 							{
 								p++; i++;
 								f = 1;
@@ -176,46 +176,46 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				}
 				p++; i++;
 			}
-			if( *(p - 1)  == L'.' ) return i - 1;  /* 最後が "." なら含めない */
+			if( *(p - 1)  == LCHAR('.') ) return i - 1;  /* 最後が "." なら含めない */
 			/* 接尾語 */
 			if( p < q )
 			{
-				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
-				 || *p == L'F' || *p == L'f' )
+				if( (( d == 0 ) && ( *p == LCHAR('L') || *p == LCHAR('l') ))
+				 || *p == LCHAR('F') || *p == LCHAR('f') )
 				{
 					p++; i++;
 				}
 			}
 			return i;
 		}
-		else if( *p == L'.' )
+		else if( *p == LCHAR('.') )
 		{
 			while( p < q )
 			{
-				if( *p < L'0' || *p > L'9' )
+				if( *p < LCHAR('0') || *p > LCHAR('9') )
 				{
-					if( *p == L'.' )
+					if( *p == LCHAR('.') )
 					{
 						if( f == 1 ) break;  /* 指数部に入っている */
 						d++;
 						if( d > 1 )
 						{
-							if( *(p - 1) == L'.' ) break;  /* "." が連続なら中断 */
+							if( *(p - 1) == LCHAR('.') ) break;  /* "." が連続なら中断 */
 						}
 					}
-					else if( *p == L'E' || *p == L'e' )
+					else if( *p == LCHAR('E') || *p == LCHAR('e') )
 					{
 						if( f == 1 ) break;  /* 指数部に入っている */
 						if( p + 2 < q )
 						{
-							if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
-							 && ( *(p + 2) >= L'0' && *(p + 2) <= L'9' ) )
+							if( ( *(p + 1) == LCHAR('+') || *(p + 1) == LCHAR('-') )
+							 && ( *(p + 2) >= LCHAR('0') && *(p + 2) <= LCHAR('9') ) )
 							{
 								p++; i++;
 								p++; i++;
 								f = 1;
 							}
-							else if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+							else if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 							{
 								p++; i++;
 								f = 1;
@@ -227,7 +227,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 						}
 						else if( p + 1 < q )
 						{
-							if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+							if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 							{
 								p++; i++;
 								f = 1;
@@ -249,29 +249,29 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 				}
 				p++; i++;
 			}
-			if( *(p - 1)  == L'.' ) return i - 1;  /* 最後が "." なら含めない */
+			if( *(p - 1)  == LCHAR('.') ) return i - 1;  /* 最後が "." なら含めない */
 			/* 接尾語 */
 			if( p < q )
 			{
-				if( *p == L'F' || *p == L'f' )
+				if( *p == LCHAR('F') || *p == LCHAR('f') )
 				{
 					p++; i++;
 				}
 			}
 			return i;
 		}
-		else if( *p == L'E' || *p == L'e' )
+		else if( *p == LCHAR('E') || *p == LCHAR('e') )
 		{
 			p++; i++;
 			while( p < q )
 			{
-				if( *p < L'0' || *p > L'9' )
+				if( *p < LCHAR('0') || *p > LCHAR('9') )
 				{
-					if( ( *p == L'+' || *p == L'-' ) && ( *(p - 1) == L'E' || *(p - 1) == L'e' ) )
+					if( ( *p == LCHAR('+') || *p == LCHAR('-') ) && ( *(p - 1) == LCHAR('E') || *(p - 1) == LCHAR('e') ) )
 					{
 						if( p + 1 < q )
 						{
-							if( *(p + 1) < L'0' || *(p + 1) > L'9' )
+							if( *(p + 1) < LCHAR('0') || *(p + 1) > LCHAR('9') )
 							{
 								/* "0E+", "0E-" */
 								break;
@@ -294,8 +294,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			/* 接尾語 */
 			if( p < q )
 			{
-				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
-				 || *p == L'F' || *p == L'f' )
+				if( (( d == 0 ) && ( *p == LCHAR('L') || *p == LCHAR('l') ))
+				 || *p == LCHAR('F') || *p == LCHAR('f') )
 				{
 					p++; i++;
 				}
@@ -308,8 +308,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			/*if( *p == L'.' ) return i - 1;*/  /* 最後が "." なら含めない */
 			if( p < q )
 			{
-				if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
-				 || *p == L'F' || *p == L'f' )
+				if( (( d == 0 ) && ( *p == LCHAR('L') || *p == LCHAR('l') ))
+				 || *p == LCHAR('F') || *p == LCHAR('f') )
 				{
 					p++; i++;
 				}
@@ -318,35 +318,35 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		}
 	}
 
-	else if( *p >= L'1' && *p <= L'9' )  /* 10進数 */
+	else if( *p >= LCHAR('1') && *p <= LCHAR('9') )  /* 10進数 */
 	{
 		p++; i++;
 		while( p < q )
 		{
-			if( *p < L'0' || *p > L'9' )
+			if( *p < LCHAR('0') || *p > LCHAR('9') )
 			{
-				if( *p == L'.' )
+				if( *p == LCHAR('.') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." が連続なら中断 */
+						if( *(p - 1) == LCHAR('.') ) break;  /* "." が連続なら中断 */
 					}
 				}
-				else if( *p == L'E' || *p == L'e' )
+				else if( *p == LCHAR('E') || *p == LCHAR('e') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					if( p + 2 < q )
 					{
-						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
-						 && ( *(p + 2) >= L'0' && *(p + 2) <= L'9' ) )
+						if( ( *(p + 1) == LCHAR('+') || *(p + 1) == LCHAR('-') )
+						 && ( *(p + 2) >= LCHAR('0') && *(p + 2) <= LCHAR('9') ) )
 						{
 							p++; i++;
 							p++; i++;
 							f = 1;
 						}
-						else if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						else if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -358,7 +358,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 					}
 					else if( p + 1 < q )
 					{
-						if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -380,12 +380,12 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 			}
 			p++; i++;
 		}
-		if( *(p - 1) == L'.' ) return i - 1;  /* 最後が "." なら含めない */
+		if( *(p - 1) == LCHAR('.') ) return i - 1;  /* 最後が "." なら含めない */
 		/* 接尾語 */
 		if( p < q )
 		{
-			if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
-			 || *p == L'F' || *p == L'f' )
+			if( (( d == 0 ) && ( *p == LCHAR('L') || *p == LCHAR('l') ))
+			 || *p == LCHAR('F') || *p == LCHAR('f') )
 			{
 				p++; i++;
 			}
@@ -393,35 +393,35 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		return i;
 	}
 
-	else if( *p == L'-' )  /* マイナス */
+	else if( *p == LCHAR('-') )  /* マイナス */
 	{
 		p++; i++;
 		while( p < q )
 		{
-			if( *p < L'0' || *p > L'9' )
+			if( *p < LCHAR('0') || *p > LCHAR('9') )
 			{
-				if( *p == L'.' )
+				if( *p == LCHAR('.') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." が連続なら中断 */
+						if( *(p - 1) == LCHAR('.') ) break;  /* "." が連続なら中断 */
 					}
 				}
-				else if( *p == L'E' || *p == L'e' )
+				else if( *p == LCHAR('E') || *p == LCHAR('e') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					if( p + 2 < q )
 					{
-						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
-						 && ( *(p + 2) >= L'0' && *(p + 2) <= L'9' ) )
+						if( ( *(p + 1) == LCHAR('+') || *(p + 1) == LCHAR('-') )
+						 && ( *(p + 2) >= LCHAR('0') && *(p + 2) <= LCHAR('9') ) )
 						{
 							p++; i++;
 							p++; i++;
 							f = 1;
 						}
-						else if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						else if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -433,7 +433,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 					}
 					else if( p + 1 < q )
 					{
-						if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -460,7 +460,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		//if( i <= 2 ) return 0;
 		//if( *(p - 1)  == L'.' ) return i - 1;  /* 最後が "." なら含めない */
 		if( i == 1 ) return 0;
-		if( *(p - 1) == L'.' )
+		if( *(p - 1) == LCHAR('.') )
 		{
 			i--;
 			if( i == 1 ) return 0;
@@ -469,8 +469,8 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		/* 接尾語 */
 		if( p < q )
 		{
-			if( (( d == 0 ) && ( *p == L'L' || *p == L'l' ))
-			 || *p == L'F' || *p == L'f' )
+			if( (( d == 0 ) && ( *p == LCHAR('L') || *p == LCHAR('l') ))
+			 || *p == LCHAR('F') || *p == LCHAR('f') )
 			{
 				p++; i++;
 			}
@@ -478,36 +478,36 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		return i;
 	}
 
-	else if( *p == L'.' )  /* 小数点 */
+	else if( *p == LCHAR('.') )  /* 小数点 */
 	{
 		d++;
 		p++; i++;
 		while( p < q )
 		{
-			if( *p < L'0' || *p > L'9' )
+			if( *p < LCHAR('0') || *p > LCHAR('9') )
 			{
-				if( *p == L'.' )
+				if( *p == LCHAR('.') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					d++;
 					if( d > 1 )
 					{
-						if( *(p - 1) == L'.' ) break;  /* "." が連続なら中断 */
+						if( *(p - 1) == LCHAR('.') ) break;  /* "." が連続なら中断 */
 					}
 				}
-				else if( *p == L'E' || *p == L'e' )
+				else if( *p == LCHAR('E') || *p == LCHAR('e') )
 				{
 					if( f == 1 ) break;  /* 指数部に入っている */
 					if( p + 2 < q )
 					{
-						if( ( *(p + 1) == L'+' || *(p + 1) == L'-' )
-						 && ( *(p + 2) >= L'0' && *(p + 2) <= L'9' ) )
+						if( ( *(p + 1) == LCHAR('+') || *(p + 1) == LCHAR('-') )
+						 && ( *(p + 2) >= LCHAR('0') && *(p + 2) <= LCHAR('9') ) )
 						{
 							p++; i++;
 							p++; i++;
 							f = 1;
 						}
-						else if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						else if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -519,7 +519,7 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 					}
 					else if( p + 1 < q )
 					{
-						if( *(p + 1) >= L'0' && *(p + 1) <= L'9' )
+						if( *(p + 1) >= LCHAR('0') && *(p + 1) <= LCHAR('9') )
 						{
 							p++; i++;
 							f = 1;
@@ -543,11 +543,11 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 		}
 		/* "." だけなら数値でない */
 		if( i == 1 ) return 0;
-		if( *(p - 1)  == L'.' ) return i - 1;  /* 最後が "." なら含めない */
+		if( *(p - 1)  == LCHAR('.') ) return i - 1;  /* 最後が "." なら含めない */
 		/* 接尾語 */
 		if( p < q )
 		{
-			if( *p == L'F' || *p == L'f' )
+			if( *p == LCHAR('F') || *p == LCHAR('f') )
 			{
 				p++; i++;
 			}
@@ -556,17 +556,17 @@ static int IsNumber(const CStringRef& cStr,/*const wchar_t *buf,*/ int offset/*,
 	}
 
 #if 0
-	else if( *p == L'&' )  /* VBの16進数 */
+	else if( *p == LCHAR('&') )  /* VBの16進数 */
 	{
 		p++; i++;
-		if( ( p < q ) && ( *p == L'H' ) )
+		if( ( p < q ) && ( *p == LCHAR('H') ) )
 		{
 			p++; i++;
 			while( p < q )
 			{
-				if( ( *p >= L'0' && *p <= L'9' )
-				 || ( *p >= L'A' && *p <= L'F' )
-				 || ( *p >= L'a' && *p <= L'f' ) )
+				if( ( *p >= LCHAR('0') && *p <= LCHAR('9') )
+				 || ( *p >= LCHAR('A') && *p <= LCHAR('F') )
+				 || ( *p >= LCHAR('a') && *p <= LCHAR('f') ) )
 				{
 					p++; i++;
 				}

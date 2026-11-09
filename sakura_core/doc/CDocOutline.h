@@ -35,9 +35,9 @@ public:
 	void	MakeTopicList_html(CFuncInfoArr* pcFuncInfoArr, bool bXml);			//!< HTML アウトライン解析 // 2003.05.20 zenryaku
 	void	MakeTopicList_tex(CFuncInfoArr* pcFuncInfoArr);						//!< TeX アウトライン解析 // 2003.07.20 naoh
 	void	MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr,
-								   std::wstring& sTitleOverride );				//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
+								   sakura::wstring& sTitleOverride );				//!< ルールファイルを使ってリスト作成 2002.04.01 YAZAKI
 	int		ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule,
-						  int nMaxCount, bool& bRegex, std::wstring& title );	//!< ルールファイル読込 2002.04.01 YAZAKI
+						  int nMaxCount, bool& bRegex, sakura::wstring& title );	//!< ルールファイル読込 2002.04.01 YAZAKI
 	void	MakeFuncList_BookMark( CFuncInfoArr* );								//!< ブックマークリスト作成 //2001.12.03 hor
 private:
 	CEditDoc* m_pcDocRef;

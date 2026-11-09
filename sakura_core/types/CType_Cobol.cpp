@@ -18,14 +18,14 @@
 void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"COBOL" );
-	wcscpy( pType->m_szTypeExts, L"cbl,cpy,pco,cob" );	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
+	wcscpy( pType->m_szTypeName, LTEXT("COBOL") );
+	wcscpy( pType->m_szTypeExts, LTEXT("cbl,cpy,pco,cob") );	//Jun. 04, 2001 JEPRO KENCH氏の助言に従い追加
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"*", 6 );			//Jun. 02, 2001 JEPRO 修正
-	pType->m_cLineComment.CopyTo( 1, L"D", 6 );			//Jun. 04, 2001 JEPRO 追加
+	pType->m_cLineComment.CopyTo( 0, LTEXT("*"), 6 );			//Jun. 02, 2001 JEPRO 修正
+	pType->m_cLineComment.CopyTo( 1, LTEXT("D"), 6 );			//Jun. 04, 2001 JEPRO 追加
 	pType->m_nStringType = STRING_LITERAL_PLSQL;							/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	wcscpy( pType->m_szIndentChars, L"*" );				/* その他のインデント対象文字 */
+	wcscpy( pType->m_szIndentChars, LTEXT("*") );				/* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 3;						/* キーワードセット */		//Jul. 10, 2001 JEPRO
 	pType->m_eDefaultOutline = OUTLINE_COBOL;			/* アウトライン解析方法 */
 	// 指定桁縦線	//2005.11.08 Moca
@@ -39,19 +39,19 @@ void CType_Cobol::InitTypeConfigImp(STypeConfig* pType)
 /*! COBOL アウトライン解析 */
 void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	int				i;
 	int				k;
-	wchar_t			szDivision[1024];
-	wchar_t			szLabel[1024];
-	const wchar_t*	pszKeyWord;
+	WCHAR			szDivision[1024];
+	WCHAR			szLabel[1024];
+	const WCHAR*	pszKeyWord;
 	int				nKeyWordLen;
 	BOOL			bDivision;
 	bool			bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	szDivision[0] = L'\0';
-	szLabel[0] =  L'\0';
+	szDivision[0] = LCHAR('\0');
+	szLabel[0] =  LCHAR('\0');
 
 	CLogicInt	nLineCount;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
@@ -60,11 +60,11 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			break;
 		}
 		/* コメント行か */
-		if( 7 <= nLineLen && pLine[6] == L'*' ){
+		if( 7 <= nLineLen && pLine[6] == LCHAR('*') ){
 			continue;
 		}
 		/* ラベル行か */
-		if( 8 <= nLineLen && pLine[7] != L' ' ){
+		if( 8 <= nLineLen && pLine[7] != LCHAR(' ') ){
 			k = 0;
 			for( i = 7; i < nLineLen; ){
 				if( pLine[i] == '.'
@@ -75,18 +75,18 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 				szLabel[k] = pLine[i];
 				++k;
 				++i;
-				if( pLine[i - 1] == L' ' ){
+				if( pLine[i - 1] == LCHAR(' ') ){
 					for( ; i < nLineLen; ++i ){
-						if( pLine[i] != L' ' ){
+						if( pLine[i] != LCHAR(' ') ){
 							break;
 						}
 					}
 				}
 			}
-			szLabel[k] = L'\0';
+			szLabel[k] = LCHAR('\0');
 //			MYTRACE( L"szLabel=[%ls]\n", szLabel );
 
-			pszKeyWord = L"division";
+			pszKeyWord = LTEXT("division");
 			nKeyWordLen = (int)wcslen( pszKeyWord );
 			bDivision = FALSE;
 			int nLen = (int)wcslen( szLabel ) - nKeyWordLen;
@@ -108,12 +108,12 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 			*/
 
 			CLayoutPoint ptPos;
-			wchar_t	szWork[1024];
+			WCHAR	szWork[1024];
 			m_pcDocRef->m_cLayoutMgr.LogicToLayout(
 				CLogicPoint(0, nLineCount),
 				&ptPos
 			);
-			auto_sprintf( szWork, L"%ls::%ls", szDivision, szLabel );
+			auto_sprintf( szWork, LTEXT("%ls::%ls"), szDivision, szLabel );
 			pcFuncInfoArr->AppendData( nLineCount + CLogicInt(1), ptPos.GetY2() + CLayoutInt(1) , szWork, 0 );
 		}
 	}
@@ -121,108 +121,108 @@ void CDocOutline::MakeTopicList_cobol( CFuncInfoArr* pcFuncInfoArr )
 }
 
 //Jul. 10, 2001 JEPRO 追加
-const wchar_t* g_ppszKeywordsCOBOL[] = {
-	L"ACCEPT",
-	L"ADD",
-	L"ADVANCING",
-	L"AFTER",
-	L"ALL",
-	L"AND",
-	L"ARGUMENT",
-	L"ASSIGN",
-	L"AUTHOR",
-	L"BEFORE",
-	L"BLOCK",
-	L"BY",
-	L"CALL",
-	L"CHARACTERS",
-	L"CLOSE",
-	L"COMP",
-	L"COMPILED",
-	L"COMPUTE",
-	L"COMPUTER",
-	L"CONFIGURATION",
-	L"CONSOLE",
-	L"CONTAINS",
-	L"CONTINUE",
-	L"CONTROL",
-	L"COPY",
-	L"DATA",
-	L"DELETE",
-	L"DISPLAY",
-	L"DIVIDE",
-	L"DIVISION",
-	L"ELSE",
-	L"END",
-	L"ENVIRONMENT",
-	L"EVALUATE",
-	L"EXAMINE",
-	L"EXIT",
-	L"EXTERNAL",
-	L"FD",
-	L"FILE",
-	L"FILLER",
-	L"FROM",
-	L"GIVING",
-	L"GO",
-	L"GOBACK",
-	L"HIGH-VALUE",
-	L"IDENTIFICATION",
-	L"IF",
-	L"INITIALIZE",
-	L"INPUT",
-	L"INTO",
-	L"IS",
-	L"LABEL",
-	L"LINKAGE",
-	L"LOW-VALUE",
-	L"MODE",
-	L"MOVE",
-	L"NOT",
-	L"OBJECT",
-	L"OCCURS",
-	L"OF",
-	L"ON",
-	L"OPEN",
-	L"OR",
-	L"OTHER",
-	L"OUTPUT",
-	L"PERFORM",
-	L"PIC",
-	L"PROCEDURE",
-	L"PROGRAM",
-	L"READ",
-	L"RECORD",
-	L"RECORDING",
-	L"REDEFINES",
-	L"REMAINDER",
-	L"REMARKS",
-	L"REPLACING",
-	L"REWRITE",
-	L"ROLLBACK",
-	L"SECTION",
-	L"SELECT",
-	L"SOURCE",
-	L"SPACE",
-	L"STANDARD",
-	L"STOP",
-	L"STORAGE",
-	L"SYSOUT",
-	L"TEST",
-	L"THEN",
-	L"TO",
-	L"TODAY",
-	L"TRANSFORM",
-	L"UNTIL",
-	L"UPON",
-	L"USING",
-	L"VALUE",
-	L"VARYING",
-	L"WHEN",
-	L"WITH",
-	L"WORKING",
-	L"WRITE",
-	L"WRITTEN",
-	L"ZERO"
+const WCHAR* g_ppszKeywordsCOBOL[] = {
+	LTEXT("ACCEPT"),
+	LTEXT("ADD"),
+	LTEXT("ADVANCING"),
+	LTEXT("AFTER"),
+	LTEXT("ALL"),
+	LTEXT("AND"),
+	LTEXT("ARGUMENT"),
+	LTEXT("ASSIGN"),
+	LTEXT("AUTHOR"),
+	LTEXT("BEFORE"),
+	LTEXT("BLOCK"),
+	LTEXT("BY"),
+	LTEXT("CALL"),
+	LTEXT("CHARACTERS"),
+	LTEXT("CLOSE"),
+	LTEXT("COMP"),
+	LTEXT("COMPILED"),
+	LTEXT("COMPUTE"),
+	LTEXT("COMPUTER"),
+	LTEXT("CONFIGURATION"),
+	LTEXT("CONSOLE"),
+	LTEXT("CONTAINS"),
+	LTEXT("CONTINUE"),
+	LTEXT("CONTROL"),
+	LTEXT("COPY"),
+	LTEXT("DATA"),
+	LTEXT("DELETE"),
+	LTEXT("DISPLAY"),
+	LTEXT("DIVIDE"),
+	LTEXT("DIVISION"),
+	LTEXT("ELSE"),
+	LTEXT("END"),
+	LTEXT("ENVIRONMENT"),
+	LTEXT("EVALUATE"),
+	LTEXT("EXAMINE"),
+	LTEXT("EXIT"),
+	LTEXT("EXTERNAL"),
+	LTEXT("FD"),
+	LTEXT("FILE"),
+	LTEXT("FILLER"),
+	LTEXT("FROM"),
+	LTEXT("GIVING"),
+	LTEXT("GO"),
+	LTEXT("GOBACK"),
+	LTEXT("HIGH-VALUE"),
+	LTEXT("IDENTIFICATION"),
+	LTEXT("IF"),
+	LTEXT("INITIALIZE"),
+	LTEXT("INPUT"),
+	LTEXT("INTO"),
+	LTEXT("IS"),
+	LTEXT("LABEL"),
+	LTEXT("LINKAGE"),
+	LTEXT("LOW-VALUE"),
+	LTEXT("MODE"),
+	LTEXT("MOVE"),
+	LTEXT("NOT"),
+	LTEXT("OBJECT"),
+	LTEXT("OCCURS"),
+	LTEXT("OF"),
+	LTEXT("ON"),
+	LTEXT("OPEN"),
+	LTEXT("OR"),
+	LTEXT("OTHER"),
+	LTEXT("OUTPUT"),
+	LTEXT("PERFORM"),
+	LTEXT("PIC"),
+	LTEXT("PROCEDURE"),
+	LTEXT("PROGRAM"),
+	LTEXT("READ"),
+	LTEXT("RECORD"),
+	LTEXT("RECORDING"),
+	LTEXT("REDEFINES"),
+	LTEXT("REMAINDER"),
+	LTEXT("REMARKS"),
+	LTEXT("REPLACING"),
+	LTEXT("REWRITE"),
+	LTEXT("ROLLBACK"),
+	LTEXT("SECTION"),
+	LTEXT("SELECT"),
+	LTEXT("SOURCE"),
+	LTEXT("SPACE"),
+	LTEXT("STANDARD"),
+	LTEXT("STOP"),
+	LTEXT("STORAGE"),
+	LTEXT("SYSOUT"),
+	LTEXT("TEST"),
+	LTEXT("THEN"),
+	LTEXT("TO"),
+	LTEXT("TODAY"),
+	LTEXT("TRANSFORM"),
+	LTEXT("UNTIL"),
+	LTEXT("UPON"),
+	LTEXT("USING"),
+	LTEXT("VALUE"),
+	LTEXT("VARYING"),
+	LTEXT("WHEN"),
+	LTEXT("WITH"),
+	LTEXT("WORKING"),
+	LTEXT("WRITE"),
+	LTEXT("WRITTEN"),
+	LTEXT("ZERO")
 };
 int g_nKeywordsCOBOL = int(std::size(g_ppszKeywordsCOBOL));

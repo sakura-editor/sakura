@@ -145,8 +145,8 @@ INT_PTR CPropFileName::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LP
 					nIndex = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
 					// 未選択
 					if( -1 == nIndex ){
-						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, L"" );
-						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, L"" );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_FROM, LTEXT("") );
+						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FNAME_TO, LTEXT("") );
 					}
 					else if( nIndex != m_nLastPos_FILENAME ){
 						GetListViewItem_FILENAME( hListView, nIndex, szFrom, szTo );
@@ -371,15 +371,15 @@ int CPropFileName::GetData( HWND hwndDlg )
 			ListView_GetItemText( hListView, nIndex, 0, m_Common.m_sFileName.m_szTransformFileNameFrom[nCount], _MAX_PATH );
 
 			// 置換前文字列がNULLだったら捨てる
-			if( L'\0' == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
-				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
+			if( LCHAR('\0') == m_Common.m_sFileName.m_szTransformFileNameFrom[nCount][0] ){
+				m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = LCHAR('\0');
 			}else{
 				ListView_GetItemText( hListView, nIndex, 1, m_Common.m_sFileName.m_szTransformFileNameTo[nCount], _MAX_PATH );
 				nCount++;
 			}
 		}else{
-			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = L'\0';
-			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = L'\0';
+			m_Common.m_sFileName.m_szTransformFileNameFrom[nIndex][0] = LCHAR('\0');
+			m_Common.m_sFileName.m_szTransformFileNameTo[nIndex][0] = LCHAR('\0');
 		}
 	}
 
@@ -391,7 +391,7 @@ int CPropFileName::SetListViewItem_FILENAME( HWND hListView, int nIndex, LPWSTR 
 	LV_ITEM	Item;
 	int nCount;
 
-	if( L'\0' == szFrom[0] || -1 == nIndex ) return -1;
+	if( LCHAR('\0') == szFrom[0] || -1 == nIndex ) return -1;
 
 	nCount = ListView_GetItemCount( hListView );
 

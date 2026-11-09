@@ -495,8 +495,8 @@ public:
 	 * @param[in] pluginName プラグイン名
 	 * @return Readme ファイル名。存在しない場合は空文字列
 	 */
-	std::wstring GetReadMeFile(
-		std::wstring_view pluginName
+	sakura::wstring GetReadMeFile(
+		sakura::wstring_view pluginName
 	);
 
 	/*!
@@ -507,8 +507,8 @@ public:
 	 * @return Readme ファイル名。存在しない場合は空文字列
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
-	std::wstring GetReadMeFile(
+		requires (!std::is_same_v<A, sakura::wstring_view>)
+	sakura::wstring GetReadMeFile(
 		const A& pluginName
 	)
 	{
@@ -519,7 +519,7 @@ public:
 		return GetReadMeFile(_PluginName.str());
 	}
 
-	bool BrowseReadMe(const std::wstring& sReadMeName);		//	Readme ファイルの表示
+	bool BrowseReadMe(const sakura::wstring& sReadMeName);		//	Readme ファイルの表示
 protected:
 	//! Message Handler
 	INT_PTR DispatchEvent(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -551,8 +551,8 @@ protected:
 private:
 	bool GetDataTree(HWND hwndTree, HTREEITEM htiTrg, int nLevel);
 
-	bool Check_MainMenu(HWND hwndTree, std::wstring& sErrMsg);						// メニューの検査
-	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, std::wstring& sErrMsg);	// メニューの検査
+	bool Check_MainMenu(HWND hwndTree, sakura::wstring& sErrMsg);						// メニューの検査
+	bool Check_MainMenu_Sub(HWND hwndTree, HTREEITEM htiTrg, int nLevel, sakura::wstring& sErrMsg);	// メニューの検査
 	static LRESULT CALLBACK TreeViewProc(HWND hwndTree, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
 };
 #endif /* SAKURA_CPROPCOMMON_82053028_AB71_4E4C_AE50_0E46E173828C_H_ */

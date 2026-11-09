@@ -54,7 +54,7 @@ namespace ApiWrap{
 		@return		成功した場合 true
 		@return		失敗した場合 false
 	*/
-	bool Wnd_GetText( HWND hWnd, std::wstring& strText );
+	bool Wnd_GetText( HWND hWnd, sakura::wstring& strText );
 
 	/*!
 		@brief Window テキストを取得する
@@ -215,7 +215,7 @@ namespace ApiWrap{
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      リストボックス                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	bool List_GetText( HWND hList, int nIndex, std::wstring& strText );
+	bool List_GetText( HWND hList, int nIndex, sakura::wstring& strText );
 	int List_GetText(HWND hwndList, size_t nIndex, std::span<WCHAR> buffer) noexcept;
 	int List_GetText(HWND hwndList, size_t nIndex, WCHAR* pszText, size_t cchText) noexcept;
 	inline int List_AddString(HWND hwndList, _In_z_ LPCWSTR str) noexcept
@@ -272,7 +272,7 @@ namespace ApiWrap{
 		return SetDlgItemText(hwndDlg, nIDDlgItem, str);
 	}
 
-	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText );
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, sakura::wstring& strText );
 	UINT DlgItem_GetText(HWND hwndDlg, int nIDDlgItem, WCHAR* pszText, size_t nMaxCount) noexcept;
 
 	bool TreeView_GetItemTextVector(HWND hwndTree, TVITEM& item, std::vector<WCHAR>& vecStr);

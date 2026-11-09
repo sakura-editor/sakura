@@ -39,9 +39,9 @@
 */
 static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
-	const wchar_t*	pLineSrc;
+	const WCHAR*	pLineSrc;
 	CLogicInt		nLineLenSrc;
-	const wchar_t*	pLineDes;
+	const WCHAR*	pLineDes;
 	int			nLineLenDes;
 	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
 	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
@@ -245,7 +245,7 @@ static ECodeType GetDiffCreateTempFileCode(ECodeType code)
 */
 void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 {
-	const std::wstring strDiffFile2 = _szDiffFile2;
+	const sakura::wstring strDiffFile2 = _szDiffFile2;
 	const WCHAR* szDiffFile2 = strDiffFile2.c_str();
 
 	bool	bTmpFile1 = false;
@@ -337,7 +337,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 	ECodeType saveCode = GetDiffCreateTempFileCode(code);
 	ECodeType code2 = cDlgDiff.m_nCodeTypeDst;
 	if( CODE_ERROR == code2 ){
-		if( cDlgDiff.m_szFile2[0] != L'\0' ){
+		if( cDlgDiff.m_szFile2[0] != LCHAR('\0') ){
 			// ファイル名指定
 			code2 = GetFileCharCode(cDlgDiff.m_szFile2);
 		}
@@ -362,7 +362,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 	// UNICODE,UNICODEBEの場合は常に一時ファイルでUTF-8にする
 	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	// 2014.06.25 ファイル名がない(=無題,Grep,アウトプット)もTmpFileModeにする
-	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == L'\0';
+	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == LCHAR('\0');
 	if( !bTmpFileMode ){
 		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
 		wcscpy( szTmpFile2, cDlgDiff.m_szFile2 );

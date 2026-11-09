@@ -52,9 +52,9 @@
 #define RK_SIZE           100    //最大登録可能数
 
 //#define RK_HEAD_CHAR      '^'    //行先頭の正規表現
-#define RK_HEAD_STR1      L"/^"   //BREGEXP
-#define RK_HEAD_STR2      L"m#^"  //BREGEXP
-#define RK_HEAD_STR3      L"m/^"  //BREGEXP
+#define RK_HEAD_STR1      LTEXT("/^")   //BREGEXP
+#define RK_HEAD_STR2      LTEXT("m#^")  //BREGEXP
+#define RK_HEAD_STR3      LTEXT("m/^")  //BREGEXP
 //#define RK_HEAD_STR4      "#^"   //BREGEXP
 
 #define RK_KAKOMI_1_START "/"
@@ -193,7 +193,7 @@ BOOL CRegexKeyword::RegexKeySetTypes( const STypeConfig *pTypesPtr )
 BOOL CRegexKeyword::RegexKeyCompile( void )
 {
 	int	i;
-	static const wchar_t dummy[2] = L"\0";
+	static const WCHAR dummy[2] = LTEXT("\0");
 	const struct RegexKeywordInfo	*rp;
 
 	MYDBGMSG("RegexKeyCompile")
@@ -207,10 +207,10 @@ BOOL CRegexKeyword::RegexKeyCompile( void )
 
 	//コンパイルパターンを内部変数に移す。
 	m_nRegexKeyCount = 0;
-	const wchar_t * pKeyword = &m_pTypes->m_RegexKeywordList[0];
+	const WCHAR * pKeyword = &m_pTypes->m_RegexKeywordList[0];
 	for(i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( pKeyword[0] == L'\0' ) break;
+		if( pKeyword[0] == LCHAR('\0') ) break;
 		m_nRegexKeyCount++;
 		for(; *pKeyword != '\0'; pKeyword++ ){}
 		pKeyword++;
@@ -418,17 +418,17 @@ BOOL CRegexKeyword::RegexIsKeyword(
 	return FALSE;
 }
 
-BOOL CRegexKeyword::RegexKeyCheckSyntax(const wchar_t *s)
+BOOL CRegexKeyword::RegexKeyCheckSyntax(const WCHAR *s)
 {
-	const wchar_t	*p;
+	const WCHAR	*p;
 	int	length, i;
-	static const wchar_t *kakomi[7 * 2] = {
-		L"/",  L"/k",
-		L"m/", L"/k",
-		L"m#", L"#k",
-		L"/",  L"/ki",
-		L"m/", L"/ki",
-		L"m#", L"#ki",
+	static const WCHAR *kakomi[7 * 2] = {
+		LTEXT("/"),  LTEXT("/k"),
+		LTEXT("m/"), LTEXT("/k"),
+		LTEXT("m#"), LTEXT("#k"),
+		LTEXT("/"),  LTEXT("/ki"),
+		LTEXT("m/"), LTEXT("/ki"),
+		LTEXT("m#"), LTEXT("#ki"),
 		nullptr, nullptr,
 	};
 

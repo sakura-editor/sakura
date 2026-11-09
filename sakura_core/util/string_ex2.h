@@ -14,17 +14,17 @@ class CNativeA;
 class CNativeW;
 
 // Aug. 16, 2007 kobake
-wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count);
-wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src);
+WCHAR *wcs_pushW(WCHAR *dst, size_t dst_count, const WCHAR* src, size_t src_count);
+WCHAR *wcs_pushW(WCHAR *dst, size_t dst_count, const WCHAR* src);
 #define wcs_pushW wcs_pushW
 
 int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c );/* 2003.06.24 Moca 最後の文字が指定された文字でないときは付加する */
 size_t LimitStringLengthW( LPCWSTR pszData, size_t nDataLength, size_t nLimitLength, CNativeW& cmemDes );/* データを指定「文字数」以内に切り詰める */
 
 const char*    GetNextLine  ( const char* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol); /* CR0LF0,CRLF,LF,CRで区切られる「行」を返す。改行コードは行長に加えない */
-const wchar_t* GetNextLineW ( const wchar_t* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, bool bExtEol); // GetNextLineのwchar_t版
+const WCHAR* GetNextLineW ( const WCHAR* pData, int nDataLen, int* pnLineLen, int* pnBgn, CEol* pcEol, bool bExtEol); // GetNextLineのwchar_t版
 //wchar_t* GetNextLineWB( const wchar_t*, int, int*, int*, CEol* ); // GetNextLineのwchar_t版(ビックエンディアン用)  // 未使用
-void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn );
+void GetLineColumn( const WCHAR* pLine, int* pnJumpToLine, int* pnJumpToColumn );
 
 int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith);
 
@@ -35,7 +35,7 @@ int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith);
 	@date 2004/06/19 genta Generic mapping
 */
 inline void dupamp(const WCHAR* org, WCHAR* out)
-{	cescape( org, out, L'&', L'&' ); }
+{	cescape( org, out, LCHAR('&'), LCHAR('&') ); }
 
 /*
 	scanf的安全スキャン
@@ -46,8 +46,8 @@ inline void dupamp(const WCHAR* org, WCHAR* out)
 		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
 */
 int scan_ints(
-	const wchar_t*	pszData,	//!< [in]  データ文字列
-	const wchar_t*	pszFormat,	//!< [in]  データフォーマット
+	const WCHAR*	pszData,	//!< [in]  データ文字列
+	const WCHAR*	pszFormat,	//!< [in]  データフォーマット
 	int*			anBuf		//!< [out] 取得した数値 (要素数は最大32まで)
 );
 
@@ -64,7 +64,7 @@ constexpr size_t int2dec_destBufferSufficientLength();
 template <>
 constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
 {
-	return int(std::size(L"-2147483648"));
+	return int(std::size(LTEXT("-2147483648")));
 }
 
 /*!
@@ -74,7 +74,7 @@ constexpr size_t int2dec_destBufferSufficientLength<int32_t>()
 template <>
 constexpr size_t int2dec_destBufferSufficientLength<int64_t>()
 {
-	return int(std::size(L"-9223372036854775808"));
+	return int(std::size(LTEXT("-9223372036854775808")));
 }
 
 /*! @brief 整数を10進数の文字列に変換

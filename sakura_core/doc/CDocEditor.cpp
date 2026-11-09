@@ -199,7 +199,7 @@ bool CDocEditor::IsEnablePaste() const
 	@param cEol     [in] 行末コード
 
 */
-void CDocEditAgent::AddLineStrX( const wchar_t* pData, int nDataLen )
+void CDocEditAgent::AddLineStrX( const WCHAR* pData, int nDataLen )
 {
 	//チェーン適用
 	CDocLine* pDocLine = m_pcDocLineMgr->AddNewLine();

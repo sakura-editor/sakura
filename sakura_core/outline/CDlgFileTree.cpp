@@ -96,18 +96,18 @@ static WCHAR* GetFileTreeLabel( const SFileTreeItem& item )
 	const WCHAR* pszLabel;
 	if( item.m_eFileTreeItemType != EFileTreeItemType_Folder ){
 		pszLabel = item.m_szLabelName;
-		if( item.m_szLabelName[0] == L'\0' ){
+		if( item.m_szLabelName[0] == LCHAR('\0') ){
 			pszLabel = item.m_szTargetPath;
-			if( 0 == wcscmp(pszLabel, L".")
-			  || 0 == wcscmp(pszLabel, L".\\") 
-			  || 0 == wcscmp(pszLabel, L"./") ){
+			if( 0 == wcscmp(pszLabel, LTEXT("."))
+			  || 0 == wcscmp(pszLabel, LTEXT(".\\")) 
+			  || 0 == wcscmp(pszLabel, LTEXT("./")) ){
 				pszLabel = LS(STR_FILETREE_CURDIR);
 			}
 		}
 	}else{
 		pszLabel = item.m_szLabelName;
-		if( pszLabel[0] == L'\0' ){
-			pszLabel = L"Folder";
+		if( pszLabel[0] == LCHAR('\0') ){
+			pszLabel = LTEXT("Folder");
 		}
 	}
 	return const_cast<WCHAR*>(pszLabel);
@@ -122,7 +122,7 @@ void CDlgFileTree::SetData()
 	HTREEITEM hSelect = nullptr;
 	m_aItemRemoveList.clear();
 	TreeView_DeleteAllItems(hwndTree);
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == LCHAR('\0'));
 	for( int i = 0; i < (int)m_fileTreeSetting.m_aItems.size(); i++ ){
 		const auto nMaxCount = int(std::size(GetDllShareData().m_Common.m_sOutline.m_sFileTree.m_aItems));
 		if( bSaveShareData && nMaxCount < i + 1 ){
@@ -164,7 +164,7 @@ void CDlgFileTree::SetDataItem(LPARAM nItemIndex)
 	}
 	SFileTreeItem itemDummy;
 	const SFileTreeItem& item = (bDummy ? itemDummy : m_fileTreeSetting.m_aItems[nItemIndex]);
-	itemDummy.m_szTargetFile = L"*.*";
+	itemDummy.m_szTargetFile = LTEXT("*.*");
 	int nIDs[] ={IDC_RADIO_GREP, IDC_RADIO_FILE, IDC_RADIO_FOLDER};
 	int nID1 = 0;
 	int nID2 = 0;
@@ -211,7 +211,7 @@ void CDlgFileTree::ChangeEnableItemType()
 
 void CDlgFileTree::ChangeEnableAddInsert()
 {
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == LCHAR('\0'));
 	if( bSaveShareData ){
 		int nCount = TreeView_GetCount(GetItemHwnd(IDC_TREE_FL));
 		bool bEnable = true;
@@ -243,7 +243,7 @@ int CDlgFileTree::GetData()
 			pFileTree = &type.m_sFileTree;
 		}
 	}
-	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == L'\0');
+	bool bSaveShareData = (m_fileTreeSetting.m_szLoadProjectIni[0] == LCHAR('\0'));
 	std::vector<SFileTreeItem> items;
 	if( !GetDataTree(items, TreeView_GetRoot(GetItemHwnd(IDC_TREE_FL)), 0, (bSaveShareData ? int(std::size(pFileTree->m_aItems)) : 0) ) ){
 		InfoMessage(GetHwnd(), LS(STR_FILETREE_MAXCOUNT));
@@ -265,10 +265,10 @@ int CDlgFileTree::GetData()
 	if( false == bSaveShareData ){
 		// 元のiniに保存
 		CImpExpFileTree cImpExp(items);
-		std::wstring strIni = LPCWSTR(m_fileTreeSetting.m_szLoadProjectIni);
-		std::wstring strError;
+		sakura::wstring strIni = LPCWSTR(m_fileTreeSetting.m_szLoadProjectIni);
+		sakura::wstring strError;
 		if( false == cImpExp.Export(strIni, strError) ){
-			ErrorMessage(hwndDlg, L"%ls", strError.c_str());
+			ErrorMessage(hwndDlg, LTEXT("%ls"), strError.c_str());
 		}
 	}
 	return TRUE;
@@ -359,9 +359,9 @@ void CDlgFileTree::SetDataInit()
 		}else{
 			id = STR_FILETREE_FROM_TYPE;
 		}
-		std::wstring str = LS(id);
-		if( m_fileTreeSetting.m_szLoadProjectIni[0] != L'\0' ){
-			str += L"+";
+		sakura::wstring str = LS(id);
+		if( m_fileTreeSetting.m_szLoadProjectIni[0] != LCHAR('\0') ){
+			str += LTEXT("+");
 			str += LS(F_FILE_TOPMENU);
 		}
 		::SetWindowText(GetItemHwnd(IDC_STATIC_SETTFING_FROM), str.c_str() );
@@ -372,7 +372,7 @@ void CDlgFileTree::SetDataInit()
 		CTextWidthCalc calc(GetHwnd(), IDC_STATIC_SETTFING_FROM);
 		RECT rc;
 		GetWindowRect( GetItemHwnd(IDC_STATIC_SETTFING_FROM), &rc);
-		const int xWidth = calc.GetTextWidth(L"x");
+		const int xWidth = calc.GetTextWidth(LTEXT("x"));
 		const int ctrlWidth = rc.right - rc.left;
 		int nMaxCch = ctrlWidth / xWidth;
 		CFileNameManager::getInstance()->GetTransformFileNameFast(pFile, szFilePath, int(std::size(szFilePath)), calc.GetDC(), true, nMaxCch);
@@ -467,13 +467,13 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	{
 	case IDC_BUTTON_REF1:
 		{
-			CDlgOpenFile::SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), L"*.ini", true, EFITER_NONE );
+			CDlgOpenFile::SelectFile( GetHwnd(), GetItemHwnd(IDC_EDIT_DEFINI), LTEXT("*.ini"), true, EFITER_NONE );
 		}
 		return TRUE;
 	case IDC_BUTTON_LOAD:
 		{
 			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_DEFINI, m_fileTreeSetting.m_szDefaultProjectIni, m_fileTreeSetting.m_szDefaultProjectIni.GetBufferCount() );
-			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != L'\0' ){
+			if( m_fileTreeSetting.m_szDefaultProjectIni[0] != LCHAR('\0') ){
 				CDataProfile cProfile;
 				cProfile.SetReadingMode();
 				const WCHAR* pszIniFileName;
@@ -531,12 +531,12 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 				CDlgOpenFile dlg;
 				WCHAR szDir[_MAX_PATH];
 				GetInidir(szDir);
-				dlg.Create( G_AppInstance(), hwndDlg, L"*.*", szDir,
+				dlg.Create( G_AppInstance(), hwndDlg, LTEXT("*.*"), szDir,
 					std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
 				WCHAR szFile[_MAX_PATH];
 				if( dlg.DoModal_GetOpenFileName(szFile) ){
 					CNativeW cmemFile = szFile;
-					cmemFile.Replace(L"%", L"%%");
+					cmemFile.Replace(LTEXT("%"), LTEXT("%%"));
 					ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PATH, cmemFile.GetStringPtr() );
 				}
 			}
@@ -576,8 +576,8 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 			::DestroyMenu( hMenu );
 			if( nId != 0 ){
 				int index = nId - MENU_ROOT;
-				const WCHAR* pszPaths[] = { L"<iniroot>", L"%MYDOC%", L"%MYMUSIC%", L"%MYVIDEO%",
-					L"%DESKTOP%", L"%TEMP%", L"%SAKURA%", L"%SAKURADATA%" };
+				const WCHAR* pszPaths[] = { LTEXT("<iniroot>"), LTEXT("%MYDOC%"), LTEXT("%MYMUSIC%"), LTEXT("%MYVIDEO%"),
+					LTEXT("%DESKTOP%"), LTEXT("%TEMP%"), LTEXT("%SAKURA%"), LTEXT("%SAKURADATA%") };
 				ApiWrap::EditCtl_ReplaceSel(GetItemHwnd(IDC_EDIT_PATH), pszPaths[index]);
 			}
 		}
@@ -699,8 +699,8 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 		{
 			CDlgOpenFile dlg;
 			SLoadInfo sLoadInfo;
-			std::vector<std::wstring> aFileNames;
-			dlg.Create( G_AppInstance(), GetHwnd(), L"*.*", L".",
+			std::vector<sakura::wstring> aFileNames;
+			dlg.Create( G_AppInstance(), GetHwnd(), LTEXT("*.*"), LTEXT("."),
 				std::vector<LPCWSTR>(), std::vector<LPCWSTR>() );
 			if( dlg.DoModalOpenDlg(&sLoadInfo, &aFileNames, false) ){
 				if( 0 < aFileNames.size() ){
@@ -736,7 +736,7 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 					HTREEITEM htiItemFirst = nullptr;
 					for( int i = 0; i < (int)aFileNames.size(); i++ ){
 						CNativeW cmemFile = aFileNames[i].c_str();
-						cmemFile.Replace(L"%", L"%%");
+						cmemFile.Replace(LTEXT("%"), LTEXT("%%"));
 						SFileTreeItem item;
 						item.m_eFileTreeItemType = EFileTreeItemType_File;
 						item.m_szTargetPath = cmemFile.GetStringPtr();
@@ -758,13 +758,13 @@ BOOL CDlgFileTree::OnBnClicked( int wID )
 	case IDC_BUTTON_REPLACE:
 		{
 			CDlgInput1 dlgInput;
-			std::wstring strMsg = LS(STR_FILETREE_REPLACE_PATH_FROM);
-			std::wstring strTitle = LS(STR_DLGREPLC_STR);
+			sakura::wstring strMsg = LS(STR_FILETREE_REPLACE_PATH_FROM);
+			sakura::wstring strTitle = LS(STR_DLGREPLC_STR);
 			WCHAR szPathFrom[_MAX_PATH];
-			szPathFrom[0] = L'\0';
+			szPathFrom[0] = LCHAR('\0');
 			if( dlgInput.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathFrom)) - 1, szPathFrom) ){
 				WCHAR szPathTo[_MAX_PATH];
-				szPathTo[0] = L'\0';
+				szPathTo[0] = LCHAR('\0');
 				strMsg = LS(STR_FILETREE_REPLACE_PATH_TO);
 				if( dlgInput.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMsg.c_str(), int(std::size(szPathTo)) - 1, szPathTo) ){
 					int nItemsCount = (int)m_fileTreeSetting.m_aItems.size();

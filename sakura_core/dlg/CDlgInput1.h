@@ -33,7 +33,7 @@ class CDlgInput1 : public TSakuraSingleton<CDlgInput1>
 {
 private:
 	using SBuffer = std::span<WCHAR>;
-	using SFuncType = std::function<int(HWND, std::wstring_view, size_t)>;
+	using SFuncType = std::function<int(HWND, sakura::wstring_view, size_t)>;
 
 	using Me = CDlgInput1;
 
@@ -45,7 +45,7 @@ public:
 		LPARAM lParam
 	);
 
-	static int NoValidation(HWND hWndDlg, std::wstring_view text, size_t cchBuffer);
+	static int NoValidation(HWND hWndDlg, sakura::wstring_view text, size_t cchBuffer);
 
 	static LRESULT CALLBACK SubclassProc(
 		HWND hWnd,
@@ -69,8 +69,8 @@ public:
 
 	BOOL DoModal(
 		_In_opt_ HWND hWndOwner,
-		std::wstring_view title,
-		std::wstring_view message,
+		sakura::wstring_view title,
+		sakura::wstring_view message,
 		std::span<WCHAR> buffer,
 		const std::optional<SFuncType>& optFunc = std::nullopt
 	);
@@ -94,8 +94,8 @@ public:
 	{
 		return DoModal(
 			hWndOwner,
-			static_cast<std::wstring_view>(cxx::NullTerminatedString(title)),
-			static_cast<std::wstring_view>(cxx::NullTerminatedString(message)),
+			static_cast<sakura::wstring_view>(cxx::NullTerminatedString(title)),
+			static_cast<sakura::wstring_view>(cxx::NullTerminatedString(message)),
 			static_cast<std::span<WCHAR>>(buffer),
 			optFunc
 		);
@@ -103,9 +103,9 @@ public:
 
 	BOOL DoModal(
 		_In_opt_ HWND hWndOwner,
-		std::wstring_view title,
-		std::wstring_view message,
-		std::wstring& buffer,
+		sakura::wstring_view title,
+		sakura::wstring_view message,
+		sakura::wstring& buffer,
 		const std::optional<SFuncType>& optFunc = std::nullopt
 	);
 
@@ -128,8 +128,8 @@ public:
 
 	HWND			m_hWnd;		/* このダイアログのハンドル */
 
-	std::wstring	m_Title;	/* ダイアログタイトル */
-	std::wstring	m_Message;	/* メッセージ */
+	sakura::wstring	m_Title;	/* ダイアログタイトル */
+	sakura::wstring	m_Message;	/* メッセージ */
 	SBuffer			m_Text;		/* テキスト */
 
 	SFuncType		m_Func = &NoValidation;

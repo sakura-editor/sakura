@@ -30,10 +30,10 @@ struct SysString
 	SysString()                         { Data = nullptr; }
 	SysString(const SysString &Source)  { Data = ::SysAllocStringLen(Source.Data, SysStringLen(Source.Data)); }
 	SysString(BSTR &Source)             { Data = ::SysAllocStringLen(Source, SysStringLen(Source)); }
-	SysString(const wchar_t *S, size_t L)  { Data = ::SysAllocStringLen(S, UINT(L)); }
+	SysString(const WCHAR *S, size_t L)  { Data = ::SysAllocStringLen(S, UINT(L)); }
 	SysString(const char *S, size_t L)
 	{ 
-		wchar_t *buf = new wchar_t[L + 1];
+		WCHAR *buf = new WCHAR[L + 1];
 		int L2 = ::MultiByteToWideChar(CP_ACP, 0, S, int(L), buf, int(L));
 		Data = ::SysAllocStringLen(buf, L2); 
 		delete[] buf;
@@ -48,13 +48,13 @@ struct SysString
 		*L = ::WideCharToMultiByte(CP_ACP, 0, Data, Len, *S, Len * 2, nullptr, nullptr);
 		(*S)[*L] = 0;
 	}
-	void GetW(wchar_t **S, int *L)
+	void GetW(WCHAR **S, int *L)
 	{
 		int Len = ::SysStringLen(Data);
-		*S = new wchar_t[Len + 1];
+		*S = new WCHAR[Len + 1];
 		*L = Len;
 		wmemcpy(*S, Data, Len);
-		(*S)[Len] = L'\0';
+		(*S)[Len] = LCHAR('\0');
 	}
 	void Get(std::string* str)
 	{
@@ -64,7 +64,7 @@ struct SysString
 		str->assign(S, Len);
 		delete [] S;
 	}
-	void GetW(std::wstring* str)
+	void GetW(sakura::wstring* str)
 	{
 		size_t Len = ::SysStringLen(Data);
 		str->assign(Data, Len);

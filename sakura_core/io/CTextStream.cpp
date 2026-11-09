@@ -22,7 +22,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CTextInputStream::CTextInputStream(const WCHAR* pszPath)
-: CStream(pszPath,L"rb")
+: CStream(pszPath,LTEXT("rb"))
 {
 	if(Good()){
 		//BOM確認 -> m_bIsUtf8
@@ -54,7 +54,7 @@ CTextInputStream::~CTextInputStream()
 /*!
  * @brief 1行読込。改行は削る
  */
-void CTextInputStream::ReadLineW(std::wstring& line)
+void CTextInputStream::ReadLineW(sakura::wstring& line)
 {
 	//$$ 非効率だけど今のところは許して。。
 
@@ -107,9 +107,9 @@ void CTextInputStream::ReadLineW(std::wstring& line)
  *
  * @note 既存コード互換のため残しておく。
  */
-std::wstring CTextInputStream::ReadLineW()
+sakura::wstring CTextInputStream::ReadLineW()
 {
-	std::wstring line;
+	sakura::wstring line;
 	ReadLineW(line);
 	return line;
 }
@@ -119,7 +119,7 @@ std::wstring CTextInputStream::ReadLineW()
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CTextOutputStream::CTextOutputStream(const WCHAR* pszPath, ECodeType eCodeType, bool bExceptionMode, bool bBom)
-: COutputStream(pszPath,L"wb",bExceptionMode)
+: COutputStream(pszPath,LTEXT("wb"),bExceptionMode)
 {
 	m_pcCodeBase = CCodeFactory::CreateCodeBase(eCodeType,0);
 	if(Good() && bBom){
@@ -138,7 +138,7 @@ CTextOutputStream::~CTextOutputStream()
 }
 
 void CTextOutputStream::WriteString(
-	const wchar_t*	szData,	//!< 書き込む文字列
+	const WCHAR*	szData,	//!< 書き込む文字列
 	int				nLen	//!< 書き込む文字列長。-1を渡すと自動計算。
 )
 {
@@ -146,19 +146,19 @@ void CTextOutputStream::WriteString(
 
 	int nDataLen = nLen;
 	if(nDataLen<0)nDataLen = (int)wcslen(szData);
-	const wchar_t* pData = szData;
-	const wchar_t* pEnd = szData + nDataLen;
+	const WCHAR* pData = szData;
+	const WCHAR* pEnd = szData + nDataLen;
 
 	//1行毎にカキコ。"\n"は"\r\n"に変換しながら出力。ただし、"\r\n"は"\r\r\n"に変換しない。
-	const wchar_t* p = pData;
+	const WCHAR* p = pData;
 	for (;;) {
 		//\nを検出。ただし\r\nは除外。
-		const wchar_t* q = p;
+		const WCHAR* q = p;
 		while(q<pEnd){
-			if(*q==L'\n' && !((q-1)>=p && *(q-1)==L'\r') )break;
+			if(*q==LCHAR('\n') && !((q-1)>=p && *(q-1)==LCHAR('\r')) )break;
 			q++;
 		}
-		const wchar_t* lf;
+		const WCHAR* lf;
 		if(q<pEnd)lf = q;
 		else lf = nullptr;
 
@@ -170,7 +170,7 @@ void CTextOutputStream::WriteString(
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
 
 			//\r\nを出力
-			cSrc.SetString(L"\r\n");
+			cSrc.SetString(LTEXT("\r\n"));
 			m_pcCodeBase->UnicodeToCode(cSrc,&cDst);
 			fwrite(cDst.GetRawPtr(),1,cDst.GetRawLength(),GetFp());
 

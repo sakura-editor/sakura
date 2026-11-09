@@ -26,7 +26,7 @@ class CStringRef final{
 public:
 	CStringRef() noexcept = default;
 
-	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
+	CStringRef( const WCHAR* pData, size_t nDataLen ) noexcept;
 
 	/*!
 	 * @brief 文字列を指定して構築する
@@ -41,7 +41,7 @@ public:
 		const auto szText = cxx::NullTerminatedString<WCHAR>{ source };
 
 		// 入力元を文字列として扱う
-		const auto text = static_cast<std::wstring_view>(szText);
+		const auto text = static_cast<sakura::wstring_view>(szText);
 
 		m_pData = text.data();
 		m_nDataLen = static_cast<unsigned>(text.length());
@@ -76,25 +76,25 @@ public:
 	 *
 	 * @return 文字列参照
 	 */
-	constexpr std::wstring_view str() const noexcept
+	constexpr sakura::wstring_view str() const noexcept
 	{
-		return std::wstring_view{ data(), length() };
+		return sakura::wstring_view{ data(), length() };
 	}
 
-	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
+	[[nodiscard]] const WCHAR* GetPtr() const noexcept { return m_pData; }
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
 	[[nodiscard]] bool IsValid() const noexcept { return m_pData != nullptr; }
-	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
-	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
+	[[nodiscard]] WCHAR At( size_t nIndex ) const noexcept;
+	[[nodiscard]] WCHAR operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
 	/*!
 	 * @brief 文字列に変換する演算子
 	 *
 	 * @return 文字列
 	 */
-	constexpr explicit operator std::wstring() const
+	constexpr explicit operator sakura::wstring() const
 	{
-		return std::wstring{ str() };
+		return sakura::wstring{ str() };
 	}
 
 	/*!
@@ -102,19 +102,19 @@ public:
 	 *
 	 * @return 文字列参照
 	 */
-	constexpr explicit operator std::wstring_view() const& noexcept
+	constexpr explicit operator sakura::wstring_view() const& noexcept
 	{
 		return str();
 	}
 
 private:
-	const wchar_t*	m_pData = nullptr;
+	const WCHAR*	m_pData = nullptr;
 	unsigned		m_nDataLen = 0;
 };
 
 // グローバル演算子の前方宣言
-CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
-CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
+CNativeW operator + (const CNativeW& lhs, const WCHAR* rhs) noexcept(false);
+CNativeW operator + (const WCHAR* lhs, const CNativeW& rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
@@ -151,11 +151,11 @@ public:
 		const auto szText = cxx::NullTerminatedString<WCHAR>{ source };
 
 		// 入力元を文字列として扱う
-		const auto text = static_cast<std::wstring_view>(szText);
+		const auto text = static_cast<sakura::wstring_view>(szText);
 		SetString(text.data(), text.length());
 	}
 
-	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
+	CNativeW( const WCHAR* pData, size_t nDataLen ); //!< nDataLenは文字単位。
 
 	/*!
 	 * @brief バッファへのポインタを取得する
@@ -186,9 +186,9 @@ public:
 	 *
 	 * @return 文字列参照
 	 */
-	std::wstring_view str() const noexcept
+	sakura::wstring_view str() const noexcept
 	{
-		return std::wstring_view{ data(), length() };
+		return sakura::wstring_view{ data(), length() };
 	}
 
 	/*! メモリ確保済みかどうか */
@@ -198,7 +198,7 @@ public:
 	void AllocStringBuffer( size_t nDataLen );                    //!< (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 
 	//WCHAR
-	void SetString( const wchar_t* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
+	void SetString( const WCHAR* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
 
 	/*!
 	 * @brief バッファの内容を置き換える
@@ -208,7 +208,7 @@ public:
 	void SetString(_In_opt_z_ LPCWSTR pszData)
 	{
 		if (pszData) {
-			std::wstring_view data(pszData);
+			sakura::wstring_view data(pszData);
 			SetString(data.data(), data.length());
 		}
 		else {
@@ -216,9 +216,9 @@ public:
 		}
 	}
 
-	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
+	void SetStringHoldBuffer( const WCHAR* pData, size_t nDataLen );
 
-	void AppendString( const wchar_t* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
+	void AppendString( const WCHAR* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
 
 	/*!
 	 * @brief バッファの最後にデータを追加する
@@ -228,7 +228,7 @@ public:
 	void AppendString(_In_opt_z_ LPCWSTR pszData)
 	{
 		if (pszData) {
-			std::wstring_view text(pszData);
+			sakura::wstring_view text(pszData);
 			AppendString(text.data(), text.length());
 		}
 		else {
@@ -247,7 +247,7 @@ public:
 	 */
 	template <typename... Params>
 	void AppendStringF(
-		std::wstring_view format,
+		sakura::wstring_view format,
 		const Params&... params
 	)
 	{
@@ -364,24 +364,24 @@ public:
 	}
 
 	//ネイティブ取得インターフェース
-	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
+	[[nodiscard]] WCHAR operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
 	CLogicInt GetStringLength() const                        //!< 文字列長を返す。文字単位。
 	{
-		return CLogicInt(CNative::GetRawLength() / sizeof(wchar_t));
+		return CLogicInt(CNative::GetRawLength() / sizeof(WCHAR));
 	}
-	const wchar_t* GetStringPtr() const
+	const WCHAR* GetStringPtr() const
 	{
-		return reinterpret_cast<const wchar_t*>(GetRawPtr());
+		return reinterpret_cast<const WCHAR*>(GetRawPtr());
 	}
-	wchar_t* GetStringPtr()
+	WCHAR* GetStringPtr()
 	{
-		return reinterpret_cast<wchar_t*>(GetRawPtr());
+		return reinterpret_cast<WCHAR*>(GetRawPtr());
 	}
 
 	//特殊
 	void _SetStringLength( size_t nLength )
 	{
-		_SetRawLength( nLength * sizeof(wchar_t) );
+		_SetRawLength( nLength * sizeof(WCHAR) );
 	}
 	//末尾を1文字削る
 	void Chop()
@@ -398,7 +398,7 @@ public:
 	}
 	//! メモリ再確保を行わずに格納できる最大文字数を求める
 	[[nodiscard]] int capacity() const noexcept {
-		return CMemory::capacity() / sizeof(wchar_t);
+		return CMemory::capacity() / sizeof(WCHAR);
 	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -406,9 +406,9 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	
 	int Compare(const CNativeW& rhs) const noexcept;
-	int Compare(const wchar_t* rhs) const noexcept;
+	int Compare(const WCHAR* rhs) const noexcept;
 	bool Equals(const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
-	bool Equals(const wchar_t* rhs) const noexcept { return 0 == Compare(rhs); }
+	bool Equals(const WCHAR* rhs) const noexcept { return 0 == Compare(rhs); }
 
 	//! 同一の文字列ならtrue
 	static bool IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 );
@@ -417,8 +417,8 @@ public:
 	//                           変換                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
-	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
+	void Replace( sakura::wstring_view strFrom, sakura::wstring_view strTo );   //!< 文字列置換
+	void Replace( const WCHAR* pszFrom, size_t nFromLen, const WCHAR* pszTo, size_t nToLen );   //!< 文字列置換
 
 	/*!
 	 * @brief バッファの最後にデータを追加する
@@ -447,7 +447,7 @@ public:
 		const auto szText = cxx::NullTerminatedString{ rhs };
 
 		// 入力元を文字列として扱う
-		const auto text = static_cast<std::wstring_view>(szText);
+		const auto text = static_cast<sakura::wstring_view>(szText);
 		AppendString(text.data(), text.length());
 
 		return *this;
@@ -471,9 +471,9 @@ public:
 	 *
 	 * @return 文字列
 	 */
-	explicit operator std::wstring() const
+	explicit operator sakura::wstring() const
 	{
-		return std::wstring{ str() };
+		return sakura::wstring{ str() };
 	}
 
 	/*!
@@ -481,7 +481,7 @@ public:
 	 *
 	 * @return 文字列参照
 	 */
-	explicit operator std::wstring_view() const& noexcept
+	explicit operator sakura::wstring_view() const& noexcept
 	{
 		return str();
 	}
@@ -489,18 +489,18 @@ public:
 public:
 	// -- -- staticインターフェース -- -- //
 	//! 指定した位置の文字がwchar_t何個分かを返す
-	static CLogicInt GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index );
+	static CLogicInt GetSizeOfChar( const WCHAR* pData, size_t cchData, size_t index );
 	static CLogicInt GetSizeOfChar( const CStringRef& cStr, size_t index )
 		{ return GetSizeOfChar( cStr.GetPtr(), cStr.GetLength(), index ); }
 	//! 指定した位置の文字が半角何個分かを返す
-	static CKetaXInt GetKetaOfChar(const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache = GetCharWidthCache());
+	static CKetaXInt GetKetaOfChar(const WCHAR* pData, size_t cchData, size_t index, CCharWidthCache& cache = GetCharWidthCache());
 	static CKetaXInt GetKetaOfChar(const CStringRef& cStr, size_t index, CCharWidthCache& cache = GetCharWidthCache())
 		{ return GetKetaOfChar(cStr.GetPtr(), cStr.GetLength(), index, cache); }
-	static const wchar_t* GetCharNext(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の次にある文字の位置を返します
-	static const wchar_t* GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
+	static const WCHAR* GetCharNext(const WCHAR* pData, size_t nDataLen, const WCHAR* pDataCurrent); //!< ポインタで示した文字の次にある文字の位置を返します
+	static const WCHAR* GetCharPrev(const WCHAR* pData, size_t nDataLen, const WCHAR* pDataCurrent); //!< ポインタで示した文字の直前にある文字の位置を返します
 
-	static CHabaXInt GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
-	static CLayoutXInt GetColmOfChar( const wchar_t* pData, size_t cchData, size_t index, bool bEnableExtEol )
+	static CHabaXInt GetHabaOfChar( const WCHAR* pData, size_t cchData, size_t index, bool bEnableExtEol, CCharWidthCache& cache = GetCharWidthCache() );
+	static CLayoutXInt GetColmOfChar( const WCHAR* pData, size_t cchData, size_t index, bool bEnableExtEol )
 		{ return GetHabaOfChar(pData, cchData, index, bEnableExtEol); }
 	static CLayoutXInt GetColmOfChar( const CStringRef& cStr, size_t index, bool bEnableExtEol )
 		{ return GetHabaOfChar(cStr.GetPtr(), cStr.GetLength(), index, bEnableExtEol); }

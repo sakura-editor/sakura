@@ -192,13 +192,13 @@ public:
 	explicit GlobalWString(SIZE_T cch) : GlobalMemory(sizeof(WCHAR) * (cch + 1)) {}
 
 	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-	explicit GlobalWString(std::wstring_view text);
+	explicit GlobalWString(sakura::wstring_view text);
 
 	//文字列を指定して更新する
-	void SetText(std::wstring_view text) const;
+	void SetText(sakura::wstring_view text) const;
 
 	//格納されている文字列データのコピーを取得する
-	std::wstring wstring() const &;
+	sakura::wstring wstring() const &;
 };
 
 /*!
@@ -333,16 +333,16 @@ public:
 	using Base::Base;
 
 	//文字列を指定して必要サイズを計算する
-	static size_t CalcSize(std::wstring_view text) noexcept;
+	static size_t CalcSize(sakura::wstring_view text) noexcept;
 
 	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-	explicit GlobalSakura(std::wstring_view text);
+	explicit GlobalSakura(sakura::wstring_view text);
 
 	//文字列を指定して更新する
-	void SetText(std::wstring_view text) const;
+	void SetText(sakura::wstring_view text) const;
 
 	//格納されている文字列データのコピーを取得する
-	std::wstring wstring() const &;
+	sakura::wstring wstring() const &;
 };
 
 GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
@@ -352,7 +352,7 @@ GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
  *
  * @return カレントディレクトリのパス
  */
-std::wstring GetCurrentDirectoryW();
+sakura::wstring GetCurrentDirectoryW();
 
 /*!
  * @brief モジュールのファイルパスを取得する
@@ -360,7 +360,7 @@ std::wstring GetCurrentDirectoryW();
  * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
  * @return モジュールのファイルパス
  */
-std::wstring GetModuleFileNameW(
+sakura::wstring GetModuleFileNameW(
 	_In_opt_ HMODULE hModule
 );
 
@@ -369,7 +369,7 @@ std::wstring GetModuleFileNameW(
  *
  * @return システムディレクトリのパス
  */
-std::wstring GetSystemDirectoryW();
+sakura::wstring GetSystemDirectoryW();
 
 /*!
  * @brief ファイルマッピングのビューを取得する
@@ -396,9 +396,9 @@ std::span<std::byte> MapViewOfFile(
  * @param[in, opt] dwReplaceFlags 置換フラグ
  */
 void ReplaceFileW(
-	std::wstring_view replacedFileName,
-	std::wstring_view replacementFileName,
-	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	sakura::wstring_view replacedFileName,
+	sakura::wstring_view replacementFileName,
+	const std::optional<sakura::wstring>& optBackupFileName = std::nullopt,
 	_In_ DWORD dwReplaceFlags = 0
 );
 
@@ -413,11 +413,11 @@ void ReplaceFileW(
 template <
 	basis::NullTerminatedStringConstructible<WCHAR> A1,
 	basis::NullTerminatedStringConstructible<WCHAR> A2
-> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+> requires (!std::is_same_v<A1, sakura::wstring_view> || !std::is_same_v<A2, sakura::wstring_view>)
 void ReplaceFileW(
 	const A1 & replacedFileName,
 	const A2 & replacementFileName,
-	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	const std::optional<sakura::wstring>& optBackupFileName = std::nullopt,
 	_In_ DWORD dwReplaceFlags = 0
 )
 {
@@ -440,7 +440,7 @@ void ReplaceFileW(
  * @param[in] newPath 新しいディレクトリ
  */
 void SetCurrentDirectoryW(
-	std::wstring_view newPath
+	sakura::wstring_view newPath
 );
 
 } // namespace cxx

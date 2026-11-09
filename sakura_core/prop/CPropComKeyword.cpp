@@ -90,7 +90,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 	static HWND			hwndLIST_KEYWORD;
 	RECT				rc;
 	auto& cDlgInput1 = *CDlgInput1::getInstance();
-	wchar_t				szKeyWord[MAX_KEYWORDLEN + 1];
+	WCHAR				szKeyWord[MAX_KEYWORDLEN + 1];
 	LONG_PTR			lStyle;
 	LV_DISPINFO*		plvdi;
 	LV_KEYDOWN*			pnkd;
@@ -117,8 +117,8 @@ INT_PTR CPropKeyword::DispatchEvent(
 			auto dlgWidth = rc.right - rc.left;
 			auto dlgHeight = btnRect.bottom - rc.top + DpiScaleY(15);
 			SetWindowPos( hwndDlg, nullptr, 0, 0, dlgWidth, dlgHeight, SWP_NOZORDER|SWP_NOMOVE );
-			std::wstring title = LS(STR_PROPCOMMON);
-			title += L" - ";
+			sakura::wstring title = LS(STR_PROPCOMMON);
+			title += LTEXT(" - ");
 			title += LS(STR_PROPCOMMON_KEYWORD);
 			SetWindowText( hwndDlg, title.c_str() );
 		}
@@ -136,7 +136,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 		lvc.fmt = LVCFMT_LEFT;
 		lvc.cx = rc.right - rc.left;
-		lvc.pszText = const_cast<WCHAR*>(L"");
+		lvc.pszText = const_cast<WCHAR*>(LTEXT(""));
 		lvc.iSubItem = 0;
 		ListView_InsertColumn( hwndLIST_KEYWORD, 0, &lvc );
 
@@ -163,35 +163,35 @@ INT_PTR CPropKeyword::DispatchEvent(
 				return TRUE;
 			case LVN_BEGINLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( L"LVN_BEGINLABELEDIT\n" );
-												MYTRACE( L"	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE( L"	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE( L"	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( L"	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE( L"	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( L"	plvi->pszText =[%s]\n", plvi->pszText );
-												MYTRACE( L"	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( L"	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( L"	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE( LTEXT("LVN_BEGINLABELEDIT\n") );
+												MYTRACE( LTEXT("	plvi->mask =[%xh]\n"), plvi->mask );
+												MYTRACE( LTEXT("	plvi->iItem =[%d]\n"), plvi->iItem );
+												MYTRACE( LTEXT("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( LTEXT("	plvi->state =[%xf]\n"), plvi->state );
+												MYTRACE( LTEXT("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( LTEXT("	plvi->pszText =[%s]\n"), plvi->pszText );
+												MYTRACE( LTEXT("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( LTEXT("	plvi->iImage=[%d]\n"), plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( LTEXT("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
 #endif
 				return TRUE;
 			case LVN_ENDLABELEDIT:
 #ifdef _DEBUG
-				MYTRACE( L"LVN_ENDLABELEDIT\n" );
-												MYTRACE( L"	plvi->mask =[%xh]\n", plvi->mask );
-												MYTRACE( L"	plvi->iItem =[%d]\n", plvi->iItem );
-												MYTRACE( L"	plvi->iSubItem =[%d]\n", plvi->iSubItem );
-				if (plvi->mask & LVIF_STATE)	MYTRACE( L"	plvi->state =[%xf]\n", plvi->state );
-												MYTRACE( L"	plvi->stateMask =[%xh]\n", plvi->stateMask );
-				if (plvi->mask & LVIF_TEXT)		MYTRACE( L"	plvi->pszText =[%s]\n", plvi->pszText  );
-												MYTRACE( L"	plvi->cchTextMax=[%d]\n", plvi->cchTextMax );
-				if (plvi->mask & LVIF_IMAGE)	MYTRACE( L"	plvi->iImage=[%d]\n", plvi->iImage );
-				if (plvi->mask & LVIF_PARAM)	MYTRACE( L"	plvi->lParam=[%xh(%d)]\n", plvi->lParam, plvi->lParam );
+				MYTRACE( LTEXT("LVN_ENDLABELEDIT\n") );
+												MYTRACE( LTEXT("	plvi->mask =[%xh]\n"), plvi->mask );
+												MYTRACE( LTEXT("	plvi->iItem =[%d]\n"), plvi->iItem );
+												MYTRACE( LTEXT("	plvi->iSubItem =[%d]\n"), plvi->iSubItem );
+				if (plvi->mask & LVIF_STATE)	MYTRACE( LTEXT("	plvi->state =[%xf]\n"), plvi->state );
+												MYTRACE( LTEXT("	plvi->stateMask =[%xh]\n"), plvi->stateMask );
+				if (plvi->mask & LVIF_TEXT)		MYTRACE( LTEXT("	plvi->pszText =[%s]\n"), plvi->pszText  );
+												MYTRACE( LTEXT("	plvi->cchTextMax=[%d]\n"), plvi->cchTextMax );
+				if (plvi->mask & LVIF_IMAGE)	MYTRACE( LTEXT("	plvi->iImage=[%d]\n"), plvi->iImage );
+				if (plvi->mask & LVIF_PARAM)	MYTRACE( LTEXT("	plvi->lParam=[%xh(%d)]\n"), plvi->lParam, plvi->lParam );
 #endif
 				if( nullptr == plvi->pszText ){
 					return TRUE;
 				}
-				if( plvi->pszText[0] != L'\0' ){
+				if( plvi->pszText[0] != LCHAR('\0') ){
 					if( MAX_KEYWORDLEN < wcslen( plvi->pszText ) ){
 						InfoMessage( hwndDlg, LS(STR_PROPCOMKEYWORD_ERR_LEN), MAX_KEYWORDLEN );
 						return TRUE;
@@ -236,7 +236,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 				OnHelp( hwndDlg, IDD_PROP_KEYWORD );
 				return TRUE;
 			case PSN_KILLACTIVE:
-				DEBUG_TRACE( L"Keyword PSN_KILLACTIVE\n" );
+				DEBUG_TRACE( LTEXT("Keyword PSN_KILLACTIVE\n") );
 				/* ダイアログデータの取得 Keyword */
 				GetData( hwndDlg );
 				return TRUE;
@@ -274,7 +274,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					szKeyWord[0] = L'\0';
+					szKeyWord[0] = LCHAR('\0');
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
 					if( !cDlgInput1.DoModal(
 						G_AppInstance(),
@@ -287,7 +287,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					){
 						return TRUE;
 					}
-					if( szKeyWord[0] != L'\0' ){
+					if( szKeyWord[0] != LCHAR('\0') ){
 						/* セットの追加 */
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWordSet( szKeyWord, false );
 
@@ -304,17 +304,17 @@ INT_PTR CPropKeyword::DispatchEvent(
 							return TRUE;
 						}
 						/* 削除対象のセットを使用しているファイルタイプを列挙 */
-						std::wstring strLabel;
+						sakura::wstring strLabel;
 						for( size_t i = 0; i < m_Types_nKeyWordSetIdx.size() ; ++i ){
 							// 2002/04/25 YAZAKI STypeConfig全体を保持する必要はないし、m_pShareDataを直接見ても問題ない。
 							for( int k = 0; k < MAX_KEYWORDSET_PER_TYPE; k++ ){
 								if( nIndex1 == m_Types_nKeyWordSetIdx[i].index[k] ){
-									std::wstring name;
-									std::wstring exts;
+									sakura::wstring name;
+									sakura::wstring exts;
 									bool bAdd = false;
 									if( m_Types_nKeyWordSetIdx[i].typeId == -1 ){
 										// タイプ別一時表示
-										name = L"(Temp)";
+										name = LTEXT("(Temp)");
 										name += m_tempTypeName;
 										exts = m_tempTypeExts;
 										bAdd = true;
@@ -328,11 +328,11 @@ INT_PTR CPropKeyword::DispatchEvent(
 										}
 									}
 									if( bAdd ){
-										strLabel += L"・";
+										strLabel += LTEXT("・");
 										strLabel += name;
-										strLabel +=  L"(";
+										strLabel +=  LTEXT("(");
 										strLabel += exts;
-										strLabel += L")\n";
+										strLabel += LTEXT(")\n");
 									}
 									break;
 								}
@@ -379,7 +379,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 							return TRUE;
 						}
 					}
-					if( szKeyWord[0] != L'\0' ){
+					if( szKeyWord[0] != LCHAR('\0') ){
 						m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord );
 
 						// ダイアログデータの設定 Keyword
@@ -397,11 +397,11 @@ INT_PTR CPropKeyword::DispatchEvent(
 						return TRUE;
 					}
 					/* モードレスダイアログの表示 */
-					szKeyWord[0] = L'\0';
+					szKeyWord[0] = LCHAR('\0');
 					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
-					if( szKeyWord[0] != L'\0' ){
+					if( szKeyWord[0] != LCHAR('\0') ){
 						/* ｎ番目のセットにキーワードを追加 */
 						if( 0 == m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.AddKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, szKeyWord ) ){
 							// ダイアログデータの設定 Keyword 指定キーワードセットの設定
@@ -490,7 +490,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 {
 	int			nIndex1;
 	LV_ITEM		lvi;
-	wchar_t		szKeyWord[MAX_KEYWORDLEN + 1];
+	WCHAR		szKeyWord[MAX_KEYWORDLEN + 1];
 	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	nIndex1 = ListView_GetNextItem( hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED );
@@ -509,7 +509,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYEDIT1), LS(STR_PROPCOMKEYWORD_KEYEDIT2), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
-	if( szKeyWord[0] != L'\0' ){
+	if( szKeyWord[0] != LCHAR('\0') ){
 		/* ｎ番目のセットにキーワードを編集 */
 		m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.UpdateKeyWord(
 			m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx,

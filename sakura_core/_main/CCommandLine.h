@@ -56,7 +56,7 @@ private:
 		@date 2002.12.05 genta
 	*/
 	static int AtoiOptionInt(const WCHAR* arg){
-		return ( arg[0] == L'"' || arg[0] == L'\'' ) ?
+		return ( arg[0] == LCHAR('"') || arg[0] == LCHAR('\'') ) ?
 			_wtoi( arg + 1 ) : _wtoi( arg );
 	}
 
@@ -77,7 +77,7 @@ public:
 	LPCWSTR GetProfileName() const noexcept { return m_ProfileName.c_str(); }
 	auto& GetProfileNameRef() noexcept { return m_ProfileName; }
 	bool IsSetProfile() const noexcept { return m_bSetProfile; }
-	void	SetProfileName(std::wstring_view newProfileName);
+	void	SetProfileName(sakura::wstring_view newProfileName);
 	bool IsProfileMgr() const noexcept { return m_bProfileMgr; }
 	const CLogicPoint& GetCaretLocation() const noexcept { return m_fi.m_ptCursor; }
 	CLayoutPoint GetViewLocation() const noexcept { return { m_fi.m_nViewLeftCol,  m_fi.m_nViewTopLine }; }
@@ -88,7 +88,7 @@ public:
 	const WCHAR* GetFileName(int i) const noexcept { return i < GetFileNum() ? m_vFiles[i].c_str() : nullptr; }
 	void ClearFile(void) noexcept { m_vFiles.clear(); }
 	LPCWSTR GetDocType() const noexcept { return m_fi.m_szDocType; }
-	void	SetDocType(std::wstring_view newDocType);
+	void	SetDocType(sakura::wstring_view newDocType);
 	ECodeType GetDocCode() const noexcept { return m_fi.m_nCharCode; }
 	void ParseKanjiCodeFromFileName( LPWSTR pszExeFileName, int cchExeFileName );
 	void ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse = true );
@@ -108,15 +108,15 @@ private:
 	CNativeW	m_cmMacro;			//! [out] マクロファイル名／マクロ文
 	CNativeW	m_cmMacroType;		//! [out] マクロ種別
 	SProfileName	m_ProfileName{};		//! プロファイル名
-	std::vector<std::wstring> m_vFiles;	//!< ファイル名(複数)
+	std::vector<sakura::wstring> m_vFiles;	//!< ファイル名(複数)
 };
 
 namespace cxx {
 
-constexpr bool iequals(std::wstring_view lhs, std::wstring_view rhs)
+constexpr bool iequals(sakura::wstring_view lhs, sakura::wstring_view rhs)
 {
     return lhs.size() == rhs.size() &&
-		std::ranges::equal(lhs, rhs, [] (wchar_t a, wchar_t b) {
+		std::ranges::equal(lhs, rhs, [] (WCHAR a, WCHAR b) {
             return std::towupper(a) == std::towupper(b);
         });
 }

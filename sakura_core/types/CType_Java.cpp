@@ -19,12 +19,12 @@
 void CType_Java::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Java" );
-	wcscpy( pType->m_szTypeExts, L"java,jav" );
+	wcscpy( pType->m_szTypeName, LTEXT("Java") );
+	wcscpy( pType->m_szTypeExts, LTEXT("java,jav") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"//", -1 );					/* 行コメントデリミタ */
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ブロックコメントデリミタ */
+	pType->m_cLineComment.CopyTo( 0, LTEXT("//"), -1 );					/* 行コメントデリミタ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( LTEXT("/*"), LTEXT("*/") );	/* ブロックコメントデリミタ */
 	pType->m_nKeyWordSetIdx[0] = 4;									/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_JAVA;						/* アウトライン解析方法 */
 	pType->m_eSmartIndent = SMARTINDENT_CPP;						/* スマートインデント種別 */
@@ -47,36 +47,36 @@ enum EFuncListJavaMode {
 /* Java関数リスト作成 */
 void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt	nLineLen;
 	int			i;
 	int			nNestLevel;
 	int			nCharChars;
-	wchar_t		szWordPrev[100];
-	wchar_t		szWord[100];
+	WCHAR		szWordPrev[100];
+	WCHAR		szWord[100];
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	EFuncListJavaMode	nMode;
-	wchar_t		szFuncName[100];
+	WCHAR		szFuncName[100];
 	CLogicInt	nFuncLine = CLogicInt(0);
 	int			nFuncId;
 	int			nFuncNum;
-	wchar_t		szClass[1024];
+	WCHAR		szClass[1024];
 
 	int			nClassNestArrNum;
 	std::vector<int>	nClassNestArr(0);
 	std::vector<int>	nNestLevel2Arr(0);
 
 	nNestLevel = 0;
-	szWordPrev[0] = L'\0';
-	szWord[nWordIdx] = L'\0';
+	szWordPrev[0] = LCHAR('\0');
+	szWord[nWordIdx] = LCHAR('\0');
 	nMode = FL_JAVA_MODE_NORMAL;
 	//nNestLevel2Arr[0] = 0;
 	nFuncNum = 0;
-	szClass[0] = L'\0';
+	szClass[0] = LCHAR('\0');
 	nClassNestArrNum = 0;
 	CLogicInt		nLineCount;
-	const wchar_t*	szJavaKigou = L"!\"#%&'()=-^|\\`@[{+;*}]<,>?/";	//識別子に使用できない半角記号。_:~.$は許可
+	const WCHAR*	szJavaKigou = LTEXT("!\"#%&'()=-^|\\`@[{+;*}]<,>?/");	//識別子に使用できない半角記号。_:~.$は許可
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
@@ -85,12 +85,12 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
 
 			/* エスケープシーケンスは常に取り除く */
-			if( L'\\' == pLine[i] ){
+			if( LCHAR('\\') == pLine[i] ){
 				++i;
 			}else
 			/* シングルクォーテーション文字列読み込み中 */
 			if( FL_JAVA_MODE_SINGLE_QUOTE == nMode ){
-				if( L'\'' == pLine[i] ){
+				if( LCHAR('\'') == pLine[i] ){
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
@@ -98,7 +98,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* ダブルクォーテーション文字列読み込み中 */
 			if( FL_JAVA_MODE_DOUBLE_QUOTE == nMode ){
-				if( L'"' == pLine[i] ){
+				if( LCHAR('"') == pLine[i] ){
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else{
@@ -106,7 +106,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* コメント読み込み中 */
 			if( FL_JAVA_MODE_COMMENT == nMode ){
-				if( i < nLineLen - 1 && L'*' == pLine[i] &&  L'/' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('*') == pLine[i] &&  LCHAR('/') == pLine[i + 1] ){
 					++i;
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
@@ -125,21 +125,21 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nMode = FL_JAVA_MODE_TOO_LONG_WORD;
 						continue;
 					}else{
-						memcpy(&szWord[nWordIdx], &pLine[i], sizeof(wchar_t)*nCharChars);
+						memcpy(&szWord[nWordIdx], &pLine[i], sizeof(WCHAR)*nCharChars);
 						szWord[nWordIdx + nCharChars] = '\0';
 					}
 					nWordIdx += nCharChars;
 				}else{
 					/* クラス宣言部分を見つけた */
 					//	Oct. 10, 2002 genta interfaceも対象に
-					if( 0 == wcscmp( L"class", szWordPrev ) ||
-						0 == wcscmp( L"interface", szWordPrev )
+					if( 0 == wcscmp( LTEXT("class"), szWordPrev ) ||
+						0 == wcscmp( LTEXT("interface"), szWordPrev )
 					 ){
 						nClassNestArr.push_back( nNestLevel );
 						nNestLevel2Arr.push_back( 0 );
 						++nClassNestArrNum;
 						if( 0 < nNestLevel	){
-							wcscat( szClass, L"\\" );
+							wcscat( szClass, LTEXT("\\") );
 						}
 						wcscat( szClass, szWord );
 
@@ -157,8 +157,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 							ptPosXY_Logic,
 							&ptPosXY_Layout
 						);
-						wchar_t szWork[256];
-						if( 0 < auto_snprintf_s(szWork, std::size(szWork), L"%ls::%ls", szClass, LS(STR_OUTLINE_JAVA_DEFPOS) ) ){
+						WCHAR szWork[256];
+						if( 0 < auto_snprintf_s(szWork, std::size(szWork), LTEXT("%ls::%ls"), szClass, LS(STR_OUTLINE_JAVA_DEFPOS) ) ){
 							pcFuncInfoArr->AppendData( ptPosXY_Logic.GetY2() + CLogicInt(1), ptPosXY_Layout.GetY2() + CLayoutInt(1), szWork, nFuncId ); //2007.10.09 kobake レイアウト・ロジックの混在バグ修正
 						}
 					}
@@ -170,24 +170,24 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* 記号列読み込み中 */
 			if( FL_JAVA_MODE_SYMBOL == nMode ){
-				if( L'_' == pLine[i] ||
-					L':' == pLine[i] ||
-					L'~' == pLine[i] ||
-					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('_') == pLine[i] ||
+					LCHAR(':') == pLine[i] ||
+					LCHAR('~') == pLine[i] ||
+					(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+					(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+					(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+					LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol) ||
-					L'{' == pLine[i] ||
-					L'}' == pLine[i] ||
-					L'(' == pLine[i] ||
-					L')' == pLine[i] ||
-					L';' == pLine[i]	||
-					L'\'' == pLine[i] ||
-					L'"' == pLine[i] ||
-					L'/' == pLine[i] ||
-					L'.' == pLine[i]
+					LCHAR('{') == pLine[i] ||
+					LCHAR('}') == pLine[i] ||
+					LCHAR('(') == pLine[i] ||
+					LCHAR(')') == pLine[i] ||
+					LCHAR(';') == pLine[i]	||
+					LCHAR('\'') == pLine[i] ||
+					LCHAR('"') == pLine[i] ||
+					LCHAR('/') == pLine[i] ||
+					LCHAR('.') == pLine[i]
 				){
 					nMode = FL_JAVA_MODE_NORMAL;
 					i--;
@@ -198,8 +198,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			/* 長過ぎる単語無視中 */
 			if( FL_JAVA_MODE_TOO_LONG_WORD == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					nMode = FL_JAVA_MODE_NORMAL;
@@ -209,42 +209,42 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 			/* ノーマルモード */
 			if( FL_JAVA_MODE_NORMAL == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					continue;
 				}else
-				if( i < nLineLen - 1 && L'/' == pLine[i] &&  L'/' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('/') == pLine[i] &&  LCHAR('/') == pLine[i + 1] ){
 					break;
 				}else
-				if( i < nLineLen - 1 && L'/' == pLine[i] &&  L'*' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('/') == pLine[i] &&  LCHAR('*') == pLine[i + 1] ){
 					++i;
 					nMode = FL_JAVA_MODE_COMMENT;
 					continue;
 				}else
-				if( L'\'' == pLine[i] ){
+				if( LCHAR('\'') == pLine[i] ){
 					nMode = FL_JAVA_MODE_SINGLE_QUOTE;
 					continue;
 				}else
-				if( L'"' == pLine[i] ){
+				if( LCHAR('"') == pLine[i] ){
 					nMode = FL_JAVA_MODE_DOUBLE_QUOTE;
 					continue;
 				}else
-				if( L'{' == pLine[i] ){
+				if( LCHAR('{') == pLine[i] ){
 					if( 0 < nClassNestArrNum && 2 == nNestLevel2Arr[nClassNestArrNum - 1] ){
 						//	Oct. 10, 2002 genta
 						//	メソッド中でさらにメソッドを定義することはないので
 						//	ネストレベル判定追加 class/interfaceの直下の場合のみ判定する
 						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
-						 && 0 != wcscmp( L"sizeof", szFuncName )
-						 && 0 != wcscmp( L"if", szFuncName )
-						 && 0 != wcscmp( L"for", szFuncName )
-						 && 0 != wcscmp( L"do", szFuncName )
-						 && 0 != wcscmp( L"while", szFuncName )
-						 && 0 != wcscmp( L"catch", szFuncName )
-						 && 0 != wcscmp( L"switch", szFuncName )
-						 && 0 != wcscmp( L"return", szFuncName )
+						 && 0 != wcscmp( LTEXT("sizeof"), szFuncName )
+						 && 0 != wcscmp( LTEXT("if"), szFuncName )
+						 && 0 != wcscmp( LTEXT("for"), szFuncName )
+						 && 0 != wcscmp( LTEXT("do"), szFuncName )
+						 && 0 != wcscmp( LTEXT("while"), szFuncName )
+						 && 0 != wcscmp( LTEXT("catch"), szFuncName )
+						 && 0 != wcscmp( LTEXT("switch"), szFuncName )
+						 && 0 != wcscmp( LTEXT("return"), szFuncName )
 						){
 							nFuncId = FL_OBJ_FUNCTION;
 							++nFuncNum;
@@ -259,8 +259,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 								CLogicPoint(CLogicInt(0), nFuncLine - CLogicInt(1)),
 								&ptPosXY
 							);
-							wchar_t szWork[256];
-							if( 0 < auto_snprintf_s(szWork, std::size(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+							WCHAR szWork[256];
+							if( 0 < auto_snprintf_s(szWork, std::size(szWork), LTEXT("%ls::%ls"), szClass, szFuncName ) ){
 								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
 							}
 						}
@@ -272,7 +272,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
-				if( L'}' == pLine[i] ){
+				if( LCHAR('}') == pLine[i] ){
 					if( 0 < nClassNestArrNum ){
 						nNestLevel2Arr[nClassNestArrNum - 1] = 0;
 					}
@@ -286,21 +286,21 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						nClassNestArrNum--;
 						int k;
 						for( k = int(wcslen( szClass ) - 1); k >= 0; k-- ){
-							if( L'\\' == szClass[k] ){
+							if( LCHAR('\\') == szClass[k] ){
 								break;
 							}
 						}
 						if( 0 > k ){
 							k = 0;
 						}
-						szClass[k] = L'\0';
+						szClass[k] = LCHAR('\0');
 					}
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
-				if( L'(' == pLine[i] ){
+				if( LCHAR('(') == pLine[i] ){
 					if( 0 < nClassNestArrNum /*nNestLevel == 1*/ &&
-						0 != wcscmp( L"new", szWordPrev )
+						0 != wcscmp( LTEXT("new"), szWordPrev )
 					){
 						wcscpy( szFuncName, szWord );
 						nFuncLine = nLineCount + CLogicInt(1);
@@ -311,9 +311,9 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
-				if( L')' == pLine[i] ){
+				if( LCHAR(')') == pLine[i] ){
 					int			k;
-					const wchar_t*	pLine2;
+					const WCHAR*	pLine2;
 					CLogicInt		nLineLen2;
 					CLogicInt	nLineCount2;
 					nLineCount2 = nLineCount;
@@ -325,12 +325,12 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 				loop_is_func:;
 					for( ; k < nLineLen2; ++k ){
 						if( !bCommentLoop ){
-							if( pLine2[k] != L' ' && pLine2[k] != WCODE::TAB && !WCODE::IsLineDelimiter(pLine2[k], bExtEol) ){
-								if( k + 1 < nLineLen2 && pLine2[k] == L'/' && pLine2[k + 1] == L'*' ){
+							if( pLine2[k] != LCHAR(' ') && pLine2[k] != WCODE::TAB && !WCODE::IsLineDelimiter(pLine2[k], bExtEol) ){
+								if( k + 1 < nLineLen2 && pLine2[k] == LCHAR('/') && pLine2[k + 1] == LCHAR('*') ){
 									bCommentLoop = TRUE;
 									++k;
 								}else
-								if( k + 1 < nLineLen2 && pLine2[k] == L'/' && pLine2[k + 1] == L'/' ){
+								if( k + 1 < nLineLen2 && pLine2[k] == LCHAR('/') && pLine2[k + 1] == LCHAR('/') ){
 									k = nLineLen2 + 1;
 									break;
 								}else{
@@ -338,7 +338,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 								}
 							}
 						}else{
-							if( k + 1 < nLineLen2 && pLine2[k] == L'*' && pLine2[k + 1] == L'/' ){
+							if( k + 1 < nLineLen2 && pLine2[k] == LCHAR('*') && pLine2[k + 1] == LCHAR('/') ){
 								bCommentLoop = FALSE;
 								++k;
 							}
@@ -357,7 +357,7 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					}else{
 						//	Oct. 10, 2002 genta
 						//	abstract にも対応
-						if( pLine2[k] == L'{' || pLine2[k] == L';' ||
+						if( pLine2[k] == LCHAR('{') || pLine2[k] == LCHAR(';') ||
 							__iscsym( pLine2[k] ) ){
 							if( 0 < nClassNestArrNum ){
 								if( 1 == nNestLevel2Arr[nClassNestArrNum - 1] ){
@@ -373,19 +373,19 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 					nMode = FL_JAVA_MODE_NORMAL;
 					continue;
 				}else
-				if( L';' == pLine[i] ){
+				if( LCHAR(';') == pLine[i] ){
 					if( 0 < nClassNestArrNum && 2 == nNestLevel2Arr[nClassNestArrNum - 1] ){
 						//	Oct. 10, 2002 genta
 						// 関数の中で別の関数の宣言部を使うことって，Javaであるの？
 						if( nClassNestArr[nClassNestArrNum - 1] == nNestLevel - 1
-						 && 0 != wcscmp( L"sizeof", szFuncName )
-						 && 0 != wcscmp( L"if", szFuncName )
-						 && 0 != wcscmp( L"for", szFuncName )
-						 && 0 != wcscmp( L"do", szFuncName )
-						 && 0 != wcscmp( L"while", szFuncName )
-						 && 0 != wcscmp( L"catch", szFuncName )
-						 && 0 != wcscmp( L"switch", szFuncName )
-						 && 0 != wcscmp( L"return", szFuncName )
+						 && 0 != wcscmp( LTEXT("sizeof"), szFuncName )
+						 && 0 != wcscmp( LTEXT("if"), szFuncName )
+						 && 0 != wcscmp( LTEXT("for"), szFuncName )
+						 && 0 != wcscmp( LTEXT("do"), szFuncName )
+						 && 0 != wcscmp( LTEXT("while"), szFuncName )
+						 && 0 != wcscmp( LTEXT("catch"), szFuncName )
+						 && 0 != wcscmp( LTEXT("switch"), szFuncName )
+						 && 0 != wcscmp( LTEXT("return"), szFuncName )
 						){
 							nFuncId = FL_OBJ_DECLARE;
 							++nFuncNum;
@@ -400,8 +400,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 								CLogicPoint(CLogicInt(0), nFuncLine - CLogicInt(1)),
 								&ptPosXY
 							);
-							wchar_t szWork[256];
-							if( 0 < auto_snprintf_s(szWork, std::size(szWork), L"%ls::%ls", szClass, szFuncName ) ){
+							WCHAR szWork[256];
+							if( 0 < auto_snprintf_s(szWork, std::size(szWork), LTEXT("%ls::%ls"), szClass, szFuncName ) ){
 								pcFuncInfoArr->AppendData( nFuncLine, ptPosXY.GetY2() + CLayoutInt(1), szWork, nFuncId );
 							}
 						}
@@ -419,8 +419,8 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 						){
 						wcscpy( szWordPrev, szWord );
 						nWordIdx = 0;
-						memcpy(&szWord[nWordIdx], &pLine[i], sizeof(wchar_t)*nCharChars);
-						szWord[nWordIdx + nCharChars] = L'\0';
+						memcpy(&szWord[nWordIdx], &pLine[i], sizeof(WCHAR)*nCharChars);
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += nCharChars;
 						nMode = FL_JAVA_MODE_WORD;
 					}else{
@@ -436,60 +436,60 @@ void CDocOutline::MakeFuncList_Java( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 
-const wchar_t* g_ppszKeywordsJAVA[] = {
-	L"abstract",
-	L"assert",	// Mar. 8, 2003 genta
-	L"boolean",
-	L"break",
-	L"byte",
-	L"case",
-	L"catch",
-	L"char",
-	L"class",
-	L"continue",
-	L"const",
-	L"default",
-	L"do",
-	L"double",
-	L"else",
-	L"enum",
-	L"exports",
-	L"extends",
-	L"final",
-	L"finally",
-	L"float",
-	L"for",
-	L"goto",
-	L"if",
-	L"implements",
-	L"import",
-	L"instanceof",
-	L"int",
-	L"interface",
-	L"long",
-	L"module",
-	L"native",
-	L"new",
-	L"package",
-	L"private",
-	L"protected",
-	L"public",
-	L"requires",
-	L"return",
-	L"short",
-	L"static",
-	L"strictfp",	// Mar. 8, 2003 genta
-	L"super",
-	L"switch",
-	L"synchronized",
-	L"this",
-	L"throw",
-	L"throws",
-	L"transient",
-	L"try",
-	L"var",
-	L"void",
-	L"volatile",
-	L"while"
+const WCHAR* g_ppszKeywordsJAVA[] = {
+	LTEXT("abstract"),
+	LTEXT("assert"),	// Mar. 8, 2003 genta
+	LTEXT("boolean"),
+	LTEXT("break"),
+	LTEXT("byte"),
+	LTEXT("case"),
+	LTEXT("catch"),
+	LTEXT("char"),
+	LTEXT("class"),
+	LTEXT("continue"),
+	LTEXT("const"),
+	LTEXT("default"),
+	LTEXT("do"),
+	LTEXT("double"),
+	LTEXT("else"),
+	LTEXT("enum"),
+	LTEXT("exports"),
+	LTEXT("extends"),
+	LTEXT("final"),
+	LTEXT("finally"),
+	LTEXT("float"),
+	LTEXT("for"),
+	LTEXT("goto"),
+	LTEXT("if"),
+	LTEXT("implements"),
+	LTEXT("import"),
+	LTEXT("instanceof"),
+	LTEXT("int"),
+	LTEXT("interface"),
+	LTEXT("long"),
+	LTEXT("module"),
+	LTEXT("native"),
+	LTEXT("new"),
+	LTEXT("package"),
+	LTEXT("private"),
+	LTEXT("protected"),
+	LTEXT("public"),
+	LTEXT("requires"),
+	LTEXT("return"),
+	LTEXT("short"),
+	LTEXT("static"),
+	LTEXT("strictfp"),	// Mar. 8, 2003 genta
+	LTEXT("super"),
+	LTEXT("switch"),
+	LTEXT("synchronized"),
+	LTEXT("this"),
+	LTEXT("throw"),
+	LTEXT("throws"),
+	LTEXT("transient"),
+	LTEXT("try"),
+	LTEXT("var"),
+	LTEXT("void"),
+	LTEXT("volatile"),
+	LTEXT("while")
 };
 int g_nKeywordsJAVA = int(std::size(g_ppszKeywordsJAVA));

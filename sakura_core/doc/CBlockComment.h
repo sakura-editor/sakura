@@ -44,21 +44,21 @@ public:
 	CBlockComment();
 
 	//設定
-	void SetBlockCommentRule( const wchar_t* pszFrom, const wchar_t* pszTo );	//	行コメントデリミタをコピーする
+	void SetBlockCommentRule( const WCHAR* pszFrom, const WCHAR* pszTo );	//	行コメントデリミタをコピーする
 
 	//判定
 	bool Match_CommentFrom( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
 	int Match_CommentTo( int nPos, const CStringRef& cStr ) const;	//	行コメントに値するか確認する
 
 	//取得
-	const wchar_t* getBlockCommentFrom() const{ return m_szBlockCommentFrom; }
-	const wchar_t* getBlockCommentTo() const{ return m_szBlockCommentTo; }
+	const WCHAR* getBlockCommentFrom() const{ return m_szBlockCommentFrom; }
+	const WCHAR* getBlockCommentTo() const{ return m_szBlockCommentTo; }
 	int getBlockFromLen() const { return m_nBlockFromLen; }
 	int getBlockToLen() const { return m_nBlockToLen; }
 
 private:
-	wchar_t	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]; //!< ブロックコメントデリミタ(From)
-	wchar_t	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];   //!< ブロックコメントデリミタ(To)
+	WCHAR	m_szBlockCommentFrom[BLOCKCOMMENT_BUFFERSIZE]; //!< ブロックコメントデリミタ(From)
+	WCHAR	m_szBlockCommentTo[BLOCKCOMMENT_BUFFERSIZE];   //!< ブロックコメントデリミタ(To)
 	int		m_nBlockFromLen;
 	int		m_nBlockToLen;
 };

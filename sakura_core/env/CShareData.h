@@ -89,7 +89,7 @@ public:
 	BOOL ActiveAlreadyOpenedWindow( const WCHAR* pszPath, HWND* phwndOwner, ECodeType nCharCode );/* 指定ファイルが開かれているか調べつつ、多重オープン時の文字コード衝突も確認 */	// 2007.03.16
 
 	//デバッグ  今は主にマクロ・外部コマンド実行用
-	void TraceOutString( const wchar_t* pszStr, int len = -1);	/* アウトプットウィンドウに出力(未加工文字列) */
+	void TraceOutString( const WCHAR* pszStr, int len = -1);	/* アウトプットウィンドウに出力(未加工文字列) */
 	void SetTraceOutSource( HWND hwnd ){ m_hwndTraceOutSource = hwnd; }	/* TraceOut起動元ウィンドウの設定 */
 	bool OpenDebugWindow( HWND hwnd, bool bAllwaysActive );	//!<  デバッグウィンドウを開く
 
@@ -122,7 +122,7 @@ public:
 	}
 
 	// 国際化対応のための文字列を変更する(コントロールプロセス専用)
-	void ConvertLangValues(std::vector<std::wstring>& values, bool bSetValues);
+	void ConvertLangValues(std::vector<sakura::wstring>& values, bool bSetValues);
 
 	static CMutex& GetMutexShareWork();
 

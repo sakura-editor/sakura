@@ -99,11 +99,11 @@ WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count )
 	return pw;
 }
 
-const wchar_t* wcsistr( const wchar_t* s1, const wchar_t* s2 )
+const WCHAR* wcsistr( const WCHAR* s1, const WCHAR* s2 )
 {
 	size_t len2=wcslen(s2);
-	const wchar_t* p=s1;
-	const wchar_t* q=wcschr(s1,L'\0')-len2;
+	const WCHAR* p=s1;
+	const WCHAR* q=wcschr(s1,LCHAR('\0'))-len2;
 	while(p<=q){
 		if(wmemicmp(p,s2,len2)==0)return p;
 		p++;
@@ -116,7 +116,7 @@ const char* stristr(const char* s1, const char* s2)
 	//$ 日本語考慮してないので、あんまり役に立たない版。stristr_jを使うのが望ましい。
 	size_t len2=strlen(s2);
 	const char* p=s1;
-	const char* q=strchr(s1,L'\0')-len2;
+	const char* q=strchr(s1,LCHAR('\0'))-len2;
 	while(p<=q){
 		if(amemicmp(p,s2,len2)==0)return p;
 		p++;
@@ -232,7 +232,7 @@ int wmemicmp_ascii(const WCHAR* p1,const WCHAR* p2,size_t count)
 namespace{
 	template <class T> struct Charset{};
 	template <> struct Charset<ACHAR>{ static const ACHAR QUOT= '"'; };
-	template <> struct Charset<WCHAR>{ static const WCHAR QUOT=L'"'; };
+	template <> struct Charset<WCHAR>{ static const WCHAR QUOT=LCHAR('"'); };
 }
 template <class CHAR_TYPE>
 CHAR_TYPE* my_strtok(
@@ -256,7 +256,7 @@ CHAR_TYPE* my_strtok(
 			{
 				if( auto_strchr( pDelimiter, pBuffer[i] ) )
 				{
-					pBuffer[i++] = L'\0';
+					pBuffer[i++] = LCHAR('\0');
 					break;
 				}
 			}
@@ -447,12 +447,12 @@ int skr_towupper( int c )
 #ifdef _MSC_VER
 	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
 	static const auto szMap = []{
-		std::array<wchar_t, 256> map{};
+		std::array<WCHAR, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towupper( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 255; i++ ) map[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) map[i] = (WCHAR)my_towupper( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (WCHAR)i;						// 無変換（制御コード部）
+		for( ; i < 255; i++ ) map[i] = _towupper_l( (WCHAR)i, locale );	// "English"localeで変換
 		map[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
 		_free_locale( locale );
 		return map;
@@ -460,7 +460,7 @@ int skr_towupper( int c )
 
 	if( c < 256 ) return szMap[c];
 #endif
-	return towupper( (wchar_t)c );
+	return towupper( (WCHAR)c );
 }
 
 int skr_towlower( int c )
@@ -468,17 +468,17 @@ int skr_towlower( int c )
 #ifdef _MSC_VER
 	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
 	static const auto szMap = []{
-		std::array<wchar_t, 256> map{};
+		std::array<WCHAR, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towlower( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 256; i++ ) map[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) map[i] = (WCHAR)my_towlower( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (WCHAR)i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) map[i] = _towlower_l( (WCHAR)i, locale );	// "English"localeで変換
 		_free_locale( locale );
 		return map;
 	}();
 
 	if( c < 256 ) return szMap[c];
 #endif
-	return towlower( (wchar_t)c );
+	return towlower( (WCHAR)c );
 }

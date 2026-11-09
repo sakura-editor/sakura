@@ -36,7 +36,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 	// 先頭の改行・空白文字をスキップ
 	for( ncuridx = 0; ncuridx < nsrclen; ++ncuridx ){
 		WCHAR c = psrc[ncuridx];
-		if( !WCODE::IsLineDelimiterBasic(c) && c != L' ' && c != L'\t' ){
+		if( !WCODE::IsLineDelimiterBasic(c) && c != LCHAR(' ') && c != LCHAR('\t') ){
 			break;
 		}
 	}
@@ -60,7 +60,7 @@ bool CDecode_UuDecode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 		}
 		if( nlinelen == 1 ){
 			// データの最後である場合
-			if( pline[0] == L' ' || pline[0] == L'`' || pline[0] == L'~' ){
+			if( pline[0] == LCHAR(' ') || pline[0] == LCHAR('`') || pline[0] == LCHAR('~') ){
 				bsuccess = true;
 				break;
 			}

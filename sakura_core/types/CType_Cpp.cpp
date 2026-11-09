@@ -29,19 +29,19 @@
  * 現状、拡張子に対応するアウトライン種別はベタ書きで判定している。
  * 一致する拡張子がない場合、OUTLINE_C_CPPになる。
  */
-EOutlineType GetCLangOutlineType( const wchar_t* pszFileName )
+EOutlineType GetCLangOutlineType( const WCHAR* pszFileName )
 {
 	auto eOutlineType = OUTLINE_C_CPP;
-	if( CheckEXT( pszFileName, L"c" ) )
+	if( CheckEXT( pszFileName, LTEXT("c") ) )
 	{
 		eOutlineType = OUTLINE_C;
 	}
-	else if( CheckEXT( pszFileName, L"cpp" )
-		|| CheckEXT( pszFileName, L"c++" )
-		|| CheckEXT( pszFileName, L"cxx" )
-		|| CheckEXT( pszFileName, L"hpp" )
-		|| CheckEXT( pszFileName, L"h++" )
-		|| CheckEXT( pszFileName, L"hxx" ) )
+	else if( CheckEXT( pszFileName, LTEXT("cpp") )
+		|| CheckEXT( pszFileName, LTEXT("c++") )
+		|| CheckEXT( pszFileName, LTEXT("cxx") )
+		|| CheckEXT( pszFileName, LTEXT("hpp") )
+		|| CheckEXT( pszFileName, LTEXT("h++") )
+		|| CheckEXT( pszFileName, LTEXT("hxx") ) )
 	{
 		eOutlineType = OUTLINE_CPP;
 	}
@@ -49,13 +49,13 @@ EOutlineType GetCLangOutlineType( const wchar_t* pszFileName )
 }
 
 //!CPPキーワードで始まっていれば true
-inline bool IsHeadCppKeyword(const wchar_t* pData)
+inline bool IsHeadCppKeyword(const WCHAR* pData)
 {
-	if( wcsncmp_literal(pData, L"case"      )==0 )return true;
-	if( wcsncmp_literal(pData, L"default:"  )==0 )return true;
-	if( wcsncmp_literal(pData, L"public:"   )==0 )return true;
-	if( wcsncmp_literal(pData, L"private:"  )==0 )return true;
-	if( wcsncmp_literal(pData, L"protected:")==0 )return true;
+	if( wcsncmp_literal(pData, LTEXT("case")      )==0 )return true;
+	if( wcsncmp_literal(pData, LTEXT("default:")  )==0 )return true;
+	if( wcsncmp_literal(pData, LTEXT("public:")   )==0 )return true;
+	if( wcsncmp_literal(pData, LTEXT("private:")  )==0 )return true;
+	if( wcsncmp_literal(pData, LTEXT("protected:"))==0 )return true;
 	return false;
 }
 
@@ -66,13 +66,13 @@ inline bool IsHeadCppKeyword(const wchar_t* pData)
 void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"C/C++" );
-	wcscpy( pType->m_szTypeExts, L"c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm" );
+	wcscpy( pType->m_szTypeName, LTEXT("C/C++") );
+	wcscpy( pType->m_szTypeExts, LTEXT("c,cpp,cxx,cc,cp,c++,h,hpp,hxx,hh,hp,h++,rc,hm") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"//", -1 );							/* 行コメントデリミタ */
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );			/* ブロックコメントデリミタ */
-	pType->m_cBlockComments[1].SetBlockCommentRule( L"#if 0", L"#endif" );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
+	pType->m_cLineComment.CopyTo( 0, LTEXT("//"), -1 );							/* 行コメントデリミタ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( LTEXT("/*"), LTEXT("*/") );			/* ブロックコメントデリミタ */
+	pType->m_cBlockComments[1].SetBlockCommentRule( LTEXT("#if 0"), LTEXT("#endif") );	/* ブロックコメントデリミタ2 */	//Jul. 11, 2001 JEPRO
 	pType->m_nKeyWordSetIdx[0] = 0;											/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_C_CPP;									/* アウトライン解析方法 */
 	pType->m_eSmartIndent = SMARTINDENT_CPP;								/* スマートインデント種別 */
@@ -88,15 +88,15 @@ void CType_Cpp::InitTypeConfigImp(STypeConfig* pType)
 /*!
 	関数に用いることができる文字かどうかの判定
 */
-inline bool C_IsWordChar( wchar_t c )
+inline bool C_IsWordChar( WCHAR c )
 {
 	return (
-		L'_' == c ||
-		L':' == c ||
-		L'~' == c ||
-		(L'a' <= c && c <= L'z' )||
-		(L'A' <= c && c <= L'Z' )||
-		(L'0' <= c && c <= L'9' )||
+		LCHAR('_') == c ||
+		LCHAR(':') == c ||
+		LCHAR('~') == c ||
+		(LCHAR('a') <= c && c <= LCHAR('z') )||
+		(LCHAR('A') <= c && c <= LCHAR('Z') )||
+		(LCHAR('0') <= c && c <= LCHAR('9') )||
 		(0xa1 <= c && !iswcntrl(c) && !iswspace(c))
 	);
 }
@@ -115,12 +115,12 @@ inline bool C_IsWordChar( wchar_t c )
 	@param nLen 文字列の長さ。
 	本質的には不要であるが、高速化のために既にある値を利用する。
 */
-static bool C_IsOperator( wchar_t* szStr, int nLen	)
+static bool C_IsOperator( WCHAR* szStr, int nLen	)
 {
-	if( nLen >= 8 && szStr[ nLen - 1 ] == L'r' ){
+	if( nLen >= 8 && szStr[ nLen - 1 ] == LCHAR('r') ){
 		if( nLen > 8 ?
-				wcscmp( szStr + nLen - 9, L":operator" ) == 0 :	// メンバー関数による定義
-				wcscmp( szStr, L"operator" ) == 0	// friend関数による定義
+				wcscmp( szStr + nLen - 9, LTEXT(":operator") ) == 0 :	// メンバー関数による定義
+				wcscmp( szStr, LTEXT("operator") ) == 0	// friend関数による定義
 		 ){
 		 	return true;
 		}
@@ -134,12 +134,12 @@ static bool C_IsOperator( wchar_t* szStr, int nLen	)
 
 	@date 2005.12.06 じゅうじ 最後の1文字しか見ないと2バイトコードの後半がバックスラッシュの場合に誤認する
 */
-static bool C_IsLineEsc(const wchar_t *s, int len)
+static bool C_IsLineEsc(const WCHAR *s, int len)
 {
 	if ( len > 0 && WCODE::IsLineDelimiter(s[len-1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ) len--;
-	if ( len > 0 && s[len-1] == L'\r' ) len--;
+	if ( len > 0 && s[len-1] == LCHAR('\r') ) len--;
 
-	if ( len > 0 && s[len-1] == L'\\' ) {
+	if ( len > 0 && s[len-1] == LCHAR('\\') ) {
 		if ( len == 1 ) {
 			return(true);
 		} else if ( len == 2 ) {
@@ -155,17 +155,17 @@ static bool C_IsLineEsc(const wchar_t *s, int len)
 	return(false);
 }
 
-static bool CPP_IsFunctionAfterKeyword( const wchar_t* s )
+static bool CPP_IsFunctionAfterKeyword( const WCHAR* s )
 {
 	return
-		wcscmp( s, L"const" ) == 0 ||
-		wcscmp( s, L"volatile" ) == 0 ||
-		wcscmp( s, L"throw" ) == 0 ||
-		wcscmp( s, L"default" ) == 0 ||
-		wcscmp( s, L"delete" ) == 0 ||
-		wcscmp( s, L"override" ) == 0 ||
-		wcscmp( s, L"final" ) == 0 ||
-		wcscmp( s, L"noexcept" ) == 0
+		wcscmp( s, LTEXT("const") ) == 0 ||
+		wcscmp( s, LTEXT("volatile") ) == 0 ||
+		wcscmp( s, LTEXT("throw") ) == 0 ||
+		wcscmp( s, LTEXT("default") ) == 0 ||
+		wcscmp( s, LTEXT("delete") ) == 0 ||
+		wcscmp( s, LTEXT("override") ) == 0 ||
+		wcscmp( s, LTEXT("final") ) == 0 ||
+		wcscmp( s, LTEXT("noexcept") ) == 0
 		;
 }
 
@@ -181,7 +181,7 @@ class CCppPreprocessMng {
 public:
 	CCppPreprocessMng(void) = default;
 
-	CLogicInt ScanLine(const wchar_t*, CLogicInt);
+	CLogicInt ScanLine(const WCHAR*, CLogicInt);
 
 private:
 	bool m_ismultiline = false; //!< 複数行のディレクティブ
@@ -228,12 +228,12 @@ private:
 	@date 2007.12.13 じゅうじ : ifの直後にスペースがない場合の対応
 
 */
-CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
+CLogicInt CCppPreprocessMng::ScanLine( const WCHAR* str, CLogicInt _length )
 {
 	int length=_length;
 
-	const wchar_t* lastptr = str + length;	//	処理文字列末尾
-	const wchar_t* p;	//	処理中の位置
+	const WCHAR* lastptr = str + length;	//	処理文字列末尾
+	const WCHAR* p;	//	処理中の位置
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
 	//	skip whitespace
@@ -247,7 +247,7 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		return CLogicInt(length);
 	}
 
-	if( *p != L'#' ){	//	プリプロセッサ以外の処理はメイン部に任せる
+	if( *p != LCHAR('#') ){	//	プリプロセッサ以外の処理はメイン部に任せる
 		if( m_enablebuf ){
 			return CLogicInt(length);	//	1ビットでも1となっていたら無視
 		}
@@ -269,12 +269,12 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		Directive_Elif,
 		Directive_Endif,
 	} directive = Directive_None;
-	     if (p + 5 < lastptr && wcsncmp_literal(p, L"ifdef" ) == 0) { directive = Directive_Ifdef;  p += 5; }
-	else if (p + 6 < lastptr && wcsncmp_literal(p, L"ifndef") == 0) { directive = Directive_Ifndef; p += 6; }
-	else if (p + 2 < lastptr && wcsncmp_literal(p, L"if"    ) == 0) { directive = Directive_If;     p += 2; }
-	else if (p + 4 < lastptr && wcsncmp_literal(p, L"else"  ) == 0) { directive = Directive_Else;   p += 4; }
-	else if (p + 4 < lastptr && wcsncmp_literal(p, L"elif"  ) == 0) { directive = Directive_Elif;   p += 4; }
-	else if (p + 5 < lastptr && wcsncmp_literal(p, L"endif" ) == 0) { directive = Directive_Endif;  p += 5; }
+	     if (p + 5 < lastptr && wcsncmp_literal(p, LTEXT("ifdef") ) == 0) { directive = Directive_Ifdef;  p += 5; }
+	else if (p + 6 < lastptr && wcsncmp_literal(p, LTEXT("ifndef")) == 0) { directive = Directive_Ifndef; p += 6; }
+	else if (p + 2 < lastptr && wcsncmp_literal(p, LTEXT("if")    ) == 0) { directive = Directive_If;     p += 2; }
+	else if (p + 4 < lastptr && wcsncmp_literal(p, LTEXT("else")  ) == 0) { directive = Directive_Else;   p += 4; }
+	else if (p + 4 < lastptr && wcsncmp_literal(p, LTEXT("elif")  ) == 0) { directive = Directive_Elif;   p += 4; }
+	else if (p + 5 < lastptr && wcsncmp_literal(p, LTEXT("endif") ) == 0) { directive = Directive_Endif;  p += 5; }
 
 
 	//	ここからPreprocessor directive解析
@@ -287,13 +287,13 @@ CLogicInt CCppPreprocessMng::ScanLine( const wchar_t* str, CLogicInt _length )
 		//	それ以外のif/ifdef/ifndefは最初が有効部分と見なす
 		//	最初の条件によってこの時点ではp < lastptrなので判定省略
 		// 2007/12/13 じゅうじ : #if(0)とスペースを空けない場合の対応
-		if( C_IsSpace( *p, bExtEol ) || *p == L'(' ){
+		if( C_IsSpace( *p, bExtEol ) || *p == LCHAR('(') ){
 			//	if 0 チェック
 			//	skip whitespace
 			//	2007.12.15 genta
-			for( ; ( C_IsSpace( *p, bExtEol ) || *p == L'(' ) && p < lastptr ; ++p )
+			for( ; ( C_IsSpace( *p, bExtEol ) || *p == LCHAR('(') ) && p < lastptr ; ++p )
 				;
-			bool bZero = (*p == L'0');
+			bool bZero = (*p == LCHAR('0'));
 			//	保存領域の確保とビットパターンの設定
 			if (directive == Directive_If || directive == Directive_Ifdef || directive == Directive_Ifndef) {
 				m_bitpattern = 1 << m_stackptr;
@@ -382,7 +382,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 #ifdef _DEBUG
 // #define TRACE_OUTLINE
 #endif
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt	nLineLen;
 	CLogicInt	i;
 	if( nOutlineType == OUTLINE_C_CPP ){
@@ -402,8 +402,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	bool bInInitList = false;	// 2010.07.08 ryoji 関数名調査の際、現在位置が初期化リスト（':'以後）に到達したかどうかを示す
 	int			nNestLevel_template = 0; // template<> func<vector<int>> などの<>の数
 
-	wchar_t		szWordPrev[256];	//	1つ前のword
-	wchar_t		szWord[256];		//	現在解読中のwordを入れるところ
+	WCHAR		szWordPrev[256];	//	1つ前のword
+	WCHAR		szWord[256];		//	現在解読中のwordを入れるところ
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 100;	//	許容されるwordの最大長さ
 	int			nMode;				//	現在のstate
@@ -461,10 +461,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	const int	nNamespaceNestMax	= 32;			//!< ネスト可能なネームスペース、クラス等の最大数
 	int			nNamespaceLen[nNamespaceNestMax+1];	//!< ネームスペース全体の長さ
 	const int	nNamespaceLenMax 	= 512;			//!< 最大のネームスペース全体の長さ
-	wchar_t		szNamespace[nNamespaceLenMax];		//!< 現在のネームスペース(終端が\0になっているとは限らないので注意)
+	WCHAR		szNamespace[nNamespaceLenMax];		//!< 現在のネームスペース(終端が\0になっているとは限らないので注意)
 	const int 	nItemNameLenMax	 	= 256;
-	wchar_t		szItemName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
-	wchar_t		szTemplateName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
+	WCHAR		szItemName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
+	WCHAR		szTemplateName[nItemNameLenMax];		//!< すぐ前の 関数名 or クラス名 or 構造体名 or 共用体名 or 列挙体名 or ネームスペース名
 	// 例えば下のコードの←の部分での
 	// szNamespaceは"Namespace\ClassName\"
 	// nMamespaceLenは{10,20}
@@ -474,24 +474,24 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 	//　class ClassName{
 	//　←
 	//　}}
-	wchar_t		szRawStringTag[32];	// C++11 raw string litteral
+	WCHAR		szRawStringTag[32];	// C++11 raw string litteral
 	int nRawStringTagLen = 0;
 	int nRawStringTagCompLen = 0;
 
 	CLogicInt	nItemLine(0);		//!< すぐ前の 関数 or クラス or 構造体 or 共用体 or 列挙体 or ネームスペースのある行
 	int			nItemFuncId = 0;
 
-	szWordPrev[0] = L'\0';
-	szWord[nWordIdx] = L'\0';
-	szNamespace[0] = L'\0';	// 2002/10/27 frozen
+	szWordPrev[0] = LCHAR('\0');
+	szWord[nWordIdx] = LCHAR('\0');
+	szNamespace[0] = LCHAR('\0');	// 2002/10/27 frozen
 	nNamespaceLen[0] = 0;	// 2002/10/27 frozen
-	szItemName[0] = L'\0';
-	szTemplateName[0] = L'\0';
+	szItemName[0] = LCHAR('\0');
+	szTemplateName[0] = LCHAR('\0');
 	nMode = 0;
 
 	// finalで無名ではない
-	auto is_final_context = [](const wchar_t* pszWord, const wchar_t* pszItemName) {
-		return wcscmp(L"final", pszWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), pszItemName) != 0;
+	auto is_final_context = [](const WCHAR* pszWord, const WCHAR* pszItemName) {
+		return wcscmp(LTEXT("final"), pszWord) == 0 && wcscmp(LS(STR_OUTLINE_CPP_NONAME), pszItemName) != 0;
 	};
 	
 	//	Aug. 10, 2004 genta プリプロセス処理クラス
@@ -515,11 +515,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 		//	以下の解析処理はSKIPされる．
 		//	To Here Aug. 10, 2004 genta
 #ifdef TRACE_OUTLINE
-		DEBUG_TRACE(L"line:%ls", pLine);
+		DEBUG_TRACE(LTEXT("line:%ls"), pLine);
 #endif
 		for( ; i < nLineLen; ++i ){
 #ifdef TRACE_OUTLINE
-			DEBUG_TRACE(L"%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n", int((Int)i), pLine[i], nMode, nMode2,
+			DEBUG_TRACE(LTEXT("%2d [%lc] %d %x %d %d %d wd[%ls] pre[%ls] tmp[%ls] til[%ls] %d\n"), int((Int)i), pLine[i], nMode, nMode2,
 				nNestLevel_global, nNestLevel_func, nNestLevel_fparam, szWord, szWordPrev, szTemplateName, szItemName, nWordIdx );
 #endif
 /* del start 2005/12/6 じゅうじ	*/
@@ -567,7 +567,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					auto nLen = int(wcslen(szWordPrev));
 					if( nLen + 1 < int(std::size(szWordPrev)) ){
 						szWordPrev[nLen] = pLine[i];
-						szWordPrev[nLen + 1] = L'\0';
+						szWordPrev[nLen + 1] = LCHAR('\0');
 					}
 				}
 				if( '"' == pLine[i] ){
@@ -595,8 +595,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						nMode = 999;
 						continue;
 					}else{
-						if( pLine[i] == L':' ){
-							if( pLine[i + 1] == L':' || (0 < i && pLine[i-1] == L':') ){
+						if( pLine[i] == LCHAR(':') ){
+							if( pLine[i + 1] == LCHAR(':') || (0 < i && pLine[i-1] == LCHAR(':')) ){
 								// name ::class or class :: member
 							}else{
 								// class Klass:base のように:の前にスペースがない場合
@@ -615,7 +615,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							}
 						}
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = LCHAR('\0');
 					}
 				}else{
 					// 2002/10/27 frozen　ここから
@@ -630,12 +630,12 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
 						// strcut name<X> final のfinalはクラス名の一部ではない
 						// struct name<final> のfinalは一部
-						if( wcscmp(L"final", szWord) != 0 || nNestLevel_template != 0 ){
+						if( wcscmp(LTEXT("final"), szWord) != 0 || nNestLevel_template != 0 ){
 							auto nLen = int(wcslen(szTemplateName));
-							if( 0 < nLen && C_IsWordChar(szTemplateName[nLen - 1]) && szTemplateName[nLen - 1] != L':' && szWord[nWordIdx] != L':' ){
+							if( 0 < nLen && C_IsWordChar(szTemplateName[nLen - 1]) && szTemplateName[nLen - 1] != LCHAR(':') && szWord[nWordIdx] != LCHAR(':') ){
 								// template func<const x>() のような場合にconstの後ろにスペースを挿入
 								if( nLen + 1 < nItemNameLenMax ){
-									wcscat( szTemplateName, L" " );
+									wcscat( szTemplateName, LTEXT(" ") );
 									nLen++;
 								}
 							}
@@ -646,19 +646,19 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					{
 						if( nMode2 == M2_NORMAL )
 							nItemFuncId = 0;
-						if( wcscmp(szWord,L"class")==0 )
+						if( wcscmp(szWord,LTEXT("class"))==0 )
 							nItemFuncId = FL_OBJ_CLASS;
-						else if( wcscmp(szWord,L"struct")==0 )
+						else if( wcscmp(szWord,LTEXT("struct"))==0 )
 							nItemFuncId = FL_OBJ_STRUCT;
-						else if( wcscmp(szWord,L"namespace")==0 )
+						else if( wcscmp(szWord,LTEXT("namespace"))==0 )
 							nItemFuncId = FL_OBJ_NAMESPACE;
-						else if( wcscmp(szWord,L"enum")==0 )
+						else if( wcscmp(szWord,LTEXT("enum"))==0 )
 							nItemFuncId = FL_OBJ_ENUM;
-						else if( wcscmp(szWord,L"union")==0 )
+						else if( wcscmp(szWord,LTEXT("union"))==0 )
 							nItemFuncId = FL_OBJ_UNION;
-						else if( wcscmp(szWord,L"__interface")==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
+						else if( wcscmp(szWord,LTEXT("__interface"))==0 ) // 2007.05.26 genta "__interface" をクラスに類する扱いにする
 							nItemFuncId = FL_OBJ_INTERFACE;
-						else if( wcscmp(szWord,L"typedef") == 0 )
+						else if( wcscmp(szWord,LTEXT("typedef")) == 0 )
 							bDefinedTypedef = true;
 						if( nItemFuncId != 0 && nItemFuncId != FL_OBJ_FUNCTION )	//  2010.07.08 ryoji nMode2 == M2_FUNC_NAME_END のときは nItemFuncId == 2 のはず
 						{
@@ -674,15 +674,15 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					// 2002/10/27 frozen　ここまで
 					if( nMode2 == M2_NORMAL ){
 						// templateは終わった
-						szTemplateName[0] = L'\0';
+						szTemplateName[0] = LCHAR('\0');
 					}
 
 					//	To Here Mar. 31, 2001 genta
 					// 2004/03/12 zenryaku キーワードに _ と PARAMS を使わせない (GNUのコードが見にくくなるから)
-					if( !( wcscmp(L"PARAMS",szWord) == 0 || wcscmp(L"_",szWord) == 0 ) )
+					if( !( wcscmp(LTEXT("PARAMS"),szWord) == 0 || wcscmp(LTEXT("_"),szWord) == 0 ) )
 						wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
@@ -699,11 +699,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					 ';' == pLine[i] ||
 					'\'' == pLine[i] ||
 					 '"' == pLine[i] ||
-					 (L'/' == pLine[i] && (L'*' == pLine[i+1] || L'/' == pLine[i+1]))
+					 (LCHAR('/') == pLine[i] && (LCHAR('*') == pLine[i+1] || LCHAR('/') == pLine[i+1]))
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
@@ -714,32 +714,32 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						continue;
 					}else{
 						szWord[nWordIdx] = pLine[i];
-						szWord[nWordIdx + 1] = L'\0';
+						szWord[nWordIdx + 1] = LCHAR('\0');
 					}
 					if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
 						auto nItemNameLen = int(wcslen(szTemplateName));
 						if(nItemNameLen + 1 < nItemNameLenMax ){
 							szTemplateName[nItemNameLen] = pLine[i];
-							szTemplateName[nItemNameLen + 1 ] = L'\0';
+							szTemplateName[nItemNameLen + 1 ] = LCHAR('\0');
 						}
 					}
-					if( nMode2 == M2_OPERATOR_WORD && L'<' == pLine[i] ){
-						const wchar_t* p = &szWord[nWordIdx-8];
-						if(  (8 <= nWordIdx && wcsncmp_literal(p, L"operator<") == 0)
-						 || ((9 <= nWordIdx && wcsncmp_literal(p-1, L"operator<<") == 0) && 0 < i && L'<' == pLine[i-1]) ){
+					if( nMode2 == M2_OPERATOR_WORD && LCHAR('<') == pLine[i] ){
+						const WCHAR* p = &szWord[nWordIdx-8];
+						if(  (8 <= nWordIdx && wcsncmp_literal(p, LTEXT("operator<")) == 0)
+						 || ((9 <= nWordIdx && wcsncmp_literal(p-1, LTEXT("operator<<")) == 0) && 0 < i && LCHAR('<') == pLine[i-1]) ){
 							// 違う：operator<<const() / operator<<()
 						}else{
 							// operator< <T>() / operator<<<T>() / operator+<T>()
 							nMode2Old = nMode2;
 							nMode2 = M2_TEMPLATE_WORD;
 							wcsncpy( szTemplateName, szWord, nItemNameLenMax );
-							szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+							szTemplateName[ nItemNameLenMax - 1 ] = LCHAR('\0');
 						}
 					}
 					if( nMode2 == M2_TEMPLATE || nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
-						if( pLine[i] == L'<' ){
+						if( pLine[i] == LCHAR('<') ){
 							nNestLevel_template++;
-						}else if( pLine[i] == L'>' ){
+						}else if( pLine[i] == LCHAR('>') ){
 							wcscpy( szItemName, szTemplateName );
 							nNestLevel_template--;
 							if( nNestLevel_template == 0 ){
@@ -750,7 +750,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									if( nMode2 == M2_OPERATOR_WORD ){
 										wcscpy(szWord, szTemplateName);
 										nWordIdx = (int)wcslen(szWord) - 1;
-										szTemplateName[0] = L'\0';
+										szTemplateName[0] = LCHAR('\0');
 									}
 								}
 							}
@@ -791,27 +791,27 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator ""i
 						if( nLen + 1 < int(std::size(szWordPrev)) ){
-							const wchar_t szOperator[] = { pLine[i], 0 };
+							const WCHAR szOperator[] = { pLine[i], 0 };
 							::wcscat_s( szWordPrev, szOperator );
 						}
 						nMode2 = M2_OPERATOR_WORD;
 					}else{
-						if( wcscmp( szWordPrev, L"R" ) == 0 ||
-							wcscmp( szWordPrev, L"LR" ) == 0 ||
-							wcscmp( szWordPrev, L"uR" ) == 0 ||
-							wcscmp( szWordPrev, L"UR" ) == 0 ||
-							wcscmp( szWordPrev, L"u8R" ) == 0
+						if( wcscmp( szWordPrev, LTEXT("R") ) == 0 ||
+							wcscmp( szWordPrev, LTEXT("LR") ) == 0 ||
+							wcscmp( szWordPrev, LTEXT("uR") ) == 0 ||
+							wcscmp( szWordPrev, LTEXT("UR") ) == 0 ||
+							wcscmp( szWordPrev, LTEXT("u8R") ) == 0
 						){
 							// C++11 raw string
 							// R"abc(string)abc"
 							for( int k = i + 1; k < nLineLen; k++ ){
-								if( pLine[k] == L'(' ){
+								if( pLine[k] == LCHAR('(') ){
 									// i = 1, k = 5, len = 5-1-1=3
 									CLogicInt tagLen = t_min(k - i - 1, CLogicInt(int(std::size(szRawStringTag)) - 1));
 									nRawStringTagLen = tagLen + 1;
-									szRawStringTag[0] = L')';
+									szRawStringTag[0] = LCHAR(')');
 									wcsncpy( szRawStringTag + 1, &pLine[i+1], tagLen );
-									szRawStringTag[nRawStringTagLen] = L'\0';
+									szRawStringTag[nRawStringTagLen] = LCHAR('\0');
 									nRawStringTagCompLen = (int)wcslen(szRawStringTag);
 									break;
 								}
@@ -831,7 +831,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}
 					int nItemNameLen = 0;
 					auto nLenDefPos = int(wcslen(LS(STR_OUTLINE_CPP_DEFPOS)));
-					if( nNestLevel_func !=0 || (szWordPrev[0] == L'=' && szWordPrev[1] == L'\0') || nMode2 == M2_AFTER_EQUAL )
+					if( nNestLevel_func !=0 || (szWordPrev[0] == LCHAR('=') && szWordPrev[1] == LCHAR('\0')) || nMode2 == M2_AFTER_EQUAL )
 						++nNestLevel_func;
 					else if(
 							(nMode2 & M2_AFTER_ITEM) != 0  &&
@@ -844,7 +844,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					// +1は終端NUL文字
 					{
 						wcscpy( &szNamespace[nNamespaceLen[nNestLevel_global]] , szItemName);
-						szItemName[0] = L'\0';
+						szItemName[0] = LCHAR('\0');
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						//	関数の後ろにconst, throw または初期化子があると
 						//	M2_KR_FUNCに遷移して，';'が見つからないとその状態のまま
@@ -860,8 +860,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								wcscpy(&szNamespace[nNamespaceLen[nNestLevel_global]], LS(STR_OUTLINE_CPP_DEFPOS));
 							else
 							{
-								szNamespace[nNamespaceLen[nNestLevel_global]] = L'\0';
-								szNamespace[nNamespaceLen[nNestLevel_global]+1] = L':';
+								szNamespace[nNamespaceLen[nNestLevel_global]] = LCHAR('\0');
+								szNamespace[nNamespaceLen[nNestLevel_global]+1] = LCHAR(':');
 								if(bVisibleMemberFunc == false && nNestPoint_class == 0)
 									nNestPoint_class = nNestLevel_global;
 							}
@@ -878,7 +878,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							&ptPosXY
 						);
 #ifdef TRACE_OUTLINE
-						DEBUG_TRACE( L"AppendData %d %ls\n", nItemLine, szNamespace );
+						DEBUG_TRACE( LTEXT("AppendData %d %ls\n"), nItemLine, szNamespace );
 #endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1) , szNamespace, nItemFuncId);
 						bDefinedTypedef = false;
@@ -886,7 +886,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						//	Jan. 30, 2005 genta M2_KR_FUNC 追加
 						if( !bAddFunction )
 						{
-							szNamespace[nNamespaceLen[nNestLevel_global]] = L':';
+							szNamespace[nNamespaceLen[nNestLevel_global]] = LCHAR(':');
 							nNamespaceLen[nNestLevel_global] += 2;
 						}
 					}
@@ -945,13 +945,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nMode2 == M2_NORMAL && nNestLevel_fparam == 0 && C_IsOperator(szWordPrev, nLen) ){
 						int k;
 						for( k = i + 1; k < nLineLen && C_IsSpace(pLine[k], bExtEol); k++){}
-						if( k < nLineLen && pLine[k] == L')' ){
+						if( k < nLineLen && pLine[k] == LCHAR(')') ){
 							for( k++; k < nLineLen && C_IsSpace(pLine[k], bExtEol); k++){}
-							if( k < nLineLen && (pLine[k] == L'<' || pLine[k] == L'(' ) ){
+							if( k < nLineLen && (pLine[k] == LCHAR('<') || pLine[k] == LCHAR('(') ) ){
 								// オペレータだった operator()( / operator()<;
 								if( nLen + 1 < int(std::size(szWordPrev)) ){
 									szWordPrev[nLen] = pLine[i];
-									szWordPrev[nLen + 1] = L'\0';
+									szWordPrev[nLen + 1] = LCHAR('\0');
 								}
 								nMode2 = M2_OPERATOR_WORD;
 								bOperator = true;
@@ -968,11 +968,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						if(nNestLevel_fparam==0)
 						{
 							bool bAdd = true;
-							if( wcscmp(szWordPrev, L"__declspec") == 0
-									|| wcscmp(szWordPrev, L"alignas") == 0
-									|| wcscmp(szWordPrev, L"decltype") == 0
-									|| wcscmp(szWordPrev, L"_Alignas") == 0
-									|| wcscmp(szWordPrev, L"__attribute__") == 0
+							if( wcscmp(szWordPrev, LTEXT("__declspec")) == 0
+									|| wcscmp(szWordPrev, LTEXT("alignas")) == 0
+									|| wcscmp(szWordPrev, LTEXT("decltype")) == 0
+									|| wcscmp(szWordPrev, LTEXT("_Alignas")) == 0
+									|| wcscmp(szWordPrev, LTEXT("__attribute__")) == 0
 							){
 								bAdd = false;
 							}else{
@@ -1000,7 +1000,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						auto nItemNameLen = int(wcslen(szTemplateName));
 						if( nItemNameLen + 1 < nItemNameLenMax ){
 							szTemplateName[nItemNameLen] = pLine[i];
-							szTemplateName[nItemNameLen + 1 ] = L'\0';
+							szTemplateName[nItemNameLen + 1 ] = LCHAR('\0');
 						}
 					}
 					continue;
@@ -1029,13 +1029,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						auto nLen = int(wcslen(szWordPrev));
 						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							szWordPrev[nLen] = pLine[i];
-							szWordPrev[nLen + 1] = L'\0';
+							szWordPrev[nLen + 1] = LCHAR('\0');
 						}
 					}else if( nMode2 == M2_TEMPLATE_SAVE || nMode2 == M2_TEMPLATE_WORD ){
 						auto nItemNameLen = int(wcslen(szTemplateName));
 						if( nItemNameLen + 1 < nItemNameLenMax ){
 							szTemplateName[nItemNameLen] = pLine[i];
-							szTemplateName[nItemNameLen + 1 ] = L'\0';
+							szTemplateName[nItemNameLen + 1 ] = LCHAR('\0');
 						}
 					}
 					continue;
@@ -1046,7 +1046,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
 						// 演算子のオペレータだった operator []
 						if( nLen + 1 < int(std::size(szWordPrev)) ){
-							const wchar_t szOperator[] = { pLine[i], 0 };
+							const WCHAR szOperator[] = { pLine[i], 0 };
 							::wcscat_s( szWordPrev, szOperator );
 						}
 						nMode2 = M2_OPERATOR_WORD;
@@ -1070,7 +1070,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						auto nLen = int(wcslen(szWordPrev));
 						if( nLen + 1 < int(std::size(szWordPrev)) ){
 							szWordPrev[nLen] = pLine[i];
-							szWordPrev[nLen + 1] = L'\0';
+							szWordPrev[nLen + 1] = LCHAR('\0');
 						}
 					}
 				} else
@@ -1112,13 +1112,13 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							&ptPosXY
 						);
 #ifdef TRACE_OUTLINE
-						DEBUG_TRACE( L"AppendData %d %ls\n", nItemLine, szNamespace );
+						DEBUG_TRACE( LTEXT("AppendData %d %ls\n"), nItemLine, szNamespace );
 #endif
 						pcFuncInfoArr->AppendData( nItemLine, ptPosXY.GetY2() + CLayoutInt(1), szNamespace, nItemFuncId);
 					}
 					nItemLine = -1;
-					szWordPrev[0] = L'\0';
-					szTemplateName[0] = L'\0'; // hoge < ... ; はtemplateではなかったのでクリア
+					szWordPrev[0] = LCHAR('\0');
+					szTemplateName[0] = LCHAR('\0'); // hoge < ... ; はtemplateではなかったのでクリア
 					nNestLevel_template = 0;
 					nMode2 = M2_NORMAL;
 					//  2002/10/27 frozen ここまで
@@ -1137,11 +1137,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						{
 							auto pos = int(wcslen(szWordPrev)) - 2;
 							if( //	前の文字列の末尾チェック
-								( pos > 0 &&	szWordPrev[pos] == L':' &&
-								szWordPrev[pos + 1] == L':' ) ||
+								( pos > 0 &&	szWordPrev[pos] == LCHAR(':') &&
+								szWordPrev[pos + 1] == LCHAR(':') ) ||
 								//	次の文字列の先頭チェック
-								( i < nLineLen - 1 && pLine[i] == L':' &&
-									pLine[i+1] == L':' )
+								( i < nLineLen - 1 && pLine[i] == LCHAR(':') &&
+									pLine[i+1] == LCHAR(':') )
 							){
 								//	前の文字列に続ける
 								if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
@@ -1159,8 +1159,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 							else if( nMode2 == M2_NORMAL && C_IsOperator( szWordPrev, pos + 2 ) ){
 								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
 									//	スペースを入れて、前の文字列に続ける
-									szWordPrev[pos + 2] = L' ';
-									szWordPrev[pos + 3] = L'\0';
+									szWordPrev[pos + 2] = LCHAR(' ');
+									szWordPrev[pos + 3] = LCHAR('\0');
 								}
 								wcscpy( szWord, szWordPrev );
 								nWordIdx = (int)wcslen( szWord );
@@ -1169,8 +1169,8 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								// operator 継続中
 								if( -1 < pos && C_IsWordChar( szWordPrev[pos + 1] ) ){
 									//	スペースを入れて、前の文字列に続ける
-									szWordPrev[pos + 2] = L' ';
-									szWordPrev[pos + 3] = L'\0';
+									szWordPrev[pos + 2] = LCHAR(' ');
+									szWordPrev[pos + 3] = LCHAR('\0');
 								}
 								wcscpy( szWord, szWordPrev );
 								nWordIdx = (int)wcslen( szWord );
@@ -1182,7 +1182,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						}
 						//	wcscpy( szWordPrev, szWord );	不要？
 						//	To Here
-						if( pLine[i] == L':' && pLine[i+1] != L':')
+						if( pLine[i] == LCHAR(':') && pLine[i+1] != LCHAR(':'))
 						{
 							if(nMode2 == M2_NAMESPACE_SAVE)
 							{
@@ -1215,11 +1215,11 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 					}else{
 						// 2011.12.02 template対応
 						if( nMode2 == M2_NORMAL || nMode2 == M2_OPERATOR_WORD ){
-							if( pLine[i] == L'<' ){
+							if( pLine[i] == LCHAR('<') ){
 								int nLen = (int)wcslen(szWordPrev);
-								if( wcscmp(szWordPrev, L"template") == 0 ){
+								if( wcscmp(szWordPrev, LTEXT("template")) == 0 ){
 									nMode2 = M2_TEMPLATE;
-									szTemplateName[0] = L'\0';
+									szTemplateName[0] = LCHAR('\0');
 								}else if( C_IsOperator(szWordPrev, nLen) ){
 									// operator<
 								}else{
@@ -1227,10 +1227,10 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 									nMode2Old = nMode2;
 									nMode2 = M2_TEMPLATE_WORD;
 									wcsncpy( szTemplateName, szWordPrev, nItemNameLenMax );
-									szTemplateName[ nItemNameLenMax - 1 ] = L'\0';
+									szTemplateName[ nItemNameLenMax - 1 ] = LCHAR('\0');
 								}
 							}else{
-								szTemplateName[0] = L'\0';
+								szTemplateName[0] = LCHAR('\0');
 							}
 						}
 						//	Aug. 13, 2004 genta
@@ -1239,7 +1239,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						//	専用の判定関数を使うべし．
 						//	operatorで無ければ=は代入なのでここは宣言文ではない．
 						int nLen = (int)wcslen(szWordPrev);
-						if( pLine[i] == L'=' && nNestLevel_func == 0
+						if( pLine[i] == LCHAR('=') && nNestLevel_func == 0
 							&& nMode2 == M2_NORMAL && ! C_IsOperator(szWordPrev,nLen) ){
 							nMode2 = M2_AFTER_EQUAL;
 						}else if( nMode2 == M2_NORMAL && C_IsOperator(szWordPrev, nLen) ){
@@ -1259,7 +1259,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 						if( nMode2 == M2_NAMESPACE_SAVE )
 						{
 #if 0
-							if( pLine[i] == L'>' || pLine[i] == L',' || pLine[i] == L'=')
+							if( pLine[i] == LCHAR('>') || pLine[i] == LCHAR(',') || pLine[i] == LCHAR('='))
 								// '<' の前に '>' , ',' , '=' があったので、おそらく
 								// 前にあった"class"はテンプレートパラメータの型を表していたと考えられる。
 								// よって、クラス名の調査は終了。
@@ -1269,7 +1269,7 @@ void CDocOutline::MakeFuncList_C( CFuncInfoArr* pcFuncInfoArr ,EOutlineType& nOu
 								nMode2 = M2_NORMAL; 
 							else
 #endif
-							if( pLine[i] == L'<' )
+							if( pLine[i] == LCHAR('<') )
 								nMode2 = M2_TEMPLATE_SAVE;
 						}
 						nMode = 2;
@@ -1297,12 +1297,12 @@ static bool IsCommentBlock( std::vector<SCommentBlock>& arr, int pos )
 }
 
 /* C/C++スマートインデント処理 */
-void CEditView::SmartIndent_CPP( wchar_t wcChar )
+void CEditView::SmartIndent_CPP( WCHAR wcChar )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	int			k;
-	const wchar_t*	pLine2;
+	const WCHAR*	pLine2;
 	CLogicInt	nLineLen2;
 	int			nLevel;
 	CLogicInt j;
@@ -1311,32 +1311,32 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	CLogicRange sRangeA;
 	sRangeA.Clear(-1);
 
-	wchar_t*	pszData = nullptr;
+	WCHAR*	pszData = nullptr;
 	CLogicInt	nDataLen;
 
 	int			nWork = 0;
 	int			nCharChars;
 	int			nSrcLen;
-	wchar_t		pszSrc[1024];
+	WCHAR		pszSrc[1024];
 	BOOL		bChange;
 
 	int			nCaretPosX_PHY;
 
 	CLogicPoint	ptCP;
 
-	if(wcChar==WCODE::CR || wcschr(L":{}()",wcChar)!=nullptr){
+	if(wcChar==WCODE::CR || wcschr(LTEXT(":{}()"),wcChar)!=nullptr){
 		//次へ進む
 	}else return;
 
 	switch( wcChar ){
 	case WCODE::CR:
-	case L':':
-	case L'}':
-	case L')':
-	case L'{':
-	case L'(':
+	case LCHAR(':'):
+	case LCHAR('}'):
+	case LCHAR(')'):
+	case LCHAR('{'):
+	case LCHAR('('):
 	{
-		wchar_t wcCharOrg = wcChar;
+		WCHAR wcCharOrg = wcChar;
 		nCaretPosX_PHY = GetCaret().GetCaretLogicPos().x;
 
 		pLine = m_pcEditDoc->m_cDocLineMgr.GetLine(GetCaret().GetCaretLogicPos().GetY2())->GetDocLineStrWithEOL(&nLineLen);
@@ -1367,7 +1367,7 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				if( i < nLineLen ){
 					// 2005-09-02 D.S.Koba GetSizeOfChar
 					nCharChars = CNativeW::GetSizeOfChar( pLine, nLineLen, i );
-					if( 1 == nCharChars && ( pLine[i] == L')' || pLine[i] == L'}' ) ){
+					if( 1 == nCharChars && ( pLine[i] == LCHAR(')') || pLine[i] == LCHAR('}') ) ){
 						wcChar = pLine[i];
 					}
 					nCaretPosX_PHY = i;
@@ -1383,17 +1383,17 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				}
 			}
 			if( i < nWork ){
-				if( ( L':' == wcChar && IsHeadCppKeyword(&pLine[i]) )
+				if( ( LCHAR(':') == wcChar && IsHeadCppKeyword(&pLine[i]) )
 					//	Sep. 18, 2002 かろと
-					|| ( L'{' == wcChar && L'#' != pLine[i] )
-					|| ( L'(' == wcChar && L'#' != pLine[i] )
+					|| ( LCHAR('{') == wcChar && LCHAR('#') != pLine[i] )
+					|| ( LCHAR('(') == wcChar && LCHAR('#') != pLine[i] )
 				){
 
 				}else{
 					return;
 				}
 			}else{
-				if( L':' == wcChar ){
+				if( LCHAR(':') == wcChar ){
 					return;
 				}
 			}
@@ -1464,10 +1464,10 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				for( int n = 0; n < nLineLen2; n++ ){
 					switch( nMode ){
 					case 0:
-						if( m_pTypeData->m_bIndentCppStringIgnore && L'"' == pLine2[n] ){
+						if( m_pTypeData->m_bIndentCppStringIgnore && LCHAR('"') == pLine2[n] ){
 							nMode = 1;
 							nBegin = n;
-						}else if( m_pTypeData->m_bIndentCppStringIgnore &&  L'\'' == pLine2[n] ){
+						}else if( m_pTypeData->m_bIndentCppStringIgnore &&  LCHAR('\'') == pLine2[n] ){
 							nMode = 2;
 							nBegin = n;
 						}else if( m_pTypeData->m_bIndentCppCommentIgnore &&  n + 1 < nLineLen2 && '/' == pLine2[n] && '*' == pLine2[n+1] ){
@@ -1481,9 +1481,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						}
 						break;
 					case 1:
-						if( L'\\' == pLine2[n] ){
+						if( LCHAR('\\') == pLine2[n] ){
 							n++;
-						}else if( L'"' == pLine2[n] ){
+						}else if( LCHAR('"') == pLine2[n] ){
 							SCommentBlock block = { nBegin, n };
 							arrCommentBlock.push_back(block);
 							nBegin = -1;
@@ -1491,9 +1491,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						}
 						break;
 					case 2:
-						if( L'\\' == pLine2[n] ){
+						if( LCHAR('\\') == pLine2[n] ){
 							n++;
-						}else if( L'\'' == pLine2[n] ){
+						}else if( LCHAR('\'') == pLine2[n] ){
 							SCommentBlock block = { nBegin, n };
 							arrCommentBlock.push_back(block);
 							nBegin = -1;
@@ -1530,22 +1530,22 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			}
 
 			for( ; k >= 0; /*k--*/ ){
-				if( 1 == nCharChars && ( L'}' == pLine2[k] || L')' == pLine2[k] )
+				if( 1 == nCharChars && ( LCHAR('}') == pLine2[k] || LCHAR(')') == pLine2[k] )
 				){
-					if( 0 < k && L'\'' == pLine2[k - 1]
-					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
+					if( 0 < k && LCHAR('\'') == pLine2[k - 1]
+					 && nLineLen2 - 1 > k && LCHAR('\'') == pLine2[k + 1]
 					){
 //						MYTRACE( L"▼[%ls]\n", pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合
 						if( j == GetCaret().GetCaretLogicPos().y ){
-							if( L'{' == wcChar && L'}' == pLine2[k] ){
-								wcChar = L'}';
+							if( LCHAR('{') == wcChar && LCHAR('}') == pLine2[k] ){
+								wcChar = LCHAR('}');
 								nLevel--;	/* {}の入れ子レベル */
 							}
-							if( L'(' == wcChar && L')' == pLine2[k] ){
-								wcChar = L')';
+							if( LCHAR('(') == wcChar && LCHAR(')') == pLine2[k] ){
+								wcChar = LCHAR(')');
 								nLevel--;	/* {}の入れ子レベル */
 							}
 						}
@@ -1553,20 +1553,20 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 						nLevel++;	/* {}の入れ子レベル */
 					}
 				}
-				if( 1 == nCharChars && ( L'{' == pLine2[k] || L'(' == pLine2[k] )
+				if( 1 == nCharChars && ( LCHAR('{') == pLine2[k] || LCHAR('(') == pLine2[k] )
 				){
-					if( 0 < k && L'\'' == pLine2[k - 1]
-					 && nLineLen2 - 1 > k && L'\'' == pLine2[k + 1]
+					if( 0 < k && LCHAR('\'') == pLine2[k - 1]
+					 && nLineLen2 - 1 > k && LCHAR('\'') == pLine2[k + 1]
 					){
 //						MYTRACE( L"▼[%ls]\n", pLine2 );
 					}else if( bCommentStringCheck && IsCommentBlock(arrCommentBlock, k) ){
 					}else{
 						//同じ行の場合
 						if( j == GetCaret().GetCaretLogicPos().y ){
-							if( L'{' == wcChar && L'{' == pLine2[k] ){
+							if( LCHAR('{') == wcChar && LCHAR('{') == pLine2[k] ){
 								return;
 							}
-							if( L'(' == wcChar && L'(' == pLine2[k] ){
+							if( LCHAR('(') == wcChar && LCHAR('(') == pLine2[k] ){
 								return;
 							}
 						}
@@ -1599,9 +1599,9 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			}
 
 			nCharChars = (m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace)? (Int)m_pcEditDoc->m_cLayoutMgr.GetTabSpaceKetas(): Int(1);
-			pszData = new wchar_t[nDataLen + nCharChars + 1];
+			pszData = new WCHAR[nDataLen + nCharChars + 1];
 			wmemcpy( pszData, pLine2, nDataLen );
-			if( WCODE::CR  == wcChar || L'{' == wcChar || L'(' == wcChar ){
+			if( WCODE::CR  == wcChar || LCHAR('{') == wcChar || LCHAR('(') == wcChar ){
 				// 2005.10.11 ryoji TABキーがSPACE挿入の設定なら追加インデントもSPACEにする
 				//	既存文字列の右端の表示位置を求めた上で挿入するスペースの数を決定する
 				if( m_pcEditDoc->m_cDocType.GetDocumentAttribute().m_bInsSpace ){	// SPACE挿入設定
@@ -1620,15 +1620,15 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 					nCharChars = (Int)m_pcEditDoc->m_cLayoutMgr.GetActualTabSpaceKetas(m);
 					for( int i2 = 0; i2 < nCharChars; i2++ )
 						pszData[nDataLen + i2] = WCODE::SPACE;
-					pszData[nDataLen + nCharChars] = L'\0';
+					pszData[nDataLen + nCharChars] = LCHAR('\0');
 					nDataLen += CLogicInt(nCharChars);
 				}else{
 					pszData[nDataLen] = WCODE::TAB;
-					pszData[nDataLen + 1] = L'\0';
+					pszData[nDataLen + 1] = LCHAR('\0');
 					++nDataLen;
 				}
 			}else{
-				pszData[nDataLen] = L'\0';
+				pszData[nDataLen] = LCHAR('\0');
 			}
 			break;
 		}
@@ -1638,8 +1638,8 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 				return;
 			}else{
 				nDataLen = CLogicInt(0);
-				pszData = new wchar_t[nDataLen + 1];
-				pszData[nDataLen] = L'\0';
+				pszData = new WCHAR[nDataLen + 1];
+				pszData[nDataLen] = LCHAR('\0');
 			}
 		}
 
@@ -1654,10 +1654,10 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 			return;
 		}
 		if( nullptr == pLine ){
-			pszSrc[0] = L'\0';
+			pszSrc[0] = LCHAR('\0');
 		}else{
 			wmemcpy( pszSrc, &pLine[sRangeA.GetFrom().x], nSrcLen );
-			pszSrc[nSrcLen] = L'\0';
+			pszSrc[nSrcLen] = LCHAR('\0');
 		}
 
 		/* 調整によって置換される箇所 */
@@ -1716,164 +1716,164 @@ void CEditView::SmartIndent_CPP( wchar_t wcChar )
 	}
 }
 
-const wchar_t* g_ppszKeywordsCPP[] = {
-	L"#define",
-	L"#elif",
-	L"#elifdef",
-	L"#elifndef",
-	L"#else",
-	L"#embed",
-	L"#endif",
-	L"#error",
-	L"#if",
-	L"#ifdef",
-	L"#ifndef",
-	L"#include",
-	L"#line",
-	L"#pragma",
-	L"#undef",
-	L"_Alignas",
-	L"_Alignof",
-	L"_Atomic",
-	L"_Bool",
-	L"_Complex",
-	L"_Generic",
-	L"_Imaginary",
-	L"_Noreturn",
-	L"_Pragma",
-	L"_Static_assert",
-	L"_Thread_local",
-	L"__DATE__",
-	L"__FILE__",
-	L"__FUNCTION__",
-	L"__FUNCDNAME__",
-	L"__FUNCSIG__",
-	L"__LINE__",
-	L"__PRETTY_FUNCTION__",
-	L"__TIME__",
-	L"__VA_ARGS__",
-	L"__cplusplus",
-	L"__declspec",
-	L"__func__",
-	L"__forceinline",
-	L"__inline",
-	L"__has_cpp_attribute",
-	L"__has_embed",
-	L"__has_include",
-	L"__restrict",
-	L"__restrict__",
-	L"alignas",
-	L"alignof",
-	L"and",
-	L"and_eq",
-	L"asm",
-	L"auto",
-	L"bitand",
-	L"bitor",
-	L"bool",
-	L"break",
-	L"case",
-	L"catch",
-	L"char",
-	L"char8_t",
-	L"char16_t",
-	L"char32_t",
-	L"class",
-	L"compl",
-	L"concept",
-	L"const",
-	L"consteval",
-	L"constexpr",
-	L"constinit",
-	L"const_cast",
-	L"continue",
-	L"contract_assert",
-	L"co_await",
-	L"co_return",
-	L"co_yield",
-	L"decltype",
-	L"default",
-	L"define",
-	L"defined",
-	L"delete",
-	L"do",
-	L"double",
-	L"dynamic_cast",
-	L"elif",
-	L"elifdef",
-	L"elifndef",
-	L"else",
-	L"embed",
-	L"endif",
-	L"enum",
-	L"error",
-	L"explicit",
-	L"export",
-	L"extern",
-	L"false",
-	L"final",
-	L"float",
-	L"for",
-	L"friend",
-	L"goto",
-	L"if",
-	L"ifdef",
-	L"ifndef",
-	L"import",
-	L"include",
-	L"inline",
-	L"int",
-	L"line",
-	L"long",
-	L"module",
-	L"mutable",
-	L"namespace",
-	L"new",
-	L"noexcept",
-	L"not",
-	L"not_eq",
-	L"nullptr",
-	L"operator",
-	L"or",
-	L"or_eq",
-	L"override",
-	L"pragma",
-	L"private",
-	L"protected",
-	L"public",
-	L"register",
-	L"reinterpret_cast",
-	L"requires",
-	L"restrict",
-	L"return",
-	L"short",
-	L"signed",
-	L"sizeof",
-	L"static",
-	L"static_assert",
-	L"static_cast",
-	L"struct",
-	L"switch",
-	L"template",
-	L"this",
-	L"thread_local",
-	L"throw",
-	L"true",
-	L"try",
-	L"typedef",
-	L"typeid",
-	L"typename",
-	L"undef",
-	L"union",
-	L"unsigned",
-	L"using",
-	L"virtual",
-	L"void",
-	L"volatile",
-	L"warning",
-	L"wchar_t",
-	L"while",
-	L"xor",
-	L"xor_eq",
+const WCHAR* g_ppszKeywordsCPP[] = {
+	LTEXT("#define"),
+	LTEXT("#elif"),
+	LTEXT("#elifdef"),
+	LTEXT("#elifndef"),
+	LTEXT("#else"),
+	LTEXT("#embed"),
+	LTEXT("#endif"),
+	LTEXT("#error"),
+	LTEXT("#if"),
+	LTEXT("#ifdef"),
+	LTEXT("#ifndef"),
+	LTEXT("#include"),
+	LTEXT("#line"),
+	LTEXT("#pragma"),
+	LTEXT("#undef"),
+	LTEXT("_Alignas"),
+	LTEXT("_Alignof"),
+	LTEXT("_Atomic"),
+	LTEXT("_Bool"),
+	LTEXT("_Complex"),
+	LTEXT("_Generic"),
+	LTEXT("_Imaginary"),
+	LTEXT("_Noreturn"),
+	LTEXT("_Pragma"),
+	LTEXT("_Static_assert"),
+	LTEXT("_Thread_local"),
+	LTEXT("__DATE__"),
+	LTEXT("__FILE__"),
+	LTEXT("__FUNCTION__"),
+	LTEXT("__FUNCDNAME__"),
+	LTEXT("__FUNCSIG__"),
+	LTEXT("__LINE__"),
+	LTEXT("__PRETTY_FUNCTION__"),
+	LTEXT("__TIME__"),
+	LTEXT("__VA_ARGS__"),
+	LTEXT("__cplusplus"),
+	LTEXT("__declspec"),
+	LTEXT("__func__"),
+	LTEXT("__forceinline"),
+	LTEXT("__inline"),
+	LTEXT("__has_cpp_attribute"),
+	LTEXT("__has_embed"),
+	LTEXT("__has_include"),
+	LTEXT("__restrict"),
+	LTEXT("__restrict__"),
+	LTEXT("alignas"),
+	LTEXT("alignof"),
+	LTEXT("and"),
+	LTEXT("and_eq"),
+	LTEXT("asm"),
+	LTEXT("auto"),
+	LTEXT("bitand"),
+	LTEXT("bitor"),
+	LTEXT("bool"),
+	LTEXT("break"),
+	LTEXT("case"),
+	LTEXT("catch"),
+	LTEXT("char"),
+	LTEXT("char8_t"),
+	LTEXT("char16_t"),
+	LTEXT("char32_t"),
+	LTEXT("class"),
+	LTEXT("compl"),
+	LTEXT("concept"),
+	LTEXT("const"),
+	LTEXT("consteval"),
+	LTEXT("constexpr"),
+	LTEXT("constinit"),
+	LTEXT("const_cast"),
+	LTEXT("continue"),
+	LTEXT("contract_assert"),
+	LTEXT("co_await"),
+	LTEXT("co_return"),
+	LTEXT("co_yield"),
+	LTEXT("decltype"),
+	LTEXT("default"),
+	LTEXT("define"),
+	LTEXT("defined"),
+	LTEXT("delete"),
+	LTEXT("do"),
+	LTEXT("double"),
+	LTEXT("dynamic_cast"),
+	LTEXT("elif"),
+	LTEXT("elifdef"),
+	LTEXT("elifndef"),
+	LTEXT("else"),
+	LTEXT("embed"),
+	LTEXT("endif"),
+	LTEXT("enum"),
+	LTEXT("error"),
+	LTEXT("explicit"),
+	LTEXT("export"),
+	LTEXT("extern"),
+	LTEXT("false"),
+	LTEXT("final"),
+	LTEXT("float"),
+	LTEXT("for"),
+	LTEXT("friend"),
+	LTEXT("goto"),
+	LTEXT("if"),
+	LTEXT("ifdef"),
+	LTEXT("ifndef"),
+	LTEXT("import"),
+	LTEXT("include"),
+	LTEXT("inline"),
+	LTEXT("int"),
+	LTEXT("line"),
+	LTEXT("long"),
+	LTEXT("module"),
+	LTEXT("mutable"),
+	LTEXT("namespace"),
+	LTEXT("new"),
+	LTEXT("noexcept"),
+	LTEXT("not"),
+	LTEXT("not_eq"),
+	LTEXT("nullptr"),
+	LTEXT("operator"),
+	LTEXT("or"),
+	LTEXT("or_eq"),
+	LTEXT("override"),
+	LTEXT("pragma"),
+	LTEXT("private"),
+	LTEXT("protected"),
+	LTEXT("public"),
+	LTEXT("register"),
+	LTEXT("reinterpret_cast"),
+	LTEXT("requires"),
+	LTEXT("restrict"),
+	LTEXT("return"),
+	LTEXT("short"),
+	LTEXT("signed"),
+	LTEXT("sizeof"),
+	LTEXT("static"),
+	LTEXT("static_assert"),
+	LTEXT("static_cast"),
+	LTEXT("struct"),
+	LTEXT("switch"),
+	LTEXT("template"),
+	LTEXT("this"),
+	LTEXT("thread_local"),
+	LTEXT("throw"),
+	LTEXT("true"),
+	LTEXT("try"),
+	LTEXT("typedef"),
+	LTEXT("typeid"),
+	LTEXT("typename"),
+	LTEXT("undef"),
+	LTEXT("union"),
+	LTEXT("unsigned"),
+	LTEXT("using"),
+	LTEXT("virtual"),
+	LTEXT("void"),
+	LTEXT("volatile"),
+	LTEXT("warning"),
+	LTEXT("wchar_t"),
+	LTEXT("while"),
+	LTEXT("xor"),
+	LTEXT("xor_eq"),
 };
 int g_nKeywordsCPP = int(std::size(g_ppszKeywordsCPP));

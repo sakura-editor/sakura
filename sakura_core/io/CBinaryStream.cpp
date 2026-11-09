@@ -8,7 +8,7 @@
 #include "CBinaryStream.h"
 
 CBinaryInputStream::CBinaryInputStream(LPCWSTR pszFilePath)
-: CStream(pszFilePath,L"rb")
+: CStream(pszFilePath,LTEXT("rb"))
 {
 }
 
@@ -29,6 +29,6 @@ int CBinaryInputStream::Read(void* pBuffer, size_t nSizeInBytes)
 }
 
 CBinaryOutputStream::CBinaryOutputStream(LPCWSTR pszFilePath, bool bExceptionMode)
-: COutputStream(pszFilePath,L"wb",bExceptionMode)
+: COutputStream(pszFilePath,LTEXT("wb"),bExceptionMode)
 {
 }

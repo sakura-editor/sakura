@@ -36,7 +36,7 @@ private:
 	using Me = CIfObjTypeInfo;
 
 	const CIfObj::CMethodInfoList& m_MethodsRef;
-	std::wstring m_sName;
+	sakura::wstring m_sName;
 	TYPEATTR m_TypeAttr{};
 
 public:
@@ -48,13 +48,13 @@ public:
 		return Base::template make_instance<CIfObjTypeInfo>(std::forward<Args>(args)...);
 	}
 
-	CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, std::wstring_view sName);
+	CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, sakura::wstring_view sName);
 
 	HRESULT STDMETHODCALLTYPE GetTypeAttr(
 					/* [out] */ [[maybe_unused]] TYPEATTR __RPC_FAR *__RPC_FAR *ppTypeAttr) override
 	{
 #ifdef TEST
-		DEBUG_TRACE( L"GetTypeAttr\n" );
+		DEBUG_TRACE( LTEXT("GetTypeAttr\n") );
 #endif
 		*ppTypeAttr = &m_TypeAttr;
 		return S_OK;
@@ -64,7 +64,7 @@ public:
 					/* [out] */ [[maybe_unused]] ITypeComp __RPC_FAR *__RPC_FAR *ppTComp) override
 	{
 #ifdef TEST
-		DEBUG_TRACE( L"GetTypeComp\n" );
+		DEBUG_TRACE( LTEXT("GetTypeComp\n") );
 #endif
 		return E_NOTIMPL;
 	}
@@ -142,13 +142,13 @@ public:
 			return TYPE_E_ELEMENTNOTFOUND;
 		}
 		if( pBstrDocString ){
-			*pBstrDocString = SysAllocString(L"");
+			*pBstrDocString = SysAllocString(LTEXT(""));
 		}
 		if( pdwHelpContext ){
 			*pdwHelpContext = 0;
 		}
 		if( pBstrHelpFile ){
-			*pBstrHelpFile = SysAllocString(L"");
+			*pBstrHelpFile = SysAllocString(LTEXT(""));
 		}
 		return S_OK;
 	}
@@ -216,7 +216,7 @@ public:
 	}
 };
 
-CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, std::wstring_view sName)
+CIfObjTypeInfo::CIfObjTypeInfo(const CIfObj::CMethodInfoList& methods, sakura::wstring_view sName)
 	: m_MethodsRef(methods)
 	, m_sName(sName)
 {
@@ -229,7 +229,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetFuncDesc(
 			/* [out] */ FUNCDESC __RPC_FAR *__RPC_FAR *ppFuncDesc)
 {
 #ifdef TEST
-	DEBUG_TRACE( L"GetFuncDesc\n" );
+	DEBUG_TRACE( LTEXT("GetFuncDesc\n") );
 #endif
 	*ppFuncDesc = const_cast<FUNCDESC __RPC_FAR *>(&(m_MethodsRef[index].Desc));
 	return S_OK;
@@ -242,7 +242,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
     /* [out] */ UINT __RPC_FAR *pcNames)
 {
 #ifdef TEST
-		DEBUG_TRACE( L"GetNames\n" );
+		DEBUG_TRACE( LTEXT("GetNames\n") );
 #endif
 	*pcNames = 1;
 	if(cMaxNames > 0)
@@ -254,7 +254,7 @@ HRESULT STDMETHODCALLTYPE CIfObjTypeInfo::GetNames(
 //インターフェースオブジェクト
 
 //コンストラクタ
-CIfObj::CIfObj(std::wstring_view name, bool isGlobal)
+CIfObj::CIfObj(sakura::wstring_view name, bool isGlobal)
 	: m_sName(name)
 	, m_isGlobal(isGlobal)
 {
@@ -336,7 +336,7 @@ HRESULT STDMETHODCALLTYPE CIfObj::GetIDsOfNames(
 
 //型情報にメソッドを追加する
 void CIfObj::AddMethod(
-	const wchar_t*	Name,
+	const WCHAR*	Name,
 	int				ID,
 	VARTYPE*		ArgumentTypes,
 	int				ArgumentCount,

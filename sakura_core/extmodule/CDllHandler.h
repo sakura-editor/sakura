@@ -193,6 +193,6 @@ protected:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
 	HINSTANCE		m_hInstance;
-	std::wstring	m_strLoadedDllName;
+	sakura::wstring	m_strLoadedDllName;
 };
 #endif /* SAKURA_CDLLHANDLER_B27A5A93_E49F_4618_8958_6883D63BBABB_H_ */

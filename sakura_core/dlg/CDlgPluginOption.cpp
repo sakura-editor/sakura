@@ -25,8 +25,8 @@
 #include "sakura.hh"
 
 // BOOL変数の表示
-#define	BOOL_DISP_TRUE	L"\u2611"
-#define	BOOL_DISP_FALSE	L"\u2610"
+#define	BOOL_DISP_TRUE	LTEXT("\u2611")
+#define	BOOL_DISP_FALSE	LTEXT("\u2610")
 
 using namespace std::string_literals;
 
@@ -111,7 +111,7 @@ void CDlgPluginOption::SetData( void )
 	for( i=0, it = m_cPlugin->m_options.cbegin(); it != m_cPlugin->m_options.cend(); i++, it++ ){
 		cOpt = *it;
 
-		auto_snprintf_s(buf, std::size(buf), L"%ls", cOpt->GetLabel().c_str());
+		auto_snprintf_s(buf, std::size(buf), LTEXT("%ls"), cOpt->GetLabel().c_str());
 		lvi.mask     = LVIF_TEXT | LVIF_PARAM;
 		lvi.pszText  = buf;
 		lvi.iItem    = i;
@@ -119,9 +119,9 @@ void CDlgPluginOption::SetData( void )
 		lvi.lParam   = cOpt->GetIndex();
 		ListView_InsertItem( hwndList, &lvi );
 
-		std::wstring sSection;
-		std::wstring sKey;
-		std::wstring sValue;
+		sakura::wstring sSection;
+		sakura::wstring sKey;
+		sakura::wstring sValue;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
@@ -141,30 +141,30 @@ void CDlgPluginOption::SetData( void )
 		}
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
-			wcscpy_s( buf, sValue == L"0"s || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
+			wcscpy_s( buf, sValue == LTEXT("0"s) || sValue.empty() ? BOOL_DISP_FALSE : BOOL_DISP_TRUE );
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_INT) {
 			// 数値へ正規化
-			auto_sprintf( buf, L"%d", _wtoi(sValue.c_str()));
+			auto_sprintf( buf, LTEXT("%d"), _wtoi(sValue.c_str()));
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 値から表示へ
-			std::wstring	sView;
-			std::wstring	sTrg;
-			std::vector<std::wstring>	selects;
+			sakura::wstring	sView;
+			sakura::wstring	sTrg;
+			std::vector<sakura::wstring>	selects;
 			selects = cOpt->GetSelects();
 
-			buf[0] = L'\0';
+			buf[0] = LCHAR('\0');
 			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
 				SepSelect(*it2, &sView, &sTrg);
 				if (sValue == sTrg) {
-					auto_snprintf_s(buf, std::size(buf), L"%ls", sView.c_str());
+					auto_snprintf_s(buf, std::size(buf), LTEXT("%ls"), sView.c_str());
 					break;
 				}
 			}
 		}
 		else {
-			auto_snprintf_s(buf, std::size(buf), L"%ls", sValue.c_str());
+			auto_snprintf_s(buf, std::size(buf), LTEXT("%ls"), sValue.c_str());
 		}
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -226,32 +226,32 @@ int CDlgPluginOption::GetData( void )
 
 		if (cOpt->GetType() == OPTION_TYPE_BOOL) {
 			if (wcscmp(buf,  BOOL_DISP_FALSE) == 0) {
-				wcscpy (buf, L"0");
+				wcscpy (buf, LTEXT("0"));
 			}
 			else {
-				wcscpy (buf, L"1");
+				wcscpy (buf, LTEXT("1"));
 			}
 		}
 		else if (cOpt->GetType() == OPTION_TYPE_SEL) {
 			// 表示から値へ
-			std::wstring	sView;
-			std::wstring	sTrg;
-			std::vector<std::wstring>	selects;
+			sakura::wstring	sView;
+			sakura::wstring	sTrg;
+			std::vector<sakura::wstring>	selects;
 			selects = cOpt->GetSelects();
-			std::wstring sWbuf = buf;
+			sakura::wstring sWbuf = buf;
 
 			for (auto it2 = selects.cbegin(); it2 != selects.cend(); it2++) {
 				SepSelect(*it2, &sView, &sTrg);
 				if (sView == sWbuf) {
-					auto_sprintf( buf, L"%ls", sTrg.c_str());
+					auto_sprintf( buf, LTEXT("%ls"), sTrg.c_str());
 					break;
 				}
 			}
 		}
 
-		std::wstring sSection;
-		std::wstring sKey;
-		std::wstring sValue;
+		sakura::wstring sSection;
+		sakura::wstring sKey;
+		sakura::wstring sValue;
 
 		cOpt->GetKey(&sSection, &sKey);
 		if( sSection.empty() || sKey.empty() ) {
@@ -499,7 +499,7 @@ void CDlgPluginOption::MoveFocusToEdit( void )
 {
 	//	現在のFocus取得
 	int		iLine = ListView_GetNextItem( GetItemHwnd( IDC_LIST_PLUGIN_OPTIONS ), -1, LVNI_SELECTED);
-	std::wstring	sType;
+	sakura::wstring	sType;
 	HWND	hwndCtrl;
 
 	if (iLine >= 0) {
@@ -536,7 +536,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	LVITEM	lvi;
-	std::wstring	sType;
+	sakura::wstring	sType;
 
 	if (iLine >= 0) {
 		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
@@ -565,7 +565,7 @@ void CDlgPluginOption::SetToEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_SEL) {
 			// CONBO 設定
-			std::vector<std::wstring>	selects;
+			std::vector<sakura::wstring>	selects;
 			selects = m_cPlugin->m_options[iLine]->GetSelects();
 
 			HWND	hwndCombo;
@@ -575,9 +575,9 @@ void CDlgPluginOption::SetToEdit( int iLine )
 			int		nSelIdx;
 			int		i;
 			int		nItemIdx;
-			std::wstring	sView;
-			std::wstring	sValue;
-			std::wstring	sWbuf = buf;
+			sakura::wstring	sView;
+			sakura::wstring	sValue;
+			sakura::wstring	sWbuf = buf;
 			nSelIdx = -1;		// 選択
 			i = 0;
 			for (auto it = selects.cbegin(); it != selects.cend(); it++) {
@@ -628,7 +628,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 	WCHAR	buf[MAX_LENGTH_VALUE+1];
 	int		nVal;
 	LVITEM	lvi;
-	std::wstring	sType;
+	sakura::wstring	sType;
 
 	if (iLine >= 0) {
 		sType = m_cPlugin->m_options[iLine]->GetType();
@@ -648,7 +648,7 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 		}
 		else if (sType == OPTION_TYPE_INT) {
 			nVal = ::GetDlgItemInt( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_NUM, nullptr, TRUE );
-			auto_sprintf( buf, L"%d", nVal);
+			auto_sprintf( buf, LTEXT("%d"), nVal);
 		}
 		else if (sType == OPTION_TYPE_SEL) {
 			ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_PLUGIN_OPTION, buf, MAX_LENGTH_VALUE+1);
@@ -669,9 +669,9 @@ void CDlgPluginOption::SetFromEdit( int iLine )
 }
 
 // 選択用文字列分解
-void CDlgPluginOption::SepSelect(std::wstring sTrg, std::wstring* spView, std::wstring* spValue )
+void CDlgPluginOption::SepSelect(sakura::wstring sTrg, sakura::wstring* spView, sakura::wstring* spValue )
 {
-	if (const auto ix = sTrg.find(L':'); ix == std::wstring::npos) {
+	if (const auto ix = sTrg.find(LCHAR(':')); ix == sakura::wstring::npos) {
 		*spView = *spValue = sTrg;
 	}
 	else {
@@ -714,7 +714,7 @@ void CDlgPluginOption::SelectDirectory( int iLine )
 	auto_sprintf( sTitle, LS(STR_DLGPLUGINOPT_SELECT), buf);
 	if (SelectDir( GetHwnd(), (const WCHAR*)sTitle /*L"ディレクトリの選択"*/, szDir, szDir )) {
 		//	末尾に\マークを追加する．
-		AddLastChar( szDir, int(std::size(szDir)), L'\\' );
+		AddLastChar( szDir, int(std::size(szDir)), LCHAR('\\') );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_PLUGIN_OPTION_DIR, szDir );
 	}
 }

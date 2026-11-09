@@ -54,7 +54,7 @@ DWORD WaitForSingleObject(
  * 構築時にはミューテックスを作成しない。初回Lock()時に作成する。
  */
 CMutex::CMutex(
-	std::wstring_view name,
+	sakura::wstring_view name,
 	LPSECURITY_ATTRIBUTES psa,
 	bool bInitialOwner
 )

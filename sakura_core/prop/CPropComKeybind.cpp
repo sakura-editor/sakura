@@ -28,9 +28,9 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 
-#define STR_SHIFT_PLUS        L"Shift+"  //@@@ 2001.11.08 add MIK
-#define STR_CTRL_PLUS         L"Ctrl+"  //@@@ 2001.11.08 add MIK
-#define STR_ALT_PLUS          L"Alt+"  //@@@ 2001.11.08 add MIK
+#define STR_SHIFT_PLUS        LTEXT("Shift+")  //@@@ 2001.11.08 add MIK
+#define STR_CTRL_PLUS         LTEXT("Ctrl+")  //@@@ 2001.11.08 add MIK
+#define STR_ALT_PLUS          LTEXT("Alt+")  //@@@ 2001.11.08 add MIK
 
 //@@@ 2001.02.04 Start by MIK: Popup Help
 static const DWORD p_helpids[] = {	//10700
@@ -281,7 +281,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				// 2007.11.02 ryoji F_DISABLEなら未割当
 				if( nFuncCode == F_DISABLE ){
 					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), int(std::size(pszLabel)) - 1 );
-					pszLabel[std::size(pszLabel) - 1] = L'\0';
+					pszLabel[std::size(pszLabel) - 1] = LCHAR('\0');
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}
@@ -463,31 +463,31 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	int 	nIndex;
 	int 	nIndexTop;
 	int 	i;
-	wchar_t	szKeyState[64];
+	WCHAR	szKeyState[64];
 	
 	hwndKeyList = ::GetDlgItem( hwndDlg, IDC_LIST_KEY );
 	nIndex = ApiWrap::List_GetCurSel( hwndKeyList );
 	nIndexTop = ApiWrap::List_GetTopIndex( hwndKeyList );
-	szKeyState[0] = L'\0';
+	szKeyState[0] = LCHAR('\0');
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
-		wcscat( szKeyState, L"Shift+" );
+		wcscat( szKeyState, LTEXT("Shift+") );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
 		i |= _CTRL;
-		wcscat( szKeyState, L"Ctrl+" );
+		wcscat( szKeyState, LTEXT("Ctrl+") );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 		i |= _ALT;
-		wcscat( szKeyState, L"Alt+" );
+		wcscat( szKeyState, LTEXT("Alt+") );
 	}
 	::SendMessage( hwndKeyList, WM_SETREDRAW, FALSE, 0 );
 	/* キー一覧に文字列をセット（リストボックス）*/
 	ApiWrap::List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		WCHAR	pszLabel[256];
-		auto_sprintf( pszLabel, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
+		auto_sprintf( pszLabel, LTEXT("%ls%s"), szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 		ApiWrap::List_AddString( hwndKeyList, pszLabel );
 	}
 	ApiWrap::List_SetCurSel( hwndKeyList, nIndex );

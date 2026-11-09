@@ -106,7 +106,7 @@ BOOL SelectDir(
 
 	BOOL bRet = TRUE;
 	if ( 0 != wcsncpy_s( strFolderName, nMaxCount, pszResult, _TRUNCATE ) ) {
-		wcsncpy_s( strFolderName, nMaxCount, L"", _TRUNCATE );
+		wcsncpy_s( strFolderName, nMaxCount, LTEXT(""), _TRUNCATE );
 		bRet = FALSE;
 	}
 
@@ -117,7 +117,7 @@ BOOL SelectDir(
 
 namespace apiwrap {
 
-std::wstring CommDlgExtendedErrorString();
+sakura::wstring CommDlgExtendedErrorString();
 
 }	// namespace apiwrap
 
@@ -194,7 +194,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 							::ZeroMemory( &si, sizeof(si) );
 							si.cbSize   = sizeof(si);
 							si.fMask    = SEE_MASK_IDLIST;
-							si.lpVerb   = L"open";
+							si.lpVerb   = LTEXT("open");
 							si.lpIDList = pIDL;
 							si.nShow    = SW_SHOWNORMAL;
 							::ShellExecuteEx( &si );	// フォルダを開く
@@ -218,7 +218,7 @@ static LRESULT CALLBACK PropSheetWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, L
 				{
 					DLLSHAREDATA *pShareData = &GetDllShareData();
 					GetInidir( pShareData->m_sHistory.m_szIMPORTFOLDER );
-					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, std::size(pShareData->m_sHistory.m_szIMPORTFOLDER), L'\\' );
+					AddLastChar( pShareData->m_sHistory.m_szIMPORTFOLDER, std::size(pShareData->m_sHistory.m_szIMPORTFOLDER), LCHAR('\\') );
 				}
 				break;
 			}
@@ -298,20 +298,20 @@ DWORD NetConnect ( const WCHAR strNetWorkPass[] )
 	//char sUser[] = "\0";		//ユーザー名
 	DWORD dwRet;				//戻り値　エラーコードはWINERROR.Hを参照
 	WCHAR sTemp[256];
-	WCHAR sDrive[] = L"";
+	WCHAR sDrive[] = LTEXT("");
     int i;
 
 	if (wcslen(strNetWorkPass) < 3)	return ERROR_BAD_NET_NAME;  //UNCではない。
-	if (strNetWorkPass[0] != L'\\' && strNetWorkPass[1] != L'\\')	return ERROR_BAD_NET_NAME;  //UNCではない。
+	if (strNetWorkPass[0] != LCHAR('\\') && strNetWorkPass[1] != LCHAR('\\'))	return ERROR_BAD_NET_NAME;  //UNCではない。
 
 	//3文字目から数えて最初の\の直前までを切り出す
-	sTemp[0] = L'\\';
-	sTemp[1] = L'\\';
-	for (i = 2; strNetWorkPass[i] != L'\0'; i++) {
-		if (strNetWorkPass[i] == L'\\') break;
+	sTemp[0] = LCHAR('\\');
+	sTemp[1] = LCHAR('\\');
+	for (i = 2; strNetWorkPass[i] != LCHAR('\0'); i++) {
+		if (strNetWorkPass[i] == LCHAR('\\')) break;
 		sTemp[i] = strNetWorkPass[i];
 	}
-	sTemp[i] = L'\0';	//終端
+	sTemp[i] = LCHAR('\0');	//終端
 
 	//NETRESOURCE作成
 	NETRESOURCE nr;
@@ -394,12 +394,12 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 				if( SUCCEEDED( hRes = pIShellLink->Resolve(hwnd, SLR_ANY_MATCH ) ) ){
 					// Get the path to the link target.
 					WCHAR szGotPath[MAX_PATH];
-					szGotPath[0] = L'\0';
+					szGotPath[0] = LCHAR('\0');
 					if( SUCCEEDED( hRes = pIShellLink->GetPath(szGotPath, MAX_PATH, &wfd, SLGP_SHORTPATH ) ) ){
 						// Get the description of the target.
 						WCHAR szDescription[MAX_PATH];
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
-							if( L'\0' != szGotPath[0] ){
+							if( LCHAR('\0') != szGotPath[0] ){
 								/* 正常終了 */
 								wcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
@@ -438,9 +438,9 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 */
 static LPCWSTR GetHelpFilePath()
 {
-	static WCHAR szHelpFile[_MAX_PATH] = L"";
-	if(szHelpFile[0]==L'\0'){
-		GetExedir( szHelpFile, L"sakura.chm" );
+	static WCHAR szHelpFile[_MAX_PATH] = LTEXT("");
+	if(szHelpFile[0]==LCHAR('\0')){
+		GetExedir( szHelpFile, LTEXT("sakura.chm") );
 	}
 	return szHelpFile;
 }
@@ -493,7 +493,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 
 			memset(&hp, 0, sizeof(hp));	// 構造体をゼロクリア
 			hp.cbStruct = sizeof(hp);
-			hp.pszFont = L"ＭＳ Ｐゴシック, 9";
+			hp.pszFont = LTEXT("ＭＳ Ｐゴシック, 9");
 			hp.clrForeground = hp.clrBackground = COLORREF(-1);
 			hp.rcMargins.left = hp.rcMargins.top = hp.rcMargins.right = hp.rcMargins.bottom = -1;
 			if( uCommandOrg == HELP_CONTEXTMENU ){
@@ -549,7 +549,7 @@ BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 			dwData = 1;	// 目次ページ
 
 		WCHAR buf[256];
-		swprintf( buf, int(std::size(buf)), L"https://sakura-editor.github.io/help/HLP%06Iu.html", dwData );
+		swprintf( buf, int(std::size(buf)), LTEXT("https://sakura-editor.github.io/help/HLP%06Iu.html"), dwData );
 		ShellExecute( ::GetActiveWindow(), nullptr, buf, nullptr, nullptr, SW_SHOWNORMAL );
 	}
 
@@ -582,7 +582,7 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.hInstance = GetModuleHandleW(nullptr);
 	if (!Comdlg32::getInstance()->ChooseFontW(&cf)) {
 #ifdef _DEBUG
-		std::wstring name;
+		sakura::wstring name;
 		try {
 			name = apiwrap::CommDlgExtendedErrorString();
 		}

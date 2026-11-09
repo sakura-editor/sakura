@@ -23,7 +23,7 @@
 /*!	m_aSearchKeysにpszSearchKeyを追加する。
 	YAZAKI
 */
-void CSearchKeywordManager::AddToSearchKeyArr( const wchar_t* pszSearchKey )
+void CSearchKeywordManager::AddToSearchKeyArr( const WCHAR* pszSearchKey )
 {
 	CRecentSearch	cRecentSearchKey;
 	cRecentSearchKey.AppendItem( pszSearchKey );
@@ -34,7 +34,7 @@ void CSearchKeywordManager::AddToSearchKeyArr( const wchar_t* pszSearchKey )
 /*!	m_aReplaceKeysにpszReplaceKeyを追加する
 	YAZAKI
 */
-void CSearchKeywordManager::AddToReplaceKeyArr( const wchar_t* pszReplaceKey )
+void CSearchKeywordManager::AddToReplaceKeyArr( const WCHAR* pszReplaceKey )
 {
 	CRecentReplace	cRecentReplaceKey;
 	cRecentReplaceKey.AppendItem( pszReplaceKey );

@@ -41,7 +41,7 @@ public:
 	bool		m_bPaste = false;
 	bool		m_bBackup = false;
 
-	std::wstring	m_strText2;				//!< 置換後
+	sakura::wstring	m_strText2;				//!< 置換後
 	int				m_nReplaceKeySequence;	//!< 置換後シーケンス
 
 protected:

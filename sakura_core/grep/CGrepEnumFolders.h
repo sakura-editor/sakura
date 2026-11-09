@@ -29,8 +29,8 @@ public:
 
 	BOOL IsValid( WIN32_FIND_DATA& w32fd, LPCWSTR pFile = nullptr ) override{
 		if( ( w32fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
-		 && ( 0 != wcscmp( w32fd.cFileName, L"." ) )
-		 && ( 0 != wcscmp( w32fd.cFileName, L".." ) ) ){
+		 && ( 0 != wcscmp( w32fd.cFileName, LTEXT(".") ) )
+		 && ( 0 != wcscmp( w32fd.cFileName, LTEXT("..") ) ) ){
 			if( CGrepEnumFileBase::IsValid( w32fd, pFile ) ){
 				return TRUE;
 			}

@@ -20,7 +20,7 @@
 bool fexist(LPCWSTR pszPath); //!< ファイルまたはディレクトリが存在すればtrue
 bool fexist(const std::filesystem::path& path) noexcept; //!< ファイルまたはディレクトリが存在すればtrue
 
-bool IsFilePath( const wchar_t* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
+bool IsFilePath( const WCHAR* pLine, size_t* pnBgn, size_t* pnPathLen, bool bFileOnly = true );
 bool IsFileExists(const WCHAR* path, bool bFileOnly = false);
 bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
 
@@ -32,7 +32,7 @@ bool IsDirectory(LPCWSTR pszPath);	// 2009.08.20 ryoji
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
 bool IsInvalidFilenameChars(
-	std::wstring_view szPath
+	sakura::wstring_view szPath
 );
 
 /*!
@@ -44,7 +44,7 @@ bool IsInvalidFilenameChars(
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
 template <basis::NullTerminatedStringConstructible<WCHAR> A>
-	requires (!std::is_same_v<A, std::wstring_view>)
+	requires (!std::is_same_v<A, sakura::wstring_view>)
 bool IsInvalidFilenameChars(
 	const A& szPath
 )
@@ -85,8 +85,8 @@ void AddLastYenFromDirectoryPath(A& folder)
 	cxx::AddLastYenFromDirectoryPath(std::span<WCHAR>{ folder });
 }
 
-std::wstring AddLastYenPath(std::wstring_view path);
-std::wstring ReplaceSlashToYen(std::wstring_view path);	//!< パスの区切りの / を \ に置き換える
+sakura::wstring AddLastYenPath(sakura::wstring_view path);
+sakura::wstring ReplaceSlashToYen(sakura::wstring_view path);	//!< パスの区切りの / を \ に置き換える
 void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR* pszFile );	/* ファイルのフルパスを、フォルダーとファイル名に分割 */
 void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* pszPath );/* フォルダー、ファイル名から、結合したパスを作成 */
 BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
@@ -104,7 +104,7 @@ void GetInidirOrExedir( LPWSTR pDir, LPCWSTR szFile = nullptr, BOOL bRetExedirIf
 
 LPCWSTR GetRelPath( LPCWSTR pszPath );
 
-std::filesystem::path GetTempFilePath(std::wstring_view prefix, const std::optional<std::filesystem::path>& optTempDir = std::nullopt);
+std::filesystem::path GetTempFilePath(sakura::wstring_view prefix, const std::optional<std::filesystem::path>& optTempDir = std::nullopt);
 
 //ファイル時刻
 //TODO: いつか個別ファイルに移動したい
@@ -210,7 +210,7 @@ private:
  * @returns ファイルの更新日時
  */
 FILETIME GetLastWriteTime(
-	std::wstring_view filename
+	sakura::wstring_view filename
 );
 
 /*!
@@ -256,10 +256,10 @@ bool GetLastWriteTimestamp(
 }
 
 //文字列分割
-void my_splitpath_w ( const wchar_t *comln , wchar_t *drv,wchar_t *dir,wchar_t *fnm,wchar_t *ext );
+void my_splitpath_w ( const WCHAR *comln , WCHAR *drv,WCHAR *dir,WCHAR *fnm,WCHAR *ext );
 #define my_splitpath_t my_splitpath_w
 
-int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 );
+int FileMatchScoreSepExt( sakura::wstring_view file1, sakura::wstring_view file2 );
 
 void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth );
 void GetShortViewPath(WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int nPxWidth, bool bFitMode );

@@ -78,10 +78,10 @@ namespace apiwrap {
  */
 struct SGetTextResult {
 	//!	取得した文字列バッファ
-	std::wstring buffer;
+	sakura::wstring buffer;
 
 	//!	取得した文字列
-	std::wstring_view text;
+	sakura::wstring_view text;
 
 	//!	取得結果
 	bool result = false;
@@ -92,7 +92,7 @@ struct SGetTextResult {
 	/*!
 	 * @brief 成功状態を表すコンストラクター
 	 */
-	explicit SGetTextResult(std::wstring&& buffer_)
+	explicit SGetTextResult(sakura::wstring&& buffer_)
 		: buffer(std::move(buffer_))
 		, text(buffer)
 		, result(true)
@@ -104,7 +104,7 @@ struct SGetTextResult {
 	 *
 	 * @note 取得した文字列への参照を保持する
 	 */
-	explicit SGetTextResult(std::wstring_view text_)
+	explicit SGetTextResult(sakura::wstring_view text_)
 		: text(text_)
 		, result(true)
 	{
@@ -121,7 +121,7 @@ struct SGetTextResult {
 	/*!
 	 * @brief 取得した文字列バッファを返す変換演算子
 	 */
-	explicit operator const std::wstring&() const noexcept { return buffer; }
+	explicit operator const sakura::wstring&() const noexcept { return buffer; }
 
 	/*!
 	 * @brief 取得した文字列を返す変換演算子
@@ -166,7 +166,7 @@ SGetTextResult GetDlgItemTextW(
 
 	// 必要な文字数を確認する
 	const auto cchRequired = static_cast<int>(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, WM_GETTEXTLENGTH, 0L, 0L));
-	if (!cchRequired) return SGetTextResult{ std::wstring_view(buffer.data(), 0) };
+	if (!cchRequired) return SGetTextResult{ sakura::wstring_view(buffer.data(), 0) };
 
 	// バッファが足りない場合は失敗とする
 	if (std::ssize(buffer) < cchRequired + 1) return SGetTextResult{};
@@ -175,7 +175,7 @@ SGetTextResult GetDlgItemTextW(
 	const auto actualCopied = ::GetDlgItemTextW(hWndDlg, nIDDlgItem, buffer.data(), cchRequired + 1);
 
 	// バッファ参照を呼出元に返す
-	return SGetTextResult{ std::wstring_view(buffer.data(), actualCopied) };
+	return SGetTextResult{ sakura::wstring_view(buffer.data(), actualCopied) };
 }
 
 /*!
@@ -195,7 +195,7 @@ SGetTextResult GetWindowTextW(
 
 	// 必要な文字数を確認する
 	const auto cchRequired = ::GetWindowTextLengthW(hWnd);
-	if (!cchRequired) return SGetTextResult{ std::wstring_view(buffer.data(), 0) };
+	if (!cchRequired) return SGetTextResult{ sakura::wstring_view(buffer.data(), 0) };
 
 	// バッファが足りない場合は失敗とする
 	if (std::ssize(buffer) < cchRequired + 1) return SGetTextResult{};
@@ -204,7 +204,7 @@ SGetTextResult GetWindowTextW(
 	const auto actualCopied = ::GetWindowTextW(hWnd, buffer.data(), cchRequired + 1);
 
 	// バッファ参照を呼出元に返す
-	return SGetTextResult{ std::wstring_view(buffer.data(), actualCopied) };
+	return SGetTextResult{ sakura::wstring_view(buffer.data(), actualCopied) };
 }
 
 /*!

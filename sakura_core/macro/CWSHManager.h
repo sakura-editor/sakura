@@ -31,12 +31,12 @@
 #include "macro/CWSHIfObj.h"
 class CEditView;
 
-typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
+typedef void (*EngineCallback)(WCHAR *Ext, char *EngineName);
 
 class CWSHMacroManager final : public CMacroManagerBase
 {
 public:
-	explicit CWSHMacroManager(std::wstring const AEngineName);
+	explicit CWSHMacroManager(sakura::wstring const AEngineName);
 
 	~CWSHMacroManager() override;
 
@@ -61,8 +61,8 @@ public:
 	void ClearParam();								//インターフェースオブジェクトを削除する
 
 protected:
-	std::wstring m_Source;
-	std::wstring m_EngineName;
+	sakura::wstring m_Source;
+	sakura::wstring m_EngineName;
 	CWSHIfObj::List m_Params;
 	//2009.10.29 syat CWSHIfObjへ移動
 	////	2007.07.20 genta : flags追加

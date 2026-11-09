@@ -63,8 +63,8 @@ BOOL CPPAMacroMgr::LoadKeyMacro(
 
 	// バッファ（cmemWork）にファイル内容を読み込み、m_cPPAに渡す。
 	while( in ){
-		std::wstring szLine = in.ReadLineW();
-		szLine += L"\n";
+		sakura::wstring szLine = in.ReadLineW();
+		szLine += LTEXT("\n");
 		cmemWork.AppendString(szLine.c_str());
 	}
 	in.Close();
@@ -102,7 +102,7 @@ BOOL CPPAMacroMgr::LoadKeyMacroStr(
 */
 CMacroManagerBase* CPPAMacroMgr::Creator(const WCHAR* ext)
 {
-	if( wcscmp( ext, L"ppa" ) == 0 ){
+	if( wcscmp( ext, LTEXT("ppa") ) == 0 ){
 		return new CPPAMacroMgr;
 	}
 	return nullptr;

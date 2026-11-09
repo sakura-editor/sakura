@@ -36,12 +36,12 @@ public:
 	virtual ~CTextInputStream();
 
 	//操作
-	void			ReadLineW(std::wstring& line);
-	std::wstring	ReadLineW();
+	void			ReadLineW(sakura::wstring& line);
+	sakura::wstring	ReadLineW();
 
 private:
 	bool			m_bIsUtf8 = false;						//!< UTF-8ならtrue
-	std::string		m_Buffer = std::string(4096, L'\0');	//!< 内部バッファ
+	std::string		m_Buffer = std::string(4096, LCHAR('\0'));	//!< 内部バッファ
 };
 
 //テキスト出力ストリーム
@@ -59,7 +59,7 @@ public:
 	virtual ~CTextOutputStream();
 
 	//文字列書込。改行を入れたい場合は、文字列内に'\n'を含めること。(クラス側で適切な改行コードに変換して出力します)
-	void WriteString(const wchar_t* szData, int nLen = -1);
+	void WriteString(const WCHAR* szData, int nLen = -1);
 
 	/*!
 	 * @brief 書式付き文字列を出力する

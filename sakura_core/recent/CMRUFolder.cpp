@@ -86,7 +86,7 @@ HMENU CMRUFolder::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) cons
 		CFileNameManager::getInstance()->GetMenuFullLabel( szMenu, int(std::size(szMenu)), true, pszFolder, -1, false, CODE_NONE, bFavoriteLabel, i, true, dcFont.GetHDC() );
 
 		//	メニューに追加
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, L"", TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELOPENFOLDER + i, szMenu, LTEXT(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
@@ -120,7 +120,7 @@ void CMRUFolder::ClearAll()
 void CMRUFolder::Add( const WCHAR* pszFolder )
 {
 	if( nullptr == pszFolder
-	 || pszFolder[0] == L'\0' )
+	 || pszFolder[0] == LCHAR('\0') )
 	{	//	長さが0なら排除。
 		return;
 	}

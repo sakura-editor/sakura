@@ -17,8 +17,8 @@
  */
 template<>
 bool CDataProfile::IOProfileData<ColorInfo>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		entryKey,		//!< [in] エントリ名
 	ColorInfo&				colorInfo		//!< [in,out] エントリ値
 )
 {
@@ -26,14 +26,14 @@ bool CDataProfile::IOProfileData<ColorInfo>(
 	//   C[XXX]=ON/OFF,IsBold,TextColor,BackColor,HasUnderLine
 
 	// 取得・設定は文字列を介して行う
-	std::wstring buffer{};
+	sakura::wstring buffer{};
 
 	// 書き込みモード
 	if (IsWritingMode()) {
 		// 色設定データを書式化する
 		strprintf(
 			buffer,
-			L"%d,%d,%06x,%06x,%d",
+			LTEXT("%d,%d,%06x,%06x,%d"),
 			colorInfo.m_bDisp ? 1 : 0,
 			colorInfo.m_sFontAttr.m_bBoldFont ? 1 : 0,
 			colorInfo.m_sColorAttr.m_cTEXT,
@@ -54,7 +54,7 @@ bool CDataProfile::IOProfileData<ColorInfo>(
 		std::array<unsigned, 5> ints{};
 		if (5 != ::swscanf_s(
 			buffer.c_str(),
-			L"%u,%u,%06x,%06x,%u",
+			LTEXT("%u,%u,%06x,%06x,%u"),
 			&ints[0],
 			&ints[1],
 			&ints[2],
@@ -82,25 +82,25 @@ bool CDataProfile::IOProfileData<ColorInfo>(
  */
 template <>
 bool CDataProfile::IOProfileData<EditInfo>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		keyPrefix,		//!< [in] エントリ名
 	EditInfo&				ei				//!< [in,out] エントリ値
 )
 {
-	IOProfileData(sectionName, std::format(L"{}.nViewTopLine",	keyPrefix), ei.m_nViewTopLine);
-	IOProfileData(sectionName, std::format(L"{}.nViewLeftCol",	keyPrefix), ei.m_nViewLeftCol);
-	IOProfileData(sectionName, std::format(L"{}.nX",			keyPrefix), ei.m_ptCursor.x);
-	IOProfileData(sectionName, std::format(L"{}.nY",			keyPrefix), ei.m_ptCursor.y);
-	IOProfileData(sectionName, std::format(L"{}.nCharCode",		keyPrefix), ei.m_nCharCode);
-	IOProfileData(sectionName, std::format(L"{}.szPath",		keyPrefix), ei.m_szPath);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nViewTopLine"),	keyPrefix), ei.m_nViewTopLine);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nViewLeftCol"),	keyPrefix), ei.m_nViewLeftCol);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nX"),			keyPrefix), ei.m_ptCursor.x);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nY"),			keyPrefix), ei.m_ptCursor.y);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nCharCode"),		keyPrefix), ei.m_nCharCode);
+	IOProfileData(sectionName, std::format(LTEXT("{}.szPath"),		keyPrefix), ei.m_szPath);
 
-	if (!IOProfileData(sectionName, std::format(L"{}.szMark2",	keyPrefix), ei.m_szMarkLines) &&
+	if (!IOProfileData(sectionName, std::format(LTEXT("{}.szMark2"),	keyPrefix), ei.m_szMarkLines) &&
 		IsReadingMode())
 	{
-		IOProfileData(sectionName, std::format(L"{}.szMark", keyPrefix), ei.m_szMarkLines);
+		IOProfileData(sectionName, std::format(LTEXT("{}.szMark"), keyPrefix), ei.m_szMarkLines);
 	}
 
-	IOProfileData(sectionName, std::format(L"{}.nType", keyPrefix), ei.m_nTypeId );
+	IOProfileData(sectionName, std::format(LTEXT("{}.nType"), keyPrefix), ei.m_nTypeId );
 
 	return true;	// 返却値に意味はない
 }
@@ -112,8 +112,8 @@ bool CDataProfile::IOProfileData<EditInfo>(
  */
 template<>
 bool CDataProfile::IOProfileData<KeyHelpInfo>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		entryKey,		//!< [in] エントリ名
 	KeyHelpInfo&			keyHelpInfo		//!< [in,out] エントリ値
 )
 {
@@ -121,7 +121,7 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 	//   KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 
 	// 取得・設定は文字列を介して行う
-	std::wstring buffer{};
+	sakura::wstring buffer{};
 
 	// 書き込みモード
 	if (IsWritingMode()) {
@@ -132,7 +132,7 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 		// 辞書データを書式化する
 		strprintf(
 			buffer,
-			L"%d,%s,%s",
+			LTEXT("%d,%s,%s"),
 			keyHelpInfo.m_bUse ? 1 : 0,
 			keyHelpInfo.m_szAbout,
 			keyHelpInfo.m_szPath
@@ -153,7 +153,7 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 		auto szPath = keyHelpInfo.m_szPath;
 		if (3 != ::swscanf_s(
 			buffer.c_str(),
-			L"%d,%[^,],%[^\n]",
+			LTEXT("%d,%[^,],%[^\n]"),
 			&ints[0],
 			szAbout.data(), unsigned(std::size(szAbout)),
 			szPath.data(), unsigned(std::size(szPath))
@@ -162,12 +162,12 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
 			// szAbout部分が空の場合も拾う
 			if (2 == ::swscanf_s(
 				buffer.c_str(),
-				L"%d,,%[^\n]",
+				LTEXT("%d,,%[^\n]"),
 				&ints[0],
 				szPath.data(), unsigned(std::size(szPath))
 			))
 			{
-				szAbout = L"";
+				szAbout = LTEXT("");
 			}
 			else {
 				// 1つ目の値が不正（数値でない）
@@ -193,8 +193,8 @@ bool CDataProfile::IOProfileData<KeyHelpInfo>(
  */
 template<>
 bool CDataProfile::IOProfileData<MacroRec>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		keySuffix,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		keySuffix,		//!< [in] エントリ名
 	MacroRec&				macroRec		//!< [in,out] エントリ値
 )
 {
@@ -207,17 +207,17 @@ bool CDataProfile::IOProfileData<MacroRec>(
 		::wcscpy_s(szFile, macroRec.m_szFile);
 	}
 
-	if (!IOProfileData(sectionName, strprintf(L"Name%s", keySuffix), szName))
+	if (!IOProfileData(sectionName, strprintf(LTEXT("Name%s"), keySuffix), szName))
 	{
 		return false;
 	}
 
-	if (!IOProfileData(sectionName, strprintf(L"File%s", keySuffix), szFile))
+	if (!IOProfileData(sectionName, strprintf(LTEXT("File%s"), keySuffix), szFile))
 	{
 		return false;
 	}
 
-	IOProfileData(sectionName, strprintf(L"ReloadWhenExecute%s", keySuffix), macroRec.m_bReloadWhenExecute);
+	IOProfileData(sectionName, strprintf(LTEXT("ReloadWhenExecute%s"), keySuffix), macroRec.m_bReloadWhenExecute);
 
 	::wcscpy_s(macroRec.m_szName, szName);
 	::wcscpy_s(macroRec.m_szFile, szFile);
@@ -232,56 +232,56 @@ bool CDataProfile::IOProfileData<MacroRec>(
  */
 template<>
 bool CDataProfile::IOProfileData<PRINTSETTING>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		keyPrefix,		//!< [in] エントリ名
 	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
 )
 {
-	ShareData_IO_PrintInts(*this, sectionName, strprintf(L"%s.nInts", keyPrefix), printSetting);
+	ShareData_IO_PrintInts(*this, sectionName, strprintf(LTEXT("%s.nInts"), keyPrefix), printSetting);
 
-	IOProfileData(sectionName, strprintf(L"%s.szSName", keyPrefix), printSetting.m_szPrintSettingName);
-	IOProfileData(sectionName, strprintf(L"%s.szFF",    keyPrefix), printSetting.m_szPrintFontFaceHan);
-	IOProfileData(sectionName, strprintf(L"%s.szFFZ",   keyPrefix), printSetting.m_szPrintFontFaceZen);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szSName"), keyPrefix), printSetting.m_szPrintSettingName);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szFF"),    keyPrefix), printSetting.m_szPrintFontFaceHan);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szFFZ"),   keyPrefix), printSetting.m_szPrintFontFaceZen);
 
 	// ヘッダー/フッター
 	for (int j = 0; j < 3; ++j) {
-		IOProfileData(sectionName, strprintf(L"%s.szHF[%d]" , keyPrefix, j), printSetting.m_szHeaderForm[j]);
-		IOProfileData(sectionName, strprintf(L"%s.szFTF[%d]", keyPrefix, j), printSetting.m_szFooterForm[j]);
+		IOProfileData(sectionName, strprintf(LTEXT("%s.szHF[%d]") , keyPrefix, j), printSetting.m_szHeaderForm[j]);
+		IOProfileData(sectionName, strprintf(LTEXT("%s.szFTF[%d]"), keyPrefix, j), printSetting.m_szFooterForm[j]);
 	}
 
 	// ヘッダー/フッター フォント設定
 	ShareData_IO_LogFont(
 		*this,
 		sectionName,
-		strprintf(L"%s.lfHeader",			keyPrefix),
+		strprintf(LTEXT("%s.lfHeader"),			keyPrefix),
 		printSetting.m_lfHeader,
 		printSetting.m_nHeaderPointSize,
-		strprintf(L"%s.nHeaderPointSize",	keyPrefix),
-		strprintf(L"%s.lfHeaderFaceName",	keyPrefix)
+		strprintf(LTEXT("%s.nHeaderPointSize"),	keyPrefix),
+		strprintf(LTEXT("%s.lfHeaderFaceName"),	keyPrefix)
 	);
 
 	ShareData_IO_LogFont(
 		*this,
 		sectionName,
-		strprintf(L"%s.lfFooter",			keyPrefix),
+		strprintf(LTEXT("%s.lfFooter"),			keyPrefix),
 		printSetting.m_lfFooter,
 		printSetting.m_nFooterPointSize,
-		strprintf(L"%s.nFooterPointSize",	keyPrefix),
-		strprintf(L"%s.lfFooterFaceName",	keyPrefix)
+		strprintf(LTEXT("%s.nFooterPointSize"),	keyPrefix),
+		strprintf(LTEXT("%s.lfFooterFaceName"),	keyPrefix)
 	);
 
-	IOProfileData(sectionName, strprintf(L"%s.szDriver", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDriverName);
-	IOProfileData(sectionName, strprintf(L"%s.szDevice", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDeviceName);
-	IOProfileData(sectionName, strprintf(L"%s.szOutput", keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterOutputName);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szDriver"), keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDriverName);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szDevice"), keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterDeviceName);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.szOutput"), keyPrefix, keyPrefix), printSetting.m_mdmDevMode.m_szPrinterOutputName);
 
 	//禁則
-	IOProfileData(sectionName, strprintf(L"%s.bKinsokuHead", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuHead);
-	IOProfileData(sectionName, strprintf(L"%s.bKinsokuTail", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuTail);
-	IOProfileData(sectionName, strprintf(L"%s.bKinsokuRet",  keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuRet);
-	IOProfileData(sectionName, strprintf(L"%s.bKinsokuKuto", keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuKuto);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.bKinsokuHead"), keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuHead);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.bKinsokuTail"), keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuTail);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.bKinsokuRet"),  keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuRet);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.bKinsokuKuto"), keyPrefix, keyPrefix), printSetting.m_bPrintKinsokuKuto);
 
 	//カラー印刷
-	IOProfileData(sectionName, strprintf(L"%s.bColorPrint", keyPrefix), printSetting.m_bColorPrint);
+	IOProfileData(sectionName, strprintf(LTEXT("%s.bColorPrint"), keyPrefix), printSetting.m_bColorPrint);
 
 	return true;	// 返却値に意味はない
 }
@@ -293,8 +293,8 @@ bool CDataProfile::IOProfileData<PRINTSETTING>(
  */
 template<>
 bool CDataProfile::IOProfileData<PluginRec>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		keyPrefix,		//!< [in] エントリ名
 	PluginRec&				pluginRec		//!< [in,out] エントリ値
 )
 {
@@ -307,17 +307,17 @@ bool CDataProfile::IOProfileData<PluginRec>(
 		::wcscpy_s(szId, pluginRec.m_szId);
 	}
 
-	if (!IOProfileData(sectionName, std::format(L"{}.Name", keyPrefix), szName))
+	if (!IOProfileData(sectionName, std::format(LTEXT("{}.Name"), keyPrefix), szName))
 	{
 		return false;
 	}
 
-	if (!IOProfileData(sectionName, std::format(L"{}.Id", keyPrefix), szId))
+	if (!IOProfileData(sectionName, std::format(LTEXT("{}.Id"), keyPrefix), szId))
 	{
 		return false;
 	}
 
-	if (!IOProfileData(sectionName, std::format(L"{}.CmdNum", keyPrefix), pluginRec.m_nCmdNum))
+	if (!IOProfileData(sectionName, std::format(LTEXT("{}.CmdNum"), keyPrefix), pluginRec.m_nCmdNum))
 	{
 		return false;
 	}
@@ -335,19 +335,19 @@ bool CDataProfile::IOProfileData<PluginRec>(
  */
 template <>
 bool CDataProfile::IOProfileData<RECT>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		entryKey,		//!< [in] エントリ名
 	RECT&					rcEntryValue	//!< [in,out] エントリ値
 )
 {
 	// 取得・設定は文字列を介して行う
-	std::wstring buffer{};
+	sakura::wstring buffer{};
 
 	// 書き込みモード
 	if (IsWritingMode()) {
 		strprintf(
 			buffer,
-			L"%d,%d,%d,%d",
+			LTEXT("%d,%d,%d,%d"),
 			rcEntryValue.left,
 			rcEntryValue.top,
 			rcEntryValue.right,
@@ -366,7 +366,7 @@ bool CDataProfile::IOProfileData<RECT>(
 		std::array<int, 4> ints{};
 		if (4 != ::swscanf_s(
 			buffer.c_str(),
-			L"%d,%d,%d,%d",
+			LTEXT("%d,%d,%d,%d"),
 			&ints[0],
 			&ints[1],
 			&ints[2],
@@ -392,36 +392,36 @@ bool CDataProfile::IOProfileData<RECT>(
  */
 template <>
 bool CDataProfile::IOProfileData<SFileTreeItem>(
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		keyPrefix,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		keyPrefix,		//!< [in] エントリ名
 	SFileTreeItem&			fileTreeItem		//!< [in,out] エントリ値
 )
 {
-	IOProfileData(sectionName, std::format(L"{}.eItemType", keyPrefix), fileTreeItem.m_eFileTreeItemType);
+	IOProfileData(sectionName, std::format(LTEXT("{}.eItemType"), keyPrefix), fileTreeItem.m_eFileTreeItemType);
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_File)
 	{
-		IOProfileData(sectionName, std::format(L"{}.szTargetPath", keyPrefix), fileTreeItem.m_szTargetPath);
+		IOProfileData(sectionName, std::format(LTEXT("{}.szTargetPath"), keyPrefix), fileTreeItem.m_szTargetPath);
 	}
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Folder ||
 		!fileTreeItem.m_szLabelName.empty())
 	{
-		IOProfileData(sectionName, std::format(L"{}.szLabelName", keyPrefix), fileTreeItem.m_szLabelName);
+		IOProfileData(sectionName, std::format(LTEXT("{}.szLabelName"), keyPrefix), fileTreeItem.m_szLabelName);
 	}
 
-	IOProfileData(sectionName, std::format(L"{}.nDepth", keyPrefix), fileTreeItem.m_nDepth);
+	IOProfileData(sectionName, std::format(LTEXT("{}.nDepth"), keyPrefix), fileTreeItem.m_nDepth);
 
 	if (IsReadingMode() ||
 		fileTreeItem.m_eFileTreeItemType == EFileTreeItemType_Grep)
 	{
-		IOProfileData(sectionName, std::format(L"{}.szTargetFile",   keyPrefix), fileTreeItem.m_szTargetFile);
-		IOProfileData(sectionName, std::format(L"{}.bIgnoreHidden",  keyPrefix), fileTreeItem.m_bIgnoreHidden);
-		IOProfileData(sectionName, std::format(L"{}.bIgnoreReadOny", keyPrefix), fileTreeItem.m_bIgnoreReadOnly);
-		IOProfileData(sectionName, std::format(L"{}.bIgnoreSystem",  keyPrefix), fileTreeItem.m_bIgnoreSystem);
+		IOProfileData(sectionName, std::format(LTEXT("{}.szTargetFile"),   keyPrefix), fileTreeItem.m_szTargetFile);
+		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreHidden"),  keyPrefix), fileTreeItem.m_bIgnoreHidden);
+		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreReadOny"), keyPrefix), fileTreeItem.m_bIgnoreReadOnly);
+		IOProfileData(sectionName, std::format(LTEXT("{}.bIgnoreSystem"),  keyPrefix), fileTreeItem.m_bIgnoreSystem);
 	}
 
 	return true;	// 返却値に意味はない

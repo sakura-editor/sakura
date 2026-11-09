@@ -56,7 +56,7 @@ static const DWORD p_helpids3[] = {	//11500
 
 struct SHokanMethod{
 	int nMethod;
-	std::wstring name;
+	sakura::wstring name;
 };
 
 static std::vector<SHokanMethod>* GetHokanMethodList()
@@ -105,21 +105,21 @@ INT_PTR CPropTypesSupport::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_HOKANFILE), L"*.kwd", true, EFITER_TEXT);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_HOKANFILE), LTEXT("*.kwd"), true, EFITER_TEXT);
 				}
 				return TRUE;
 			case IDC_BUTTON_TYPEOPENHELP:	/* 外部ヘルプ１の「参照...」ボタン */
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHELP), L"*.hlp;*.chm;*.col", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHELP), LTEXT("*.hlp;*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
 			case IDC_BUTTON_TYPEOPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP), L"*.chm;*.col", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_TYPEEXTHTMLHELP), LTEXT("*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
 			default:

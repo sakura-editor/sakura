@@ -24,8 +24,8 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return UnicodeToUTF8(cSrc, pDst);
 	}
-	EConvertResult _UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
-	EConvertResult UnicodeToHex(const wchar_t* ps, const int nsl, WCHAR* pd, const CommonSetting_Statusbar* psStatusbar) override{ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
+	EConvertResult _UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool CESU8Mode);			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* ps, const int nsl, WCHAR* pd, const CommonSetting_Statusbar* psStatusbar) override{ return _UnicodeToHex(ps, nsl, pd, psStatusbar, false); }
 
 public:
 	// UTF-8 / CESU-8 <-> Unicodeコード変換
@@ -43,9 +43,9 @@ protected:
 	//変換の実装
 	// 2008.11.10 変換ロジックを書き直す
 	inline static int _Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bCESUMode );
-	static int Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode );
+	static int Utf8ToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool bCESU8Mode );
 	inline static int _UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen, unsigned char* pDst, bool bCESU8Mode );
-	static int UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
+	static int UniToUtf8( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode );
 };
 
 /*!
@@ -76,7 +76,7 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 			nret = 2;
 		}else{
 			// 保護コード
-			pDst[0] = L'?';
+			pDst[0] = LCHAR('?');
 			nret = 1;
 		}
 	}else{
@@ -91,7 +91,7 @@ inline int CUtf8::_Utf8ToUni_char( const unsigned char* pSrc, const int nSrcLen,
 			nret = 2;
 		}else{
 			// 保護コード
-			pDst[0] = L'?';
+			pDst[0] = LCHAR('?');
 			nret = 1;
 		}
 	}
@@ -122,7 +122,7 @@ inline int CUtf8::_UniToUtf8_char( const unsigned short* pSrc, const int nSrcLen
 		}else if( nSrcLen == 1 ){	// nSrcLen == 1
 			wc32 = pSrc[0];
 		}else{
-			wc32 = L'?';
+			wc32 = LCHAR('?');
 		}
 		nret = EncodeUtf8( wc32, &pDst[0] );
 	}else{

@@ -20,11 +20,11 @@
 void CType_Asm::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"アセンブラ" );
-	wcscpy( pType->m_szTypeExts, L"asm" );
+	wcscpy( pType->m_szTypeName, LTEXT("アセンブラ") );
+	wcscpy( pType->m_szTypeExts, LTEXT("asm") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L";", -1 );			/* 行コメントデリミタ */
+	pType->m_cLineComment.CopyTo( 0, LTEXT(";"), -1 );			/* 行コメントデリミタ */
 	pType->m_eDefaultOutline = OUTLINE_ASM;					/* アウトライン解析方法 */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;
 }
@@ -59,12 +59,12 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		pTmpLine = _wcsdup( pLine );
 		if( pTmpLine == nullptr ) break;
 		if( wcslen( pTmpLine ) >= (unsigned int)nLineLen ){	//バイナリを含んでいたら短くなるので...
-			pTmpLine[ nLineLen ] = L'\0';	//指定長で切り詰め
+			pTmpLine[ nLineLen ] = LCHAR('\0');	//指定長で切り詰め
 		}
 
 		//行コメント削除
-		p = wcschr( pTmpLine, L';' );
-		if( p ) *p = L'\0';
+		p = wcschr( pTmpLine, LCHAR(';') );
+		if( p ) *p = LCHAR('\0');
 
 		length = (int)wcslen( pTmpLine );
 		offset = 0;
@@ -72,12 +72,12 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 		//トークンに分割
 		for( j = 0; j < MAX_ASM_TOKEN; j++ ) token[ j ] = nullptr;
 		for( j = 0; j < MAX_ASM_TOKEN; j++ ){
-			token[ j ] = my_strtok<WCHAR>( pTmpLine, length, &offset, L" \t\r\n" );
+			token[ j ] = my_strtok<WCHAR>( pTmpLine, length, &offset, LTEXT(" \t\r\n") );
 			if( token[ j ] == nullptr ) break;
 			//トークンに含まれるべき文字でないか？
-			if( wcschr( token[ j ], L'\"') != nullptr
-			 || wcschr( token[ j ], L'\\') != nullptr
-			 || wcschr( token[ j ], L'\'' ) != nullptr ){
+			if( wcschr( token[ j ], LCHAR('\"')) != nullptr
+			 || wcschr( token[ j ], LCHAR('\\')) != nullptr
+			 || wcschr( token[ j ], LCHAR('\'') ) != nullptr ){
 				token[ j ] = nullptr;
 				break;
 			}
@@ -89,17 +89,17 @@ void CDocOutline::MakeTopicList_asm( CFuncInfoArr* pcFuncInfoArr )
 
 			length = (int)wcslen( token[ 0 ] );
 			if( length >= 2
-			 && token[ 0 ][ length - 1 ] == L':' ){	//ラベル
-				token[ 0 ][ length - 1 ] = L'\0';
+			 && token[ 0 ][ length - 1 ] == LCHAR(':') ){	//ラベル
+				token[ 0 ][ length - 1 ] = LCHAR('\0');
 				nFuncId = 51;
 				entry_token = token[ 0 ];
 			}
 			else if( token[ 1 ] != nullptr ){	//トークンが2個以上ある
-				if( _wcsicmp( token[ 1 ], L"proc" ) == 0 ){	//関数
+				if( _wcsicmp( token[ 1 ], LTEXT("proc") ) == 0 ){	//関数
 					nFuncId = 50;
 					entry_token = token[ 0 ];
 				}else
-				if( _wcsicmp( token[ 1 ], L"endp" ) == 0 ){	//関数終了
+				if( _wcsicmp( token[ 1 ], LTEXT("endp") ) == 0 ){	//関数終了
 					nFuncId = 52;
 					entry_token = token[ 0 ];
 				//}else

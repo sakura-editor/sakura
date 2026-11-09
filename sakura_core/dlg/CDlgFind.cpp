@@ -186,7 +186,7 @@ void CDlgFind::SetCombosList( void )
 	while (ApiWrap::Combo_GetCount(hwndCombo) > 0) {
 		ApiWrap::Combo_DeleteString( hwndCombo, 0);
 	}
-	std::wstring strText;
+	sakura::wstring strText;
 	if( !ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_TEXT, strText ) || strText != m_strText ) {
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_strText.c_str() );
 	}

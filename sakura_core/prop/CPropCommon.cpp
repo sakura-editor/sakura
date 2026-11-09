@@ -210,7 +210,7 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 		{ STR_PROPCOMMON_PLUGIN,	IDD_PROP_PLUGIN,	CPropPlugin::DlgProc_page },
 	};
 
-	std::wstring		sTabname[std::size(ComPropSheetInfoList)];
+	sakura::wstring		sTabname[std::size(ComPropSheetInfoList)];
 	PROPSHEETPAGE		psp[std::size(ComPropSheetInfoList)];
 	for( nIdx = 0; nIdx < int(std::size(ComPropSheetInfoList)); nIdx++ ){
 		sTabname[nIdx] = LS(ComPropSheetInfoList[nIdx].m_nTabNameId);
@@ -290,8 +290,8 @@ INT_PTR CPropCommon::DoPropertySheet( int nPageNum, bool bTrayProc )
 void CPropCommon::InitData( const int* tempTypeKeywordSet, const WCHAR* name, const WCHAR* exts )
 {
 	m_Common = m_pShareData->m_Common;
-	m_tempTypeName[0] = L'\0';
-	m_tempTypeExts[0] = L'\0';
+	m_tempTypeName[0] = LCHAR('\0');
+	m_tempTypeExts[0] = LCHAR('\0');
 
 	//2002/04/25 YAZAKI STypeConfig全体を保持する必要はない。
 	if( tempTypeKeywordSet ){
@@ -468,7 +468,7 @@ HFONT CPropCommon::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf
 	hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 	// フォント名の設定
-	auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
+	auto_sprintf( szFontName, nps % 10 ? LTEXT("%s(%.1fpt)") : LTEXT("%s(%.0fpt)"),
 		lf.lfFaceName, double(nps)/10 );
 	ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 

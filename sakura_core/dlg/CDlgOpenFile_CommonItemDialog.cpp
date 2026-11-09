@@ -54,18 +54,18 @@ struct CDlgOpenFile_CommonItemDialog final
 	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter) override;
 	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo,
-						 std::vector<std::wstring>* pFileNames,
+						 std::vector<sakura::wstring>* pFileNames,
 						 bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo,
 						 bool bSimpleMode ) override;
 
 	bool DoModalOpenDlgImpl0( bool bAllowMultiSelect,
-							  std::vector<std::wstring>* pFileNames,
+							  std::vector<sakura::wstring>* pFileNames,
 							  LPCWSTR fileName,
 							  const std::vector<COMDLG_FILTERSPEC>& specs );
 	HRESULT DoModalOpenDlgImpl1( IFileOpenDialog* pFileOpenDialog,
 								 bool bAllowMultiSelect,
-								 std::vector<std::wstring>* pFileNames,
+								 std::vector<sakura::wstring>* pFileNames,
 								 LPCWSTR fileName,
 								 const std::vector<COMDLG_FILTERSPEC>& specs );
 	bool DoModalSaveDlgImpl0( WCHAR* pszPath );
@@ -77,7 +77,7 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	DLLSHAREDATA*	m_pShareData;
 
-	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	sakura::wstring	m_strDefaultWildCard{ LTEXT("*.*") };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -410,14 +410,14 @@ void CDlgOpenFile_CommonItemDialog::Create(
 	}
 
 	/* 「開く」での初期フォルダー */
-	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
+	if( pszDefaultPath && pszDefaultPath[0] != LCHAR('\0') ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
-		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
+		auto_sprintf( szRelPath, LTEXT("%s%s"), szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
 			wcscpy(m_szInitialDir, p );
@@ -442,7 +442,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
 	specs.reserve(7);
-	std::vector<std::wstring> strs;
+	std::vector<sakura::wstring> strs;
 	strs.reserve(8);
 
 	strs.push_back(LS(STR_DLGOPNFL_EXTNAME1));
@@ -451,29 +451,29 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(
 	switch( eAddFilter ){
 	case EFITER_TEXT:
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME2));
-		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.txt"});
+		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), LTEXT("*.txt")});
 		break;
 	case EFITER_MACRO:
-		specs.push_back(COMDLG_FILTERSPEC{L"Macros", L"*.js;*.vbs;*.ppa;*.py;*.mac"});
-		specs.push_back(COMDLG_FILTERSPEC{L"JScript", L"*.js"});
-		specs.push_back(COMDLG_FILTERSPEC{L"VBScript", L"*.vbs"});
-		specs.push_back(COMDLG_FILTERSPEC{L"Pascal", L"*.ppa"});
-		specs.push_back(COMDLG_FILTERSPEC{L"Python", L"*.py"});
-		specs.push_back(COMDLG_FILTERSPEC{L"Key Macro", L"*.mac"});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("Macros"), LTEXT("*.js;*.vbs;*.ppa;*.py;*.mac")});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("JScript"), LTEXT("*.js")});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("VBScript"), LTEXT("*.vbs")});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("Pascal"), LTEXT("*.ppa")});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("Python"), LTEXT("*.py")});
+		specs.push_back(COMDLG_FILTERSPEC{LTEXT("Key Macro"), LTEXT("*.mac")});
 		break;
 	case EFITER_NONE:
 	default:
 		break;
 	}
 
-	if (m_strDefaultWildCard != L"*.*") {
+	if (m_strDefaultWildCard != LTEXT("*.*")) {
 		strs.push_back(LS(STR_DLGOPNFL_EXTNAME3));
-		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), L"*.*"});
+		specs.push_back(COMDLG_FILTERSPEC{strs.back().c_str(), LTEXT("*.*")});
 	}
 
 	m_customizeSetting.bCustomize = false;
-	std::vector<std::wstring> fileNames;
-	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
+	std::vector<sakura::wstring> fileNames;
+	bool ret = DoModalOpenDlgImpl0(false, &fileNames, LTEXT(""), specs);
 	if (ret) {
 		::wcscpy_s(pszPath, cchPath, fileNames[0].c_str());
 	}
@@ -531,17 +531,17 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		}
 		if (bCodeSel) {
 			hr = SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)eCodeSel); RETURN_IF_FAILED
-			hr = AddCheckButton(CtrlId::CHECK_CP, L"C&P", FALSE); RETURN_IF_FAILED
+			hr = AddCheckButton(CtrlId::CHECK_CP, LTEXT("C&P"), FALSE); RETURN_IF_FAILED
 		}
 		else {
 			if( -1 == AddComboCodePages( m_nCharCode ) ){
 				hr = SetSelectedControlItem(CtrlId::COMBO_CODE, CODE_SJIS); RETURN_IF_FAILED
 			}
-			hr = AddCheckButton(CtrlId::CHECK_CP, L"C&P", TRUE); RETURN_IF_FAILED
+			hr = AddCheckButton(CtrlId::CHECK_CP, LTEXT("C&P"), TRUE); RETURN_IF_FAILED
 			hr = SetControlState(CtrlId::CHECK_CP, CDCS_VISIBLE); RETURN_IF_FAILED
 		}
 		if (m_customizeSetting.bUseBom) {
-			hr = AddCheckButton(CtrlId::CHECK_BOM, L"&BOM", FALSE); RETURN_IF_FAILED
+			hr = AddCheckButton(CtrlId::CHECK_BOM, LTEXT("&BOM"), FALSE); RETURN_IF_FAILED
 			if (CCodeTypeName(m_nCharCode).UseBom()) {
 				hr = SetCheckButtonState(CtrlId::CHECK_BOM, m_bBom ? TRUE : FALSE); RETURN_IF_FAILED
 			}
@@ -556,9 +556,9 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 		hr = StartVisualGroup(CtrlId::LABEL_EOL, LS(STR_FILEDIALOG_EOL)); RETURN_IF_FAILED
 		hr = AddComboBox(CtrlId::COMBO_EOL); RETURN_IF_FAILED
 		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::none), LS(STR_DLGOPNFL1)); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::cr_and_lf), L"CR+LF"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::line_feed), L"LF (UNIX)"); RETURN_IF_FAILED
-		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::carriage_return), L"CR (Mac)"); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::cr_and_lf), LTEXT("CR+LF")); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::line_feed), LTEXT("LF (UNIX)")); RETURN_IF_FAILED
+		hr = AddControlItem(CtrlId::COMBO_EOL, static_cast<DWORD>(EEolType::carriage_return), LTEXT("CR (Mac)")); RETURN_IF_FAILED
 		hr = SetSelectedControlItem(CtrlId::COMBO_EOL, 0); RETURN_IF_FAILED
 		hr = EndVisualGroup(); RETURN_IF_FAILED
 	}
@@ -582,7 +582,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::Customize()
 HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 	IFileOpenDialog* pFileOpenDialog,
 	bool bAllowMultiSelect,
-	std::vector<std::wstring>* pFileNames,
+	std::vector<sakura::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -640,7 +640,7 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl1(
 
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 	bool bAllowMultiSelect,
-	std::vector<std::wstring>* pFileNames,
+	std::vector<sakura::wstring>* pFileNames,
 	LPCWSTR fileName,
 	const std::vector<COMDLG_FILTERSPEC>& specs)
 {
@@ -673,21 +673,21 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlgImpl0(
 */
 bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::wstring>* pFileNames,
+	std::vector<sakura::wstring>* pFileNames,
 	bool bOptions )
 {
 	// ファイルの種類	2003.05.12 MIK
 	const int nTypesCount = m_pShareData->m_nTypesCount;
 	std::vector<COMDLG_FILTERSPEC> specs(2 + nTypesCount);
-	std::vector<std::wstring> strs(2 + nTypesCount);
+	std::vector<sakura::wstring> strs(2 + nTypesCount);
 	strs[0] = LS(STR_DLGOPNFL_EXTNAME3);
 	strs[1] = LS(STR_DLGOPNFL_EXTNAME2);
 	specs[0].pszName = strs[0].c_str();
-	specs[0].pszSpec = L"*.*";
+	specs[0].pszSpec = LTEXT("*.*");
 	specs[1].pszName = strs[1].c_str();
-	specs[1].pszSpec = L"*.txt";
+	specs[1].pszSpec = LTEXT("*.txt");
 	CDocTypeManager docTypeMgr;
-	std::wstring worksString;
+	sakura::wstring worksString;
 	for( int i = 0; i < nTypesCount; i++ ){
 		const STypeConfigMini* type = nullptr;
 		if( !docTypeMgr.GetTypeConfigMini( CTypeConfig(i), &type ) ){
@@ -700,7 +700,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModalOpenDlg(
 			specs[2 + i].pszSpec = strs[2 + i].c_str();
 		}
 		else {
-			specs[2 + i].pszSpec = L"";
+			specs[2 + i].pszSpec = LTEXT("");
 		}
 	}
 	m_bViewMode = pLoadInfo->bViewMode;
@@ -729,18 +729,18 @@ HRESULT CDlgOpenFile_CommonItemDialog::DoModalSaveDlgImpl1(
 
 	HRESULT hr;
 	std::array<COMDLG_FILTERSPEC, 3> specs;
-	std::array<std::wstring, 3> strs;
+	std::array<sakura::wstring, 3> strs;
 	strs[0] = LS(STR_DLGOPNFL_EXTNAME1);
 	strs[1] = LS(STR_DLGOPNFL_EXTNAME2);
 	strs[2] = LS(STR_DLGOPNFL_EXTNAME3);
 	specs[0].pszName = strs[0].c_str();
 	specs[0].pszSpec = m_strDefaultWildCard.c_str();
 	specs[1].pszName = strs[1].c_str();
-	specs[1].pszSpec = L"*.txt";
+	specs[1].pszSpec = LTEXT("*.txt");
 	specs[2].pszName = strs[2].c_str();
-	specs[2].pszSpec = L"*.*";
+	specs[2].pszSpec = LTEXT("*.*");
 #define RETURN_IF_FAILED if (FAILED(hr)) { /* __debugbreak(); */ return hr; }
-	hr = pFileSaveDialog->SetDefaultExtension(L"txt"); RETURN_IF_FAILED
+	hr = pFileSaveDialog->SetDefaultExtension(LTEXT("txt")); RETURN_IF_FAILED
 	hr = pFileSaveDialog->SetFileTypes(UINT(specs.size()), &specs[0]); RETURN_IF_FAILED
 	cxx::com_pointer<IShellItem> psiFolder;
 	SHCreateItemFromParsingName(m_szInitialDir, nullptr, IID_PPV_ARGS(&psiFolder));
@@ -881,7 +881,7 @@ void CDlgOpenFile_CommonItemDialog::ReplaceSlashInFileName() const
 	if( !m_pFileDialog || FAILED( m_pFileDialog->GetFileName( &pszFileName ) ) || !pszFileName ){
 		return;
 	}
-	const std::wstring text{ pszFileName };
+	const sakura::wstring text{ pszFileName };
 	::CoTaskMemFree( pszFileName );
 	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
 		m_pFileDialog->SetFileName( replaced.c_str() );
@@ -959,12 +959,12 @@ int CDlgOpenFile_CommonItemDialog::AddComboCodePages( int nSelCode )
 {
 	HRESULT hr;
 	int nSel = -1;
-	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP, L"CP_ACP");
+	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP, LTEXT("CP_ACP"));
 	if( nSelCode == CODE_CPACP ){
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPACP);
 		nSel = nSelCode;
 	}
-	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM, L"CP_OEM");
+	hr = AddControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM, LTEXT("CP_OEM"));
 	if( nSelCode == CODE_CPOEM ){
 		SetSelectedControlItem(CtrlId::COMBO_CODE, (DWORD)CODE_CPOEM);
 		nSel = nSelCode;

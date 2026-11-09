@@ -136,7 +136,7 @@ void CEditView::DrawBracketPair( bool bDraw )
 			}
 			const CLayout* pcLayout;
 			CLogicInt		nLineLen;
-			const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptColLine.GetY2(), &nLineLen, &pcLayout );
+			const WCHAR*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptColLine.GetY2(), &nLineLen, &pcLayout );
 			if( pLine )
 			{
 				EColorIndexType		nColorIndex;
@@ -238,30 +238,30 @@ void CEditView::DrawBracketPair( bool bDraw )
 //!対括弧の対応表
 //2007.10.16 kobake
 struct KAKKO_T{
-	const wchar_t *sStr;
-	const wchar_t *eStr;
+	const WCHAR *sStr;
+	const WCHAR *eStr;
 };
 static const KAKKO_T g_aKakkos[] = {
 	//半角
-	{ L"(", L")", },
-	{ L"[", L"]", },
-	{ L"{", L"}", },
-	{ L"<", L">", },
-	{ L"｢", L"｣", },
+	{ LTEXT("("), LTEXT(")"), },
+	{ LTEXT("["), LTEXT("]"), },
+	{ LTEXT("{"), LTEXT("}"), },
+	{ LTEXT("<"), LTEXT(">"), },
+	{ LTEXT("｢"), LTEXT("｣"), },
 	//全角
-	{ L"【", L"】", },
-	{ L"『", L"』", },
-	{ L"「", L"」", },
-	{ L"＜", L"＞", },
-	{ L"≪", L"≫", },
-	{ L"《", L"》", },
-	{ L"（", L"）", },
-	{ L"〈", L"〉", },
-	{ L"｛", L"｝", },
-	{ L"〔", L"〕", },
-	{ L"［", L"］", },
-	{ L"“", L"”", },
-	{ L"〝", L"〟", },
+	{ LTEXT("【"), LTEXT("】"), },
+	{ LTEXT("『"), LTEXT("』"), },
+	{ LTEXT("「"), LTEXT("」"), },
+	{ LTEXT("＜"), LTEXT("＞"), },
+	{ LTEXT("≪"), LTEXT("≫"), },
+	{ LTEXT("《"), LTEXT("》"), },
+	{ LTEXT("（"), LTEXT("）"), },
+	{ LTEXT("〈"), LTEXT("〉"), },
+	{ LTEXT("｛"), LTEXT("｝"), },
+	{ LTEXT("〔"), LTEXT("〕"), },
+	{ LTEXT("［"), LTEXT("］"), },
+	{ LTEXT("“"), LTEXT("”"), },
+	{ LTEXT("〝"), LTEXT("〟"), },
 	//終端
 	{ nullptr, nullptr, },
 };
@@ -303,7 +303,7 @@ bool CEditView::SearchBracket(
 	CLogicPoint ptPos;
 
 	m_pcEditDoc->m_cLayoutMgr.LayoutToLogic( ptLayout, &ptPos );
-	const wchar_t *cline = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2()), &len);
+	const WCHAR *cline = CDocLine::GetDocLineStrWithEOL_Safe(m_pcEditDoc->m_cDocLineMgr.GetLine(ptPos.GetY2()), &len);
 
 	//	Jun. 19, 2000 genta
 	if( cline == nullptr )	//	最後の行に本文がない場合
@@ -339,7 +339,7 @@ bool CEditView::SearchBracket(
 		return false;	//	前の文字はない
 	}
 
-	const wchar_t *bPos = CNativeW::GetCharPrev( cline, ptPos.x, cline + ptPos.x );
+	const WCHAR *bPos = CNativeW::GetCharPrev( cline, ptPos.x, cline + ptPos.x );
 	auto nCharSize = int(cline + ptPos.x - bPos);
 	// 括弧処理 2007.10.16 kobake
 	if(nCharSize==1){
@@ -380,18 +380,18 @@ bool CEditView::SearchBracket(
 bool CEditView::SearchBracketForward(
 	CLogicPoint		ptPos,
 	CLayoutPoint*	pptLayoutNew,
-	const wchar_t*	upChar,
-	const wchar_t*	dnChar,
+	const WCHAR*	upChar,
+	const WCHAR*	dnChar,
 	int*			mode
 )
 {
 	const CDocLine* ci;
 
 	int			len;
-	const wchar_t* cPos;
-	const wchar_t* nPos;
-	const wchar_t* cline;
-	const wchar_t* lineend;
+	const WCHAR* cPos;
+	const WCHAR* nPos;
+	const WCHAR* cline;
+	const WCHAR* lineend;
 	int			level = 0;
 
 	CLayoutPoint ptColLine;
@@ -473,17 +473,17 @@ bool CEditView::SearchBracketForward(
 bool CEditView::SearchBracketBackward(
 	CLogicPoint		ptPos,
 	CLayoutPoint*	pptLayoutNew,
-	const wchar_t*	dnChar,
-	const wchar_t*	upChar,
+	const WCHAR*	dnChar,
+	const WCHAR*	upChar,
 	int*			mode
 )
 {
 	const CDocLine* ci;
 
 	int			len;
-	const wchar_t* cPos;
-	const wchar_t* pPos;
-	const wchar_t* cline;
+	const WCHAR* cPos;
+	const WCHAR* pPos;
+	const WCHAR* cline;
 	int			level = 1;
 	
 	CLayoutPoint ptColLine;
@@ -557,7 +557,7 @@ bool CEditView::SearchBracketBackward(
 	@retval true 括弧
 	@retval false 非括弧
 */
-bool CEditView::IsBracket( const wchar_t *pLine, CLogicInt x, CLogicInt size )
+bool CEditView::IsBracket( const WCHAR *pLine, CLogicInt x, CLogicInt size )
 {
 	// 括弧処理 2007.10.16 kobake
 	if( size == 1 ){

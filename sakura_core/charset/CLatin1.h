@@ -23,7 +23,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return Latin1ToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToLatin1(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -33,9 +33,9 @@ public:
 
 protected:
 	// 実装
-	static int Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError );
+	static int Latin1ToUni( const char *pSrc, const int nSrcLen, WCHAR *pDst, bool* pbError );
 	inline static int _UniToLatin1_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
+	static int UniToLatin1( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool *pbError );
 };
 
 /*!
@@ -58,7 +58,7 @@ inline int CLatin1::_UniToLatin1_char( const unsigned short* pSrc, unsigned char
 			nret = 1;
 		} else {
 			// ISO 8859-1以外
-			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const wchar_t*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, nullptr, &blost );
+			nret = ::WideCharToMultiByte( 1252, 0, reinterpret_cast<const WCHAR*>(pSrc), 1, reinterpret_cast<char*>(pDst), 4, nullptr, &blost );
 			if( blost != FALSE ){
 				// Uni -> CLatin1 変換に失敗
 				berror = true;

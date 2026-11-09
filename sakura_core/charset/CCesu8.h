@@ -22,7 +22,7 @@ public:
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{	//!< UNICODE    → 特定コード 変換
 		return CUtf8::UnicodeToCESU8(cSrc, pDst);
 	}
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override {			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override {			//!< UNICODE → Hex 変換
 		return CUtf8()._UnicodeToHex( cSrc, iSLen, pDst, psStatusbar, true );
 	}
 };

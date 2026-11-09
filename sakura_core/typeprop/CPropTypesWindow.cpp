@@ -74,13 +74,13 @@ TYPE_NAME_ID<int> ImeStateArr[] = {
 	{ 4, STR_IME_STATE_NO }
 };
 
-static const wchar_t* aszEolStr[] = {
-	L"CR+LF",
-	L"LF (UNIX)",
-	L"CR (Mac)",
-	L"NEL",
-	L"LS",
-	L"PS",
+static const WCHAR* aszEolStr[] = {
+	LTEXT("CR+LF"),
+	LTEXT("LF (UNIX)"),
+	LTEXT("CR (Mac)"),
+	LTEXT("NEL"),
+	LTEXT("LS"),
+	LTEXT("PS"),
 };
 static const EEolType aeEolType[] = {
 	EEolType::cr_and_lf,
@@ -172,7 +172,7 @@ INT_PTR CPropTypesWindow::DispatchEvent(
 			case IDC_BUTTON_BACKIMG_PATH_SEL:
 				{
 					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_BACKIMG_PATH),
-						L"*.bmp;*.jpg;*.jpeg;*.png", true, EFITER_NONE );
+						LTEXT("*.bmp;*.jpg;*.jpeg;*.png"), true, EFITER_NONE );
 				}
 				return TRUE;
 			//	From Here Sept. 10, 2000 JEPRO
@@ -443,8 +443,8 @@ void CPropTypesWindow::SetData( HWND hwndDlg )
 	}
 
 	/* 行番号区切り文字 */
-	wchar_t	szLineTermChar[2];
-	auto_sprintf( szLineTermChar, L"%lc", m_Types.m_cLineTermChar );
+	WCHAR	szLineTermChar[2];
+	auto_sprintf( szLineTermChar, LTEXT("%lc"), m_Types.m_cLineTermChar );
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar );
 
 	//	From Here Sept. 10, 2000 JEPRO
@@ -535,7 +535,7 @@ int CPropTypesWindow::GetData( HWND hwndDlg )
 	}
 	
 	/* 行番号区切り文字 */
-	wchar_t	szLineTermChar[2];
+	WCHAR	szLineTermChar[2];
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_LINETERMCHAR, szLineTermChar, 2 );
 	m_Types.m_cLineTermChar = szLineTermChar[0];
 

@@ -56,7 +56,7 @@ static DWORD s_dwComctl32Version = PACKVERSION(0, 0);
 DWORD GetComctl32Version()
 {
 	if( PACKVERSION(0, 0) == s_dwComctl32Version )
-		s_dwComctl32Version = GetDllVersion(L"Comctl32.dll");
+		s_dwComctl32Version = GetDllVersion(LTEXT("Comctl32.dll"));
 	return s_dwComctl32Version;
 }
 
@@ -84,7 +84,7 @@ BOOL IsVisualStyle()
 */
 void PreventVisualStyle( HWND hWnd )
 {
-	::SetWindowTheme( hWnd, L"", L"" );
+	::SetWindowTheme( hWnd, LTEXT(""), LTEXT("") );
 	return;
 }
 
@@ -380,7 +380,7 @@ BOOL IsPowerShellAvailable(void)
 
 	DWORD ret = ::SearchPath(
 		nullptr,					// 検索パス
-		L"powershell.exe",	// ファイル名
+		LTEXT("powershell.exe"),	// ファイル名
 		nullptr,					// ファイルの拡張子
 		MAX_PATH,				// バッファのサイズ
 		szFileBuff,				// 見つかったファイル名を格納するバッファ
@@ -423,7 +423,7 @@ namespace cxx {
 {
 	assert(!files.empty());
 
-	auto strFiles = std::accumulate(files.begin() + 1, files.end(), std::wstring(files.front()), [](const std::wstring& a, const std::filesystem::path& b) { return a + L'\0' + b.native(); }) + L'\0' + L'\0';
+	auto strFiles = std::accumulate(files.begin() + 1, files.end(), sakura::wstring(files.front()), [](const sakura::wstring& a, const std::filesystem::path& b) { return a + LCHAR('\0') + b.native(); }) + LCHAR('\0') + LCHAR('\0');
 
 	const size_t allocSize = sizeof(DROPFILES) + std::size(strFiles) * sizeof(WCHAR);
 	GlobalDropFiles drop(allocSize);
@@ -436,14 +436,14 @@ namespace cxx {
 }
 
 //文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-GlobalWString::GlobalWString(std::wstring_view text)
+GlobalWString::GlobalWString(sakura::wstring_view text)
 	: GlobalWString(text.size())
 {
 	SetText(text);
 }
 
 //文字列を指定して更新する
-void GlobalWString::SetText(std::wstring_view text) const
+void GlobalWString::SetText(sakura::wstring_view text) const
 {
 	Lock([text](LPWSTR pStr, size_t cbSize) {
 		if (cbSize / sizeof(WCHAR) <= std::size(text)) throw std::length_error("text length is too long.");
@@ -453,9 +453,9 @@ void GlobalWString::SetText(std::wstring_view text) const
 }
 
 //格納されている文字列データのコピーを取得する
-std::wstring GlobalWString::wstring() const & {
+sakura::wstring GlobalWString::wstring() const & {
 	return Lock([](LPCWSTR pStr, size_t cbSize) {
-		return std::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
+		return sakura::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
 	});
 }
 
@@ -488,7 +488,7 @@ std::vector<std::filesystem::path> GlobalDropFiles::data() const & {
 	const auto hDrop = static_cast<HDROP>(get());
 	return Lock([hDrop](const DROPFILES* p [[maybe_unused]], size_t cbSize [[maybe_unused]]) {
 		std::vector<std::filesystem::path> files;
-		std::wstring buffer(_MAX_PATH, L'\0');
+		sakura::wstring buffer(_MAX_PATH, LCHAR('\0'));
 		const auto uFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
 		for (UINT i = 0; i < uFiles; ++i) {
 			// 必要サイズを取得する
@@ -513,20 +513,20 @@ using size_type = CClipboard::SAKURAClipW_LengthFieldType;
 } // end of anonymous namespace
 
 //文字列を指定して必要サイズを計算する
-/* static */ size_t GlobalSakura::CalcSize(std::wstring_view text) noexcept
+/* static */ size_t GlobalSakura::CalcSize(sakura::wstring_view text) noexcept
 {
 	return sizeof(size_type) + (std::size(text) + 1) * sizeof(WCHAR);
 }
 
 //文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
-GlobalSakura::GlobalSakura(std::wstring_view text)
+GlobalSakura::GlobalSakura(sakura::wstring_view text)
 	: GlobalMemory(CalcSize(text))
 {
 	SetText(text);
 }
 
 // 文字列を指定して更新する
-void GlobalSakura::SetText(std::wstring_view text) const
+void GlobalSakura::SetText(sakura::wstring_view text) const
 {
 	Lock([text](LPWSTR pStr, size_t cbSize) {
 		if (cbSize < CalcSize(text)) throw std::length_error("text length is too long.");
@@ -539,12 +539,12 @@ void GlobalSakura::SetText(std::wstring_view text) const
 }
 
 //格納されている文字列データのコピーを取得する
-std::wstring GlobalSakura::wstring() const & {
-	return Lock([](LPCWSTR pStr, size_t cbSize) -> std::wstring {
-		if (cbSize < sizeof(size_type) + sizeof(WCHAR)) return L"";
+sakura::wstring GlobalSakura::wstring() const & {
+	return Lock([](LPCWSTR pStr, size_t cbSize) -> sakura::wstring {
+		if (cbSize < sizeof(size_type) + sizeof(WCHAR)) return LTEXT("");
 		const auto length = *(const size_type*)pStr;
-		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
-		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
+		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return LTEXT("");
+		return sakura::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
 	});
 }
 
@@ -553,7 +553,7 @@ std::wstring GlobalSakura::wstring() const & {
  *
  * @return カレントディレクトリのパス
  */
-std::wstring GetCurrentDirectoryW()
+sakura::wstring GetCurrentDirectoryW()
 {
 	SSuperLongFilePath buf;
 
@@ -571,7 +571,7 @@ std::wstring GetCurrentDirectoryW()
 		);
 	}
 
-	return std::wstring(buf.c_str(), ret);
+	return sakura::wstring(buf.c_str(), ret);
 }
 
 /*!
@@ -580,7 +580,7 @@ std::wstring GetCurrentDirectoryW()
  * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
  * @return モジュールのファイルパス
  */
-std::wstring GetModuleFileNameW(
+sakura::wstring GetModuleFileNameW(
 	_In_opt_ HMODULE hModule
 )
 {
@@ -600,7 +600,7 @@ std::wstring GetModuleFileNameW(
 		);
 	}
 
-	return std::wstring(buf.c_str(), ret);
+	return sakura::wstring(buf.c_str(), ret);
 }
 
 /*!
@@ -608,7 +608,7 @@ std::wstring GetModuleFileNameW(
  *
  * @return システムディレクトリのパス
  */
-std::wstring GetSystemDirectoryW()
+sakura::wstring GetSystemDirectoryW()
 {
 	SSuperLongFilePath buf;
 
@@ -626,7 +626,7 @@ std::wstring GetSystemDirectoryW()
 		);
 	}
 
-	return std::wstring(buf.c_str(), ret);
+	return sakura::wstring(buf.c_str(), ret);
 }
 
 /*!
@@ -634,10 +634,10 @@ std::wstring GetSystemDirectoryW()
  *
  * @return 一時フォルダのパス
  */
-std::wstring GetTempPath2W()
+sakura::wstring GetTempPath2W()
 {
 	// Kernel32.DLLのハンドルを取得する
-	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
+	const auto kernel32 = ::GetModuleHandleW(LTEXT("KERNEL32.DLL"));
 
 	if (!kernel32) throw cxx::make_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
 
@@ -656,14 +656,14 @@ std::wstring GetTempPath2W()
 
 	if (!ret) throw cxx::make_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
 
-	return std::wstring(buf.c_str(), ret);
+	return sakura::wstring(buf.c_str(), ret);
 }
 
 /*!
  * @brief DLLを読み込む
  */
 HMODULE LoadLibraryExW(
-	std::wstring_view fileName,
+	sakura::wstring_view fileName,
 	_Reserved_ HANDLE hFile,
 	_In_ DWORD dwFlags
 )
@@ -707,9 +707,9 @@ HMODULE LoadLibraryExW(
  * @param[in, opt] dwReplaceFlags 置換フラグ
  */
 void ReplaceFileW(
-	std::wstring_view replacedFileName,
-	std::wstring_view replacementFileName,
-	const std::optional<std::wstring>& optBackupFileName,
+	sakura::wstring_view replacedFileName,
+	sakura::wstring_view replacementFileName,
+	const std::optional<sakura::wstring>& optBackupFileName,
 	_In_ DWORD dwReplaceFlags
 )
 {
@@ -734,9 +734,9 @@ void ReplaceFileW(
 		throw std::invalid_argument("replacementFileName must exist.");
 	}
 
-	auto backupFileName = optBackupFileName.value_or(L"");
+	auto backupFileName = optBackupFileName.value_or(LTEXT(""));
 
-	if (std::wstring::npos != backupFileName.find_first_of(LR"(/\)"))
+	if (sakura::wstring::npos != backupFileName.find_first_of(LTEXT(R"(/\)")))
 	{
 		throw std::invalid_argument("backupFileName must not contain path separators.");
 	}
@@ -776,7 +776,7 @@ void ReplaceFileW(
  * @param[in] newPath 新しいディレクトリ
  */
 void SetCurrentDirectoryW(
-	std::wstring_view newPath
+	sakura::wstring_view newPath
 )
 {
 	// 引数はNUL終端文字列として扱う

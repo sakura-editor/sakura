@@ -92,9 +92,9 @@ enum eOutlineNativeNamesId{
 };
 
 const WCHAR* pszOutlineNames[] = {
-	L"XML",
-	L"C",
-	L"C++",
+	LTEXT("XML"),
+	LTEXT("C"),
+	LTEXT("C++"),
 };
 
 //アウトライン解析方法・標準ルール
@@ -277,7 +277,7 @@ INT_PTR CPropTypesScreen::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), L"*.rul;*.rule;*.txt", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_OUTLINERULEFILE), LTEXT("*.rul;*.rule;*.txt"), true, EFITER_NONE);
 				}
 				return TRUE;
 
@@ -619,7 +619,7 @@ int CPropTypesScreen::GetData( HWND hwndDlg )
 		/* TAB表示文字列 */
 		WCHAR szTab[8+1]; /* +1. happy */
 		ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_TABVIEWSTRING, szTab, int(std::size(szTab)) );
-		wcscpy( m_Types.m_szTabViewString, L"^       " );
+		wcscpy( m_Types.m_szTabViewString, LTEXT("^       ") );
 		for( int i = 0; i < 8; i++ ){
 			if( !WCODE::IsTabAvailableCode(szTab[i]) )break;
 			m_Types.m_szTabViewString[i] = szTab[i];

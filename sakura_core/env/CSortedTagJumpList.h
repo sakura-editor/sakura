@@ -28,7 +28,7 @@ public:
 	CSortedTagJumpList(int max);
 	~CSortedTagJumpList();
 
-	int		AddBaseDir(std::wstring_view baseDir);
+	int		AddBaseDir(sakura::wstring_view baseDir);
 	BOOL AddParamA( const ACHAR* keyword, const ACHAR* filename, int no, ACHAR type, const ACHAR* note, int depth, const int baseDirId );
 	BOOL GetParam( int index, WCHAR* keyword, WCHAR* filename, int* no, WCHAR* type, WCHAR* note, int* depth, WCHAR* baseDir );
 	int GetCount( void ){ return m_nCount; }
@@ -56,7 +56,7 @@ public:
 
 private:
 	TagJumpInfo*	m_pTagjump = nullptr;	//!< タグジャンプ情報
-	std::vector<std::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
+	std::vector<sakura::wstring> m_baseDirArr;	//!< ベースディレクトリ情報
 	int				m_nCount = 0;	//!< 個数
 	bool			m_bOverflow = false;	//!< オーバーフロー
 	

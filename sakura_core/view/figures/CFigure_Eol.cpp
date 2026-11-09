@@ -32,11 +32,11 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 //                        CFigure_Eol                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Eol::Match(const wchar_t* pText, int nTextLen) const
+bool CFigure_Eol::Match(const WCHAR* pText, int nTextLen) const
 {
 	// 2014.06.18 折り返し・最終行だとDrawImpでcEol.GetLen()==0になり無限ループするので
 	// もしも行の途中に改行コードがあった場合はMatchさせない
-	if(nTextLen == 2 && pText[0]==L'\r' && pText[1]==L'\n')return true;
+	if(nTextLen == 2 && pText[0]==LCHAR('\r') && pText[1]==LCHAR('\n'))return true;
 	if(nTextLen == 1 && WCODE::IsLineDelimiterExt(pText[0]))return true;
 	return false;
 }
@@ -126,11 +126,11 @@ bool CFigure_Eol::DrawImp(SColorStrategyInfo* pInfo)
 void _DispWrap(CGraphics& gr, DispPos* pDispPos, const CEditView* pcView, CLayoutYInt nLineNum )
 {
 	CTypeSupport cWrapType(pcView,COLORIDX_WRAP);
-	const wchar_t* szText;
+	const WCHAR* szText;
 	if (cWrapType.IsDisp()) {
-		szText = L"<";
+		szText = LTEXT("<");
 	}else{
-		szText = L" ";
+		szText = LTEXT(" ");
 	}
 	CLayoutXInt width = CLayoutXInt(pcView->GetTextMetrics().CalcTextWidth3(szText, 1));
 	RECT rcClip2;
@@ -216,7 +216,7 @@ void _DispEOF(
 	bool bTrans = pcView->IsBkBitmap() && cEofType.GetBackColor() == cTextType.GetBackColor();
 
 	//定数
-	static const wchar_t	szEof[] = L"[EOF]";
+	static const WCHAR	szEof[] = LTEXT("[EOF]");
 	constexpr auto nEofLen = int(std::size(szEof)) - 1;
 
 	cEofType.SetGraphicsState_WhileThisObj(gr);
@@ -257,7 +257,7 @@ void _DispEOL(CGraphics& gr, DispPos* pDispPos, CEol cEol, const CEditView* pcVi
 			pDispPos->GetDrawPos().y + nHeightMargin,
 			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClip2,
-			L"  ",
+			LTEXT("  "),
 			2,
 			pcView->GetTextMetrics().GetDxArray_AllHankaku()
 		);

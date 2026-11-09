@@ -28,7 +28,7 @@ public:
 		}
 	}
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const override;
+	bool Match(const WCHAR* pText, int nTextLen) const override;
 	bool Disp(void) const override
 	{
 		return true;

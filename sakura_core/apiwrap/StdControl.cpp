@@ -19,7 +19,7 @@ namespace ApiWrap{
 		@return		成功した場合 true
 		@return		失敗した場合 false
 	*/
-	bool Wnd_GetText( HWND hWnd, std::wstring& strText )
+	bool Wnd_GetText( HWND hWnd, sakura::wstring& strText )
 	{
 		// バッファをクリアしておく
 		strText.clear();
@@ -76,7 +76,7 @@ namespace ApiWrap{
 		@return		成功した場合 true
 		@return		失敗した場合 false
 	*/
-	bool List_GetText( HWND hList, int nIndex, std::wstring& strText )
+	bool List_GetText( HWND hList, int nIndex, sakura::wstring& strText )
 	{
 		// バッファをクリアしておく
 		strText.clear();
@@ -134,7 +134,7 @@ namespace ApiWrap{
 		@return		成功した場合 true
 		@return		失敗した場合 false
 	*/
-	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, std::wstring& strText )
+	bool DlgItem_GetText( HWND hDlg, int nIDDlgItem, sakura::wstring& strText )
 	{
 		// バッファをクリアしておく
 		strText.clear();

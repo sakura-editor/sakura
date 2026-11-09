@@ -15,8 +15,8 @@
 #include "plugin/CPlugin.h"
 #include "macro/CWSHManager.h"
 
-#define PII_WSH						L"Wsh"			//WSHセクション
-#define PII_WSH_USECACHE			L"UseCache"		//読み込んだスクリプトを再利用する
+#define PII_WSH						LTEXT("Wsh")			//WSHセクション
+#define PII_WSH_USECACHE			LTEXT("UseCache")		//読み込んだスクリプトを再利用する
 
 class CWSHPlug final :
 	public CPlug
@@ -24,7 +24,7 @@ class CWSHPlug final :
 	using Me = CWSHPlug;
 
 public:
-	CWSHPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) :
+	CWSHPlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel ) :
 		CPlug( plugin, id, sJack, sHandler, sLabel )
 	{
 		m_Wsh = nullptr;
@@ -49,7 +49,7 @@ class CWSHPlugin final :
 
 	//コンストラクタ
 public:
-	CWSHPlugin( const std::wstring& sBaseDir ) : CPlugin( sBaseDir ) {
+	CWSHPlugin( const sakura::wstring& sBaseDir ) : CPlugin( sBaseDir ) {
 		m_bUseCache = false;
 	}
 	CWSHPlugin(const Me&) = delete;
@@ -63,7 +63,7 @@ public:
 
 	//操作
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override
+	CPlug* CreatePlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel ) override
 	{
 		return new CWSHPlug( plugin, id, sJack, sHandler, sLabel );
 	}

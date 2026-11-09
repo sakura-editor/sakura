@@ -42,7 +42,7 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
-#define	SAKURA_DIFF_TEMP_PREFIX	L"sakura_diff_"
+#define	SAKURA_DIFF_TEMP_PREFIX	LTEXT("sakura_diff_")
 
 class COutputAdapterDiff final : public COutputAdapter
 {
@@ -115,7 +115,7 @@ void CEditView::ViewDiffInfo(
 	WCHAR	szExeFolder[_MAX_PATH + 1];
 
 	WCHAR	cmdline[1024];
-	GetExedir( cmdline, L"diff.exe" );
+	GetExedir( cmdline, LTEXT("diff.exe") );
 	SplitPath_FolderAndFile( cmdline, szExeFolder, nullptr );
 
 	//	From Here Dec. 28, 2002 MIK
@@ -125,7 +125,7 @@ void CEditView::ViewDiffInfo(
 		WarningMessage( GetHwnd(), LS(STR_ERR_DLGEDITVWDIFF2) );
 		return;
 	}
-	cmdline[0] = L'\0';
+	cmdline[0] = LCHAR('\0');
 
 	//今あるDIFF差分を消去する。
 	if( CDiffManager::getInstance()->IsDiffUse() )
@@ -134,13 +134,13 @@ void CEditView::ViewDiffInfo(
 
 	//オプションを作成する
 	WCHAR	szOption[16];	// "-cwbBt"
-	wcscpy_s( szOption, L"-" );
-	if( nFlgOpt & 0x0001 ) wcscat_s( szOption, L"i" );	//-i ignore-case         大文字小文字同一視
-	if( nFlgOpt & 0x0002 ) wcscat_s( szOption, L"w" );	//-w ignore-all-space    空白無視
-	if( nFlgOpt & 0x0004 ) wcscat_s( szOption, L"b" );	//-b ignore-space-change 空白変更無視
-	if( nFlgOpt & 0x0008 ) wcscat_s( szOption, L"B" );	//-B ignore-blank-lines  空行無視
-	if( nFlgOpt & 0x0010 ) wcscat_s( szOption, L"t" );	//-t expand-tabs         TAB-SPACE変換
-	if( wcscmp( szOption, L"-" ) == 0 ) szOption[0] = L'\0';	//オプションなし
+	wcscpy_s( szOption, LTEXT("-") );
+	if( nFlgOpt & 0x0001 ) wcscat_s( szOption, LTEXT("i") );	//-i ignore-case         大文字小文字同一視
+	if( nFlgOpt & 0x0002 ) wcscat_s( szOption, LTEXT("w") );	//-w ignore-all-space    空白無視
+	if( nFlgOpt & 0x0004 ) wcscat_s( szOption, LTEXT("b") );	//-b ignore-space-change 空白変更無視
+	if( nFlgOpt & 0x0008 ) wcscat_s( szOption, LTEXT("B") );	//-B ignore-blank-lines  空行無視
+	if( nFlgOpt & 0x0010 ) wcscat_s( szOption, LTEXT("t") );	//-t expand-tabs         TAB-SPACE変換
+	if( wcscmp( szOption, LTEXT("-") ) == 0 ) szOption[0] = LCHAR('\0');	//オプションなし
 	if( nFlgOpt & 0x0020 ) nFlgFile12 = 0;
 	else                   nFlgFile12 = 1;
 
@@ -150,9 +150,9 @@ void CEditView::ViewDiffInfo(
 		//コマンドライン文字列作成(MAX:1024)
 		auto_sprintf_s(
 			cmdline, std::size(cmdline),
-			L"\"%s\\%s\" %s \"%s\" \"%s\"",
+			LTEXT("\"%s\\%s\" %s \"%s\" \"%s\""),
 			szExeFolder,	//sakura.exeパス
-			L"diff.exe",		//diff.exe
+			LTEXT("diff.exe"),		//diff.exe
 			szOption,		//diffオプション
 			( nFlgFile12 ? pszFile2 : pszFile1 ),
 			( nFlgFile12 ? pszFile1 : pszFile2 )
@@ -379,7 +379,7 @@ void CEditView::AnalyzeDiffInfo(
 static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& view, bool bBom)
 {
 	CLogicInt y = CLogicInt(0);
-	const wchar_t*	pLineData;
+	const WCHAR*	pLineData;
 	if( !hwnd ){
 		const CDocLineMgr& docMgr = view.m_pcEditDoc->m_cDocLineMgr;
 		for(;;){
@@ -388,7 +388,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 			// 正常終了
 			if( 0 == nLineLen || nullptr == pLineData ) break;
 			if( bBom ){
-				CNativeW cLine2(L"\ufeff");
+				CNativeW cLine2(LTEXT("\ufeff"));
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
@@ -411,7 +411,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 					if( nLineLen == 0 ){ return true; } // EOF => 正常終了
 					if( nLineLen < 0 ){ return false; } // 何かエラー
 					if( bBom ){
-						CNativeW cLine2(L"\ufeff");
+						CNativeW cLine2(LTEXT("\ufeff"));
 						cLine2.AppendString(pLineData, t_min(nLineLen, max_size));
 						out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 						bBom = false;
@@ -427,7 +427,7 @@ static bool MakeDiffTmpFile_core(CTextOutputStream& out, HWND hwnd, CEditView& v
 		return false;
 	}
 	if( bBom ){
-		out.WriteString(L"\ufeff", 1);
+		out.WriteString(LTEXT("\ufeff"), 1);
 	}
 	return true;
 }
@@ -529,10 +529,10 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 		CEol cEol;
 		while( RESULT_FAILURE != cfl.ReadLine( &cLine, &cEol ) ) {
 			const CLogicInt nLineLen = cLine.GetStringLength();
-			const wchar_t* pLineData= cLine.GetStringPtr();
+			const WCHAR* pLineData= cLine.GetStringPtr();
 			if( 0 == nLineLen || nullptr == pLineData ) break;
 			if( bBom ){
-				CNativeW cLine2(L"\ufeff");
+				CNativeW cLine2(LTEXT("\ufeff"));
 				cLine2.AppendString(pLineData, nLineLen);
 				out.WriteString(cLine2.GetStringPtr(), cLine2.GetStringLength());
 				bBom = false;
@@ -541,7 +541,7 @@ BOOL CEditView::MakeDiffTmpFile2( WCHAR* tmpName, const WCHAR* orgName, ECodeTyp
 			}
 		}
 		if( bBom ){
-			out.WriteString(L"\ufeff", 1);
+			out.WriteString(LTEXT("\ufeff"), 1);
 		}
 	}
 	catch(...){

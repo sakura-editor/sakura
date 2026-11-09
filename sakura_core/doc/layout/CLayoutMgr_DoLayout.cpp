@@ -284,7 +284,7 @@ void CLayoutMgr::_MakeOneLine(SLayoutWork* pWork, PF_OnLine pfOnLine)
 
 		const auto& ch = pWork->cLineStr[pWork->nPos];
 		CLayoutInt nCharKetas {0};
-		if( ch == WCODE::TAB || (ch == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) ){
+		if( ch == WCODE::TAB || (ch == LCHAR(',') && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV) ){
 			nCharKetas = GetActualTsvSpace( pWork->nPosX, ch );
 		}else{
 			nCharKetas = GetLayoutXOfChar( pWork->cLineStr, pWork->nPos );
@@ -329,7 +329,7 @@ void CLayoutMgr::_OnLine1(SLayoutWork* pWork)
 */
 void CLayoutMgr::_DoLayout(bool bBlockingHook)
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CLayoutMgr::_DoLayout" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CLayoutMgr::_DoLayout") );
 
 	_Empty();
 	Init();

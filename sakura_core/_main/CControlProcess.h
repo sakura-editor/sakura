@@ -54,7 +54,7 @@ private:
 		int nCmdShow [[maybe_unused]]
 	) override;
 
-	std::filesystem::path GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const;
+	std::filesystem::path GetPrivateIniFileName(const sakura::wstring& exeIniPath, const sakura::wstring& filename) const;
 
 	MutexHandle			m_hMutex{};		//!< アプリケーション実行検出用ミューテックス
 	MutexHandle			m_hMutexCP{};	//!< コントロールプロセスミューテックス

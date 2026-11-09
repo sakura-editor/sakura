@@ -219,10 +219,10 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 				return TRUE;
 			}
 		}
-		if( szWork[0] != L'\0' ){
+		if( szWork[0] != LCHAR('\0') ){
 			int		size = _countof(m_PrintSettingArr[0].m_szPrintSettingName) - 1;
 			wcsncpy( m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName, szWork, size);
-			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = L'\0';
+			m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintSettingName[size] = LCHAR('\0');
 			/* 印刷設定名一覧 */
 			hwndComboSettingName = GetItemHwnd( IDC_COMBO_SETTINGNAME );
 			ApiWrap::Combo_ResetContent( hwndComboSettingName );
@@ -248,7 +248,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			LOGFONT	lf = m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader;
 			INT		nPointSize;
 
-			if (lf.lfFaceName[0] == L'\0') {
+			if (lf.lfFaceName[0] == LCHAR('\0')) {
 				// 半角フォントを設定
 				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
@@ -271,7 +271,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 			LOGFONT	lf = m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter;
 			INT		nPointSize;
 
-			if (lf.lfFaceName[0] == L'\0') {
+			if (lf.lfFaceName[0] == LCHAR('\0')) {
 				// 半角フォントを設定
 				wcscpy( lf.lfFaceName, m_PrintSettingArr[m_nCurrentPrintSetting].m_szPrintFontFaceHan );
 				// 1/10mm→画面ドット数
@@ -290,7 +290,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		}
 		return TRUE;
 	case IDC_CHECK_USE_FONT_HEAD:
-		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader.lfFaceName[0] != L'\0') {
+		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader.lfFaceName[0] != LCHAR('\0')) {
 			memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfHeader, 0, sizeof(LOGFONT) );
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nHeaderPointSize = 0;
 			SetFontName( IDC_STATIC_FONT_HEAD, IDC_CHECK_USE_FONT_HEAD,
@@ -300,7 +300,7 @@ BOOL CDlgPrintSetting::OnBnClicked( int wID )
 		UpdatePrintableLineAndColumn();
 		return TRUE;
 	case IDC_CHECK_USE_FONT_FOOT:
-		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter.lfFaceName[0] != L'\0') {
+		if (m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter.lfFaceName[0] != LCHAR('\0')) {
 			memset( &m_PrintSettingArr[m_nCurrentPrintSetting].m_lfFooter, 0, sizeof(LOGFONT) );
 			m_PrintSettingArr[m_nCurrentPrintSetting].m_nFooterPointSize = 0;
 			SetFontName( IDC_STATIC_FONT_FOOT, IDC_CHECK_USE_FONT_FOOT,
@@ -805,7 +805,7 @@ BOOL CDlgPrintSetting::CalcPrintableLineAndColumn()
 	// 1pt = 1/72in = 25.4/72mm
 	int		nFontPoints = pPS->m_nPrintFontHeight * 720 / 254;
 	WCHAR	szFontPoints[20];
-	auto_snprintf_s(szFontPoints, std::size(szFontPoints), L"%d.%dpt", nFontPoints/10, nFontPoints%10 );
+	auto_snprintf_s(szFontPoints, std::size(szFontPoints), LTEXT("%d.%dpt"), nFontPoints/10, nFontPoints%10 );
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_FONTSIZE, szFontPoints );
 
 	// 印字可能領域がない場合は OK を押せなくする 2013.5.10 aroka
@@ -837,7 +837,7 @@ LPVOID CDlgPrintSetting::GetHelpIdTable(void)
 void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPointSize )
 {
 	WCHAR	szName[100];
-	bool	bUseFont = lf.lfFaceName[0] != L'\0';
+	bool	bUseFont = lf.lfFaceName[0] != LCHAR('\0');
 
 	CheckDlgButtonBool( GetHwnd(), idUse, bUseFont);
 	::EnableWindow( GetItemHwnd( idUse ), bUseFont );
@@ -864,13 +864,13 @@ void CDlgPrintSetting::SetFontName( int idTxt, int idUse, LOGFONT& lf, int nPoin
 
 		// フォント名/サイズの作成
 		int		nMM = MulDiv( nPointSize, 254, 720 );	// フォントサイズ計算(pt->1/10mm)
-		auto_sprintf(szName, nPointSize%10 ? L"%.32s(%.1fpt/%d.%dmm)" : L"%.32s(%.0fpt/%d.%dmm)",
+		auto_sprintf(szName, nPointSize%10 ? LTEXT("%.32s(%.1fpt/%d.%dmm)") : LTEXT("%.32s(%.0fpt/%d.%dmm)"),
 					lf.lfFaceName,
 					double(nPointSize)/10,
 					nMM/10, nMM/10);
 	}
 	else {
-		szName[0] = L'\0';
+		szName[0] = LCHAR('\0');
 	}
 	ApiWrap::DlgItem_SetText( GetHwnd(), idTxt, szName );
 }

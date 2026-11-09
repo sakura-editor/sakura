@@ -27,8 +27,8 @@ public:
 	bool LoadAllPlugin(CommonSetting* common = nullptr);				//全プラグインを読み込む
 	void UnloadAllPlugin();				//全プラグインを解放する
 	bool SearchNewPlugin( CommonSetting& common, HWND hWndOwner );		//新規プラグインを導入する
-	int InstallPlugin( CommonSetting& common, const WCHAR* pszPluginName, HWND hWndOwner, std::wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
-	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
+	int InstallPlugin( CommonSetting& common, const WCHAR* pszPluginName, HWND hWndOwner, sakura::wstring& errorMsg, bool bUpdate = false );	//プラグインの初期導入をする
+	bool InstZipPlugin( CommonSetting& common, HWND hWndOwner, const sakura::wstring& sZipName, bool bInSearch=false );		//Zipプラグインを追加する
 	CPlugin* GetPlugin( int id );		//プラグインを取得する
 	void UninstallPlugin( CommonSetting& common, int id );		//プラグインを削除する
 
@@ -40,17 +40,17 @@ private:
 	//属性
 public:
 	//pluginsフォルダーのパス
-	const std::wstring GetBaseDir() { return m_sBaseDir; }
-	const std::wstring GetExePluginDir() { return m_sExePluginDir; }
-	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const std::wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
-	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const std::wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
-	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const std::wstring& sZipName, const std::wstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
+	const sakura::wstring GetBaseDir() { return m_sBaseDir; }
+	const sakura::wstring GetExePluginDir() { return m_sExePluginDir; }
+	bool SearchNewPluginDir( CommonSetting& common, HWND hWndOwner, const sakura::wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)
+	bool SearchNewPluginZip( CommonSetting& common, HWND hWndOwner, const sakura::wstring& sSearchDir, bool& bCancel );		//新規プラグインを追加する(下請け)Zip File
+	bool InstZipPluginSub( CommonSetting& common, HWND hWndOwner, const sakura::wstring& sZipName, const sakura::wstring& sDispName, bool bInSearch, bool& bCancel );		//Zipプラグインを導入する(下請け)
 
 	// メンバ変数
 private:
 	CPlugin::List m_plugins;
-	std::wstring m_sBaseDir;			//pluginsフォルダーのパス
-	std::wstring m_sExePluginDir;		//Exeフォルダー配下pluginsフォルダーのパス
+	sakura::wstring m_sBaseDir;			//pluginsフォルダーのパス
+	sakura::wstring m_sExePluginDir;		//Exeフォルダー配下pluginsフォルダーのパス
 };
 
 #endif /* SAKURA_CPLUGINMANAGER_CE705DAD_1876_4B21_9052_07A9BFD292DE_H_ */

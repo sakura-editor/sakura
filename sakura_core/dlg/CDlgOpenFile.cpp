@@ -59,7 +59,7 @@ inline bool CDlgOpenFile::DoModal_GetSaveFileName( std::span<WCHAR> szPath )
 
 inline bool CDlgOpenFile::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::wstring>* pFilenames,
+	std::vector<sakura::wstring>* pFilenames,
 	bool bOptions)
 {
 	return m_pImpl->DoModalOpenDlg(pLoadInfo, pFilenames, bOptions);

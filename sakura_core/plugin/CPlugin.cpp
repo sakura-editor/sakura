@@ -27,7 +27,7 @@ EFunctionCode CPlug::GetFunctionCode() const{
 // CPlugin メンバ関数
 
 //コンストラクタ
-CPlugin::CPlugin(std::wstring_view baseDir)
+CPlugin::CPlugin(sakura::wstring_view baseDir)
 	: m_sBaseDir(baseDir)
 {
 }
@@ -55,11 +55,11 @@ bool CPlugin::ReadPluginDefCommon( CDataProfile *cProfile, CDataProfile *cProfil
 		cProfileMlang->IOProfileData( PII_PLUGIN, PII_PLUGIN_URL, m_sUrl );
 	}
 
-	DEBUG_TRACE(L"    Name:%ls\n", m_sName.c_str());
-	DEBUG_TRACE(L"    Description:%ls\n", m_sDescription.c_str());
-	DEBUG_TRACE(L"    Author:%ls\n", m_sAuthor.c_str());
-	DEBUG_TRACE(L"    Version:%ls\n", m_sVersion.c_str());
-	DEBUG_TRACE(L"    Url:%ls\n", m_sUrl.c_str());
+	DEBUG_TRACE(LTEXT("    Name:%ls\n"), m_sName.c_str());
+	DEBUG_TRACE(LTEXT("    Description:%ls\n"), m_sDescription.c_str());
+	DEBUG_TRACE(LTEXT("    Author:%ls\n"), m_sAuthor.c_str());
+	DEBUG_TRACE(LTEXT("    Version:%ls\n"), m_sVersion.c_str());
+	DEBUG_TRACE(LTEXT("    Url:%ls\n"), m_sUrl.c_str());
 
 	return true;
 }
@@ -70,21 +70,21 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 {
 	unsigned int i;
 	std::vector<JackDef> jacks = CJackManager::getInstance()->GetJackDef();
-	wchar_t szIndex[8];
+	WCHAR szIndex[8];
 
 	for( i=0; i<jacks.size(); i++ ){
-		const std::wstring sKey = jacks[i].szName;
+		const sakura::wstring sKey = jacks[i].szName;
 		for( int nCount = 0; nCount < MAX_PLUG_CMD; nCount++ ){
 			if( nCount == 0 ){
-				szIndex[0] = L'\0';
+				szIndex[0] = LCHAR('\0');
 			}else{
-				_swprintf(szIndex, L"[%d]", nCount);
+				_swprintf(szIndex, LTEXT("[%d]"), nCount);
 			}
-			std::wstring sHandler;
+			sakura::wstring sHandler;
 			if( cProfile->IOProfileData( PII_PLUG, (sKey + szIndex).c_str(), sHandler ) ){
 				//ラベルの取得
-				std::wstring sKeyLabel = sKey + szIndex + L".Label";
-				std::wstring sLabel;
+				sakura::wstring sKeyLabel = sKey + szIndex + LTEXT(".Label");
+				sakura::wstring sLabel;
 				cProfile->IOProfileData( PII_PLUG, sKeyLabel.c_str(), sLabel );
 				if( cProfileMlang ){
 					cProfileMlang->IOProfileData( PII_PLUG, sKeyLabel.c_str(), sLabel );
@@ -107,17 +107,17 @@ bool CPlugin::ReadPluginDefPlug( CDataProfile *cProfile, CDataProfile *cProfileM
 //プラグイン定義ファイルのCommandセクションを読み込む
 bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
-	std::wstring sHandler;
+	sakura::wstring sHandler;
 	WCHAR bufKey[64];
 
 	for( int nCount = 1; nCount < MAX_PLUG_CMD; nCount++ ){	//添え字は１から始める
-		_swprintf( bufKey, L"C[%d]", nCount );
+		_swprintf( bufKey, LTEXT("C[%d]"), nCount );
 		if( cProfile->IOProfileData( PII_COMMAND, bufKey, sHandler ) ){
-			std::wstring sLabel;
-			std::wstring sIcon;
+			sakura::wstring sLabel;
+			sakura::wstring sIcon;
 
 			//ラベルの取得
-			_swprintf( bufKey, L"C[%d].Label", nCount );
+			_swprintf( bufKey, LTEXT("C[%d].Label"), nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sLabel );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_COMMAND, bufKey, sLabel );
@@ -126,7 +126,7 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfi
 				sLabel = sHandler;		// Labelが無ければハンドラ名で代用
 			}
 			//アイコンの取得
-			_swprintf( bufKey, L"C[%d].Icon", nCount );
+			_swprintf( bufKey, LTEXT("C[%d].Icon"), nCount );
 			cProfile->IOProfileData( PII_COMMAND, bufKey, sIcon );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_COMMAND, bufKey, sIcon );
@@ -144,13 +144,13 @@ bool CPlugin::ReadPluginDefCommand( CDataProfile *cProfile, CDataProfile *cProfi
 //プラグイン定義ファイルのOptionセクションを読み込む	// 2010/3/24 Uchi
 bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfileMlang )
 {
-	std::wstring sLabel;
-	std::wstring sSection;
-	std::wstring sSection_wk;
-	std::wstring sKey;
-	std::wstring sType;
-	std::wstring sSelect;
-	std::wstring sDefaultVal;
+	sakura::wstring sLabel;
+	sakura::wstring sSection;
+	sakura::wstring sSection_wk;
+	sakura::wstring sKey;
+	sakura::wstring sType;
+	sakura::wstring sSelect;
+	sakura::wstring sDefaultVal;
 	WCHAR bufKey[64];
 
 	sSection.clear();
@@ -160,31 +160,31 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 		sType.clear();
 		sDefaultVal.clear();
 		//Keyの取得
-		_swprintf( bufKey, L"O[%d].Key", nCount );
+		_swprintf( bufKey, LTEXT("O[%d].Key"), nCount );
 		if( cProfile->IOProfileData( PII_OPTION, bufKey, sKey ) ){
 			//Sectionの取得
-			_swprintf( bufKey, L"O[%d].Section", nCount );
+			_swprintf( bufKey, LTEXT("O[%d].Section"), nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sSection_wk );
 			if (!sSection_wk.empty()) {		// 指定が無ければ前を引き継ぐ
 				sSection = sSection_wk;
 			}
 			//ラベルの取得
-			_swprintf( bufKey, L"O[%d].Label", nCount );
+			_swprintf( bufKey, LTEXT("O[%d].Label"), nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sLabel );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_OPTION, bufKey, sLabel );
 			}
 			//Typeの取得
-			_swprintf( bufKey, L"O[%d].Type", nCount );
+			_swprintf( bufKey, LTEXT("O[%d].Type"), nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sType );
 			// 項目選択候補
-			_swprintf( bufKey, L"O[%d].Select", nCount );
+			_swprintf( bufKey, LTEXT("O[%d].Select"), nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sSelect );
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_OPTION, bufKey, sSelect );
 			}
 			// デフォルト値
-			_swprintf( bufKey, L"O[%d].Default", nCount );
+			_swprintf( bufKey, LTEXT("O[%d].Default"), nCount );
 			cProfile->IOProfileData( PII_OPTION, bufKey, sDefaultVal );
 
 			if (sSection.empty() || sKey.empty()) {
@@ -204,12 +204,12 @@ bool CPlugin::ReadPluginDefOption( CDataProfile *cProfile, CDataProfile *cProfil
 }
 
 //プラグインフォルダー基準の相対パスをフルパスに変換
-std::wstring CPlugin::GetFilePath( const std::wstring& sFileName ) const
+sakura::wstring CPlugin::GetFilePath( const sakura::wstring& sFileName ) const
 {
-	return m_sBaseDir + L"\\" + sFileName;
+	return m_sBaseDir + LTEXT("\\") + sFileName;
 }
 
-std::wstring CPlugin::GetFolderName() const
+sakura::wstring CPlugin::GetFolderName() const
 {
 	return GetFileTitlePointer(m_sBaseDir.c_str());
 }
@@ -217,12 +217,12 @@ std::wstring CPlugin::GetFolderName() const
 //コマンドを追加する
 int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* icon, bool doRegister )
 {
-	if( !handler ){ handler = L""; }
-	if( !label ){ label = L""; }
+	if( !handler ){ handler = LTEXT(""); }
+	if( !label ){ label = LTEXT(""); }
 
 	//コマンドプラグIDは1から振る
 	m_nCommandCount++;
-	CPlug *newPlug = CreatePlug( *this, m_nCommandCount, PP_COMMAND_STR, std::wstring(handler), std::wstring(label) );
+	CPlug *newPlug = CreatePlug( *this, m_nCommandCount, PP_COMMAND_STR, sakura::wstring(handler), sakura::wstring(label) );
 	if( icon ){
 		newPlug->m_sIcon = icon;
 	}
@@ -237,12 +237,12 @@ int CPlugin::AddCommand( const WCHAR* handler, const WCHAR* label, const WCHAR* 
 
 // 文字列分割	2010/4/4 Uchi
 //	独立させたほうがいいのだが
-std::vector<std::wstring> wstring_split( std::wstring sTrg, wchar_t cSep )
+std::vector<sakura::wstring> wstring_split( sakura::wstring sTrg, WCHAR cSep )
 {
-    std::vector<std::wstring>	splitVec;
+    std::vector<sakura::wstring>	splitVec;
     size_t idx = 0;
 
-    while ((idx = sTrg.find( cSep )) != std::wstring::npos) {
+    while ((idx = sTrg.find( cSep )) != sakura::wstring::npos) {
         splitVec.push_back( sTrg.substr( 0, idx ) );
         sTrg = sTrg.substr( ++idx );
     }
@@ -259,10 +259,10 @@ bool CPlugin::ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfil
 {
 	WCHAR bufKey[64];
 	m_aStrings.clear();
-	m_aStrings.emplace_back( std::wstring() ); // 0番目ダミー
+	m_aStrings.emplace_back( sakura::wstring() ); // 0番目ダミー
 	for( int nCount = 1; nCount < MAX_PLUG_STRING; nCount++ ){	//添え字は１から始める
-		std::wstring sVal = L"";
-		_swprintf( bufKey, L"S[%d]", nCount );
+		sakura::wstring sVal = LTEXT("");
+		_swprintf( bufKey, LTEXT("S[%d]"), nCount );
 		if( cProfile->IOProfileData( PII_STRING, bufKey, sVal ) ){
 			if( cProfileMlang ){
 				cProfileMlang->IOProfileData( PII_STRING, bufKey, sVal );

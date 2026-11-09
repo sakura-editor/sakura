@@ -40,8 +40,8 @@ const DWORD p_helpids[] = {	//13700
 
 CDlgTagsMake::CDlgTagsMake()
 {
-	m_szPath[0] = L'\0';
-	m_szTagsCmdLine[0] = L'\0';
+	m_szPath[0] = LCHAR('\0');
+	m_szTagsCmdLine[0] = LCHAR('\0');
 	m_nTagsOpt = 0;
 	return;
 }
@@ -148,7 +148,7 @@ int CDlgTagsMake::GetData( void )
 	auto length = int(wcslen(m_szPath));
 	if( length > 0 )
 	{
-		if( m_szPath[ length - 1 ] != L'\\' ) wcscat( m_szPath, L"\\" );
+		if( m_szPath[ length - 1 ] != LCHAR('\\') ) wcscat( m_szPath, LTEXT("\\") );
 	}
 
 	//CTAGSオプション

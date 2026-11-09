@@ -71,13 +71,13 @@ namespace apiwrap {
  *
  * @throws std::out_of_range 未定義のエラーコードを検出した場合
  */
-std::wstring CommDlgExtendedErrorString()
+sakura::wstring CommDlgExtendedErrorString()
 {
 #pragma push_macro("CD_ERR_ENTRY")
 
 #define CD_ERR_ENTRY(code)	{ code, L ## #code ## sv }
 
-	const std::map<DWORD, std::wstring_view> codeMap{
+	const std::map<DWORD, sakura::wstring_view> codeMap{
 		CD_ERR_ENTRY(CDERR_DIALOGFAILURE),
 
 		CD_ERR_ENTRY(CDERR_GENERALCODES),
@@ -151,8 +151,8 @@ bool CallCommDlgFunc(
 
 	auto bRet = std::forward<TFunc>(func)();
 	if (!bRet && FNERR_INVALIDFILENAME == Comdlg32::getInstance()->CommDlgExtendedError()) {
-		pOfn->lpstrFile[0] = L'\0';
-		pOfn->lpstrInitialDir = L"";
+		pOfn->lpstrFile[0] = LCHAR('\0');
+		pOfn->lpstrInitialDir = LTEXT("");
 		bRet = std::forward<TFunc>(func)();
 	}
 
@@ -176,7 +176,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter) override;
 	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
-	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
+	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<sakura::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
 	static void DlgOpenFail(void);
@@ -197,7 +197,7 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 
 	DLLSHAREDATA*	m_pShareData;
 
-	std::wstring	m_strDefaultWildCard{ L"*.*" };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
+	sakura::wstring	m_strDefaultWildCard{ LTEXT("*.*") };	/* 「開く」での最初のワイルドカード（保存時の拡張子補完でも使用される） */
 	SFilePath		m_szInitialDir;			/* 「開く」での初期ディレクトリ */
 
 	std::vector<LPCWSTR>	m_vMRU;
@@ -251,7 +251,7 @@ static void ReplaceSlashInFileNameBox( HWND hwndOpenDlg )
 			return;
 		}
 	}
-	std::wstring text( ::GetWindowTextLength( hwndFilebox ), L'\0' );
+	sakura::wstring text( ::GetWindowTextLength( hwndFilebox ), LCHAR('\0') );
 	::GetWindowText( hwndFilebox, text.data(), int(text.size()) + 1 );
 	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
 		::SetWindowText( hwndFilebox, replaced.c_str() );
@@ -350,10 +350,10 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 	};
 	//	文字列はResource内に入れる
 	static const WCHAR*	const	pEolNameArr[] = {
-		L"変換なし", // ダミー
-		L"CR+LF",
-		L"LF (UNIX)",
-		L"CR (Mac)",
+		LTEXT("変換なし"), // ダミー
+		LTEXT("CR+LF"),
+		LTEXT("LF (UNIX)"),
+		LTEXT("CR (Mac)"),
 	};
 	int nEolNameArrNum = int(std::size(pEolNameArr));
 
@@ -515,14 +515,14 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 
 					CommDlg_OpenSave_GetSpec(pData->m_hwndOpenDlg, szBuf, _MAX_PATH);	// ファイル名入力ボックス内の文字列
 					pszCur = szBuf;
-					while( *pszCur == L' ' )	// 空白を読み飛ばす
+					while( *pszCur == LCHAR(' ') )	// 空白を読み飛ばす
 						pszCur = ::CharNext(pszCur);
-					if( *pszCur == L'\"' ){	// 二重引用部で始まっている
+					if( *pszCur == LCHAR('\"') ){	// 二重引用部で始まっている
 						::wcsncpy_s(pData->m_szPath, pData->m_pOf->lpstrFile, _TRUNCATE);
 					}
 					else{
 						_wsplitpath_s( pData->m_pOf->lpstrFile, nullptr, 0, nullptr, 0, nullptr, 0, szDefExt, std::size(szDefExt) );
-						if( szDefExt[0] == L'.' /* && szDefExt[1] != L'\0' */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
+						if( szDefExt[0] == LCHAR('.') /* && szDefExt[1] != L'\0' */ ){	// 既に拡張子がついている	2文字目のチェックの削除	2008/6/14 Uchi
 							// .のみの場合にも拡張子付きとみなす。
 							::wcsncpy_s(pData->m_szPath, pData->m_pOf->lpstrFile, _TRUNCATE);
 						}
@@ -530,24 +530,24 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 							switch( pData->m_pOf->nFilterIndex ){	// 選択されているファイルの種類
 							case 1:		// ユーザー定義
 								pszCur = pData->m_pcDlgOpenFile->m_strDefaultWildCard.data();
-								while( *pszCur != L'.' && *pszCur != L'\0' )	// '.'まで読み飛ばす
+								while( *pszCur != LCHAR('.') && *pszCur != LCHAR('\0') )	// '.'まで読み飛ばす
 									pszCur = ::CharNext(pszCur);
 								i2 = 0;
-								while( *pszCur != L';' && *pszCur != L'\0' ){	// ';'までコピーする
+								while( *pszCur != LCHAR(';') && *pszCur != LCHAR('\0') ){	// ';'までコピーする
 									pszNext = ::CharNext(pszCur);
 									while( pszCur < pszNext )
 										szDefExt[i2++] = *pszCur++;
 								}
-								szDefExt[i2] = L'\0';
-								if( ::wcslen(szDefExt) < 2 || szDefExt[1] == L'*' )	// 無効な拡張子?
-									szDefExt[0] = L'\0';
+								szDefExt[i2] = LCHAR('\0');
+								if( ::wcslen(szDefExt) < 2 || szDefExt[1] == LCHAR('*') )	// 無効な拡張子?
+									szDefExt[0] = LCHAR('\0');
 								break;
 							case 2:		// *.txt
-								::wcscpy(szDefExt, L".txt");
+								::wcscpy(szDefExt, LTEXT(".txt"));
 								break;
 							case 3:		// *.*
 							default:	// 不明
-								szDefExt[0] = L'\0';
+								szDefExt[0] = LCHAR('\0');
 								break;
 							}
 							::wcsncpy_s(szBuf, pData->m_pOf->lpstrFile, _TRUNCATE);
@@ -594,7 +594,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 		case CDN_FOLDERCHANGE  :
 //			MYTRACE( L"pofn->hdr.code=CDN_FOLDERCHANGE  \n" );
 			{
-				wchar_t szFolder[_MAX_PATH];
+				WCHAR szFolder[_MAX_PATH];
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
 				CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
 			}
@@ -802,14 +802,14 @@ void CDlgOpenFile_CommonFileDialog::Create(
 	}
 
 	/* 「開く」での初期フォルダー */
-	if( pszDefaultPath && pszDefaultPath[0] != L'\0' ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
+	if( pszDefaultPath && pszDefaultPath[0] != LCHAR('\0') ){	//現在編集中のファイルのパス	//@@@ 2002.04.18
 		WCHAR szDrive[_MAX_DRIVE];
 		WCHAR szDir[_MAX_DIR];
 		//	Jun. 23, 2002 genta
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
-		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
+		auto_sprintf( szRelPath, LTEXT("%s%s"), szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
 			wcscpy(m_szInitialDir, p );
@@ -847,23 +847,23 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(
 
 	switch( eAddFilter ){
 	case EFITER_TEXT:
-		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
+		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), LTEXT("*.txt") );
 		break;
 	case EFITER_MACRO:
-		cFileExt.AppendExtRaw( L"Macros", L"*.js;*.vbs;*.ppa;*.py;*.mac" );
-		cFileExt.AppendExtRaw( L"JScript", L"*.js" );
-		cFileExt.AppendExtRaw( L"VBScript", L"*.vbs" );
-		cFileExt.AppendExtRaw( L"Pascal", L"*.ppa" );
-		cFileExt.AppendExtRaw( L"Python", L"*.py" );
-		cFileExt.AppendExtRaw( L"Key Macro", L"*.mac" );
+		cFileExt.AppendExtRaw( LTEXT("Macros"), LTEXT("*.js;*.vbs;*.ppa;*.py;*.mac") );
+		cFileExt.AppendExtRaw( LTEXT("JScript"), LTEXT("*.js") );
+		cFileExt.AppendExtRaw( LTEXT("VBScript"), LTEXT("*.vbs") );
+		cFileExt.AppendExtRaw( LTEXT("Pascal"), LTEXT("*.ppa") );
+		cFileExt.AppendExtRaw( LTEXT("Python"), LTEXT("*.py") );
+		cFileExt.AppendExtRaw( LTEXT("Key Macro"), LTEXT("*.mac") );
 		break;
 	case EFITER_NONE:
 	default:
 		break;
 	}
 
-	if (m_strDefaultWildCard != L"*.*") {
-		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
+	if (m_strDefaultWildCard != LTEXT("*.*")) {
+		cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), LTEXT("*.*") );
 	}
 
 	/* 構造体の初期化 */
@@ -890,12 +890,12 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(
 		//	指定されたファイルが存在しないとき szName == NULL
 		//	ファイルの場所にディレクトリを指定するとエラーになるので
 		//	ファイルが無い場合は全く指定しないことにする．
-		if( szName[0] == L'\0' ){
-			pszPath[0] = L'\0';
+		if( szName[0] == LCHAR('\0') ){
+			pszPath[0] = LCHAR('\0');
 		}
 		else {
 			WCHAR szRelPath[_MAX_PATH];
-			auto_sprintf( szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt );
+			auto_sprintf( szRelPath, LTEXT("%s%s%s%s"), szDrive, szDir, szName, szExt );
 			const WCHAR* p = szRelPath;
 			if( ! ::GetLongFileName( p, pszPath ) ){
 				wcscpy( pszPath, p );
@@ -909,7 +909,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(
 
 	pData->m_ofn.lpstrInitialDir = m_szInitialDir;
 	pData->m_ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
-	pData->m_ofn.lpstrDefExt = L""; // 2005/02/20 novice 拡張子を省略したら補完する
+	pData->m_ofn.lpstrDefExt = LTEXT(""); // 2005/02/20 novice 拡張子を省略したら補完する
 
 	// 2010.08.28 Moca DLLが読み込まれるので移動
 	ChangeCurrentDirectoryToExeDir();
@@ -949,8 +949,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), LTEXT("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), LTEXT("*.*") );
 	
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
 	if( pszPath[0] ){
@@ -977,7 +977,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(
 	pData->m_ofn.lpstrInitialDir = m_szInitialDir;
 	pData->m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
-	pData->m_ofn.lpstrDefExt = L"";	// 2005/02/20 novice 拡張子を省略したら補完する
+	pData->m_ofn.lpstrDefExt = LTEXT("");	// 2005/02/20 novice 拡張子を省略したら補完する
 
 	// 2010.08.28 Moca DLLが読み込まれるので移動
 	ChangeCurrentDirectoryToExeDir();
@@ -999,7 +999,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(
 */
 bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	SLoadInfo* pLoadInfo,
-	std::vector<std::wstring>* pFileNames,
+	std::vector<sakura::wstring>* pFileNames,
 	bool bOptions
 )
 {
@@ -1010,8 +1010,8 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 
 	// ファイルの種類	2003.05.12 MIK
 	CFileExt	cFileExt;
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), LTEXT("*.*") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), LTEXT("*.txt") );
 	for( int i = 0; i < GetDllShareData().m_nTypesCount; i++ ){
 		const STypeConfigMini* type = nullptr;
 		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig( i ), &type ) ){
@@ -1047,7 +1047,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	if( bMultiSelect ){
 		pData->m_ofn.Flags |= OFN_ALLOWMULTISELECT;
 	}
-	pData->m_ofn.lpstrDefExt = L"";	// 2005/02/20 novice 拡張子を省略したら補完する
+	pData->m_ofn.lpstrDefExt = LTEXT("");	// 2005/02/20 novice 拡張子を省略したら補完する
 	if( bOptions == false ){
 		pData->m_ofn.Flags |= OFN_HIDEREADONLY;
 		pData->m_bUseCharCode = false;
@@ -1063,16 +1063,16 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 	bool bDlgResult = _GetOpenFileNameRecover( &pData->m_ofn );
 	if( bDlgResult ){
 		if( bMultiSelect ){
-			pLoadInfo->cFilePath = L"";
+			pLoadInfo->cFilePath = LTEXT("");
 			if( pData->m_ofn.nFileOffset < wcslen( pData->m_ofn.lpstrFile ) ){
 				pFileNames->push_back( pData->m_ofn.lpstrFile );
 			}else{
-				std::wstring path;
+				sakura::wstring path;
 				WCHAR* pos = pData->m_ofn.lpstrFile;
 				pos += wcslen(pos) + 1;
-				while( *pos != L'\0' ){
+				while( *pos != LCHAR('\0') ){
 					path = pData->m_ofn.lpstrFile;
-					path.append( L"\\" );
+					path.append( LTEXT("\\") );
 					path.append( pos );
 					pFileNames->push_back( path );
 					pos += wcslen(pos) + 1;
@@ -1115,11 +1115,11 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	//	2003.05.12 MIK
 	CFileExt	cFileExt;
 	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME1), m_strDefaultWildCard.c_str() );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), L"*.txt" );
-	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), L"*.*" );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME2), LTEXT("*.txt") );
+	cFileExt.AppendExtRaw( LS(STR_DLGOPNFL_EXTNAME3), LTEXT("*.*") );
 
 	// ファイル名の初期設定	// 2006.11.10 ryoji
-	if( pSaveInfo->cFilePath[0] == L'\0' )
+	if( pSaveInfo->cFilePath[0] == LCHAR('\0') )
 		::wcsncpy_s(pSaveInfo->cFilePath, LS(STR_NO_TITLE2), _TRUNCATE);	// 無題
 
 	//OPENFILENAME構造体の初期化
@@ -1140,7 +1140,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 
 // 2005/02/20 novice 拡張子を省略したら補完する
 //	pData->m_ofn.lpstrDefExt = L"";
-	pData->m_ofn.lpstrDefExt = (pData->m_ofn.Flags & OFN_ENABLEHOOK)? nullptr: L"";	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
+	pData->m_ofn.lpstrDefExt = (pData->m_ofn.Flags & OFN_ENABLEHOOK)? nullptr: LTEXT("");	// 2006.11.10 ryoji フックを使うときは自前で拡張子を補完する
 
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
@@ -1206,12 +1206,12 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 */
 /* static */ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 {
-	std::wstring name;
+	sakura::wstring name;
 	try {
 		name = apiwrap::CommDlgExtendedErrorString();
 	}
 	catch (const std::out_of_range&) {
-		name = L"UNKNOWN_ERRORCODE";
+		name = LTEXT("UNKNOWN_ERRORCODE");
 	}
 
 	if (name.empty()) {
@@ -1219,7 +1219,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 		return;
 	}
 
-	const auto formatted = std::format(L"{:<21}", name);
+	const auto formatted = std::format(LTEXT("{:<21}"), name);
 
 	const auto pszError = std::data(formatted);
 

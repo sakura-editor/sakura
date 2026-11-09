@@ -27,7 +27,7 @@
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-using PairGrepEnumItem = std::pair< std::wstring, DWORD >;
+using PairGrepEnumItem = std::pair< sakura::wstring, DWORD >;
 using VPGrepEnumItem = std::vector< PairGrepEnumItem >;
 
 class CGrepEnumOptions {
@@ -61,9 +61,9 @@ public:
 		return;
 	}
 
-	BOOL IsExist( std::wstring_view svFileName ) const {
+	BOOL IsExist( sakura::wstring_view svFileName ) const {
 		for( const auto& item : m_vpItems ){
-			if( std::wstring_view( item.first ) == svFileName ){
+			if( sakura::wstring_view( item.first ) == svFileName ){
 				return TRUE;
 			}
 		}
@@ -95,24 +95,24 @@ public:
 		int found = 0;
 
 		// 基底フォルダーは長さの上限を設けずに扱う(固定長バッファを使わなくなったため上限が不要)
-		const std::wstring_view svBaseFolder = lpBaseFolder ? std::wstring_view( lpBaseFolder ) : std::wstring_view();
+		const sakura::wstring_view svBaseFolder = lpBaseFolder ? sakura::wstring_view( lpBaseFolder ) : sakura::wstring_view();
 
 		// 作業用バッファはループの外に置き、確保済みの領域を使い回す
-		std::wstring strPath;
-		std::wstring strName;
-		std::wstring strFullPath;
+		sakura::wstring strPath;
+		sakura::wstring strName;
+		sakura::wstring strFullPath;
 
 		for( const auto& strKey : vecKeys ){
 			// 基準フォルダーが空(絶対パスのキー)なら区切りを付けない
 			strPath.assign( svBaseFolder );
 			if( !svBaseFolder.empty() ){
-				strPath.append( L"\\" );
+				strPath.append( LTEXT("\\") );
 			}
 			strPath.append( strKey );
 
 			// strKey ==> "subdir\*.h" 等の場合に後で(ファイル|フォルダー)名に "subdir\" を連結する
-			const auto keyDirPos = strKey.find_last_of( L"\\/" );
-			const auto nKeyDirLen = ( std::wstring::npos != keyDirPos ) ? keyDirPos + 1 : 0;
+			const auto keyDirPos = strKey.find_last_of( LTEXT("\\/") );
+			const auto nKeyDirLen = ( sakura::wstring::npos != keyDirPos ) ? keyDirPos + 1 : 0;
 
 			WIN32_FIND_DATA w32fd;
 			HANDLE handle = ::FindFirstFile( strPath.c_str(), &w32fd );
@@ -139,7 +139,7 @@ public:
 				strName.append( w32fd.cFileName );
 				strFullPath.assign( svBaseFolder );
 				if( !svBaseFolder.empty() ){
-					strFullPath.append( L"\\" );
+					strFullPath.append( LTEXT("\\") );
 				}
 				strFullPath.append( strName );
 				if( !IsValid( w32fd, strName.c_str() ) ){

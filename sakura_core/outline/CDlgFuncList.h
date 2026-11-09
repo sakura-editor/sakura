@@ -183,7 +183,7 @@ protected:
 	BOOL PostOutlineNotifyToAllEditors( WPARAM wParam, LPARAM lParam );
 	EDockSide GetDropRect( POINT ptDrag, POINT ptDrop, LPRECT pRect, bool bForceFloat );
 	BOOL Track( POINT ptDrag );
-	bool GetTreeFileFullName(HWND, HTREEITEM, std::wstring*, int*);
+	bool GetTreeFileFullName(HWND, HTREEITEM, sakura::wstring*, int*);
 	bool TagJumpTimer(const WCHAR*, CMyPoint, bool);
 
 private:
@@ -206,7 +206,7 @@ private:
 
 	// 選択中の関数情報
 	CFuncInfo* m_cFuncInfo;
-	std::wstring m_sJumpFile;
+	sakura::wstring m_sJumpFile;
 
 	const WCHAR* m_pszTimerJumpFile;
 	CMyPoint	m_pointTimerJump;

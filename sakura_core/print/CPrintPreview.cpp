@@ -143,7 +143,7 @@ LRESULT CPrintPreview::OnPaint(
 	CPrint::GetPaperName( m_pPrintSetting->m_mdmDevMode.dmPaperSize , szPaperName );
 	auto_sprintf(
 		szText,
-		L"%s  %s",
+		LTEXT("%s  %s"),
 		szPaperName,
 		(m_pPrintSetting->m_mdmDevMode.dmOrientation & DMORIENT_LANDSCAPE) ? LS(STR_ERR_DLGPRNPRVW1) : LS(STR_ERR_DLGPRNPRVW2)
 	);
@@ -691,7 +691,7 @@ void CPrintPreview::OnChangePrintSetting( void )
 
 	// 2009.08.08 印刷で用紙サイズ、横指定が効かない問題対応 syat
 	/* DEVMODE構造体が設定されていなかったら既定のプリンターを設定 */
-	if( m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName[0] == L'\0' ){
+	if( m_pPrintSetting->m_mdmDevMode.m_szPrinterDeviceName[0] == LCHAR('\0') ){
 		GetDefaultPrinterInfo();
 	}
 
@@ -792,11 +792,11 @@ void CPrintPreview::OnChangePrintSetting( void )
 	ref.m_nTsvMode =			m_pParentWnd->GetDocument()->m_cLayoutMgr.m_tsvInfo.m_nTsvMode;
 
 	//@@@ 2002.09.22 YAZAKI
-	ref.m_cLineComment.CopyTo(0, L"", -1);	/* 行コメントデリミタ */
-	ref.m_cLineComment.CopyTo(1, L"", -1);	/* 行コメントデリミタ2 */
-	ref.m_cLineComment.CopyTo(2, L"", -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
-	ref.m_cBlockComments[0].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ */
-	ref.m_cBlockComments[1].SetBlockCommentRule(L"", L"");	/* ブロックコメントデリミタ2 */
+	ref.m_cLineComment.CopyTo(0, LTEXT(""), -1);	/* 行コメントデリミタ */
+	ref.m_cLineComment.CopyTo(1, LTEXT(""), -1);	/* 行コメントデリミタ2 */
+	ref.m_cLineComment.CopyTo(2, LTEXT(""), -1);	/* 行コメントデリミタ3 */	//Jun. 01, 2001 JEPRO 追加
+	ref.m_cBlockComments[0].SetBlockCommentRule(LTEXT(""), LTEXT(""));	/* ブロックコメントデリミタ */
+	ref.m_cBlockComments[1].SetBlockCommentRule(LTEXT(""), LTEXT(""));	/* ブロックコメントデリミタ2 */
 
 	ref.m_nStringType =			0;		/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
 	ref.m_ColorInfoArr[COLORIDX_COMMENT].m_bDisp = false;
@@ -855,7 +855,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 	WCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	
 	auto_sprintf( szMessage, LS(STR_ERR_DLGPRNPRVW4) , m_nAllPageNum );
-	auto_sprintf( szPageNum, L"%d", m_nCurPageNum + 1 );
+	auto_sprintf( szPageNum, LTEXT("%d"), m_nCurPageNum + 1 );
 
 	BOOL bDlgInputPageResult=cDlgInputPage.DoModal(
 		CEditApp::getInstance()->GetAppInstance(),
@@ -869,7 +869,7 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 		int i;
 		auto nPageNumLen = int(wcslen(szPageNum));
 		for( i = 0; i < nPageNumLen;  i++ ){
-			if( !(L'0' <= szPageNum[i] &&  szPageNum[i] <= L'9') ){
+			if( !(LCHAR('0') <= szPageNum[i] &&  szPageNum[i] <= LCHAR('9')) ){
 				return;
 			}
 		}
@@ -916,11 +916,11 @@ void CPrintPreview::OnPreviewGoPage( int nPage )
 		::SetFocus( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_NEXTPAGE ));
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_PREVPAGE ), FALSE );
 	}
-	wchar_t	szEdit[1024];
+	WCHAR	szEdit[1024];
 	auto_sprintf( szEdit, LS(STR_ERR_DLGPRNPRVW6), m_nCurPageNum + 1, m_nAllPageNum );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_PAGENUM, szEdit );
 
-	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
+	auto_sprintf( szEdit, LTEXT("%d %%"), m_nPreview_Zoom );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	::InvalidateRect( m_pParentWnd->GetHwnd(), nullptr, TRUE );
@@ -968,8 +968,8 @@ void CPrintPreview::OnPreviewZoom( BOOL bZoomUp )
 		::EnableWindow( ::GetDlgItem( m_hwndPrintPreviewBar, IDC_BUTTON_ZOOMUP ), TRUE );
 	}
 
-	wchar_t	szEdit[1024];
-	auto_sprintf( szEdit, L"%d %%", m_nPreview_Zoom );
+	WCHAR	szEdit[1024];
+	auto_sprintf( szEdit, LTEXT("%d %%"), m_nPreview_Zoom );
 	ApiWrap::DlgItem_SetText( m_hwndPrintPreviewBar, IDC_STATIC_ZOOM, szEdit );
 
 	/* WM_SIZE 処理 */
@@ -1022,7 +1022,7 @@ void CPrintPreview::OnPrint( void )
 		WCHAR	szFileName[_MAX_FNAME];
 		WCHAR	szExt[_MAX_EXT];
 		_wsplitpath_s( m_pParentWnd->GetDocument()->m_cDocFile.GetFilePath(), nullptr, 0, nullptr, 0, szFileName, std::size(szFileName), szExt, std::size(szExt) );
-		auto_snprintf_s(szJobName, std::size(szJobName), L"%s%s", szFileName, szExt );
+		auto_snprintf_s(szJobName, std::size(szJobName), LTEXT("%s%s"), szFileName, szExt );
 	}
 
 	/* 印刷範囲を指定できるプリンターダイアログを作成 */
@@ -1074,7 +1074,7 @@ void CPrintPreview::OnPrint( void )
 	CDlgCancel	cDlgPrinting;
 	cDlgPrinting.DoModeless( CEditApp::getInstance()->GetAppInstance(), m_pParentWnd->GetHwnd(), IDD_PRINTING );
 	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_JOBNAME, szJobName );
-	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, L"" );	// XPS対応 2013/5/8 Uchi
+	ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, LTEXT("") );	// XPS対応 2013/5/8 Uchi
 
 	/* 親ウィンドウを無効化 */
 	::EnableWindow( m_pParentWnd->GetHwnd(), FALSE );
@@ -1112,7 +1112,7 @@ void CPrintPreview::OnPrint( void )
 
 		/* 印刷過程を表示 */
 		//	Jun. 18, 2001 genta ページ番号表示の計算ミス修正
-		auto_sprintf( szProgress, L"%d/%d", i + 1, nNum );
+		auto_sprintf( szProgress, LTEXT("%d/%d"), i + 1, nNum );
 		ApiWrap::DlgItem_SetText( cDlgPrinting.GetHwnd(), IDC_STATIC_PROGRESS, szProgress );
 
 		/* 印刷 ページ開始 */
@@ -1196,10 +1196,10 @@ void CPrintPreview::OnPrint( void )
 }
 
 // Tab文字をSpace文字に置換え
-static void Tab2Space(wchar_t* pTrg)
+static void Tab2Space(WCHAR* pTrg)
 {
-	for (;*pTrg != L'\0'; pTrg++) {
-		if (*pTrg == L'\t')	*pTrg = L' ';
+	for (;*pTrg != LCHAR('\0'); pTrg++) {
+		if (*pTrg == LCHAR('\t'))	*pTrg = LCHAR(' ');
 	}
 }
 
@@ -1207,9 +1207,9 @@ static void Tab2Space(wchar_t* pTrg)
 */
 void CPrintPreview::DrawHeaderFooter( HDC hdc, const CMyRect& rect, bool bHeader )
 {
-	bool		bFontSetting = (bHeader ? m_pPrintSetting->m_lfHeader.lfFaceName[0] : m_pPrintSetting->m_lfFooter.lfFaceName[0]) != L'\0';
+	bool		bFontSetting = (bHeader ? m_pPrintSetting->m_lfHeader.lfFaceName[0] : m_pPrintSetting->m_lfFooter.lfFaceName[0]) != LCHAR('\0');
 	const int	nWorkLen = 1024;
-	wchar_t		szWork[1024 + 1];
+	WCHAR		szWork[1024 + 1];
 	int			nLen;
 
 	if (bFontSetting) {
@@ -1455,12 +1455,12 @@ CColorStrategy* CPrintPreview::DrawPageText(
 			}
 			/* 行番号を表示するか */
 			if( m_pPrintSetting->m_bPrintLineNumber ){
-				wchar_t		szLineNum[64];	//	行番号を入れる。
+				WCHAR		szLineNum[64];	//	行番号を入れる。
 				/* 行番号の表示 false=折り返し単位／true=改行単位 */
 				if( m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_bLineNumIsCRLF ){
 					/* 論理行番号表示モード */
 					if( 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-						wcscpy( szLineNum, L" " );
+						wcscpy( szLineNum, LTEXT(" ") );
 					}else{
 						_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 					}
@@ -1472,13 +1472,13 @@ CColorStrategy* CPrintPreview::DrawPageText(
 
 				/* 行番号区切り  0=なし 1=縦線 2=任意 */
 				if( 2 == m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_nLineTermType ){
-					wchar_t szLineTerm[2];
+					WCHAR szLineTerm[2];
 					szLineTerm[0] = m_pParentWnd->GetDocument()->m_cDocType.GetDocumentAttribute().m_cLineTermChar;	/* 行番号区切り文字 */
-					szLineTerm[1] = L'\0';
+					szLineTerm[1] = LCHAR('\0');
 					wcscat( szLineNum, szLineTerm );
 				}
 				else{
-					wcscat( szLineNum, L" " );
+					wcscat( szLineNum, LTEXT(" ") );
 				}
 
 				//文字列長
@@ -1622,7 +1622,7 @@ void CPrintPreview::InitPreviewScrollBar( void )
 CColorStrategy* CPrintPreview::Print_DrawLine(
 	HDC				hdc,
 	POINT			ptDraw, //!< 描画座標。HDC内部単位。
-	const wchar_t*	pLine,
+	const WCHAR*	pLine,
 	int				nDocLineLen,
 	int				nLineStart,
 	int				nLineLen,
@@ -1771,7 +1771,7 @@ CColorStrategy* CPrintPreview::Print_DrawLine(
 void CPrintPreview::Print_DrawBlock(
 	HDC				hdc,
 	POINT			ptDraw,		//!< 描画座標。HDC内部単位。
-	const wchar_t*	pPhysicalLine,
+	const WCHAR*	pPhysicalLine,
 	int				nBlockLen,	// iLogic - nBgnLogic
 	int				nKind,
 	const CLayout*	pcLayout,	//!< 色設定用Layout

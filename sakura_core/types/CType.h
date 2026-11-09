@@ -160,7 +160,7 @@ struct STypeConfig{
 
 	bool				m_bLineNumIsCRLF;				//!< 行番号の表示 false=折り返し単位／true=改行単位
 	int					m_nLineTermType;				//!< 行番号区切り  0=なし 1=縦線 2=任意
-	wchar_t				m_cLineTermChar;				//!< 行番号区切り文字
+	WCHAR				m_cLineTermChar;				//!< 行番号区切り文字
 	CKetaXInt			m_nVertLineIdx[MAX_VERTLINES];	//!< 指定桁縦線
 	int 				m_nNoteLineOffset;				//!< ノート線のオフセット
 
@@ -369,16 +369,16 @@ GEN_CTYPE(CType_Other);
 /*!
 	スペースの判定
 */
-inline bool C_IsSpace( wchar_t c, bool bExtEol )
+inline bool C_IsSpace( WCHAR c, bool bExtEol )
 {
 	return (
-		L'\t' == c ||
-		L' ' == c ||
+		LCHAR('\t') == c ||
+		LCHAR(' ') == c ||
 		WCODE::IsLineDelimiter(c, bExtEol)
 	);
 }
 
 //! C/C++のファイル名による判定
-EOutlineType GetCLangOutlineType( const wchar_t* pszFileName );
+EOutlineType GetCLangOutlineType( const WCHAR* pszFileName );
 
 #endif /* SAKURA_CTYPE_B057F55F_C082_47DB_9CB4_E8B1BBA5BF77_H_ */

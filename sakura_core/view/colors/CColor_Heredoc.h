@@ -21,7 +21,7 @@ public:
 	bool Disp() const override{ return m_pTypeData->m_ColorInfoArr[COLORIDX_HEREDOC].m_bDisp; }
 	bool EndColor(const CStringRef& cStr, int nPos) override;
 private:
-	std::wstring	m_id;
+	sakura::wstring	m_id;
 	LPCWSTR			m_pszId = nullptr;
 	size_t			m_nSize = 0;
 	size_t			m_nCOMMENTEND = 0;

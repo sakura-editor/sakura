@@ -62,7 +62,7 @@ public:
 	}
 
 	[[nodiscard]] bool IsValidPath() const noexcept { return !empty(); }
-	[[nodiscard]] std::wstring GetDirPath() const
+	[[nodiscard]] sakura::wstring GetDirPath() const
 	{
 		std::filesystem::path path{ *this };
 		return path.remove_filename();
@@ -75,9 +75,9 @@ public:
 		const WCHAR* tail = c_str() + Length();
 
 		// 文字列末尾から逆方向に L'.' を検索
-		if (const auto *p = ::wcsrchr(c_str(), L'.')) {
+		if (const auto *p = ::wcsrchr(c_str(), LCHAR('.'))) {
 			// L'.'で始まる文字列がパス区切りを含まない場合のみ「拡張子あり」と看做す
-			if (const bool hasExt = !::wcspbrk(p, L"\\/"); hasExt && !bWithoutDot) {
+			if (const bool hasExt = !::wcspbrk(p, LTEXT("\\/")); hasExt && !bWithoutDot) {
 				return p;
 			}
 			else if (hasExt && p < tail) {

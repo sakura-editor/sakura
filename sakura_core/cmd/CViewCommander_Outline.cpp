@@ -58,7 +58,7 @@ BOOL CViewCommander::Command_FUNCLIST(
 //	}
 
 	static CFuncInfoArr	cFuncInfoArr;
-	std::wstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
+	sakura::wstring sTitleOverride;				//プラグインによるダイアログタイトル上書き
 
 	//	2001.12.03 hor & 2002.3.13 YAZAKI
 	if( nOutlineType == OUTLINE_DEFAULT ){

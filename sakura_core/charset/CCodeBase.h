@@ -39,7 +39,7 @@ struct SLoadFromCodeResult {
 	size_t consumed = 0;
 
 	//!	読み込まれたデータ
-	std::wstring destination{};
+	sakura::wstring destination{};
 
 	//!	読み込めたかどうか
 	explicit operator bool() const noexcept { return result == RESULT_COMPLETE; }
@@ -51,7 +51,7 @@ struct SConvertToCodeResult {
 	EConvertResult result;
 
 	//!	書き込み対象データ
-	std::wstring_view source;
+	sakura::wstring_view source;
 
 	//!	書き込んだ文字数
 	size_t consumed = 0;
@@ -88,7 +88,7 @@ public:
 
 	// 文字コードの16進表示
 	// 文字コード表示用		2008/6/9 Uchi
-	virtual EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
+	virtual EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar);			//!< UNICODE → Hex 変換
 
 	// 変換エラー処理（１バイト <-> U+D800 から U+D8FF）
 	static int BinToText(const unsigned char *pSrc, const int nLen, unsigned short *pDst);

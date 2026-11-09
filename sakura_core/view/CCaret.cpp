@@ -555,7 +555,7 @@ void CCaret::ShowEditCaret()
 		else{
 			nCaretWidth = GetHankakuDx();
 
-			const wchar_t*	pLine = nullptr;
+			const WCHAR*	pLine = nullptr;
 			CLogicInt		nLineLen = CLogicInt(0);
 			const CLayout*	pcLayout = nullptr;
 			pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
@@ -587,7 +587,7 @@ void CCaret::ShowEditCaret()
 		}
 		nCaretWidth = GetHankakuDx();
 
-		const wchar_t*	pLine = nullptr;
+		const WCHAR*	pLine = nullptr;
 		CLogicInt		nLineLen = CLogicInt(0);
 		const CLayout*	pcLayout = nullptr;
 		pLine= pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
@@ -672,7 +672,7 @@ void CCaret::ShowCaretPosInfo()
 	// カーソル位置の文字列を取得
 	const CLayout*	pcLayout;
 	CLogicInt		nLineLen;
-	const wchar_t*	pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
+	const WCHAR*	pLine = pLayoutMgr->GetLineStr( GetCaretLayoutPos().GetY2(), &nLineLen, &pcLayout );
 
 	// -- -- -- -- 文字コード情報 -> pszCodeName -- -- -- -- //
 	const WCHAR* pszCodeName;
@@ -690,7 +690,7 @@ void CCaret::ShowCaretPosInfo()
 		CCodePage::GetNameShort(szCodeName, m_pEditDoc->GetDocumentEncoding());
 		cmemCodeName.AppendString(szCodeName);
 		if (m_pEditDoc->GetDocumentBomExist()) {
-			cmemCodeName.AppendString( L"#" );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
+			cmemCodeName.AppendString( LTEXT("#") );		// BOM付(メニューバーなので小さく)	// 2013/4/17 Uchi
 		}
 	}
 	pszCodeName = cmemCodeName.GetStringPtr();
@@ -749,7 +749,7 @@ void CCaret::ShowCaretPosInfo()
 
 	// -- -- -- -- キャレット位置の文字情報 -> szCaretChar -- -- -- -- //
 	//
-	WCHAR szCaretChar[32]=L"";
+	WCHAR szCaretChar[32]=LTEXT("");
 	if( pLine ){
 		// 指定された桁に対応する行のデータ内の位置を調べる
 		CLogicInt nIdx = GetCaretLogicPos().GetX2() - pcLayout->GetLogicOffset();
@@ -788,7 +788,7 @@ void CCaret::ShowCaretPosInfo()
 			// これは %s(%s)%6s%s%s 等になる。%6ts表記は使えないので注意
 			auto_sprintf(
 				szFormat,
-				L"%%s(%%s)%%%ds%%s%%s",	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
+				LTEXT("%%s(%%s)%%%ds%%s%%s"),	// 「キャレット位置の文字情報」を右詰で配置（足りないときは左詰になって右に伸びる）
 				(nLen < 15)? 15 - nLen: 1
 			);
 			auto_sprintf(
@@ -796,24 +796,24 @@ void CCaret::ShowCaretPosInfo()
 				szFormat,
 				pszCodeName,
 				szEolMode.c_str(),
-				szCaretChar[0]? L"[": L" ",	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+				szCaretChar[0]? LTEXT("["): LTEXT(" "),	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 				szCaretChar,
-				szCaretChar[0]? L"]": L" "	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
+				szCaretChar[0]? LTEXT("]"): LTEXT(" ")	// 文字情報無しなら括弧も省略（EOFやフリーカーソル位置）
 			);
 		}
-		szRight[0] = L'\0';
+		szRight[0] = LCHAR('\0');
 		nLen = int(MENUBAR_MESSAGE_MAX_LEN - wcslen(szLeft));	// 右側に残っている文字長
 		if( nLen > 0 ){	// メッセージの右側文字列（「行:列」表示）
 			WCHAR szRowCol[32];
 			auto_sprintf(
 				szRowCol,
-				L"%d:%-4d",	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
+				LTEXT("%d:%-4d"),	// 「列」は最小幅を指定して左寄せ（足りないときは右に伸びる）
 				ptCaret.y,
 				ptCaret.x
 			);
 			auto_sprintf(
 				szFormat,
-				L"%%%ds",	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
+				LTEXT("%%%ds"),	// 「行:列」を右詰で配置（足りないときは左詰になって右に伸びる）
 				nLen
 			);
 			auto_sprintf(
@@ -824,7 +824,7 @@ void CCaret::ShowCaretPosInfo()
 		}
 		auto_sprintf(
 			szText,
-			L"%s%s",
+			LTEXT("%s%s"),
 			szLeft,
 			szRight
 		);
@@ -864,14 +864,14 @@ void CCaret::ShowCaretPosInfo()
 		};
 		::SendMessage(hWnd, WM_SETREDRAW, FALSE, 0);
 		if( m_bClearStatus ){
-			setStatusText( 0, SBT_NOBORDERS, L"" );
+			setStatusText( 0, SBT_NOBORDERS, LTEXT("") );
 		}
 		int nIndex = 1;
 		setStatusText( nIndex++, 0,             szRowCol );
 		setStatusText( nIndex++, 0,             szEolMode );
 		setStatusText( nIndex++, 0,             szCaretChar );
 		setStatusText( nIndex++, 0,             pszCodeName );
-		setStatusText( nIndex++, SBT_OWNERDRAW, L"" );
+		setStatusText( nIndex++, SBT_OWNERDRAW, LTEXT("") );
 		setStatusText( nIndex++, 0,             szInsMode );
 		setStatusText( nIndex++, 0,             szFontSize );
 		::SendMessage(hWnd, WM_SETREDRAW, TRUE, 0);

@@ -76,7 +76,7 @@ INT_PTR CPropStatusbar::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_STATUSBAR );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			DEBUG_TRACE( L"statusbar PSN_KILLACTIVE\n" );
+			DEBUG_TRACE( LTEXT("statusbar PSN_KILLACTIVE\n") );
 
 			/* ダイアログデータの取得 */
 			GetData( hwndDlg );

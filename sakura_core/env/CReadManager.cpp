@@ -237,7 +237,7 @@ EConvertResult CReadManager::ReadLines(
 			break;
 		}
 
-		const wchar_t* pLine = cUnicodeBuffer.GetStringPtr();
+		const WCHAR* pLine = cUnicodeBuffer.GetStringPtr();
 		const auto nLineLen = cUnicodeBuffer.GetStringLength();
 		CDocEditAgent(&cDocLineMgr).AddLineStrX( pLine, nLineLen );
 

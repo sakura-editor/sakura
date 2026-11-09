@@ -36,15 +36,15 @@ class CProfile
 private:
 	struct SectionType
 	{
-		using EntriesType = std::map<std::wstring, std::wstring, std::less<>>;
+		using EntriesType = std::map<sakura::wstring, sakura::wstring, std::less<>>;
 
 		explicit SectionType(
-			std::wstring_view name
+			sakura::wstring_view name
 		) : m_Name(name)
 		{
 		}
 
-		std::wstring	m_Name;
+		sakura::wstring	m_Name;
 		EntriesType		m_Entries{};
 	};
 
@@ -57,28 +57,28 @@ public:
 	void SetReadingMode() noexcept { m_ReadingMode = true; }
 	void SetWritingMode() noexcept { m_ReadingMode = false; }
 
-	bool ReadProfileRes( const WCHAR*, const WCHAR*, std::vector<std::wstring>* = nullptr );				// 200/5/19 Uchi
+	bool ReadProfileRes( const WCHAR*, const WCHAR*, std::vector<sakura::wstring>* = nullptr );				// 200/5/19 Uchi
 
 	bool ReadProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt) noexcept;
-	bool WriteProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt, const std::optional<std::wstring>& optComment = std::nullopt);
+	bool WriteProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt, const std::optional<sakura::wstring>& optComment = std::nullopt);
 
 	bool GetProfileData(
-		std::wstring_view	sectionName,
-		std::wstring_view	entryKey,
-		std::wstring&		strEntryValue
+		sakura::wstring_view	sectionName,
+		sakura::wstring_view	entryKey,
+		sakura::wstring&		strEntryValue
 	) const;
 
 	void SetProfileData(
-		std::wstring_view	sectionName,
-		std::wstring_view	entryKey,
-		std::wstring_view	entryValue
+		sakura::wstring_view	sectionName,
+		sakura::wstring_view	entryKey,
+		sakura::wstring_view	entryValue
 	);
 
 	void DUMP( void );
 
 private:
-	void _ReadOneline(std::wstring_view line);
-	bool _WriteFile(const std::filesystem::path& path, std::span<const std::wstring> lines);
+	void _ReadOneline(sakura::wstring_view line);
+	bool _WriteFile(const std::filesystem::path& path, std::span<const sakura::wstring> lines);
 
 	// メンバ変数
 	std::filesystem::path		m_ProfilePath;			//!< 最後に読み書きしたファイル名

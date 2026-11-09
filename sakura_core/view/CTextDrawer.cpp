@@ -30,7 +30,7 @@ const CTextArea* CTextDrawer::GetTextArea() const
 @@@ 2002.09.22 YAZAKI    const unsigned char* pDataを、const char* pDataに変更
 @@@ 2007.08.25 kobake 戻り値を void に変更。引数 x, y を DispPos に変更
 */
-void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar_t* pData, int nLength, bool bTransparent ) const
+void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const WCHAR* pData, int nLength, bool bTransparent ) const
 {
 	if( 0 >= nLength ){
 		return;
@@ -97,7 +97,7 @@ void CTextDrawer::DispText( HDC hdc, DispPos* pDispPos, int marginy, const wchar
 		int nDrawX = x + (Int)nBeforeLayout * nDx;
 
 		// 実際の描画文字列ポインタ
-		const wchar_t* pDrawData          = &pData[nBeforeLogic];
+		const WCHAR* pDrawData          = &pData[nBeforeLogic];
 		int            nDrawDataMaxLength = nLength - nBeforeLogic;
 
 		// 実際の文字間隔配列
@@ -457,7 +457,7 @@ void CTextDrawer::DispLineNumber(
 		gr.PushMyFont(sFont);	//フォント：行番号のフォント
 
 		//描画文字列
-		wchar_t szLineNum[18];
+		WCHAR szLineNum[18];
 		int nLineCols;
 		int nLineNumCols;
 		{
@@ -465,7 +465,7 @@ void CTextDrawer::DispLineNumber(
 			if( pTypes->m_bLineNumIsCRLF ){
 				/* 論理行番号表示モード */
 				if( nullptr == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-					wcscpy( szLineNum, L" " );
+					wcscpy( szLineNum, LTEXT(" ") );
 				}else{
 					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 //###デバッグ用
@@ -480,7 +480,7 @@ void CTextDrawer::DispLineNumber(
 
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 			if( 2 == pTypes->m_nLineTermType ){
-				const wchar_t szSeparator[] = { pTypes->m_cLineTermChar, 0 };
+				const WCHAR szSeparator[] = { pTypes->m_cLineTermChar, 0 };
 				::wcscat_s(szLineNum, szSeparator);
 			}
 		}

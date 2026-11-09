@@ -102,7 +102,7 @@ public:
 			else {
 				m_nColumn_Delta = m_nTabSpaceDx - (m_nColumn + m_nTabPadding) % m_nTabSpace;
 			}
-		} else if (m_pLine[m_nIndex] == L',' && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV){
+		} else if (m_pLine[m_nIndex] == LCHAR(',') && m_tsvInfo.m_nTsvMode == TSV_MODE_CSV){
 			m_nColumn_Delta = m_tsvInfo.GetActualTabLength(m_nColumn, m_tsvInfo.m_nMaxCharLayoutX);
 		}else{
 			m_nColumn_Delta = CNativeW::GetColmOfChar( m_pLine, m_nLineLen, m_nIndex,
@@ -127,14 +127,14 @@ public:
 	CLayoutInt	getColumnDelta()	const {	return m_nColumn_Delta;	}
 
 	//	2002.10.07 YAZAKI
-	const wchar_t getCurrentChar(){	return m_pLine[m_nIndex];	}
+	const WCHAR getCurrentChar(){	return m_pLine[m_nIndex];	}
 	//	Jul. 20, 2003 genta 追加
 	//	memcpyをするのにポインタがとれないと面倒
-	const wchar_t* getCurrentPos(){	return m_pLine + m_nIndex;	}
+	const WCHAR* getCurrentPos(){	return m_pLine + m_nIndex;	}
 
 private:
 	//コンストラクタで受け取ったパラメータ (固定)
-	const wchar_t*		m_pLine;
+	const WCHAR*		m_pLine;
 	const int			m_nLineLen;  //データ長。文字単位。
 	const CLayoutInt	m_nTabSpace;
 	const CTsvModeInfo&	m_tsvInfo;

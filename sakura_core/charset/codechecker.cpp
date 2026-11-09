@@ -423,9 +423,9 @@ int _CheckJisAnyPart(
 /*!
 	UTF-16 LE/BE 文字をチェック　(組み合わせ文字列考慮なし)
 */
-int _CheckUtf16Char( const wchar_t* pS, size_t nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
+int _CheckUtf16Char( const WCHAR* pS, size_t nLen, ECharSet *peCharset, const int nOption, const bool bBigEndian )
 {
-	wchar_t wc1, wc2 = 0;
+	WCHAR wc1, wc2 = 0;
 	int ncwidth;
 	ECharSet echarset;
 
@@ -919,7 +919,7 @@ int CheckUtf7BPart( const char *pS, size_t nLen, const char **ppNextChar, bool *
 	bool berror_found, bminus_found;
 	int nchecklen;
 
-	wchar_t* pdata;
+	WCHAR* pdata;
 	int ndatalen, nret;
 	ECharSet echarset;
 	CMemory cmbuffer;
@@ -1015,12 +1015,12 @@ int CheckUtf7BPart( const char *pS, size_t nLen, const char **ppNextChar, bool *
 	}
 
 	cmbuffer.AllocBuffer( nchecklen );
-	pdata = reinterpret_cast<wchar_t*>( cmbuffer.GetRawPtr() );
+	pdata = reinterpret_cast<WCHAR*>( cmbuffer.GetRawPtr() );
 	if( pdata == nullptr ){
 		goto EndFunc;
 	}
-	ndatalen = _DecodeBase64(pS, nchecklen, reinterpret_cast<char*>(pdata)) / sizeof(wchar_t);
-	CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen*sizeof(wchar_t) );
+	ndatalen = _DecodeBase64(pS, nchecklen, reinterpret_cast<char*>(pdata)) / sizeof(WCHAR);
+	CMemory::SwapHLByte( reinterpret_cast<char*>(pdata), ndatalen*sizeof(WCHAR) );
 	for( int i = 0; i < ndatalen; i += nret ){
 		nret = CheckUtf16leChar( &pdata[i], ndatalen - i, &echarset, nOption & UC_NONCHARACTER );
 		if( echarset == CHARSET_BINARY ){

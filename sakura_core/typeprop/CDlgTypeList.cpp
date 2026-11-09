@@ -35,13 +35,13 @@
 #include "config/app_constants.h"
 
 #define BUFFER_SIZE 1024
-#define ACTION_NAME	(L"SakuraEditor")
-#define PROGID_BACKUP_NAME	(L"SakuraEditorBackup")
-#define ACTION_BACKUP_PATH	(L"\\ShellBackup")
+#define ACTION_NAME	(LTEXT("SakuraEditor"))
+#define PROGID_BACKUP_NAME	(LTEXT("SakuraEditorBackup"))
+#define ACTION_BACKUP_PATH	(LTEXT("\\ShellBackup"))
 
 //関数プロトタイプ
-int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const std::wstring& destPath);
-int DeleteRegistry(HKEY root, const std::wstring& path);
+int CopyRegistry(HKEY srcRoot, const sakura::wstring& srcPath, HKEY destRoot, const sakura::wstring& destPath);
+int DeleteRegistry(HKEY root, const sakura::wstring& path);
 int RegistExt(LPCWSTR sExt, bool bDefProg);
 int UnregistExt(LPCWSTR sExt);
 int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick);
@@ -255,7 +255,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						{
 							WCHAR buf[BUFFER_SIZE] = {0};
 							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
-							::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+							::MessageBox( GetHwnd(), (sakura::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 							break;
 						}
 					}else{			//「右クリック」チェックOFF
@@ -263,7 +263,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 						{
 							WCHAR buf[BUFFER_SIZE] = {0};
 							::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
-							::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+							::MessageBox( GetHwnd(), (sakura::wstring(LS(STR_DLGTYPELIST_ERR2)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 							break;
 						}
 					}
@@ -293,7 +293,7 @@ INT_PTR CDlgTypeList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 					{
 						WCHAR buf[BUFFER_SIZE] = {0};
 						::FormatMessage( FORMAT_MESSAGE_FROM_SYSTEM, nullptr, nRet, 0, buf, int(std::size(buf)), nullptr );
-						::MessageBox( GetHwnd(), (std::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
+						::MessageBox( GetHwnd(), (sakura::wstring(LS(STR_DLGTYPELIST_ERR1)) + buf).c_str(), GSTR_APPNAME, MB_OK );
 						break;
 					}
 				}
@@ -340,13 +340,13 @@ void CDlgTypeList::SetData( int selIdx )
 		if( !CDocTypeManager().GetTypeConfigMini( CTypeConfig(nIdx), &type ) ){
 			continue;
 		}
-		if( type->m_szTypeExts[0] != L'\0' ){		/* タイプ属性：拡張子リスト */
-			auto_sprintf( szText, L"%s ( %s )",
+		if( type->m_szTypeExts[0] != LCHAR('\0') ){		/* タイプ属性：拡張子リスト */
+			auto_sprintf( szText, LTEXT("%s ( %s )"),
 				type->m_szTypeName,	/* タイプ属性：名称 */
 				type->m_szTypeExts	/* タイプ属性：拡張子リスト */
 			);
 		}else{
-			auto_sprintf( szText, L"%s",
+			auto_sprintf( szText, LTEXT("%s"),
 				type->m_szTypeName	/* タイプ属性：拡称 */
 			);
 		}
@@ -504,7 +504,7 @@ bool CDlgTypeList::InitializeType( void )
 		return false;
 	}
 	int			nRet;
-	if( typeMini->m_szTypeExts[0] != L'\0' || iDocType == 0 ){ 
+	if( typeMini->m_szTypeExts[0] != LCHAR('\0') || iDocType == 0 ){ 
 		nRet = ::MYMESSAGEBOX(
 			GetHwnd(),
 			MB_YESNO | MB_ICONQUESTION,
@@ -546,7 +546,7 @@ bool CDlgTypeList::InitializeType( void )
 				bUpdate = true;
 			}
 		}
-		type->m_szTypeExts[0] = L'\0';
+		type->m_szTypeExts[0] = LCHAR('\0');
 		type->m_nIdx = iDocType;
 		type->m_id = (::GetTickCount() & 0x3fffffff) + iDocType * 0x10000;
 		type->m_nRegexKeyMagicNumber = CRegexKeyword::GetNewMagicNumber();
@@ -591,12 +591,12 @@ bool CDlgTypeList::CopyType()
 			}
 			if( p ){
 				n = _wtoi(p) + 1;
-				*p = L'\0';
+				*p = LCHAR('\0');
 			}else{
 				n++;
 			}
 			WCHAR szNum[12];
-			auto_sprintf( szNum, L"%d", n );
+			auto_sprintf( szNum, LTEXT("%d"), n );
 			auto nLen = int(wcslen(szNum));
 			WCHAR szTemp[std::size(type.m_szTypeName) + 12];
 			wcscpy( szTemp, type.m_szTypeName );
@@ -718,7 +718,7 @@ bool CDlgTypeList::DelType()
 }
 
 /*! 再帰的レジストリコピー */
-int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const std::wstring& destPath)
+int CopyRegistry(HKEY srcRoot, const sakura::wstring& srcPath, HKEY destRoot, const sakura::wstring& destPath)
 {
 	int errorCode;
 	CRegKey keySrc;
@@ -762,7 +762,7 @@ int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const
 		}else if( errorCode ){
 			return errorCode;
 		}else{
-			if( (errorCode = CopyRegistry(srcRoot, srcPath + L"\\" + szSubKey, destRoot, destPath + L"\\" + szSubKey)) ){ return errorCode; }
+			if( (errorCode = CopyRegistry(srcRoot, srcPath + LTEXT("\\") + szSubKey, destRoot, destPath + LTEXT("\\") + szSubKey)) ){ return errorCode; }
 			index++;
 		}
 	}
@@ -771,7 +771,7 @@ int CopyRegistry(HKEY srcRoot, const std::wstring& srcPath, HKEY destRoot, const
 }
 
 /*! 再帰的レジストリ削除 */
-int DeleteRegistry(HKEY root, const std::wstring& path)
+int DeleteRegistry(HKEY root, const sakura::wstring& path)
 {
 	int errorCode;
 	CRegKey keySrc;
@@ -789,7 +789,7 @@ int DeleteRegistry(HKEY root, const std::wstring& path)
 		}else if( errorCode ){
 			return errorCode;
 		}else{
-			if( (errorCode = DeleteRegistry(root, path + L"\\" + szSubKey)) != 0 ){ return errorCode; }
+			if( (errorCode = DeleteRegistry(root, path + LTEXT("\\") + szSubKey)) != 0 ){ return errorCode; }
 		}
 	}
 	keySrc.Close();
@@ -831,15 +831,15 @@ int DeleteRegistry(HKEY root, const std::wstring& path)
 int RegistExt(LPCWSTR sExt, bool bDefProg)
 {
 	int errorCode = ERROR_SUCCESS;
-	std::wstring sBasePath = std::wstring( L"Software\\Classes\\" );
+	sakura::wstring sBasePath = sakura::wstring( LTEXT("Software\\Classes\\") );
 
 	//小文字化
 	WCHAR szLowerExt[MAX_PATH] = {0};
 	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
-	std::wstring sDotExt = sBasePath + L"." + szLowerExt;
-	std::wstring sGenProgID = std::wstring() + L"SakuraEditor_" + szLowerExt;
+	sakura::wstring sDotExt = sBasePath + LTEXT(".") + szLowerExt;
+	sakura::wstring sGenProgID = sakura::wstring() + LTEXT("SakuraEditor_") + szLowerExt;
 
 	CRegKey keyExt_HKLM;
 	WCHAR szProgID_HKLM[ BUFFER_SIZE ] = {0};
@@ -858,26 +858,26 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
 	if(wcscmp( sGenProgID.c_str(), szProgID ) != 0) {
-		if( szProgID[0] != L'\0' )
+		if( szProgID[0] != LCHAR('\0') )
 		{
 			if( (errorCode = keyExt.SetValue(PROGID_BACKUP_NAME, szProgID)) != 0 ){ return errorCode; }
 		} 
 		if( (errorCode = keyExt.SetValue(nullptr, sGenProgID.c_str())) != 0 ){ return errorCode; }
 	}
 
-	std::wstring sProgIDPath = sBasePath + sGenProgID;
+	sakura::wstring sProgIDPath = sBasePath + sGenProgID;
 	if( ! CRegKey::ExistsKey(HKEY_CURRENT_USER, sProgIDPath.c_str()) )
 	{
-		if( szProgID_HKLM[0] != L'\0' )
+		if( szProgID_HKLM[0] != LCHAR('\0') )
 		{
 			if( (errorCode = CopyRegistry(HKEY_LOCAL_MACHINE, sBasePath + szProgID_HKLM, HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 		}
 	}
 
-	std::wstring sShellPath = sProgIDPath + L"\\shell";
-	std::wstring sShellActionPath = sShellPath + L"\\" + ACTION_NAME;
-	std::wstring sShellActionCommandPath = sShellActionPath + L"\\command";
-	std::wstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
+	sakura::wstring sShellPath = sProgIDPath + LTEXT("\\shell");
+	sakura::wstring sShellActionPath = sShellPath + LTEXT("\\") + ACTION_NAME;
+	sakura::wstring sShellActionCommandPath = sShellActionPath + LTEXT("\\command");
+	sakura::wstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellActionCommand;
 	if( (errorCode = keyShellActionCommand.Open(HKEY_CURRENT_USER, sShellActionCommandPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
@@ -887,12 +887,12 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 
 	WCHAR sExePath[_MAX_PATH] = {0};
 	::GetModuleFileName( nullptr, sExePath, int(std::size(sExePath)) );
-	std::wstring sCommandPathArg = std::wstring() + L"\"" + sExePath + L"\" \"%1\"";
+	sakura::wstring sCommandPathArg = sakura::wstring() + LTEXT("\"") + sExePath + LTEXT("\" \"%1\"");
 	if( (errorCode = keyShellActionCommand.SetValue(nullptr, sCommandPathArg.c_str())) != 0 ){ return errorCode; }
 
 	CRegKey keyShellAction;
 	if( (errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) !=0 ){ return errorCode; }
-	if( (errorCode = keyShellAction.SetValue(nullptr, L"Sakura &Editor")) != 0 ){ return errorCode; }
+	if( (errorCode = keyShellAction.SetValue(nullptr, LTEXT("Sakura &Editor"))) != 0 ){ return errorCode; }
 
 	CRegKey keyShell;
 	if( (errorCode = keyShell.Open(HKEY_CURRENT_USER, sShellPath.c_str(), KEY_READ | KEY_WRITE)) != 0 ){ return errorCode; }
@@ -919,7 +919,7 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 		CRegKey keyBackup;
 		if( (errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 		{
-			keyShell.DeleteValue(L"");
+			keyShell.DeleteValue(LTEXT(""));
 		}
 		else
 		{
@@ -951,14 +951,14 @@ int RegistExt(LPCWSTR sExt, bool bDefProg)
 int UnregistExt(LPCWSTR sExt)
 {
 	int errorCode = ERROR_SUCCESS;
-	std::wstring sBasePath = std::wstring( L"Software\\Classes\\" );
+	sakura::wstring sBasePath = sakura::wstring( LTEXT("Software\\Classes\\") );
 
 	//小文字化
 	WCHAR szLowerExt[MAX_PATH] = {0};
 	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
-	std::wstring sDotExt = sBasePath + L"." + szLowerExt;
+	sakura::wstring sDotExt = sBasePath + LTEXT(".") + szLowerExt;
 
 	CRegKey keyExt;
 	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ | KEY_WRITE)) != 0)
@@ -969,15 +969,15 @@ int UnregistExt(LPCWSTR sExt)
 	WCHAR szProgID[ BUFFER_SIZE ] = {0};
 	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
-	if( szProgID[0] == L'\0' )
+	if( szProgID[0] == LCHAR('\0') )
 	{
 		return ERROR_SUCCESS;
 	}
 
-	std::wstring sProgIDPath = sBasePath + szProgID;
-	std::wstring sShellPath = sProgIDPath + L"\\shell";
-	std::wstring sShellActionPath = sShellPath + L"\\" + ACTION_NAME;
-	std::wstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
+	sakura::wstring sProgIDPath = sBasePath + szProgID;
+	sakura::wstring sShellPath = sProgIDPath + LTEXT("\\shell");
+	sakura::wstring sShellActionPath = sShellPath + LTEXT("\\") + ACTION_NAME;
+	sakura::wstring sBackupPath = sShellActionPath + ACTION_BACKUP_PATH;
 
 	CRegKey keyShellAction;
 	if( (errorCode = keyShellAction.Open(HKEY_CURRENT_USER, sShellActionPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
@@ -990,7 +990,7 @@ int UnregistExt(LPCWSTR sExt)
 	CRegKey keyBackup;
 	if( (errorCode = keyBackup.Open(HKEY_CURRENT_USER, sBackupPath.c_str(), KEY_READ | KEY_WRITE)) != 0 )
 	{
-		keyShell.DeleteValue(L"");
+		keyShell.DeleteValue(LTEXT(""));
 	}
 	else
 	{
@@ -1001,13 +1001,13 @@ int UnregistExt(LPCWSTR sExt)
 
 	keyBackup.Close();
 	keyShellAction.Close();
-	if( wcsncmp_literal(szProgID, L"SakuraEditor_") == 0)
+	if( wcsncmp_literal(szProgID, LTEXT("SakuraEditor_")) == 0)
 	{
 		if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sProgIDPath)) != 0 ){ return errorCode; }
 
 		WCHAR szBackupValue[ BUFFER_SIZE ] = {0};
 		keyExt.GetValue(PROGID_BACKUP_NAME, szBackupValue, int(std::size(szBackupValue)));
-		if( szBackupValue[0] != L'\0' ){
+		if( szBackupValue[0] != LCHAR('\0') ){
 			keyExt.SetValue(nullptr, szBackupValue);
 		}else{
 			if( (errorCode = DeleteRegistry(HKEY_CURRENT_USER, sDotExt)) != 0 ){ return errorCode; }
@@ -1038,7 +1038,7 @@ int UnregistExt(LPCWSTR sExt)
 int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 {
 	int errorCode = ERROR_SUCCESS;
-	std::wstring sBasePath = std::wstring( L"Software\\Classes\\" );
+	sakura::wstring sBasePath = sakura::wstring( LTEXT("Software\\Classes\\") );
 
 	*pbRMenu = false;
 	*pbDblClick = false;
@@ -1048,7 +1048,7 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	wcsncpy_s(szLowerExt, sExt, _TRUNCATE);
 	CharLower(szLowerExt);
 
-	std::wstring sDotExt = sBasePath + L"." + szLowerExt;
+	sakura::wstring sDotExt = sBasePath + LTEXT(".") + szLowerExt;
 
 	CRegKey keyExt;
 	if((errorCode = keyExt.Open(HKEY_CURRENT_USER, sDotExt.c_str(), KEY_READ)) != 0)
@@ -1059,13 +1059,13 @@ int CheckExt(LPCWSTR sExt, bool *pbRMenu, bool *pbDblClick)
 	WCHAR szProgID[ BUFFER_SIZE ] = {0};
 	keyExt.GetValue(nullptr, szProgID, int(std::size(szProgID)));
 
-	if(szProgID[0] == L'\0')
+	if(szProgID[0] == LCHAR('\0'))
 	{
 		return ERROR_SUCCESS;
 	}
 
-	std::wstring sShellPath = std::wstring() + L"Software\\Classes\\" + szProgID + L"\\shell";
-	std::wstring sShellActionPath = sShellPath + L"\\" + ACTION_NAME;
+	sakura::wstring sShellPath = sakura::wstring() + LTEXT("Software\\Classes\\") + szProgID + LTEXT("\\shell");
+	sakura::wstring sShellActionPath = sShellPath + LTEXT("\\") + ACTION_NAME;
 	if( ! CRegKey::ExistsKey(HKEY_CURRENT_USER, sShellActionPath.c_str()) )
 	{
 		return ERROR_SUCCESS;

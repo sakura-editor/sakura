@@ -27,8 +27,8 @@
 
 struct GrepInfo;
 
-#define DEFAULT_EXCLUDE_FILE_PATTERN    L"*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb"
-#define DEFAULT_EXCLUDE_FOLDER_PATTERN  L".git;.svn;.vs"
+#define DEFAULT_EXCLUDE_FILE_PATTERN    LTEXT("*.msi;*.exe;*.obj;*.pdb;*.ilk;*.res;*.pch;*.iobj;*.ipdb")
+#define DEFAULT_EXCLUDE_FOLDER_PATTERN  LTEXT(".git;.svn;.vs")
 
 //! GREPダイアログボックス
 class CDlgGrep : public CDialog
@@ -63,7 +63,7 @@ public:
 	bool		m_bGrepSeparateFolder;		/*!< フォルダー毎に表示 */
 	bool		m_bGrepExceptFileRegexp = false;	/*!< 除外ファイルを正規表現で指定 */
 
-	std::wstring	m_strText;				/*!< 検索文字列 */
+	sakura::wstring	m_strText;				/*!< 検索文字列 */
 	bool			m_bSetText;				//!< 検索文字列を設定したか
 	SFilePathLong	m_szFile;				//!< 検索ファイル
 	SFilePathLong	m_szFolder;				//!< 検索フォルダー

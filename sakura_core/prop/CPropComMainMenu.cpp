@@ -50,7 +50,7 @@ static const DWORD p_helpids[] = {
 // 内部使用変数
 // 機能格納(Work)
 struct SMainMenuWork {
-	std::wstring	m_sName;		// 名前
+	sakura::wstring	m_sName;		// 名前
 	EFunctionCode	m_nFunc;		// Function
 	WCHAR			m_sKey[2];		// アクセスキー
 	bool			m_bDupErr;		// アクセスキー重複エラー
@@ -125,7 +125,7 @@ LRESULT CALLBACK CPropMainMenu::TreeViewProc(
 				return 0;
 			}
 			pFuncWk->m_sKey[0] = cKey;
-			pFuncWk->m_sKey[1] = L'\0';
+			pFuncWk->m_sKey[1] = LCHAR('\0');
 			pFuncWk->m_bDupErr = false;
 			tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
 			tvi.pszText = const_cast<WCHAR*>( MakeDispLabel( pFuncWk ) );
@@ -326,12 +326,12 @@ INT_PTR CPropMainMenu::DispatchEvent(
 			  && msMenu[ (int)ptdi->item.lParam ].m_bIsNode) {
 				// ノード有効
 				pFuncWk = &msMenu[(int)ptdi->item.lParam];
-				std::wstring strNameOld = pFuncWk->m_sName;
+				sakura::wstring strNameOld = pFuncWk->m_sName;
 				if (ptdi->item.pszText == nullptr) {
 					// Esc
 					//	何も設定しない（元のまま）
 				}
-				else if (wcscmp(ptdi->item.pszText, L"") == 0) {
+				else if (wcscmp(ptdi->item.pszText, LTEXT("")) == 0) {
 					// 空
 					pFuncWk->m_sName = LS(STR_PROPCOMMAINMENU_EDIT);
 				}
@@ -377,7 +377,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 				pFuncWk = &msMenu[(int)tvi.lParam];
 				if (pFuncWk->m_nFunc != F_SEPARATOR) {
-					auto_sprintf( szKey, L"%ls", pFuncWk->m_sKey);
+					auto_sprintf( szKey, LTEXT("%ls"), pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(
 							G_AppInstance(),
@@ -388,7 +388,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							szKey)) {
 						return TRUE;
 					}
-					auto_sprintf( pFuncWk->m_sKey, L"%s", szKey);
+					auto_sprintf( pFuncWk->m_sKey, LTEXT("%s"), szKey);
 					pFuncWk->m_bDupErr = false;
 
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
@@ -465,7 +465,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					// 初期状態に戻す
 					{
 						CDataProfile	cProfile;
-						std::vector<std::wstring> data;
+						std::vector<sakura::wstring> data;
 						cProfile.SetReadingMode();
 						cProfile.ReadProfileRes( MAKEINTRESOURCE(IDR_MENU1), MAKEINTRESOURCE(ID_RC_TYPE_INI), &data );
 
@@ -532,7 +532,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							wcscpy( szLabel, L"?" );
+							wcscpy( szLabel, LTEXT("?") );
 							eFuncCode = F_SEPARATOR;
 						}
 						break;
@@ -633,7 +633,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 					pFuncWk->m_sName = szLabel;
 					pFuncWk->m_bDupErr = false;
 					pFuncWk->m_bIsNode = bIsNode;
-					pFuncWk->m_sKey[0] = L'\0';
+					pFuncWk->m_sKey[0] = LCHAR('\0');
 					tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
 					tvis.hParent = htiParent;
 					tvis.hInsertAfter = htiTemp;
@@ -767,7 +767,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 
 				case IDC_BUTTON_CHECK:		// メニューの検査
 					{
-						std::wstring sErrMsg;
+						sakura::wstring sErrMsg;
 						if (Check_MainMenu( hwndTreeRes, sErrMsg )) {
 							InfoMessage( hwndDlg, LS(STR_PROPCOMMAINMENU_OK));
 						}
@@ -825,13 +825,13 @@ INT_PTR CPropMainMenu::DispatchEvent(
 }
 
 // & の補完
-static std::wstring	SupplementAmpersand( std::wstring sLavel)
+static sakura::wstring	SupplementAmpersand( sakura::wstring sLavel)
 {
 	size_t	nPos =0;
-	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
-		if (sLavel[nPos+1] != L'&') {
+	while ((nPos = sLavel.find( LCHAR('&'), nPos)) != sakura::wstring::npos) {
+		if (sLavel[nPos+1] != LCHAR('&')) {
 			// &&でない
-			sLavel.replace( nPos, 1, L"&&");
+			sLavel.replace( nPos, 1, LTEXT("&&"));
 		}
 		nPos +=2;
 	}
@@ -840,20 +840,20 @@ static std::wstring	SupplementAmpersand( std::wstring sLavel)
 
 // & の削除
 template <basis::NullTerminatedStringConstructible<WCHAR> A>
-static std::wstring	RemoveAmpersand(
+static sakura::wstring	RemoveAmpersand(
 	const A& label
 )
 {
 	// 入力元をNUL終端文字列とみなす
 	const auto  _Label = cxx::NullTerminatedString<WCHAR>{ label };
 
-	std::wstring sLavel{ _Label.str() };
+	sakura::wstring sLavel{ _Label.str() };
 
 	size_t	nPos =0;
-	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
-		if (sLavel[nPos+1] == L'&') {
+	while ((nPos = sLavel.find( LCHAR('&'), nPos)) != sakura::wstring::npos) {
+		if (sLavel[nPos+1] == LCHAR('&')) {
 			// &&
-			sLavel.replace( nPos, 1, L"");
+			sLavel.replace( nPos, 1, LTEXT(""));
 		}
 		nPos ++;
 	}
@@ -1028,26 +1028,26 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			break;
 		case F_SEPARATOR:
 			pcFunc->m_nType = T_SEPARATOR;
-			pcFunc->m_sName[0] = L'\0';
+			pcFunc->m_sName[0] = LCHAR('\0');
 			break;
 		default:
 			if ( pFuncWk->m_bIsNode ) {
 				// コマンド定義外のIDの場合、ノードとして扱う 2012.10.14 syat 各国語対応
 				pcFunc->m_nType = T_NODE;
-				pcFunc->m_sName[0] = L'\0';	// 名前は、リソースから取得するため空白に設定
+				pcFunc->m_sName[0] = LCHAR('\0');	// 名前は、リソースから取得するため空白に設定
 				break;
 			}
 			if (pFuncWk->m_nFunc >= F_SPECIAL_FIRST && pFuncWk->m_nFunc <= F_SPECIAL_LAST) {
 				pcFunc->m_nType = T_SPECIAL;
 				// 2014.05.04 nLevel == 0 のときも"名前なし"にする
-				pcFunc->m_sName[0] = L'\0';
+				pcFunc->m_sName[0] = LCHAR('\0');
 			}
 			else {
 				if (pFuncWk->m_nFunc == F_OPTION) {
 					bOptionOk = true;
 				}
 				pcFunc->m_nType = T_LEAF;
-				pcFunc->m_sName[0] = L'\0';
+				pcFunc->m_sName[0] = LCHAR('\0');
 			}
 			break;
 		}
@@ -1074,8 +1074,8 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType = T_NODE;
 			pcFunc->m_nFunc = F_NODE;
-			wcscpy( pcFunc->m_sName, L"auto_add" );
-			pcFunc->m_sKey[0] = L'\0';
+			wcscpy( pcFunc->m_sName, LTEXT("auto_add") );
+			pcFunc->m_sKey[0] = LCHAR('\0');
 			pcFunc->m_nLevel = nLevel++;
 		}
 		else {
@@ -1087,8 +1087,8 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType = T_LEAF;
 			pcFunc->m_nFunc = F_OPTION;
-			pcFunc->m_sName[0] = L'\0';
-			pcFunc->m_sKey[0] = L'\0';
+			pcFunc->m_sName[0] = LCHAR('\0');
+			pcFunc->m_sKey[0] = LCHAR('\0');
 			pcFunc->m_nLevel = nLevel;
 		}
 		else {
@@ -1188,13 +1188,13 @@ static const WCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 	static	WCHAR	szLabel[MAX_MAIN_MENU_NAME_LEN + 10];
 
 	if (pFunc->m_sKey[0]) {
-		auto_snprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls(%ls)",
-			pFunc->m_bDupErr ? L">" : L"",
+		auto_snprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, LTEXT("%ls%ls(%ls)"),
+			pFunc->m_bDupErr ? LTEXT(">") : LTEXT(""),
 			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str(), pFunc->m_sKey);
 	}
 	else {
-		auto_snprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, L"%ls%ls",
-			pFunc->m_bDupErr ? L">" : L"",
+		auto_snprintf_s( szLabel, MAX_MAIN_MENU_NAME_LEN + 10, LTEXT("%ls%ls"),
+			pFunc->m_bDupErr ? LTEXT(">") : LTEXT(""),
 			pFunc->m_sName.substr(0, MAX_MAIN_MENU_NAME_LEN).c_str() );
 	}
 
@@ -1204,7 +1204,7 @@ static const WCHAR* MakeDispLabel( SMainMenuWork* pFunc )
 // メニューの検査
 bool CPropMainMenu::Check_MainMenu( 
 	HWND	hwndTree,		// handle to TreeView
-	std::wstring&	sErrMsg			// エラーメッセージ
+	sakura::wstring&	sErrMsg			// エラーメッセージ
 )
 {
 	HTREEITEM		htiItem;
@@ -1222,7 +1222,7 @@ bool CPropMainMenu::Check_MainMenu_Sub(
 	HWND		hwndTree,		// handle to dialog box
 	HTREEITEM 	htiTrg,			// ターゲット
 	int 		nLevel,
-	std::wstring&	sErrMsg )
+	sakura::wstring&	sErrMsg )
 {
 	// 検査用
 	static	bool		bOptionOk;		// 「共通設定」

@@ -169,7 +169,7 @@ void CMruListener::OnAfterLoad([[maybe_unused]] const SLoadInfo& sLoadInfo)
 		}
 	}
 	else{
-		eiOld.m_szMarkLines[0] = L'\0';
+		eiOld.m_szMarkLines[0] = LCHAR('\0');
 	}
 
 	// MRUリストへの登録

@@ -139,7 +139,7 @@ size_t CHokanMgr::Search(
 	POINT*			ppoWin,
 	int				nWinHeight,
 	int				nColumnWidth,
-	const wchar_t*	pszCurWord,
+	const WCHAR*	pszCurWord,
 	const WCHAR*	pszHokanFile,
 	bool			bHokanLoHiCase,	// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 	bool			bHokanByFile,	// 編集中データから候補を探す 2003.06.23 Moca
@@ -207,7 +207,7 @@ size_t CHokanMgr::Search(
 		for( auto it = plugs.begin(); it != plugs.end(); ++it ){
 			//インターフェースオブジェクト準備
 			CWSHIfObj::List params;
-			std::wstring curWord = pszCurWord;
+			sakura::wstring curWord = pszCurWord;
 			CComplementIfObj* objComp = new CComplementIfObj( curWord , this, nOption );
 			objComp->AddRef();
 			params.push_back( objComp );
@@ -340,9 +340,9 @@ size_t CHokanMgr::Search(
 }
 
 void CHokanMgr::HokanSearchByKeyword(
-	const wchar_t*	pszCurWord,
+	const WCHAR*	pszCurWord,
 	bool 			bHokanLoHiCase,
-	vector_ex<std::wstring>& 	vKouho
+	vector_ex<sakura::wstring>& 	vKouho
 ){
 	const CEditView* pcEditView = reinterpret_cast<const CEditView*>(m_lParam);
 	const STypeConfig& type = pcEditView->GetDocument()->m_cDocType.GetDocumentAttribute();
@@ -355,7 +355,7 @@ void CHokanMgr::HokanSearchByKeyword(
 		}
 		const int keyCount = keywordMgr.GetKeyWordNum(kwdset);
 		for(int i = 0; i < keyCount; i++){
-			const wchar_t* word = keywordMgr.GetKeyWord(kwdset,i);
+			const WCHAR* word = keywordMgr.GetKeyWord(kwdset,i);
 			int nRet;
 			if( bHokanLoHiCase ){
 				nRet = wmemicmp(pszCurWord, word, nKeyLen );
@@ -365,7 +365,7 @@ void CHokanMgr::HokanSearchByKeyword(
 			if( nRet != 0 ){
 				continue;
 			}
-			std::wstring strWord(word);
+			sakura::wstring strWord(word);
 			AddKouhoUnique(vKouho, strWord);
 		}
 	}
@@ -571,7 +571,7 @@ BOOL CHokanMgr::OnLbnSelChange( [[maybe_unused]] HWND hwndCtl, [[maybe_unused]] 
 /* 補完実行 */
 BOOL CHokanMgr::DoHokan( int nVKey )
 {
-	DEBUG_TRACE( L"CHokanMgr::DoHokan( nVKey==%xh )\n", nVKey );
+	DEBUG_TRACE( LTEXT("CHokanMgr::DoHokan( nVKey==%xh )\n"), nVKey );
 
 	/* 補完候補決定キー */
 	if( VK_RETURN	== nVKey && !m_pShareData->m_Common.m_sHelper.m_bHokanKey_RETURN )	return FALSE;/* VK_RETURN 補完決定キーが有効/無効 */
@@ -584,7 +584,7 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 		return FALSE;
 	}
 
-	std::wstring strLabel;
+	sakura::wstring strLabel;
 	if( !ApiWrap::List_GetText( hList, nItem, strLabel ) ){
 		return FALSE;
 	}
@@ -720,7 +720,7 @@ void CHokanMgr::ShowTip()
 	nItem = ApiWrap::List_GetCurSel( hwndCtrl );
 	if( LB_ERR == nItem )	return ;
 
-	std::wstring strLabel;
+	sakura::wstring strLabel;
 	if( !ApiWrap::List_GetText( hwndCtrl, nItem, strLabel ) ) return;
 
 	pcEditView = reinterpret_cast<CEditView*>(m_lParam);
@@ -748,7 +748,7 @@ void CHokanMgr::ShowTip()
 }
 //	2001/06/18 End
 
-bool CHokanMgr::AddKouhoUnique(vector_ex<std::wstring>& kouhoList, const std::wstring& strWord)
+bool CHokanMgr::AddKouhoUnique(vector_ex<sakura::wstring>& kouhoList, const sakura::wstring& strWord)
 {
 	return kouhoList.push_back_unique(strWord);
 }

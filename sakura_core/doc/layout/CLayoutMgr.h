@@ -127,8 +127,8 @@ public:
 public:
 	//2007.10.09 kobake 関数名変更: Search → SearchLineByLayoutY
 	CLayoutInt		GetLineCount() const{ return m_nLines; }	/* 全物理行数を返す */
-	const wchar_t*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
-	const wchar_t*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, const CLayout** ppcLayoutDes ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
+	const WCHAR*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
+	const WCHAR*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen, const CLayout** ppcLayoutDes ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
 
 	//先頭と末尾
 	CLayout*		GetTopLayout()		{ return m_pLayoutTop; }
@@ -165,7 +165,7 @@ public:
 		@param 
 		@return 次のTAB位置までの文字数．1～TAB幅
 	 */
-	CLayoutInt GetActualTsvSpace(CLayoutInt pos, wchar_t ch) const {
+	CLayoutInt GetActualTsvSpace(CLayoutInt pos, WCHAR ch) const {
 		CLayoutInt tabPadding = m_nCharLayoutXPerKeta - 1;
 		if (m_tsvInfo.m_nTsvMode == TSV_MODE_NONE && ch == WCODE::TAB) {
 			return GetTabSpace() + tabPadding - ((pos + tabPadding) % GetTabSpace());
@@ -174,7 +174,7 @@ public:
 			return tabPadding;
 		}
 		else if ((m_tsvInfo.m_nTsvMode == TSV_MODE_TSV && ch == WCODE::TAB)
-			|| (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == L',')) {
+			|| (m_tsvInfo.m_nTsvMode == TSV_MODE_CSV && ch == LCHAR(','))) {
 			return CLayoutInt(m_tsvInfo.GetActualTabLength(pos, m_tsvInfo.m_nMaxCharLayoutX));
 		}
 		else {
@@ -273,7 +273,7 @@ public:
 
 	BOOL CalculateTextWidth( BOOL bCalLineLen = TRUE, CLayoutInt nStart = CLayoutInt(-1), CLayoutInt nEnd = CLayoutInt(-1) );	/* テキスト最大幅を算出する */		// 2009.08.28 nasukoji
 	void ClearLayoutLineWidth( void );				/* 各行のレイアウト行長の記憶をクリアする */		// 2009.08.28 nasukoji
-	CLayoutXInt GetLayoutXOfChar( const wchar_t* pData, int nDataLen, int i ) const {
+	CLayoutXInt GetLayoutXOfChar( const WCHAR* pData, int nDataLen, int i ) const {
 		CLayoutXInt nSpace = CLayoutXInt(0);
 		if( m_nSpacing ){
 			nSpace = CLayoutXInt(CNativeW::GetKetaOfChar(pData, nDataLen, i)) * m_nSpacing;
@@ -353,9 +353,9 @@ protected:
 	void _OnLine2(SLayoutWork* pWork);
 
 private:
-	bool IsKinsokuHead( wchar_t wc ) const;	// 行頭禁則文字をチェックする
-	bool IsKinsokuTail( wchar_t wc ) const;	// 行末禁則文字をチェックする
-	bool IsKinsokuKuto( wchar_t wc ) const;	// 句読点文字をチェックする
+	bool IsKinsokuHead( WCHAR wc ) const;	// 行頭禁則文字をチェックする
+	bool IsKinsokuTail( WCHAR wc ) const;	// 行末禁則文字をチェックする
+	bool IsKinsokuKuto( WCHAR wc ) const;	// 句読点文字をチェックする
 	//	Oct. 1, 2002 genta インデント幅計算関数群
 	CLayoutInt getIndentOffset_Normal( CLayout* pLayoutPrev );
 	CLayoutInt getIndentOffset_Tx2x( CLayout* pLayoutPrev );
@@ -399,9 +399,9 @@ protected:
 	CKetaXInt				m_nTabSpace;				//!< TABの文字数
 	CLayoutXInt				m_nCharLayoutXPerKeta;		//!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
 	CPixelXInt				m_nSpacing;					//!< 1文字ずつの間隔(px)
-	vector_ex<wchar_t>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
-	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
+	vector_ex<WCHAR>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<WCHAR>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
+	vector_ex<WCHAR>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
 	CalcIndentProc			m_getIndentOffset;			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
 
 	//フラグ等

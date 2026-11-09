@@ -72,7 +72,7 @@ public:
 		@param[in]	mode	ログの出力モード
 		@param[in]	name	ログの出力形式
 	*/
-	CRunningTimer( std::wstring_view name = L"", OutputMode mode = OutputMode::OnWriteTrace, OutputStyle style = OutputStyle::Markdown );
+	CRunningTimer( sakura::wstring_view name = LTEXT(""), OutputMode mode = OutputMode::OnWriteTrace, OutputStyle style = OutputStyle::Markdown );
 
 	~CRunningTimer();
 
@@ -91,7 +91,7 @@ public:
 		現在の経過時間でログを書き込む
 		@param[in]	msg		ログのメッセージ欄に出力する文字列
 	*/
-	void WriteTrace( std::wstring_view msg = L"" );
+	void WriteTrace( sakura::wstring_view msg = LTEXT("") );
 
 	/*!
 		現在の経過時間でログを書き込む
@@ -121,14 +121,14 @@ protected:
 	enum class TraceType { Normal, Enter, ExitScope };
 	using TimePoint = std::chrono::high_resolution_clock::time_point;
 	struct TraceEntry {
-		TraceEntry( TimePoint timePoint, TraceType traceType, std::wstring_view msg ) :
+		TraceEntry( TimePoint timePoint, TraceType traceType, sakura::wstring_view msg ) :
 			m_timePoint( timePoint ),
 			m_traceType( traceType ),
 			m_msg( msg )
 		{}
 		TimePoint		m_timePoint;
 		TraceType		m_traceType;
-		std::wstring	m_msg;
+		sakura::wstring	m_msg;
 	};
 
 	static int m_nNestCount;
@@ -137,11 +137,11 @@ protected:
 	static TimePoint GetTime();
 	static double GetElapsedTimeInSeconds( TimePoint from, TimePoint to );
 
-	void WriteTraceInternal( TimePoint currentTime, TraceType traceType, std::wstring_view msg = L"" );
+	void WriteTraceInternal( TimePoint currentTime, TraceType traceType, sakura::wstring_view msg = LTEXT("") );
 	void FlushPendingTraces();
 	void OutputHeader() const;
 	void OutputFooter() const;
-	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;
+	void OutputTrace( TimePoint currentTime, TraceType traceType, sakura::wstring_view msg ) const;
 
 	template <typename... Args>
 	void Output(
@@ -157,7 +157,7 @@ protected:
 private:
 	TimePoint		m_startTime;				// 計測開始時間
 	TimePoint		m_lastTime;					// 最後に出力した時間
-	std::wstring	m_timerName;				// タイマー名
+	sakura::wstring	m_timerName;				// タイマー名
 	int				m_nDepth;					// このオブジェクトのネストの深さ
 	OutputMode		m_outputMode;				// ログの出力モード
 	OutputStyle		m_outputStyle;				// ログの出力形式

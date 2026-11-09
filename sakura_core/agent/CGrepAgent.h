@@ -42,9 +42,9 @@ struct IGrepProgress {
 	//! ヒット数を表示する
 	virtual void SetHitCount( int nHitCount ) = 0;
 	//! 処理中のファイル名を表示する
-	virtual void SetFileName( std::wstring_view fileName ) = 0;
+	virtual void SetFileName( sakura::wstring_view fileName ) = 0;
 	//! 処理中のフォルダーを表示する
-	virtual void SetFolder( std::wstring_view folder ) = 0;
+	virtual void SetFolder( sakura::wstring_view folder ) = 0;
 };
 
 /*!
@@ -72,8 +72,8 @@ public:
 	ECallbackResult OnBeforeClose() override;
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
-	static void CreateFolders( const WCHAR* pszPath, std::vector<std::wstring>& vPaths );
-	static std::wstring ChopYen( const std::wstring& str );
+	static void CreateFolders( const WCHAR* pszPath, std::vector<sakura::wstring>& vPaths );
+	static sakura::wstring ChopYen( const sakura::wstring& str );
 
 	// Grep実行
 	DWORD DoGrep(
@@ -86,7 +86,7 @@ public:
 private:
 	//! Grep の対象ファイル 1 つぶん(フォルダー 1 つの列挙結果の要素)
 	struct SGrepTargetFile {
-		std::wstring	strFileName;		//!< 検索するフォルダーからの相対のファイル名(検索キーにフォルダーを含むと sub\a.txt の形)
+		sakura::wstring	strFileName;		//!< 検索するフォルダーからの相対のファイル名(検索キーにフォルダーを含むと sub\a.txt の形)
 		DWORD			dwFileSizeLow = 0;	//!< ファイルサイズの下位 32 ビット(リアルタイム表示を早めるかの目安)
 	};
 
@@ -99,7 +99,7 @@ private:
 
 	//! Grep 1 回ぶんの検索の条件(全ファイルで共通。読み取り専用)
 	struct SGrepSearchCond {
-		const wchar_t*				pszKey;			//!< 検索キー
+		const WCHAR*				pszKey;			//!< 検索キー
 		const CNativeW&				cmGrepReplace;	//!< 置換後文字列(置換のときだけ使う)
 		const SSearchOption&		sSearchOption;	//!< 検索オプション
 		const GrepInfo&				sGrepOption;	//!< Grep実行の入力一式(正規化済み)
@@ -163,7 +163,7 @@ private:
 	);
 
 	// ファイル 1 つを検索した後、たまった結果を出力する時機なら出力する
-	void AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, DWORD dwFileSizeLow, int& nWork, int& nHitCountOld );
+	void AppendResultIfDue( SGrepOutput& out, const WCHAR* pszKey, DWORD dwFileSizeLow, int& nWork, int& nHitCountOld );
 
 	// Grep実行
 	int DoGrepFile(

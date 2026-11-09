@@ -232,10 +232,10 @@ inline void* memcpy_raw(void* dest, const void* src, size_t size){ return ::memc
 //文字変換
 inline int my_toupper( int c ){ return (((c) >= 'a') && ((c) <= 'z')) ? ((c) - 'a' + 'A') : (c); }
 inline int my_tolower( int c ){ return (((c) >= 'A') && ((c) <= 'Z')) ? ((c) - 'A' + 'a') : (c); }
-inline int my_towupper( int c ){ return (((c) >= L'a') && ((c) <= L'z')) ? ((c) - L'a' + L'A') : (c); }
-inline int my_towlower( int c ){ return (((c) >= L'A') && ((c) <= L'Z')) ? ((c) - L'A' + L'a') : (c); }
-inline wchar_t my_towupper2(wchar_t c) { return (wchar_t)my_towupper(c); }
-inline wchar_t my_towlower2(wchar_t c) { return (wchar_t)my_towlower(c); }
+inline int my_towupper( int c ){ return (((c) >= LCHAR('a')) && ((c) <= LCHAR('z'))) ? ((c) - LCHAR('a') + LCHAR('A')) : (c); }
+inline int my_towlower( int c ){ return (((c) >= LCHAR('A')) && ((c) <= LCHAR('Z'))) ? ((c) - LCHAR('A') + LCHAR('a')) : (c); }
+inline WCHAR my_towupper2(WCHAR c) { return (WCHAR)my_towupper(c); }
+inline WCHAR my_towlower2(WCHAR c) { return (WCHAR)my_towlower(c); }
 int skr_towupper( int c );
 int skr_towlower( int c );
 
@@ -420,7 +420,7 @@ WCHAR* strtotcs( WCHAR* dest, const WCHAR* src, size_t count );
 
 //wcsncmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-inline int wcsncmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
+inline int wcsncmp_literal(const WCHAR* strData1, const WCHAR (&literalData2)[Size]) {
 	return ::wcsncmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 
@@ -432,7 +432,7 @@ inline int strncmp_literal(const char* strData1, const char (&literalData2)[Size
 
 //_wcsnicmpの文字数指定をliteralData2の大きさで取得してくれる版
 template <size_t Size>
-inline int wcsnicmp_literal(const wchar_t* strData1, const wchar_t (&literalData2)[Size]) {
+inline int wcsnicmp_literal(const WCHAR* strData1, const WCHAR (&literalData2)[Size]) {
 	return ::_wcsnicmp(strData1, literalData2, Size - 1 ); //※終端ヌルを含めないので、_countofからマイナス1する
 }
 

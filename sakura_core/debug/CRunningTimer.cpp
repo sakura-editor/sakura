@@ -22,14 +22,14 @@
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
 
-CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputStyle style ) :
+CRunningTimer::CRunningTimer( sakura::wstring_view name, OutputMode mode, OutputStyle style ) :
 	m_timerName( name ),
 	m_outputMode( mode ),
 	m_outputStyle( style )
 {
 	if( m_timerName.length() == 0 && m_outputStyle == OutputStyle::Markdown ){
 		// 字下げ位置がわかるように何か文字列を入れておく
-		m_timerName = L"(no name)";
+		m_timerName = LTEXT("(no name)");
 	}
 
 	if( m_nNameOutputWidth < m_timerName.size() ){
@@ -83,14 +83,14 @@ uint32_t CRunningTimer::Read() const
 /*!
 	@date 2002.10.15 genta
 */
-void CRunningTimer::WriteTrace( std::wstring_view msg )
+void CRunningTimer::WriteTrace( sakura::wstring_view msg )
 {
-	WriteTraceFormat( L"%s", msg.data() );
+	WriteTraceFormat( LTEXT("%s"), msg.data() );
 }
 
 void CRunningTimer::WriteTrace( int32_t n )
 {
-	WriteTraceFormat( L"%d", n );
+	WriteTraceFormat( LTEXT("%d"), n );
 }
 
 CRunningTimer::TimePoint CRunningTimer::GetTime()
@@ -103,7 +103,7 @@ double CRunningTimer::GetElapsedTimeInSeconds( TimePoint from, TimePoint to )
 	return std::chrono::duration<double>(to - from).count();
 }
 
-void CRunningTimer::WriteTraceInternal( TimePoint currentTime, TraceType traceType, std::wstring_view msg )
+void CRunningTimer::WriteTraceInternal( TimePoint currentTime, TraceType traceType, sakura::wstring_view msg )
 {
 	if( m_outputMode == OutputMode::OnExitScope ){
 		// 溜めておいて後でまとめて出力
@@ -127,8 +127,8 @@ void CRunningTimer::FlushPendingTraces()
 void CRunningTimer::OutputHeader() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output( L"| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n", m_nNameOutputWidth, L"name" );
-		Output( L"|--------------:|-%.*s-|----------:|----------:|--------\n", m_nNameOutputWidth, L"----------------------------------------------------------------------------------------------------" );
+		Output( LTEXT("| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n"), m_nNameOutputWidth, LTEXT("name") );
+		Output( LTEXT("|--------------:|-%.*s-|----------:|----------:|--------\n"), m_nNameOutputWidth, LTEXT("----------------------------------------------------------------------------------------------------") );
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -137,45 +137,45 @@ void CRunningTimer::OutputHeader() const
 void CRunningTimer::OutputFooter() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		cxx::OutputDebugStringW( L"\n" );
+		cxx::OutputDebugStringW( LTEXT("\n") );
 	}else{
 		// 従来形式では出力するものなし
 	}
 }
 
-void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const
+void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, sakura::wstring_view msg ) const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
 		if( traceType == TraceType::Enter ){
-			msg = L"== Enter ==";
+			msg = LTEXT("== Enter ==");
 		}else if( traceType == TraceType::ExitScope ){
-			msg = L"== Exit Scope ==";
+			msg = LTEXT("== Exit Scope ==");
 		}else{
 			//msg = msg
 		}
 
-		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
+		Output( LTEXT("| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n"),
 			GetElapsedTimeInSeconds( CRunningTimer::m_initialTime, currentTime ),
-			m_nDepth * 2, L"_ _ _ _ _ _ _ _ _ _ ", (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
+			m_nDepth * 2, LTEXT("_ _ _ _ _ _ _ _ _ _ "), (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
 			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
 			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
 			msg.data() );
 	}else{
 		if( traceType == TraceType::Enter ){
-			msg = L"Enter";
+			msg = LTEXT("Enter");
 		}else if( traceType == TraceType::ExitScope ){
-			msg = L"Exit Scope";
+			msg = LTEXT("Exit Scope");
 		}else{
 			//msg = msg
 		}
 
 		if( traceType == TraceType::Enter ){
-			Output( L"%3d:\"%s\" : %s\n",
+			Output( LTEXT("%3d:\"%s\" : %s\n"),
 				m_nDepth,
 				m_timerName.c_str(),
 				msg.data() );
 		}else{
-			Output( L"%3d:\"%s\", %d㍉秒 : %s\n",
+			Output( LTEXT("%3d:\"%s\", %d㍉秒 : %s\n"),
 				m_nDepth,
 				m_timerName.c_str(),
 				(int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0),

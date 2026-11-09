@@ -15,9 +15,9 @@
 //                     CFigure_HanSpace                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_HanSpace::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
+bool CFigure_HanSpace::Match(const WCHAR* pText, [[maybe_unused]] int nTextLen) const
 {
-	if( pText[0] == L' ' ){
+	if( pText[0] == LCHAR(' ') ){
 		return true;
 	}
 	return false;
@@ -32,7 +32,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 {
 	//クリッピング矩形を計算。画面外なら描画しない
 	CMyRect rcClip;
-	const int Dx = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
+	const int Dx = pcView->GetTextMetrics().CalcTextWidth3(LTEXT(" "), 1);
 	const CLayoutXInt nCol = CLayoutXInt(Dx);
 	if(pcView->GetTextArea().GenerateClipRect(&rcClip,*pDispPos,nCol))
 	{
@@ -46,7 +46,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipBottom,
 //FIXME:幅が違う
-			L"o",
+			LTEXT("o"),
 			1,
 			&Dx
 		);
@@ -60,7 +60,7 @@ void CFigure_HanSpace::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pc
 			pDispPos->GetDrawPos().y,
 			ApiWrap::ExtTextOutOption() & ~(bTrans? ETO_OPAQUE: 0),
 			&rcClipTop,
-			L" ",
+			LTEXT(" "),
 			1,
 			&Dx
 		);

@@ -85,7 +85,7 @@ public:
 	//                           操作                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//	May 15, 2000 genta
-	void AddLineStrX( const wchar_t*, int );	/* 末尾に行を追加 Ver1.5 */
+	void AddLineStrX( const WCHAR*, int );	/* 末尾に行を追加 Ver1.5 */
 
 private:
 	CDocLineMgr* m_pcDocLineMgr;

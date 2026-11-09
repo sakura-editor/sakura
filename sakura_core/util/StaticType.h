@@ -323,7 +323,7 @@ public:
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
 	 */
-	constexpr errno_t append(std::wstring_view src) noexcept
+	constexpr errno_t append(sakura::wstring_view src) noexcept
 	{
 		return auto_strcat_s(*this, src);
 	}
@@ -334,7 +334,7 @@ public:
 	 * @retval 0 成功
 	 * @retval STRUNCATE 切り詰め発生
 	 */
-	constexpr errno_t assign(std::wstring_view src) noexcept
+	constexpr errno_t assign(sakura::wstring_view src) noexcept
 	{
 		return auto_strcpy_s(*this, src);
 	}
@@ -396,8 +396,8 @@ public:
 			}
 
 			// 文字を取り出して比較する
-			wchar_t chL = *itL;
-			wchar_t chR = *itR;
+			WCHAR chL = *itL;
+			WCHAR chR = *itR;
 
 			// 大文字小文字を区別しない場合、大文字に変換する
 			if constexpr (!CASE_SENSITIVE) {
@@ -445,7 +445,7 @@ public:
 	}
 
 	constexpr auto span()       & noexcept { return std::span<WCHAR, size()>(data(), size()); }
-	constexpr auto str()  const & noexcept { return std::wstring_view(data(), length()); }
+	constexpr auto str()  const & noexcept { return sakura::wstring_view(data(), length()); }
 
 	//クラス属性
 	size_t GetBufferCount() const noexcept { return size(); }
@@ -474,7 +474,7 @@ public:
 	 */
 	constexpr void Assign(_In_opt_z_ LPCWSTR pszData) noexcept
 	{
-		assign(std::wstring_view{ pszData ? pszData : L"" });
+		assign(sakura::wstring_view{ pszData ? pszData : LTEXT("") });
 	}
 
 	//各種メソッド
@@ -529,7 +529,7 @@ public:
 		const auto szText = cxx::NullTerminatedString{ rhs };
 
 		// 入力元を文字列として扱う
-		auto text = static_cast<std::wstring_view>(szText);
+		auto text = static_cast<sakura::wstring_view>(szText);
 
 		// 文字列を代入する
 		if (const auto ret = assign(text);
@@ -562,7 +562,7 @@ public:
 		const auto szText = cxx::NullTerminatedString{ rhs };
 
 		// 入力元を文字列として扱う
-		auto text = static_cast<std::wstring_view>(szText);
+		auto text = static_cast<sakura::wstring_view>(szText);
 
 		// 追加前の文字列長を取得する
 		const auto len = length();
@@ -605,9 +605,9 @@ public:
 	 *
 	 * @return 文字列
 	 */
-	constexpr explicit operator std::wstring() const
+	constexpr explicit operator sakura::wstring() const
 	{
-		return std::wstring{ str() };
+		return sakura::wstring{ str() };
 	}
 
 #endif // #if DISABLE_IMPLICIT_OPERATORS
@@ -619,7 +619,7 @@ public:
 	 *
 	 * @return 文字列参照
 	 */
-	constexpr explicit operator std::wstring_view() const & noexcept
+	constexpr explicit operator sakura::wstring_view() const & noexcept
 	{
 		return str();
 	}

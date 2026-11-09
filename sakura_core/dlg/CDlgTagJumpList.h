@@ -22,7 +22,7 @@
 #include "mem/CNativeW.h"
 
 //タグファイル名	//	@@ 2005.03.31 MIK 定数化
-#define TAG_FILENAME_T        L"tags"
+#define TAG_FILENAME_T        LTEXT("tags")
 
 // 2010.07.22 いくつかcppへ移動
 
@@ -50,7 +50,7 @@ public:
 	//	@@ 2005.03.31 MIK 階層パラメータを追加
 //	bool AddParamA( const ACHAR*, const ACHAR*, int, const ACHAR*, const ACHAR*, int depth, int baseDirId );	//登録
 	void SetFileName( const WCHAR *pszFileName );
-	void SetKeyword( const wchar_t *pszKeyword );	//	@@ 2005.03.31 MIK
+	void SetKeyword( const WCHAR *pszKeyword );	//	@@ 2005.03.31 MIK
 	int  FindDirectTagJump();
 
 	bool GetSelectedFullPathAndLine( WCHAR* fullPath, int count, int* lineNum, int* depth );
@@ -102,12 +102,12 @@ private:
 	int		SearchBestTag( void );	//もっとも確率の高そうなインデックスを返す。
 	//	@@ 2005.03.31 MIK
 	const WCHAR *GetFileName( void );
-	const WCHAR *GetFilePath( void ){ return m_pszFileName != nullptr ? m_pszFileName : L""; }
+	const WCHAR *GetFilePath( void ){ return m_pszFileName != nullptr ? m_pszFileName : LTEXT(""); }
 	void Empty( void );
 	void SetTextDir();
 	void FindNext(bool bNewFind);
-	void find_key( const wchar_t* keyword );
-	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
+	void find_key( const WCHAR* keyword );
+	int find_key_core(int  nTop, const WCHAR* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
 	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
 	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
 	void find_key_for_BinarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule );
@@ -130,7 +130,7 @@ private:
 
 	int		m_nIndex = -1;		//!< 選択された要素番号
 	WCHAR	*m_pszFileName = nullptr;	//!< 編集中のファイル名
-	wchar_t	*m_pszKeyword = nullptr;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
+	WCHAR	*m_pszKeyword = nullptr;	//!< キーワード(DoModalのlParam!=0を指定した場合に指定できる)
 	int		m_nLoop = -1;		//!< さかのぼれる階層数
 	CSortedTagJumpList*	m_pcList = nullptr;	//!< タグジャンプ情報
 	UINT_PTR	m_nTimerId = 0;		//!< タイマ番号
@@ -145,7 +145,7 @@ private:
 	STagFindState* m_psFindPrev = nullptr; //!< 前回の最後に検索した状態
 	STagFindState* m_psFind0Match = nullptr; //!< 前回の1つもHitしなかった最後のtags
 
-	CNativeW	m_strOldKeyword = { L"" };	//!< 前回のキーワード
+	CNativeW	m_strOldKeyword = { LTEXT("") };	//!< 前回のキーワード
 	BOOL	m_bOldTagJumpICase;	//!< 前回の大文字小文字を同一視
 	BOOL	m_bOldTagJumpPartialMatch;	//!< 前回の文字列の途中にマッチ
 

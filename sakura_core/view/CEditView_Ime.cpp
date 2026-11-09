@@ -202,7 +202,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	const int nLineLen = pcCurDocLine->GetLengthWithoutEOL();
 	if ( 0 == nLineLen )
 		return 0;
-	const wchar_t* pLine = pcCurDocLine->GetPtr();
+	const WCHAR* pLine = pcCurDocLine->GetPtr();
 
 	// 2010.04.17 行頭から←選択だと「SelectToが改行の後ろの位置」にあるため範囲を調整する
 	// フリーカーソル選択でも行末より後ろにカーソルがある
@@ -236,10 +236,10 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	//再変換考慮文字列終了  //行の中で再変換のAPIにわたすとする文字列の長さ
 	int nReconvLen = nLineLen - nReconvIndex;
 	if ( (nReconvLen + nReconvIndex - ptSelect.x) > nReconvMaxLen ){
-		const wchar_t*       p = pLine + ptSelect.x;
-		const wchar_t* const q = pLine + ptSelect.x + nReconvMaxLen;
+		const WCHAR*       p = pLine + ptSelect.x;
+		const WCHAR* const q = pLine + ptSelect.x + nReconvMaxLen;
 		while (p <= q) {
-			p = t_max(p+1, const_cast<const wchar_t*>(::CharNext(p)));
+			p = t_max(p+1, const_cast<const WCHAR*>(::CharNext(p)));
 		}
 		nReconvLen = int(p - pLine - nReconvIndex);
 	}
@@ -260,10 +260,10 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 			if( !hIMC ){
 				return 0;
 			}
-			wmemset(m_szComposition, L'\0', int(std::size(m_szComposition)));
+			wmemset(m_szComposition, LCHAR('\0'), int(std::size(m_szComposition)));
 			LONG immRet = ::ImmGetCompositionString(hIMC, GCS_COMPSTR, m_szComposition, int(std::size(m_szComposition)));
 			if( immRet == IMM_ERROR_NODATA || immRet == IMM_ERROR_GENERAL ){
-				m_szComposition[0] = L'\0';
+				m_szComposition[0] = LCHAR('\0');
 			}
 			::ImmReleaseContext( hwnd, hIMC );
 			nInsertCompLen = (int)wcslen(m_szComposition);
@@ -284,17 +284,17 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 	const void* pszReconv; 
 	const void* pszInsBuffer;
 
-	const WCHAR* pszCompInsStr = L"";
+	const WCHAR* pszCompInsStr = LTEXT("");
 	int nCompInsStr   = 0;
 	if( nInsertCompLen ){
 		pszCompInsStr = m_szComposition;
 		nCompInsStr   = (int)wcslen( pszCompInsStr );
 	}
-	dwInsByteCount      = nCompInsStr * sizeof(wchar_t);
+	dwInsByteCount      = nCompInsStr * sizeof(WCHAR);
 	dwReconvTextLen     = nReconvLen;
 	dwReconvTextInsLen  = dwReconvTextLen + nCompInsStr;                 //reconv文字列長。文字単位。
-	cbReconvLenWithNull = (dwReconvTextInsLen + 1) * sizeof(wchar_t);    //reconvデータ長。バイト単位。
-	dwCompStrOffset     = (Int)(ptSelect.x - nReconvIndex) * sizeof(wchar_t);    //compオフセット。バイト単位。
+	cbReconvLenWithNull = (dwReconvTextInsLen + 1) * sizeof(WCHAR);    //reconvデータ長。バイト単位。
+	dwCompStrOffset     = (Int)(ptSelect.x - nReconvIndex) * sizeof(WCHAR);    //compオフセット。バイト単位。
 	dwCompStrLen        = nSelectedLen + nCompInsStr;                            //comp文字列長。文字単位。
 	pszReconv           = reinterpret_cast<const void*>(pLine + nReconvIndex);   //reconv文字列へのポインタ。
 	pszInsBuffer        = pszCompInsStr;
@@ -309,7 +309,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 		//     のはずなのに Win XP+IME2002+TSF では dwSizeが0で送られてくる
 		if( dwOrgSize != 0 && dwOrgSize < sizeof(*pReconv) + cbReconvLenWithNull ){
 			// バッファ不足
-			m_szComposition[0] = L'\0';
+			m_szComposition[0] = LCHAR('\0');
 			return 0;
 		}
 		else if( 0 == dwOrgSize ){
@@ -333,17 +333,17 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 			CopyMemory(pb, pszInsBuffer, dwInsByteCount);
 			pb += dwInsByteCount;
 			CopyMemory(pb, ((char*)pszReconv) + dwCompStrOffset,
-				dwReconvTextLen*sizeof(wchar_t) - dwCompStrOffset);
+				dwReconvTextLen*sizeof(WCHAR) - dwCompStrOffset);
 		}else{
-			CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(wchar_t));
+			CopyMemory(p, pszReconv, cbReconvLenWithNull - sizeof(WCHAR));
 		}
 		// \0があると応答なしになることがある
 		for( DWORD i = 0; i < dwReconvTextInsLen; i++ ){
 			if( p[i] == 0 ){
-				p[i] = L' ';
+				p[i] = LCHAR(' ');
 			}
 		}
-		p[dwReconvTextInsLen] = L'\0';
+		p[dwReconvTextInsLen] = LCHAR('\0');
 	}
 	
 	if( false == bDocumentFeed ){
@@ -352,7 +352,7 @@ LRESULT CEditView::SetReconvertStruct(PRECONVERTSTRING pReconv, bool bDocumentFe
 		m_nLastReconvLine  = ptSelect.y;
 	}
 	if( bDocumentFeed && pReconv ){
-		m_szComposition[0] = L'\0';
+		m_szComposition[0] = LCHAR('\0');
 	}
 	return sizeof(RECONVERTSTRING) + cbReconvLenWithNull;
 }

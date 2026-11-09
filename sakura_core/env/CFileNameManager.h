@@ -28,11 +28,11 @@ public:
 	int TransformFileName_MakeCache( void );
 
 	static LPCWSTR GetFilePathFormat(
-		std::wstring_view strSrc,
+		sakura::wstring_view strSrc,
 		LPWSTR pszDest,
 		size_t nDestLen,
-		std::wstring_view strFrom,
-		std::wstring_view strTo
+		sakura::wstring_view strFrom,
+		sakura::wstring_view strTo
 	);
 
 	template <
@@ -40,7 +40,7 @@ public:
 		basis::NullTerminatedStringConstructible<WCHAR> A2,
 		basis::NullTerminatedStringConstructible<WCHAR> A3
 	>
-		requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view> || !std::is_same_v<A3, std::wstring_view>)
+		requires (!std::is_same_v<A1, sakura::wstring_view> || !std::is_same_v<A2, sakura::wstring_view> || !std::is_same_v<A3, sakura::wstring_view>)
 	static LPCWSTR GetFilePathFormat(
 		const A1& src,
 		LPWSTR pszDest,

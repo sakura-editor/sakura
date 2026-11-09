@@ -66,9 +66,9 @@
 #define CMDLINEOPT_PROF			501  //!< プロファイルを選択
 #define CMDLINEOPT_PROFMGR		502  //!< プロファイルマネージャを起動時に表示
 
-std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s)
+std::vector<sakura::wstring_view> SplitLegacyCommandLine(sakura::wstring_view s)
 {
-	std::vector<std::wstring_view> args;
+	std::vector<sakura::wstring_view> args;
 
 	// 正規表現パターン:
 	//   ^(?:-\w+[=:])?  … オプション接頭辞 (-XXX= または -XXX:) は省略可能
@@ -80,38 +80,38 @@ std::vector<std::wstring_view> SplitLegacyCommandLine(std::wstring_view s)
 	//     | [^"\\]       …   " と \ 以外の通常文字
 	//   )*
 	//   "                … 閉じ引用符
-	std::wregex re(LR"(^(?:-\w+[=:])?"(?:""|\\"|\\(?!")|[^"\\])*")");
+	std::wregex re(LTEXT(R"(^(?:-\w+[=:])?"(?:""|\\"|\\(?!")|[^"\\])*")"));
 
 	while (!s.empty()) {
 		// 先頭の空白を読み飛ばす
-		if (const auto p0 = s.find_first_not_of(L' '); std::wstring_view::npos == p0) {
-			s = std::wstring_view{};	// 残余が空白のみ → 処理終了
+		if (const auto p0 = s.find_first_not_of(LCHAR(' ')); sakura::wstring_view::npos == p0) {
+			s = sakura::wstring_view{};	// 残余が空白のみ → 処理終了
 			continue;
 		} else if (p0) {
 			s = s.substr(p0);
 		}
 
 		// 次の区切り文字を探す
-		const auto p1 = s.find_first_of(L' ');
+		const auto p1 = s.find_first_of(LCHAR(' '));
 
-		if (std::wstring_view::npos == p1) {
+		if (sakura::wstring_view::npos == p1) {
 			args.emplace_back(s);	// 残り全部を1つの引数とみなす → 処理終了
-			s = std::wstring_view{};
+			s = sakura::wstring_view{};
 			continue;
 		}
 
 		// 引用符を探す
-		if (const auto p2 = s.find_first_of(L'"'); std::wstring_view::npos == p2 || p1 < p2) {
+		if (const auto p2 = s.find_first_of(LCHAR('"')); sakura::wstring_view::npos == p2 || p1 < p2) {
 			args.emplace_back(s.substr(0, p1));
 			s = s.substr(p1);
 			continue;
 		}
 
 		// 引用符の正規表現とマッチさせる
-		std::match_results<std::wstring_view::const_iterator> m;
+		std::match_results<sakura::wstring_view::const_iterator> m;
 		if (!std::regex_search(s.begin(), s.end(), m, re)) {
 			args.emplace_back(s);	// 残り全部を1つの引数とみなす → 処理終了
-			s = std::wstring_view{};
+			s = sakura::wstring_view{};
 			continue;
 		}
 
@@ -154,13 +154,13 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取らないもの
 	*/
 	static const _CmdLineOpt _COptWoA[] = {
-		{L"R",			1,	CMDLINEOPT_R, false},
-		{L"-",			1,	CMDLINEOPT_NOMOREOPT, false},
-		{L"NOWIN",		5,	CMDLINEOPT_NOWIN, false},
-		{L"GREPMODE",	8,	CMDLINEOPT_GREPMODE, false},
-		{L"GREPDLG",		7,	CMDLINEOPT_GREPDLG, false},
-		{L"DEBUGMODE",	9,	CMDLINEOPT_DEBUGMODE, false},
-		{L"PROFMGR",		7,	CMDLINEOPT_PROFMGR, false},
+		{LTEXT("R"),			1,	CMDLINEOPT_R, false},
+		{LTEXT("-"),			1,	CMDLINEOPT_NOMOREOPT, false},
+		{LTEXT("NOWIN"),		5,	CMDLINEOPT_NOWIN, false},
+		{LTEXT("GREPMODE"),	8,	CMDLINEOPT_GREPMODE, false},
+		{LTEXT("GREPDLG"),		7,	CMDLINEOPT_GREPDLG, false},
+		{LTEXT("DEBUGMODE"),	9,	CMDLINEOPT_DEBUGMODE, false},
+		{LTEXT("PROFMGR"),		7,	CMDLINEOPT_PROFMGR, false},
 		{nullptr, 0, 0}
 	};
 
@@ -169,27 +169,27 @@ int CCommandLine::CheckCommandLine(
 		後ろに引数を取るもの
 	*/
 	static const _CmdLineOpt _COptWithA[] = {
-		{L"@",		1,			CMDLINEOPT_AT, false},
-		{L"X",		1,			CMDLINEOPT_X, false},
-		{L"Y",		1,			CMDLINEOPT_Y, false},
-		{L"VX",		2,			CMDLINEOPT_VX, false},
-		{L"VY",		2,			CMDLINEOPT_VY, false},
-		{L"SX",		2,			CMDLINEOPT_SX, false},
-		{L"SY",		2,			CMDLINEOPT_SY, false},
-		{L"WX",		2,			CMDLINEOPT_WX, false},
-		{L"WY",		2,			CMDLINEOPT_WY, false},
-		{L"CODE",	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
-		{L"TYPE",	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
-		{L"GKEY",	4,			CMDLINEOPT_GKEY, false},
-		{L"GREPR",	5,			CMDLINEOPT_GREPR, true},
-		{L"GFILE",	5,			CMDLINEOPT_GFILE, false},
-		{L"GFOLDER",	7,			CMDLINEOPT_GFOLDER, false},
-		{L"GOPT",	4,			CMDLINEOPT_GOPT, false},
-		{L"GCODE",	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
-		{L"GROUP",	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
-		{L"M",		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
-		{L"MTYPE",	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
-		{L"PROF",	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
+		{LTEXT("@"),		1,			CMDLINEOPT_AT, false},
+		{LTEXT("X"),		1,			CMDLINEOPT_X, false},
+		{LTEXT("Y"),		1,			CMDLINEOPT_Y, false},
+		{LTEXT("VX"),		2,			CMDLINEOPT_VX, false},
+		{LTEXT("VY"),		2,			CMDLINEOPT_VY, false},
+		{LTEXT("SX"),		2,			CMDLINEOPT_SX, false},
+		{LTEXT("SY"),		2,			CMDLINEOPT_SY, false},
+		{LTEXT("WX"),		2,			CMDLINEOPT_WX, false},
+		{LTEXT("WY"),		2,			CMDLINEOPT_WY, false},
+		{LTEXT("CODE"),	4,			CMDLINEOPT_CODE, false},	// 2002/09/20 Moca _COptWoAから移動
+		{LTEXT("TYPE"),	4,			CMDLINEOPT_TYPE, false},	//!< タイプ別設定 Mar. 7, 2002 genta
+		{LTEXT("GKEY"),	4,			CMDLINEOPT_GKEY, false},
+		{LTEXT("GREPR"),	5,			CMDLINEOPT_GREPR, true},
+		{LTEXT("GFILE"),	5,			CMDLINEOPT_GFILE, false},
+		{LTEXT("GFOLDER"),	7,			CMDLINEOPT_GFOLDER, false},
+		{LTEXT("GOPT"),	4,			CMDLINEOPT_GOPT, false},
+		{LTEXT("GCODE"),	5,			CMDLINEOPT_GCODE, false},	// 2002/09/21 Moca 追加
+		{LTEXT("GROUP"),	5,			CMDLINEOPT_GROUP, false},	// 2007.06.26 ryoji
+		{LTEXT("M"),		1,			CMDLINEOPT_M, false},		// 2009.06.14 syat
+		{LTEXT("MTYPE"),	5,			CMDLINEOPT_MTYPE, false},	// 2009.06.14 syat
+		{LTEXT("PROF"),	4,			CMDLINEOPT_PROF, true},	// 2013.12.20 Moca
 		{nullptr, 0, 0}
 	};
 
@@ -265,8 +265,8 @@ CCommandLine::CCommandLine() noexcept
 void CCommandLine::ParseKanjiCodeFromFileName(LPWSTR pszExeFileName, int cchExeFileName)
 {
 	for (int i = cchExeFileName - 1; 0 <= i; i--) {
-		if (pszExeFileName[i] == L'.') {
-			pszExeFileName[i] = L'\0';
+		if (pszExeFileName[i] == LCHAR('.')) {
+			pszExeFileName[i] = LCHAR('\0');
 			int k = i - 1;
 			for (; 0 < k && WCODE::Is09(pszExeFileName[k]); k--) {}
 			if (k < 0 || !WCODE::Is09(pszExeFileName[k])) {
@@ -300,7 +300,7 @@ void CCommandLine::ParseKanjiCodeFromFileName(LPWSTR pszExeFileName, int cchExeF
 */
 void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CCommandLine::Parse" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CCommandLine::Parse") );
 
 	SFilePath szPath;
 
@@ -313,16 +313,16 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	bool	bParseOptDisabled = false;	// 2007.09.09 genta オプション解析を行わなず，ファイル名として扱う
 	int		nPos;
 	int		i = 0;
-	if( pszCmdLineSrc[0] != L'-' ){
+	if( pszCmdLineSrc[0] != LCHAR('-') ){
 		for( i = 0; i < int(std::size(szPath)); ++i ){
-			if( pszCmdLineSrc[i] == L' ' || pszCmdLineSrc[i] == L'\0' ){
+			if( pszCmdLineSrc[i] == LCHAR(' ') || pszCmdLineSrc[i] == LCHAR('\0') ){
 				/* ファイルの存在をチェック */
-				szPath[i] = L'\0';	// 終端文字
+				szPath[i] = LCHAR('\0');	// 終端文字
 				if( fexist(szPath) ){
 					bFind = true;
 					break;
 				}
-				if( pszCmdLineSrc[i] == L'\0' ){
+				if( pszCmdLineSrc[i] == LCHAR('\0') ){
 					break;
 				}
 			}
@@ -334,24 +334,24 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		m_fi.m_szPath = szPath;
 		nPos = i + 1;
 	}else{
-		m_fi.m_szPath[0] = L'\0';
+		m_fi.m_szPath[0] = LCHAR('\0');
 		nPos = 0;
 	}
 
-	CNativeW cmResponseFile = L"";
-	std::wstring cmdlineWork{ pszCmdLineSrc };
+	CNativeW cmResponseFile = LTEXT("");
+	sakura::wstring cmdlineWork{ pszCmdLineSrc };
 	auto pszCmdLineWork = std::data(cmdlineWork);
 	const auto nCmdLineWorkLen = int(std::size(cmdlineWork));
-	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
+	LPWSTR pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, LTEXT(" ") );
 	while( pszToken != nullptr )
 	{
-		DEBUG_TRACE( L"OPT=[%s]\n", pszToken );
+		DEBUG_TRACE( LTEXT("OPT=[%s]\n"), pszToken );
 
 		//	2007.09.09 genta オプション判定ルール変更．オプション解析停止と""で囲まれたオプションを考慮
 		if( ( bParseOptDisabled ||
 			! (pszToken[0] == '-' || (pszToken[0] == '"' && pszToken[1] == '-')) )){
 
-			if( pszToken[0] == L'\"' ){
+			if( pszToken[0] == LCHAR('\"') ){
 				CNativeW cmWork;
 				//	Nov. 3, 2005 genta
 				//	末尾のクォーテーションが無い場合を考慮して，
@@ -364,29 +364,29 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				//	ファイル名の後ろにあるOptionを解析するため，ループは継続
 				int len = lstrlen( pszToken + 1 );
 				if( len > 0 ){
-					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == L'"' ? 1 : 0 ));
-					cmWork.Replace( L"\"\"", L"\"" );
+					cmWork.SetString( &pszToken[1], len - ( pszToken[len] == LCHAR('"') ? 1 : 0 ));
+					cmWork.Replace( LTEXT("\"\""), LTEXT("\"") );
 					if( STRUNCATE == ::wcsncpy_s( szPath, cmWork.GetStringPtr(), _TRUNCATE ) ){
-						std::wstring msg;
+						sakura::wstring msg;
 						// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 						strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), cmWork.GetStringPtr() );
 						const WCHAR* msg_str = msg.c_str();
-						MessageBox( nullptr, msg_str, L"FileNameError", MB_OK );
-						szPath[0] = L'\0';
+						MessageBox( nullptr, msg_str, LTEXT("FileNameError"), MB_OK );
+						szPath[0] = LCHAR('\0');
 					}
 				}
 				else {
-					szPath[0] = L'\0';
+					szPath[0] = LCHAR('\0');
 				}
 			}
 			else{
 				if( STRUNCATE == ::wcsncpy_s( szPath, pszToken, _TRUNCATE ) ){
-					std::wstring msg;
+					sakura::wstring msg;
 					// "%ls\nというファイルを開けません。\nファイルのパスが長すぎます。"
 					strprintf( msg, LS(STR_ERR_FILEPATH_TOO_LONG), pszToken );
 					const WCHAR* msg_str = msg.c_str();
-					MessageBox( nullptr, msg_str, L"FileNameError", MB_OK );
-					szPath[0] = L'\0';
+					MessageBox( nullptr, msg_str, LTEXT("FileNameError"), MB_OK );
+					szPath[0] = LCHAR('\0');
 				}
 			}
 
@@ -394,27 +394,27 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			// 不正なファイル名のままだとファイル保存時ダイアログが出なくなるので
 			// 簡単なファイルチェックを行うように修正
 			if (const auto path = szPath.str();
-				path.starts_with(L"file:///"))
+				path.starts_with(LTEXT("file:///")))
 			{
 				szPath = path.substr(8);	// 8文字スキップ（先頭を捨てる）
 			}
 
 			if ( IsInvalidFilenameChars( szPath ) ){
-				std::wstring msg;
+				sakura::wstring msg;
 				// "%ls\r\n上記のファイル名は不正です。ファイル名に \\ / : * ? "" < > | の文字は使えません。 "
 				strprintf( msg, LS(STR_CMDLINE_PARSECMD1), szPath );
 				const WCHAR* msg_str = msg.c_str();
-				MessageBox( nullptr, msg_str, L"FileNameError", MB_OK);
-				szPath[0] = L'\0';
+				MessageBox( nullptr, msg_str, LTEXT("FileNameError"), MB_OK);
+				szPath[0] = LCHAR('\0');
 			}
 
 			// szPathに値が入っている場合
-			if (szPath[0] != L'\0') {
+			if (szPath[0] != LCHAR('\0')) {
 				// パス解決してロングファイル名にする
 				CSakuraEnvironment::ResolvePath(szPath);
 
 				// m_fi.m_szPathに値が入っていない場合
-				if (m_fi.m_szPath[0] == L'\0') {
+				if (m_fi.m_szPath[0] == LCHAR('\0')) {
 					m_fi.m_szPath = szPath;
 				}
 				// m_fi.m_szPathに値が入っている場合
@@ -481,8 +481,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GREPMODE:	//	GREPMODE
 				m_bGrepMode = true;
 				// 未設定なら値を入れる
-				if( L'\0' == m_fi.m_szDocType[0] ){
-					SetDocType(L"grepout");
+				if( LCHAR('\0') == m_fi.m_szDocType[0] ){
+					SetDocType(LTEXT("grepout"));
 				}
 				break;
 			case CMDLINEOPT_GREPDLG:	//	GREPDLG
@@ -491,22 +491,22 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 			case CMDLINEOPT_GKEY:	//	GKEY
 				//	前後の""を取り除く
 				m_gi.cmGrepKey.SetString( arg, nArgLen );
-				m_gi.cmGrepKey.Replace( L"\"\"", L"\"" );
+				m_gi.cmGrepKey.Replace( LTEXT("\"\""), LTEXT("\"") );
 				break;
 			case CMDLINEOPT_GREPR:	//	GREPR
 				//	前後の""を取り除く
 				m_gi.cmGrepRep.SetString( arg, nArgLen );
-				m_gi.cmGrepRep.Replace( L"\"\"", L"\"" );
+				m_gi.cmGrepRep.Replace( LTEXT("\"\""), LTEXT("\"") );
 				m_gi.bGrepReplace = true;
 				break;
 			case CMDLINEOPT_GFILE:	//	GFILE
 				//	前後の""を取り除く
 				m_gi.cmGrepFile.SetString( arg, nArgLen );
-				m_gi.cmGrepFile.Replace( L"\"\"", L"\"" );
+				m_gi.cmGrepFile.Replace( LTEXT("\"\""), LTEXT("\"") );
 				break;
 			case CMDLINEOPT_GFOLDER:	//	GFOLDER
 				m_gi.cmGrepFolder.SetString( arg, nArgLen );
-				m_gi.cmGrepFolder.Replace( L"\"\"", L"\"" );
+				m_gi.cmGrepFolder.Replace( LTEXT("\"\""), LTEXT("\"") );
 				break;
 			case CMDLINEOPT_GOPT:	//	GOPT
 				for( ; *arg != '\0' ; ++arg ){
@@ -576,8 +576,8 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				m_bDebugMode = true;
 				// 2010.06.16 Moca -TYPE=output 扱いとする
 				// 未設定なら値を入れる
-				if( L'\0' == m_fi.m_szDocType[0] ){
-					SetDocType(L"output");
+				if( LCHAR('\0') == m_fi.m_szDocType[0] ){
+					SetDocType(LTEXT("output"));
 				}
 				break;
 			case CMDLINEOPT_NOMOREOPT:	// 2007.09.09 genta これ以降引数無効
@@ -585,7 +585,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			case CMDLINEOPT_M:			// 2009.06.14 syat 追加
 				m_cmMacro.SetString( arg, nArgLen );
-				m_cmMacro.Replace( L"\"\"", L"\"" );
+				m_cmMacro.Replace( LTEXT("\"\""), LTEXT("\"") );
 				break;
 			case CMDLINEOPT_MTYPE:		// 2009.06.14 syat 追加
 				m_cmMacroType.SetString( arg, nArgLen );
@@ -600,7 +600,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 				break;
 			}
 		}
-		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, L" " );
+		pszToken = my_strtok<WCHAR>( pszCmdLineWork, nCmdLineWorkLen, &nPos, LTEXT(" ") );
 	}
 
 	// レスポンスファイル解析
@@ -609,7 +609,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 		if( !input.Good() ){
 			return;
 		}
-		std::wstring responseData;
+		sakura::wstring responseData;
 		while(input){
 			responseData += input.ReadLineW();
 		}
@@ -619,7 +619,7 @@ void CCommandLine::ParseCommandLine( LPCWSTR pszCmdLineSrc, bool bResponse )
 	return;
 }
 
-void CCommandLine::SetDocType(std::wstring_view newDocType)
+void CCommandLine::SetDocType(sakura::wstring_view newDocType)
 {
 	static_assert(
 		MAX_DOCTYPE_LEN < decltype(m_fi.m_szDocType)::size(),
@@ -634,7 +634,7 @@ void CCommandLine::SetDocType(std::wstring_view newDocType)
 }
 
 void CCommandLine::SetProfileName(
-	std::wstring_view newProfileName
+	sakura::wstring_view newProfileName
 )
 {
 	// 入力元をNUL終端文字列とみなす

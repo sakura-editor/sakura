@@ -115,7 +115,7 @@ public:
 	BOOL Command_INSFILE(LPCWSTR filename, ECodeType nCharCode, int nFlgOpt);	/* キャレット位置にファイル挿入 maru 2006.12.10 */
 
 	/* 編集系 */
-	void Command_WCHAR(wchar_t wcChar, bool bConvertEOL = true );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
+	void Command_WCHAR(WCHAR wcChar, bool bConvertEOL = true );			/* 文字入力 */ //2007.09.02 kobake Command_CHAR(char)→Command_WCHAR(wchar_t)に変更
 	void Command_IME_CHAR(WORD wChar);			/* 全角文字入力 */
 	void Command_UNDO( void );				/* 元に戻す(Undo) */
 	void Command_REDO( void );				/* やり直し(Redo) */
@@ -132,12 +132,12 @@ public:
 	void Command_CUT_LINE( void );			/* 行切り取り(折り返し単位) */
 	void Command_DELETE_LINE( void );		/* 行削除(折り返し単位) */
 	void Command_DUPLICATELINE( void );		/* 行の二重化(折り返し単位) */
-	void Command_INDENT( wchar_t cChar, EIndentType = INDENT_NONE ); /* インデント ver 1 */
+	void Command_INDENT( WCHAR cChar, EIndentType = INDENT_NONE ); /* インデント ver 1 */
 // From Here 2001.12.03 hor
 //	void Command_INDENT( const char*, int );/* インデント ver0 */
-	void Command_INDENT(const wchar_t* pData, CLogicInt nDataLen, EIndentType = INDENT_NONE );/* インデント ver0 */
+	void Command_INDENT(const WCHAR* pData, CLogicInt nDataLen, EIndentType = INDENT_NONE );/* インデント ver0 */
 // To Here 2001.12.03 hor
-	void Command_UNINDENT( wchar_t wcChar );	/* 逆インデント */
+	void Command_UNINDENT( WCHAR wcChar );	/* 逆インデント */
 //	void Command_WORDSREFERENCE( void );	/* 単語リファレンス */
 	void Command_TRIM(BOOL bLeft);				// 2001.12.03 hor
 	void Command_SORT(BOOL bAsc);				// 2001.12.06 hor
@@ -207,12 +207,12 @@ public:
 	void Command_PASTEBOX( LPARAM option );					/* 矩形貼り付け（クリップボードから矩形貼り付け）*/
 	//<< 2002/03/29 Azumaiya
 	/* 矩形貼り付け（引数渡しでの張り付け）*/
-	void Command_PASTEBOX( const wchar_t *szPaste, size_t nPasteSize );
+	void Command_PASTEBOX( const WCHAR *szPaste, size_t nPasteSize );
 	//>> 2002/03/29 Azumaiya
-	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
-	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
+	void Command_INSBOXTEXT(const WCHAR *pszPaste, int nPasteSize); // 矩形貼り付け
+	void Command_INSTEXT( bool bRedraw, const WCHAR* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
 		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = nullptr ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
-	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
+	void Command_ADDTAIL( const WCHAR* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
 	void Command_COPYDIRPATH( void );				/* このファイルのフォルダー名をクリップボードにコピー */
@@ -287,7 +287,7 @@ public:
 	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
 
 	bool Command_TagsMake( void );						//タグファイルの作成	//@@@ 2003.04.13 MIK
-	bool Command_TagJumpByTagsFileKeyword( const wchar_t* keyword );	//	@@ 2005.03.31 MIK
+	bool Command_TagJumpByTagsFileKeyword( const WCHAR* keyword );	//	@@ 2005.03.31 MIK
 	void Command_COMPARE( void );						/* ファイル内容比較 */
 	void Command_Diff_Dialog( void );					/* DIFF差分表示ダイアログ */	//@@@ 2002.05.25 MIK
 	void Command_Diff( const WCHAR* szTmpFile2, int nFlgOpt );	/* DIFF差分表示 */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
@@ -325,7 +325,7 @@ public:
 	void Command_SETFONTSIZE(int fontSize, int shift, int mode);	/* フォントサイズ設定 */
 	void Command_WRAPWINDOWWIDTH( void );	/* 現在のウィンドウ幅で折り返し */	//Oct. 7, 2000 JEPRO WRAPWINDIWWIDTH を WRAPWINDOWWIDTH に変更
 	void Command_Favorite( void );			//履歴の管理	//@@@ 2003.04.08 MIK
-	void Command_SET_QUOTESTRING(const wchar_t* quotestr);	//	Jan. 29, 2005 genta 引用符の設定
+	void Command_SET_QUOTESTRING(const WCHAR* quotestr);	//	Jan. 29, 2005 genta 引用符の設定
 	void Command_TEXTWRAPMETHOD(int nWrapMethod);				/* テキストの折り返し方法を変更する */		// 2008.05.30 nasukoji
 	void Command_SELECT_COUNT_MODE( int nMode );	/* 文字カウント方法 */	//2009.07.06 syat
 
@@ -363,7 +363,7 @@ public:
 	void Command_MINIMIZE_ALL( void );	/* すべて最小化 */
 	void Command_REDRAW( void );		/* 再描画 */
 	void Command_WIN_OUTPUT( void );	//アウトプットウィンドウ表示
-	void Command_TRACEOUT(const wchar_t* outputstr, int nLen, int nFlgOpt);	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
+	void Command_TRACEOUT(const WCHAR* outputstr, int nLen, int nFlgOpt);	//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
 	void Command_WINTOPMOST(LPARAM lparam);		// 常に手前に表示 2004.09.21 Moca
 	void Command_WINLIST( int nCommandFrom );		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 	void Command_DLGWINLIST( void );	// ウィンドウ一覧ダイアログ // 2015.03.07 Moca
@@ -422,10 +422,10 @@ private:
 		}
 	}
 
-	void DelCharForOverwrite(const wchar_t* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
+	void DelCharForOverwrite(const WCHAR* pszInput, int nLen);	// 上書き用の一文字削除	// 2009.04.11 ryoji
 	bool Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int count ); // タグジャンプの前処理
 public:
-	ptrdiff_t ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText);
+	ptrdiff_t ConvertEol(const WCHAR* pszText, ptrdiff_t nTextLen, WCHAR* pszConvertedText);
 	void Sub_BoxSelectLock(LPARAM flags) noexcept;
 };
 

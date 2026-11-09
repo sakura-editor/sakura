@@ -101,15 +101,15 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	m_bPaste = false;
 	m_bBackup = m_pShareData->m_Common.m_sSearch.m_bGrepBackup;
 
-	if( m_szFile[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
+	if( m_szFile[0] == LCHAR('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFiles.size() ){
 		wcscpy( m_szFile, m_pShareData->m_sSearchKeywords.m_aGrepFiles[0] );		/* 検索ファイル */
 	}
-	if( m_szFolder[0] == L'\0' && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
+	if( m_szFolder[0] == LCHAR('\0') && m_pShareData->m_sSearchKeywords.m_aGrepFolders.size() ){
 		wcscpy( m_szFolder, m_pShareData->m_sSearchKeywords.m_aGrepFolders[0] );	/* 検索フォルダー */
 	}
 	
 	/* 除外ファイル */
-	if (m_szExcludeFile[0] == L'\0') {
+	if (m_szExcludeFile[0] == LCHAR('\0')) {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFiles.size()) {
 			wcscpy(m_szExcludeFile, m_pShareData->m_sSearchKeywords.m_aExcludeFiles[0]);
 		}
@@ -123,7 +123,7 @@ int CDlgGrepReplace::DoModal( HINSTANCE hInstance, HWND hwndParent, const WCHAR*
 	}
 
 	/* 除外フォルダー */
-	if (m_szExcludeFolder[0] == L'\0') {
+	if (m_szExcludeFolder[0] == LCHAR('\0')) {
 		if (m_pShareData->m_sSearchKeywords.m_aExcludeFolders.size()) {
 			wcscpy(m_szExcludeFolder, m_pShareData->m_sSearchKeywords.m_aExcludeFolders[0]);
 		}

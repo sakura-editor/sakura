@@ -31,7 +31,7 @@
 */
 class CGrepExceptFileRegexps {
 	std::vector<std::unique_ptr<CBregexp>> m_regexps;	//!< パターンごとのコンパイル済み正規表現
-	std::wstring m_strErrorMessage;						//!< 失敗したときのメッセージ
+	sakura::wstring m_strErrorMessage;						//!< 失敗したときのメッセージ
 
 public:
 	/*!
@@ -53,13 +53,13 @@ public:
 			}
 			// Windows のパスなので、既存の除外ワイルドカードと同じく大文字小文字を区別しない
 			if( !pRegexp->Compile( strPattern.c_str(), CBregexp::optNothing ) ){
-				m_strErrorMessage = std::format( L"{}\n{}\n{}", LS( STR_GREP_ERR_EXCLUDE_REGEXP ), strPattern, pRegexp->GetLastMessage() );
+				m_strErrorMessage = std::format( LTEXT("{}\n{}\n{}"), LS( STR_GREP_ERR_EXCLUDE_REGEXP ), strPattern, pRegexp->GetLastMessage() );
 				return false;
 			}
 			m_regexps.push_back( std::move( pRegexp ) );
 		}
 		if( !m_regexps.empty() ){
-			cGrepEnumKeys.m_fnIsExceptFilePath = [this]( std::wstring_view filePath ){ return IsMatch( filePath ); };
+			cGrepEnumKeys.m_fnIsExceptFilePath = [this]( sakura::wstring_view filePath ){ return IsMatch( filePath ); };
 		}
 		return true;
 	}
@@ -68,7 +68,7 @@ public:
 		@brief ファイルのフルパスがいずれかの正規表現に一致するか調べる
 		@param[in]	filePath	ファイルのフルパス
 	*/
-	bool IsMatch( std::wstring_view filePath )
+	bool IsMatch( sakura::wstring_view filePath )
 	{
 		return std::ranges::any_of( m_regexps, [filePath]( const auto& pRegexp ){
 			return pRegexp->Match( filePath.data(), int( filePath.length() ) );
@@ -76,7 +76,7 @@ public:
 	}
 
 	//! 失敗したときのメッセージ
-	const std::wstring& GetErrorMessage() const noexcept { return m_strErrorMessage; }
+	const sakura::wstring& GetErrorMessage() const noexcept { return m_strErrorMessage; }
 };
 
 #endif /* SAKURA_CGREPEXCEPTFILEREGEXPS_H_ */

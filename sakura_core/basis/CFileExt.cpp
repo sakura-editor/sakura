@@ -19,7 +19,7 @@
 
 bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	std::wstring workExt = CDocTypeManager::ConvertTypesExtToDlgExt(pszExt, nullptr);
+	sakura::wstring workExt = CDocTypeManager::ConvertTypesExtToDlgExt(pszExt, nullptr);
 	if (workExt.empty()) {
 		return false;
 	}
@@ -28,8 +28,8 @@ bool CFileExt::AppendExt( const WCHAR *pszName, const WCHAR *pszExt )
 
 bool CFileExt::AppendExtRaw( const WCHAR *pszName, const WCHAR *pszExt )
 {
-	if( nullptr == pszName || pszName[0] == L'\0' ) return false;
-	if( nullptr == pszExt  || pszExt[0] == L'\0' ) return false;
+	if( nullptr == pszName || pszName[0] == LCHAR('\0') ) return false;
+	if( nullptr == pszExt  || pszExt[0] == LCHAR('\0') ) return false;
 
 	SFileExtInfo info;
 	info.m_sTypeName = pszName;
@@ -62,7 +62,7 @@ const WCHAR *CFileExt::GetExtFilter( void )
 
 void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 {
-	std::wstring work;
+	sakura::wstring work;
 
 	/* 拡張子フィルタの作成 */
 	output.resize(0);
@@ -71,19 +71,19 @@ void CFileExt::CreateExtFilter(std::vector<WCHAR>& output) const
 	{
 		// "%s (%s)\0%s\0"
 		work = m_vFileExtInfo[i].m_sTypeName;
-		work.append(L" (");
+		work.append(LTEXT(" ("));
 		work.append(m_vFileExtInfo[i].m_sExt);
-		work.append(L")");
-		work.append(L"\0", 1);
+		work.append(LTEXT(")"));
+		work.append(LTEXT("\0"), 1);
 		work.append(m_vFileExtInfo[i].m_sExt);
-		work.append(L"\0", 1);
+		work.append(LTEXT("\0"), 1);
 
 		size_t pos = output.size();
 		output.resize(pos + work.length());
 		wmemcpy(&output[pos], &work[0], work.length());
 	}
 	if( 0 == GetCount() ){
-		output.push_back( L'\0' );
+		output.push_back( LCHAR('\0') );
 	}
-	output.push_back( L'\0' );
+	output.push_back( LCHAR('\0') );
 }

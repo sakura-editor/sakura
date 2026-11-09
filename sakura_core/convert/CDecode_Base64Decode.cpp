@@ -25,12 +25,12 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 	const int BUFFER_SIZE = 1024;  // バッファサイズ。１以上の整数かつ４の倍数で。
 	const int _BUFSIZE = ((BUFFER_SIZE+3)/4)*4;
 
-	const wchar_t *pSrc;
+	const WCHAR *pSrc;
 	int nSrcLen;
 	char *pw, *pw_base;
-	wchar_t buffer[_BUFSIZE];
+	WCHAR buffer[_BUFSIZE];
 	int i, j;
-	wchar_t c = 0;
+	WCHAR c = 0;
 
 	pSrc = pcSrc.GetStringPtr();
 	nSrcLen = pcSrc.GetStringLength();
@@ -46,7 +46,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 			if( IsLineDelimiterBasic(c) || c == TAB || c == SPACE ){
 				continue;
 			}
-			if( j == _BUFSIZE || c == L'=' ){
+			if( j == _BUFSIZE || c == LCHAR('=') ){
 				break;
 			}
 			if( !IsBase64(c) ){
@@ -56,7 +56,7 @@ bool CDecode_Base64Decode::DoDecode( const CNativeW& pcSrc, CMemory* pcDst )
 			++j;
 		}
 		pw += _DecodeBase64( &buffer[0], j, pw );
-	}while( i < nSrcLen && c != L'=' );
+	}while( i < nSrcLen && c != LCHAR('=') );
 
 	//if( CheckBase64Padbit(&buffer[0], j) == false ){
 	//	return false;

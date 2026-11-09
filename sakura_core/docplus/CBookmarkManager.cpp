@@ -74,14 +74,14 @@ bool CBookmarkManager::SearchBookMark(
 	@date 2002.01.16 hor
 	@date 2014.04.24 Moca ver2 差分32進数方式に変更
 */
-void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
+void CBookmarkManager::SetBookMarks( WCHAR* pMarkLines )
 {
 	CDocLine*	pCDocLine;
-	wchar_t *p;
-	wchar_t delim[] = L", ";
+	WCHAR *p;
+	WCHAR delim[] = LTEXT(", ");
 	p = pMarkLines;
-	if( p[0] == L':' ){
-		if( p[1] == L'0' ){
+	if( p[0] == LCHAR(':') ){
+		if( p[1] == LCHAR('0') ){
 			// ver2 形式 [0-9a-v] 0-31(終端バージョン) [w-zA-Z\+\-] 0-31
 			// 2番目以降は、数値+1+ひとつ前の値
 			// :00123x0 => 0,1,2,3,x0 => 0,(1+1),(2+2+1),(3+5+1),(32+9+1) => 0,2,5,9,42 => 1,3,6,10,43行目
@@ -89,21 +89,21 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 			p += 2;
 			int nLineNum = 0;
 			int nLineTemp = 0;
-			while( *p != L'\0' ){
+			while( *p != LCHAR('\0') ){
 				bool bSeparete = false;
-				if( L'0' <= *p && *p <= L'9' ){
-					nLineTemp += (*p - L'0');
+				if( LCHAR('0') <= *p && *p <= LCHAR('9') ){
+					nLineTemp += (*p - LCHAR('0'));
 					bSeparete = true;
-				}else if( L'a' <= *p && *p <= L'v' ){
-					nLineTemp += (*p - L'a') + 10;
+				}else if( LCHAR('a') <= *p && *p <= LCHAR('v') ){
+					nLineTemp += (*p - LCHAR('a')) + 10;
 					bSeparete = true;
-				}else if( L'w' <= *p && *p <= L'z' ){
-					nLineTemp += (*p - L'w');
-				}else if( L'A' <= *p && *p <= L'Z' ){
-					nLineTemp += (*p - L'A') + 4;
-				}else if( *p == L'+' ){
+				}else if( LCHAR('w') <= *p && *p <= LCHAR('z') ){
+					nLineTemp += (*p - LCHAR('w'));
+				}else if( LCHAR('A') <= *p && *p <= LCHAR('Z') ){
+					nLineTemp += (*p - LCHAR('A')) + 4;
+				}else if( *p == LCHAR('+') ){
 					nLineTemp += 30;
-				}else if( *p == L'-' ){
+				}else if( *p == LCHAR('-') ){
 					nLineTemp += 31;
 				}else{
 					break;
@@ -126,7 +126,7 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 		}
 	}else{
 		// 旧形式 行番号,区切り
-		wchar_t *context{ nullptr };
+		WCHAR *context{ nullptr };
 		while(wcstok_s(p, delim, &context) != nullptr) {
 			while(wcschr(delim, *p) != nullptr)p++;
 			pCDocLine=m_pcDocLineMgr->GetLine( CLogicInt(_wtol(p)) );
@@ -144,41 +144,41 @@ void CBookmarkManager::SetBookMarks( wchar_t* pMarkLines )
 LPCWSTR CBookmarkManager::GetBookMarks()
 {
 	const CDocLine*	pCDocLine;
-	static wchar_t szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticに
-	wchar_t szBuff[10];
-	wchar_t szBuff2[10];
+	static WCHAR szText[MAX_MARKLINES_LEN + 1];	//2002.01.17 // Feb. 17, 2003 genta staticに
+	WCHAR szBuff[10];
+	WCHAR szBuff2[10];
 	CLogicInt	nLinePos=CLogicInt(0);
 	CLogicInt	nLinePosOld=CLogicInt(-1);
 	int			nTextLen = 2;
 	pCDocLine = m_pcDocLineMgr->GetLine( nLinePos );
-	wcscpy( szText, L":0" );
+	wcscpy( szText, LTEXT(":0") );
 	while( pCDocLine ){
 		if(CBookmarkGetter(pCDocLine).IsBookmarked()){
 			CLogicInt nDiff = nLinePos - nLinePosOld - CLogicInt(1);
 			nLinePosOld = nLinePos;
 			if( nDiff == CLogicInt(0) ){
-				szBuff2[0] = L'0';
-				szBuff2[1] = L'\0';
+				szBuff2[0] = LCHAR('0');
+				szBuff2[1] = LCHAR('\0');
 			}else{
 				int nColumn = 0;
 				while( nDiff ){
 					CLogicInt nKeta = nDiff % 32;
-					wchar_t c;
+					WCHAR c;
 					if( nColumn == 0 ){
 						if( nKeta <= 9 ){
-							c = (wchar_t)((Int)nKeta + L'0');
+							c = (WCHAR)((Int)nKeta + LCHAR('0'));
 						}else{
-							c = (wchar_t)((Int)nKeta - 10 + L'a');
+							c = (WCHAR)((Int)nKeta - 10 + LCHAR('a'));
 						}
 					}else{
 						if( nKeta <= 3 ){
-							c = (wchar_t)((Int)nKeta + L'w');
+							c = (WCHAR)((Int)nKeta + LCHAR('w'));
 						}else if( nKeta <= 29 ){
-							c = (wchar_t)((Int)nKeta - 4 + L'A');
+							c = (WCHAR)((Int)nKeta - 4 + LCHAR('A'));
 						}else if( nKeta == 30 ){
-							c = L'+';
+							c = LCHAR('+');
 						}else{ // 31
-							c = L'-';
+							c = LCHAR('-');
 						}
 					}
 					szBuff[nColumn] = c;
@@ -189,7 +189,7 @@ LPCWSTR CBookmarkManager::GetBookMarks()
 				for(; i < nColumn; i++ ){
 					szBuff2[i] = szBuff[nColumn-1-i];
 				}
-				szBuff2[nColumn] = L'\0';
+				szBuff2[nColumn] = LCHAR('\0');
 			}
 			auto nBuff2Len = int(wcslen(szBuff2));
 			if( nBuff2Len + nTextLen > MAX_MARKLINES_LEN ) break;	//2002.01.17
@@ -216,7 +216,7 @@ void CBookmarkManager::MarkSearchWord(
 			continue;
 		}
 		int nLineLen = 0;
-		const wchar_t* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
+		const WCHAR* pLine = pDocLine->GetDocLineStrWithEOL( &nLineLen );
 		// 2005.03.19 かろと 前方一致サポートのためのメソッド変更(正規表現は行頭から照合する)
 		if( finder.Find( pLine, nLineLen, 0 ) ){
 			CBookmarkSetter(pDocLine).SetBookmark(true);

@@ -12,7 +12,7 @@
 #include "sakura_rc.h"
 
 CAutoScrollWnd::CAutoScrollWnd()
-: CWnd(L"::CAutoScrollWnd")
+: CWnd(LTEXT("::CAutoScrollWnd"))
 {
 	m_hCenterImg = nullptr;
 	return;
@@ -32,16 +32,16 @@ HWND CAutoScrollWnd::Create( HINSTANCE hInstance, HWND hwndParent, bool bVertica
 		if( bHorizontal ){
 			idb = IDB_SCROLL_CENTER;
 			idc = IDC_CURSOR_AUTOSCROLL_CENTER;
-			pszClassName = L"SakuraAutoScrollCWnd";
+			pszClassName = LTEXT("SakuraAutoScrollCWnd");
 		}else{
 			idb = IDB_SCROLL_VERTICAL;
 			idc = IDC_CURSOR_AUTOSCROLL_VERTICAL;
-			pszClassName = L"SakuraAutoScrollVWnd";
+			pszClassName = LTEXT("SakuraAutoScrollVWnd");
 		}
 	}else{
 		idb = IDB_SCROLL_HORIZONTAL;
 		idc = IDC_CURSOR_AUTOSCROLL_HORIZONTAL;
-		pszClassName = L"SakuraAutoScrollHWnd";
+		pszClassName = LTEXT("SakuraAutoScrollHWnd");
 	}
 	m_hCenterImg = (HBITMAP)::LoadImage(hInstance, MAKEINTRESOURCE(idb), IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION);
 	HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(idc));

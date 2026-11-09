@@ -241,12 +241,12 @@ inline bool IsJisZen( const char* pC ){
 #undef CHARCODE__IS_JIS
 
 //! UTF16 上位サロゲートか
-inline bool IsUtf16SurrogHi( const wchar_t wc ){
+inline bool IsUtf16SurrogHi( const WCHAR wc ){
 //	return ( 0xd800 <= wc && wc <= 0xdbff );
 	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xd800 );
 }
 //! UTF16 下位サロゲート文字か
-inline bool IsUtf16SurrogLow( const wchar_t wc ){
+inline bool IsUtf16SurrogLow( const WCHAR wc ){
 //	return ( 0xdc00 <= wc && wc <= 0xdfff );
 	return ( (static_cast<unsigned short>(wc) & 0xfc00) == 0xdc00 );
 }
@@ -292,24 +292,24 @@ inline bool IsBase64( const CHAR_TYPE c ){
 	return (c_ < 0x80 && (int)TABLE_BASE64CharToValue[c_] < 64)? true : false;
 }
 
-inline bool IsBinaryOnSurrogate( const wchar_t wc ){
+inline bool IsBinaryOnSurrogate( const WCHAR wc ){
 	int wc_ = wc;
 	return ( 0xdc00 <= wc_ && wc_ <= 0xdcff );
 }
 
 //! 高位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
-inline bool IsUTF16High( wchar_t c ){
+inline bool IsUTF16High( WCHAR c ){
 	return IsUtf16SurrogHi(c);
 }
 //! 下位サロゲートエリアか？	from ssrc_2004-06-05wchar00703b	2008/5/15 Uchi
-inline bool IsUTF16Low( wchar_t c ){
+inline bool IsUTF16Low( WCHAR c ){
 	return IsUtf16SurrogLow(c);
 }
 
 /*!
  * 文字列がサロゲートペアで始まっているか判定する
  */
-inline bool IsSurrogatePair(std::wstring_view text) {
+inline bool IsSurrogatePair(sakura::wstring_view text) {
 	return 2 <= text.length() && IsUTF16High(text[0]) && IsUTF16Low(text[1]);
 }
 
@@ -320,7 +320,7 @@ inline bool IsSurrogatePair(std::wstring_view text) {
  */
 inline
 _Success_(return != 0)
-char32_t ConvertToUtf32(std::wstring_view text) {
+char32_t ConvertToUtf32(sakura::wstring_view text) {
 	if (text.empty()) {
 		return 0;
 	}
@@ -338,7 +338,7 @@ char32_t ConvertToUtf32(std::wstring_view text) {
 /*!
  * 文字列がIVSの異体字セレクタで始まっているか判定する
  */
-inline bool IsVariationSelector(std::wstring_view text) {
+inline bool IsVariationSelector(sakura::wstring_view text) {
 	return (2 <= text.size()) && (text[0] == 0xDB40) && (0xDD00 <= text[1]) && (text[1] <= 0xDDEF);
 }
 
@@ -361,7 +361,7 @@ inline int GuessSjisCharsz( const char uc ){
 	return 1;
 }
 //! UTF-16 の文字長を推測（組み合わせ文字列の考慮なし）
-inline int GuessUtf16Charsz( const wchar_t wc ){
+inline int GuessUtf16Charsz( const WCHAR wc ){
 	if( IsUtf16SurrogHi(wc) ){ return 2; }
 	return 1;
 }
@@ -422,9 +422,9 @@ inline int CheckJisUnknownPart( const char *pS, size_t nLen,
 #define UC_LOOSE 0x02
 
 /* --- Unicode 系コードチェック */
-int _CheckUtf16Char( const wchar_t* pS, size_t nLen, ECharSet*, const int nOption, const bool bBigEndian );
-inline int CheckUtf16leChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, false ); }
-inline int CheckUtf16beChar( const wchar_t* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, true ); }
+int _CheckUtf16Char( const WCHAR* pS, size_t nLen, ECharSet*, const int nOption, const bool bBigEndian );
+inline int CheckUtf16leChar( const WCHAR* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, false ); }
+inline int CheckUtf16beChar( const WCHAR* pS, size_t nLen, ECharSet* e, const int o ) { return _CheckUtf16Char( pS, nLen, e, o, true ); }
 
 int CheckUtf8Char( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );
 int CheckUtf8Char2( const char* pS, size_t nLen, ECharSet*, const bool bAllow4byteCode, const int nOption );

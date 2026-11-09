@@ -26,9 +26,9 @@
 */
 bool CConvert_Trim::DoConvert(CNativeW* pcData)
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	int			nLineLen;
-	wchar_t*	pDes;
+	WCHAR*	pDes;
 	int			nBgn;
 	int			i,j;
 	int			nPosDes;
@@ -47,7 +47,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 	if( 0 >= nPosDes ){
 		return true;
 	}
-	pDes = new wchar_t[nPosDes + 1];
+	pDes = new WCHAR[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
 	// LTRIM
@@ -92,7 +92,7 @@ bool CConvert_Trim::DoConvert(CNativeW* pcData)
 			nPosDes += cEol.GetLen();
 		}
 	}
-	pDes[nPosDes] = L'\0';
+	pDes[nPosDes] = LCHAR('\0');
 
 	pcData->SetString( pDes, nPosDes );
 	delete [] pDes;

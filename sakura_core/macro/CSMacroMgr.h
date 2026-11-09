@@ -184,7 +184,7 @@ private:
 	*/
 	int m_CurrentIdx;
 
-	std::wstring	m_sMacroPath;	// Loadしたマクロ名
+	sakura::wstring	m_sMacroPath;	// Loadしたマクロ名
 
 	static MacroFuncInfo	m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
 	static MacroFuncInfo	m_MacroFuncInfoArr[];		// 関数情報(戻り値あり)

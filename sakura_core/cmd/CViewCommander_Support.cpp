@@ -56,7 +56,7 @@ retry:;
 	// 2003.06.22 Moca ファイル内から検索する場合には補完ファイルの設定は必須ではない
 	if( m_pCommanderView->m_pTypeData->m_bUseHokanByFile == FALSE &&
 		m_pCommanderView->m_pTypeData->m_bUseHokanByKeyword == false &&
-		L'\0' == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
+		LCHAR('\0') == m_pCommanderView->m_pTypeData->m_szHokanFile[0]
 	){
 		ConfirmBeep();
 		if( IDYES == ::ConfirmMessage( GetMainWindow(),
@@ -110,7 +110,7 @@ void CViewCommander::Command_HELP_CONTENTS( void )
 /* ヘルプキーワード検索 */
 void CViewCommander::Command_HELP_SEARCH( void )
 {
-	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)L"" );	// 2006.10.10 ryoji MyWinHelpに変更に変更
+	MyWinHelp( m_pCommanderView->GetHwnd(), HELP_KEY, (ULONG_PTR)LTEXT("") );	// 2006.10.10 ryoji MyWinHelpに変更に変更
 	return;
 }
 
@@ -160,11 +160,11 @@ void CViewCommander::Command_MENU_ALLFUNC( void )
 				FuncLookup.Pos2FuncName( i, j, szLabel, 256 );
 				uFlags = MF_BYPOSITION | MF_STRING | MF_ENABLED;
 				//	Oct. 3, 2001 genta
-				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, L"" );
+				pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenuPopUp, uFlags, code, szLabel, LTEXT("") );
 			}
 		}
 		//	Oct. 3, 2001 genta
-		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , L"");
+		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT_PTR)hMenuPopUp , FuncLookup.Category2Name(i) , LTEXT(""));
 //		pCEditWnd->GetMenuDrawer().MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING | MF_POPUP, (UINT)hMenuPopUp , nsFuncCode::ppszFuncKind[i] );
 	}
 
@@ -233,7 +233,7 @@ retry:;
 	// 2012.09.26 Moca HTMLHELP対応
 	WCHAR	szExt[_MAX_EXT];
 	_wsplitpath_s( path, nullptr, 0, nullptr, 0, nullptr, 0, szExt, std::size(szExt) );
-	if( 0 == _wcsicmp(szExt, L".chi") || 0 == _wcsicmp(szExt, L".chm") || 0 == _wcsicmp(szExt, L".col") ){
+	if( 0 == _wcsicmp(szExt, LTEXT(".chi")) || 0 == _wcsicmp(szExt, LTEXT(".chm")) || 0 == _wcsicmp(szExt, LTEXT(".col")) ){
 		Command_EXTHTMLHELP( path, cmemCurText.GetStringPtr() );
 	}else{
 		::WinHelp( m_pCommanderView->m_hwndParent, path, HELP_KEY, (ULONG_PTR)cmemCurText.GetStringPtr() );
@@ -250,7 +250,7 @@ retry:;
 */
 void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* kwd )
 {
-	std::wstring helpfile;
+	sakura::wstring helpfile;
 	if( _helpfile != nullptr ){
 		helpfile = _helpfile;
 	}
@@ -258,7 +258,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	HWND		hwndHtmlHelp;
 	int			nLen;
 
-	DEBUG_TRACE( L"helpfile=%s\n", helpfile.c_str() );
+	DEBUG_TRACE( LTEXT("helpfile=%s\n"), helpfile.c_str() );
 
 	//	From Here Jul. 5, 2002 genta
 	const WCHAR *filename = nullptr;
@@ -288,7 +288,7 @@ void CViewCommander::Command_EXTHTMLHELP( const WCHAR* _helpfile, const WCHAR* k
 	//	Jul. 5, 2002 genta
 	//	キーワードの外部指定を可能に
 	CNativeW	cmemCurText;
-	if( kwd != nullptr && kwd[0] != L'\0' ){
+	if( kwd != nullptr && kwd[0] != LCHAR('\0') ){
 		cmemCurText.SetString( kwd );
 	}
 	else {

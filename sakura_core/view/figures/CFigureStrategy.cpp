@@ -27,7 +27,7 @@ FigureRenderType CFigure_Text::GetRenderType(SColorStrategyInfo* pInfo)
 			WCODE::GetFontNo(pInfo->m_pLineOfLogic[nIdx]));
 	FigureRenderType nType = 0;
 	if(nLength == 1){
-		const wchar_t code = pInfo->m_pLineOfLogic[nIdx];
+		const WCHAR code = pInfo->m_pLineOfLogic[nIdx];
 		// 未合成で一度に描画しても安全そうな文字一覧(その範囲の文字が合成用文字ではないもの)
 		// 合成は未サポート
 		if((0x20 <= code && code <= 0x7f) // ASCII
@@ -221,12 +221,12 @@ void CFigureSpace::DrawImp_DrawUnderline(SColorStrategyInfo* pInfo, DispPos& sPo
 
 		int nHeightMargin = pInfo->m_pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
 		CLayoutXInt nColLength = CLayoutXInt(pInfo->m_pDispPos->GetDrawCol() - sPos.GetDrawCol());
-		int nSpWidth = pcView->GetTextMetrics().CalcTextWidth3(L" ", 1);
+		int nSpWidth = pcView->GetTextMetrics().CalcTextWidth3(LTEXT(" "), 1);
 		int nLength = (Int)(nColLength + nSpWidth - 1) / nSpWidth;
-		wchar_t* pszText = new wchar_t[nLength];
+		WCHAR* pszText = new WCHAR[nLength];
 		std::vector<int> vDxArray(nLength);
 		for( int i = 0; i < nLength; i++ ){
-			pszText[i] = L' ';
+			pszText[i] = LCHAR(' ');
 			vDxArray[i] = nSpWidth;
 		}
 		RECT rcClip2;

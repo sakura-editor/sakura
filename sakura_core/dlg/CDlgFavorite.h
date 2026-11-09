@@ -91,7 +91,7 @@ private:
 
 	struct FavoriteInfo {
 		CRecent*	m_pRecent;			//オブジェクトへのポインタ
-		std::wstring	m_strCaption;	//キャプション
+		sakura::wstring	m_strCaption;	//キャプション
 		const WCHAR*	m_pszCaption;	//キャプション
 		int			m_nId;				//コントロールのID
 		bool		m_bHaveFavorite;	//お気に入りを持っているか？

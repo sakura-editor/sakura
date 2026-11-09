@@ -12,7 +12,7 @@
 
 class CLayoutColorHeredocInfo : public CLayoutColorInfo{
 public:
-	std::wstring m_id;
+	sakura::wstring m_id;
 	bool IsEqual(const CLayoutColorInfo* p) const override{
 		if( !p ){
 			return false;
@@ -54,27 +54,27 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 	// HEREDOC_ID
 	if( m_pTypeData->m_nHeredocType == HEREDOC_PHP
 	 && cStr.At(nPos) == '<' && nPos + 3 < cStr.GetLength()
-	 && wmemcmp(cStr.GetPtr() + nPos + 1, L"<<", 2) == 0
+	 && wmemcmp(cStr.GetPtr() + nPos + 1, LTEXT("<<"), 2) == 0
 	){
 		// <<<[ \t]*((['"][_A-Za-z0-9]+['"])|[_A-Za-z0-9]+)[\r\n]+
 		const int length = cStr.GetLength();
 		int nPosIdStart = nPos + 3;
 		for(; nPosIdStart < length; nPosIdStart++ ){
-			if(cStr[nPosIdStart] != L'\t' && cStr[nPosIdStart] != L' '){
+			if(cStr[nPosIdStart] != LCHAR('\t') && cStr[nPosIdStart] != LCHAR(' ')){
 				break;
 			}
 		}
-		wchar_t quote = L'\0';
+		WCHAR quote = LCHAR('\0');
 		if( !(nPosIdStart < length) ){
 			return false;
 		}
-		if (cStr[nPosIdStart] == L'\'' || cStr[nPosIdStart] == L'"') {
+		if (cStr[nPosIdStart] == LCHAR('\'') || cStr[nPosIdStart] == LCHAR('"')) {
 			quote = cStr[nPosIdStart];
 			nPosIdStart++;
 		}
 		int i = nPosIdStart;
 		for(; i < length; i++ ){
-			if( !(WCODE::IsAZ(cStr[i]) || WCODE::Is09(cStr[i]) || cStr[i] == L'_') ){
+			if( !(WCODE::IsAZ(cStr[i]) || WCODE::Is09(cStr[i]) || cStr[i] == LCHAR('_')) ){
 				break;
 			}
 		}
@@ -82,7 +82,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 			return false;
 		}
 		const int k = i;
-		if( quote != L'\0' ){
+		if( quote != LCHAR('\0') ){
 			if( i < length && cStr[i] == quote ){
 				i++;
 			}else{
@@ -90,7 +90,7 @@ bool CColor_Heredoc::BeginColor(const CStringRef& cStr, int nPos)
 			}
 		}
 		if( i < length && WCODE::IsLineDelimiter(cStr[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
-			m_id = std::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
+			m_id = sakura::wstring(cStr.GetPtr()+nPosIdStart, k - nPosIdStart);
 			m_pszId = m_id.c_str();
 			m_nSize = m_id.size();
 			this->m_nCOMMENTEND = length;
@@ -111,7 +111,7 @@ bool CColor_Heredoc::EndColor(const CStringRef& cStr, int nPos)
 				return false;
 			}else{
 				size_t i = m_nSize;
-				if( i + 1 < cStr.GetLength() && cStr[i] == L';' && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
+				if( i + 1 < cStr.GetLength() && cStr[i] == LCHAR(';') && WCODE::IsLineDelimiter(cStr[i+1], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 					// ID;
 					m_nCOMMENTEND = i;
 					return false;

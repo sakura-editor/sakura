@@ -20,19 +20,19 @@ void SetGrepResult(
 	/* マッチした行の情報 */
 	LONGLONG	nLine,
 	int			nColumn,
-	const wchar_t*	pCompareData,
+	const WCHAR*	pCompareData,
 	int			nLineLen,
 	int			nEolCodeLen,
 	/* マッチした文字列の情報 */
-	const wchar_t*	pMatchData,
+	const WCHAR*	pMatchData,
 	int			nMatchLen,
 	/* オプション */
 	const GrepInfo&	gi
 )
 {
-	CNativeW cmemBuf(L"");				// 見出し部分(ファイル名・行桁・文字コード名)
-	wchar_t strWork[64];				// 行桁の文字列化に使う作業領域
-	const wchar_t * pDispData;			// 本文として出力する文字列の先頭
+	CNativeW cmemBuf(LTEXT(""));				// 見出し部分(ファイル名・行桁・文字コード名)
+	WCHAR strWork[64];				// 行桁の文字列化に使う作業領域
+	const WCHAR * pDispData;			// 本文として出力する文字列の先頭
 	int k;								// 本文として出力する文字数
 	bool bEOL = true;					// 末尾に改行を足すか
 	int nMaxOutStr = 0;					// 本文の最大出力文字数(出力形式ごとに決まる)
@@ -40,17 +40,17 @@ void SetGrepResult(
 	/* ノーマル */
 	if( 1 == gi.nGrepOutputStyle ){
 		if( gi.bGrepOutputBaseFolder || gi.bGrepSeparateFolder ){
-			cmemBuf.AppendString( L"・" );
+			cmemBuf.AppendString( LTEXT("・") );
 		}
 		cmemBuf.AppendString( pszFilePath );
 		cmemBuf.AppendString( lineColumnToString(strWork, nLine, nColumn) );
 		cmemBuf.AppendString( pszCodeName );
-		cmemBuf.AppendString( L": " );
+		cmemBuf.AppendString( LTEXT(": ") );
 		nMaxOutStr = 2000; // 2003.06.10 Moca 最大長変更
 	}
 	/* WZ風 */
 	else if( 2 == gi.nGrepOutputStyle ){
-		::auto_sprintf( strWork, L"・(%6I64d,%-5d): ", nLine, nColumn );
+		::auto_sprintf( strWork, LTEXT("・(%6I64d,%-5d): "), nLine, nColumn );
 		cmemBuf.AppendString( strWork );
 		nMaxOutStr = 2500; // 2003.06.10 Moca 最大長変更
 	}
@@ -89,36 +89,36 @@ void SetGrepResult(
 	cmemMessage.AppendNativeData( cmemBuf );
 	cmemMessage.AppendString( pDispData, k );
 	if( bEOL ){
-		cmemMessage.AppendString( L"\r\n", 2 );
+		cmemMessage.AppendString( LTEXT("\r\n"), 2 );
 	}
 }
 
 void AppendFolderHeadings(
 	CNativeW&			cmemMessage,
 	const GrepInfo&		gi,
-	std::wstring_view	baseFolder,
-	std::wstring_view	folder,
+	sakura::wstring_view	baseFolder,
+	sakura::wstring_view	folder,
 	bool&				bOutputBaseFolder,
 	bool&				bOutputFolderName
 )
 {
 	if( !bOutputBaseFolder && gi.bGrepOutputBaseFolder ){
 		if( !gi.bGrepSeparateFolder && 2 != gi.nGrepOutputStyle ){
-			cmemMessage.AppendString( L"■\"" );
+			cmemMessage.AppendString( LTEXT("■\"") );
 		}else{
-			cmemMessage.AppendString( L"◎\"" );
+			cmemMessage.AppendString( LTEXT("◎\"") );
 		}
 		cmemMessage.AppendString( baseFolder.data(), baseFolder.length() );
-		cmemMessage.AppendString( L"\"\r\n" );
+		cmemMessage.AppendString( LTEXT("\"\r\n") );
 		bOutputBaseFolder = true;
 	}
 	if( !bOutputFolderName && gi.bGrepSeparateFolder ){
 		if( !folder.empty() ){
-			cmemMessage.AppendString( L"■\"" );
+			cmemMessage.AppendString( LTEXT("■\"") );
 			cmemMessage.AppendString( folder.data(), folder.length() );
-			cmemMessage.AppendString( L"\"\r\n" );
+			cmemMessage.AppendString( LTEXT("\"\r\n") );
 		}else{
-			cmemMessage.AppendString( L"■\r\n" );
+			cmemMessage.AppendString( LTEXT("■\r\n") );
 		}
 		bOutputFolderName = true;
 	}
@@ -159,14 +159,14 @@ void OutputPathInfo(
 		const WCHAR* pszDispFilePath = ( gi.bGrepSeparateFolder || gi.bGrepOutputBaseFolder ) ? pszRelPath : pszFullPath;
 		if( gi.bGrepSeparateFolder ){
 			// フォルダー毎表示のときはフォルダーの見出し(■)と区別する
-			cmemMessage.AppendString( L"◆\"" );
+			cmemMessage.AppendString( LTEXT("◆\"") );
 		}else{
-			cmemMessage.AppendString( L"■\"" );
+			cmemMessage.AppendString( LTEXT("■\"") );
 		}
 		cmemMessage.AppendString( pszDispFilePath );
-		cmemMessage.AppendString( L"\"" );
+		cmemMessage.AppendString( LTEXT("\"") );
 		cmemMessage.AppendString( pszCodeName );
-		cmemMessage.AppendString( L"\r\n" );
+		cmemMessage.AppendString( LTEXT("\r\n") );
 		bOutFileName = TRUE;
 	}
 }

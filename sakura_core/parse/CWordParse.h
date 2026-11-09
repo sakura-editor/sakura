@@ -53,7 +53,7 @@ public:
 		@retval false	失敗 現在位置のデータは「単語」とは言いきれない気がする。
 	*/
 	static bool WhereCurrentWord_2(
-		const wchar_t*	pLine,			//[in]  調べるメモリ全体の先頭アドレス
+		const WCHAR*	pLine,			//[in]  調べるメモリ全体の先頭アドレス
 		size_t			cchLine,		//[in]  調べるメモリ全体の有効長
 		size_t			index,			//[in]  調査開始地点:pLineからの相対的な位置
 		bool			bEnableExtEol,	//[in]  Unicode改行文字を改行とみなすかどうか
@@ -65,7 +65,7 @@ public:
 
 	//! 現在位置の文字の種類を調べる
 	static ECharKind WhatKindOfChar(
-		const wchar_t*	pData,
+		const WCHAR*	pData,
 		size_t			cchData,
 		size_t			index
 	);
@@ -84,7 +84,7 @@ public:
 
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。
 	static bool SearchNextWordPosition(
-		const wchar_t*	pLine,
+		const WCHAR*	pLine,
 		size_t			cchLine,
 		size_t			index,			//	桁数
 		CLogicInt*		pnColumnNew,	//	見つかった位置
@@ -93,7 +93,7 @@ public:
 
 	//	pLine（長さ：nLineLen）の文字列から次の単語を探す。探し始める位置はnIdxで指定。 for 強調キーワード
 	static bool SearchNextWordPosition4KW(
-		const wchar_t*	pLine,
+		const WCHAR*	pLine,
 		size_t			cchLine,
 		size_t			index,			//	桁数
 		CLogicInt*		pnColumnNew,	//	見つかった位置
@@ -101,7 +101,7 @@ public:
 	);
 
 	static bool SearchPrevWordPosition(
-		const wchar_t* pLine,
+		const WCHAR* pLine,
 		size_t cchLine,
 		size_t index,
 		CLogicInt* pnColumnNew,
@@ -126,12 +126,12 @@ protected:
 
     境界判定はメールアドレスの先頭でのみ行われ、URL の先頭ではこれまで通り行われません。
 */
-BOOL IsURL( const wchar_t* pszLine, int offset, size_t nLineLen, int* pnMatchLen);
+BOOL IsURL( const WCHAR* pszLine, int offset, size_t nLineLen, int* pnMatchLen);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */
 inline
-BOOL IsURL( const wchar_t* pszLine, size_t nLineLen, int* pnMatchLen)
+BOOL IsURL( const WCHAR* pszLine, size_t nLineLen, int* pnMatchLen)
 {
 	return IsURL(pszLine, 0, nLineLen, pnMatchLen);
 }
@@ -139,10 +139,10 @@ BOOL IsURL( const wchar_t* pszLine, size_t nLineLen, int* pnMatchLen)
 //! URLマッチ結果構造体
 struct SUrlMatchResult {
 	//! マッチしたURL文字列
-	std::wstring_view matched;
+	sakura::wstring_view matched;
 
 	//!	コンストラクター
-	explicit SUrlMatchResult(std::wstring_view line, size_t offset, ptrdiff_t matchLen)
+	explicit SUrlMatchResult(sakura::wstring_view line, size_t offset, ptrdiff_t matchLen)
 		: matched(line.substr(offset, matchLen))
 	{
 	}
@@ -152,14 +152,14 @@ struct SUrlMatchResult {
 };
 
 //! 文字列がURLかどうかを検査する。
-inline SUrlMatchResult IsURL(std::wstring_view line) {
+inline SUrlMatchResult IsURL(sakura::wstring_view line) {
 	int nMatchLen = 0;
 	const auto result = IsURL(std::data(line), std::size(line), &nMatchLen);
 	return SUrlMatchResult{ line, 0, result ? nMatchLen : 0 };
 }
 
 //! 文字列がURLかどうかを検査する。
-inline SUrlMatchResult IsURL(std::wstring_view line, size_t offset) {
+inline SUrlMatchResult IsURL(sakura::wstring_view line, size_t offset) {
 	int nMatchLen = 0;
 	const auto result = IsURL(std::data(line), static_cast<int>(offset), std::size(line), &nMatchLen);
 	return SUrlMatchResult{ line, offset, result ? nMatchLen : 0 };
@@ -176,12 +176,12 @@ inline SUrlMatchResult IsURL(std::wstring_view line, size_t offset) {
     途中から切り出したメールアドレスの一部をメールアドレスであると誤って判定しないために
     pszBuf を固定し offset を０以上の範囲で変化させるのが望ましい使用方法です。
 */
-BOOL IsMailAddress( const wchar_t* pszBuf, int offset, size_t nBufLen, int* pnAddressLength);
+BOOL IsMailAddress( const WCHAR* pszBuf, int offset, size_t nBufLen, int* pnAddressLength);
 
 /** @deprecated 互換性のために残されています。offset 引数が追加されたものを使用してください。
 */
 inline
-BOOL IsMailAddress( const wchar_t* pszBuf, size_t nBufLen, int* pnAddressLength)
+BOOL IsMailAddress( const WCHAR* pszBuf, size_t nBufLen, int* pnAddressLength)
 {
 	return IsMailAddress(pszBuf, 0, nBufLen, pnAddressLength);
 }
@@ -197,7 +197,7 @@ inline bool CWordParse::_match_charlist( const ACHAR c, const ACHAR *pszList )
 // WCHAR 版
 inline bool CWordParse::_match_charlist( const WCHAR c, const WCHAR *pszList )
 {
-	for( int i = 0; pszList[i] != L'\0'; i++ ){
+	for( int i = 0; pszList[i] != LCHAR('\0'); i++ ){
 		if( pszList[i] == c ){ return true; }
 	}
 	return false;

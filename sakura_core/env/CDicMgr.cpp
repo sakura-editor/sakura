@@ -38,7 +38,7 @@ CDicMgr::CDicMgr()
 	@date 2006.04.10 fon 検索ヒット行を返す引数pLineを追加
 */
 BOOL CDicMgr::Search(
-	const wchar_t*		pszKey,				//!< 検索キーワード
+	const WCHAR*		pszKey,				//!< 検索キーワード
 	const int			nCmpLen,			//!< 検索キーワードの長さ
 	CNativeW**			ppcmemKey,			//!< 見つかったキーワード．呼び出し元の責任で解放する．
 	CNativeW**			ppcmemMean,			//!< 見つかったキーワードに対応する辞書内容．呼び出し元の責任で解放する．
@@ -47,18 +47,18 @@ BOOL CDicMgr::Search(
 )
 {
 #ifdef _DEBUG
-	CRunningTimer cRunningTimer( L"CDicMgr::Search" );
+	CRunningTimer cRunningTimer( LTEXT("CDicMgr::Search") );
 #endif
 	long	i;
-	constexpr auto& pszDelimit = L" /// ";
+	constexpr auto& pszDelimit = LTEXT(" /// ");
 	constexpr auto cchDelimit = int(std::size(pszDelimit)) - 1;
-	wchar_t*	pszWork;
+	WCHAR*	pszWork;
 	int		nRes;
-	wchar_t*	pszToken;
-	const wchar_t*	pszKeySeps = L",\0";
+	WCHAR*	pszToken;
+	const WCHAR*	pszKeySeps = LTEXT(",\0");
 
 	/* 辞書ファイル */
-	if( pszKeyWordHelpFile[0] == L'\0' ){
+	if( pszKeyWordHelpFile[0] == LCHAR('\0') ){
 		return FALSE;
 	}
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
@@ -68,22 +68,22 @@ BOOL CDicMgr::Search(
 		return FALSE;
 	}
 
-	wchar_t	szLine[LINEREADBUFSIZE];
+	WCHAR	szLine[LINEREADBUFSIZE];
 	for(int line=1 ; in; line++ ){	// 2006.04.10 fon
 		//1行読み込み
 		{
-			std::wstring tmp = in.ReadLineW();
+			sakura::wstring tmp = in.ReadLineW();
 			wcsncpy_s(szLine, std::size(szLine),tmp.c_str(), _TRUNCATE);
 			// auto_strlcpy(szLine,tmp.c_str(), int(std::size(szLine)));
 		}
 
 		pszWork = wcsstr( szLine, pszDelimit );
-		if( nullptr != pszWork && szLine[0] != L';' ){
-			*pszWork = L'\0';
+		if( nullptr != pszWork && szLine[0] != LCHAR(';') ){
+			*pszWork = LCHAR('\0');
 			pszWork += cchDelimit;
 
 			/* 最初のトークンを取得します。 */
-			wchar_t *context = nullptr;
+			WCHAR *context = nullptr;
 			pszToken = wcstok_s( szLine, pszKeySeps, &context );
 			while( nullptr != pszToken ){
 				nRes = _wcsnicmp( pszKey, pszToken, nCmpLen );	// 2006.04.10 fon
@@ -91,7 +91,7 @@ BOOL CDicMgr::Search(
 					int nLen = (int)wcslen(pszWork);
 					for( i = 0; i < nLen; ++i ){
 						if( WCODE::IsLineDelimiterBasic(pszWork[i]) ){
-							pszWork[i] = L'\0';
+							pszWork[i] = LCHAR('\0');
 							break;
 						}
 					}
@@ -120,16 +120,16 @@ BOOL CDicMgr::Search(
 ||
 */
 int CDicMgr::HokanSearch(
-	const wchar_t*	pszKey,
+	const WCHAR*	pszKey,
 	bool			bHokanLoHiCase,	//!< 英大文字小文字を同一視する
-	vector_ex<std::wstring>&		vKouho,	//!< [out] 候補リスト
+	vector_ex<sakura::wstring>&		vKouho,	//!< [out] 候補リスト
 	int				nMaxKouho,		//!< Max候補数(0==無制限)
 	const WCHAR*	pszKeyWordFile
 )
 {
 	int		nKeyLen;
 	int		nRet;
-	if( pszKeyWordFile[0] == L'\0' ){
+	if( pszKeyWordFile[0] == LCHAR('\0') ){
 		return 0;
 	}
 
@@ -138,7 +138,7 @@ int CDicMgr::HokanSearch(
 		return 0;
 	}
 	nKeyLen = (int)wcslen( pszKey );
-	std::wstring szLine;
+	sakura::wstring szLine;
 	while( in ){
 		szLine = in.ReadLineW();
 		if( nKeyLen > (int)szLine.length() ){
@@ -146,7 +146,7 @@ int CDicMgr::HokanSearch(
 		}
 
 		//コメント無視
-		if( szLine[0] == L';' )continue;
+		if( szLine[0] == LCHAR(';') )continue;
 
 		//空行無視
 		if( szLine.length() == 0 )continue;

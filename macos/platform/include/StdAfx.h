@@ -79,6 +79,7 @@
 
 // UTF-16 字符串函数（wcslen 等的 char16_t 版本）
 #include "util/wchar16.h"
+#include "util/std_macro.h"
 
 #if defined(__GNUC__) || defined(__clang__)
 #  define NORETURN __attribute__((noreturn))

@@ -35,14 +35,14 @@
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CFuncKeyWnd::CFuncKeyWnd()
-: CWnd(L"::CFuncKeyWnd")
+: CWnd(LTEXT("::CFuncKeyWnd"))
 {
 	int		i;
 	LOGFONT	lf;
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 	for( i = 0; i < int(std::size(m_szFuncNameArr)); ++i ){
-		m_szFuncNameArr[i][0] = L'\0';
+		m_szFuncNameArr[i][0] = LCHAR('\0');
 	}
 //	2002.11.04 Moca Open()側で設定
 //	m_nButtonGroupNum = 4;
@@ -67,7 +67,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	wcscpy( lf.lfFaceName, L"ＭＳ Ｐゴシック" );
+	wcscpy( lf.lfFaceName, LTEXT("ＭＳ Ｐゴシック") );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	return;
@@ -83,7 +83,7 @@ CFuncKeyWnd::~CFuncKeyWnd()
 /* ウィンドウ オープン */
 HWND CFuncKeyWnd::Open( HINSTANCE hInstance, HWND hwndParent, CEditDoc* pCEditDoc, bool bSizeBox )
 {
-	LPCWSTR pszClassName = L"CFuncKeyWnd";
+	LPCWSTR pszClassName = LTEXT("CFuncKeyWnd");
 
 	m_pcEditDoc = pCEditDoc;
 	m_bSizeBox = bSizeBox;
@@ -284,7 +284,7 @@ LRESULT CFuncKeyWnd::OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT 
 			if( nFuncCode != m_nFuncCodeArr[i] ){
 				m_nFuncCodeArr[i] = nFuncCode;
 				if( 0 == m_nFuncCodeArr[i] ){
-					m_szFuncNameArr[i][0] = L'\0';
+					m_szFuncNameArr[i][0] = LCHAR('\0');
 				}else{
 					//	Oct. 2, 2001 genta
 					m_pcEditDoc->m_cFuncLookup.Funccode2Name(
@@ -387,7 +387,7 @@ void CFuncKeyWnd::CreateButtons( void )
 	for( i = 0; i < int(std::size(m_hwndButtonArr)); ++i ){
 		m_hwndButtonArr[i] = ::CreateWindow(
 			WC_BUTTON,							// predefined class
-			L"",								// button text
+			LTEXT(""),								// button text
 			WS_VISIBLE | WS_CHILD | BS_LEFT,	// styles
 			// Size and position values are given explicitly, because
 			// the CW_USEDEFAULT constant gives zero values for buttons.

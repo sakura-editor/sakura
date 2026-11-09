@@ -146,7 +146,7 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 	m_dwCustColors[0] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	m_dwCustColors[1] = m_Types.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
-	std::wstring		sTabname[std::size(TypePropSheetInfoList)];
+	sakura::wstring		sTabname[std::size(TypePropSheetInfoList)];
 	m_bChangeKeyWordSet = false;
 	PROPSHEETPAGE		psp[std::size(TypePropSheetInfoList)];
 	for( nIdx = 0; nIdx < int(std::size(TypePropSheetInfoList)); nIdx++ ){
@@ -285,13 +285,13 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 		hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 		// フォント名の設定
-		auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
+		auto_sprintf( szFontName, nps % 10 ? LTEXT("%s(%.1fpt)") : LTEXT("%s(%.0fpt)"),
 			lf.lfFaceName, double(nps)/10 );
 		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 	}
 	else {
 		hFont = nullptr;
-		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, L"" );
+		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, LTEXT("") );
 	}
 
 	return hFont;

@@ -95,7 +95,7 @@ LPCWSTR CMigemo::GetDllNameImp([[maybe_unused]] int nIndex)
 	}
 
 	// デフォルトのDLL名を返す
-	return L"migemo.dll";
+	return LTEXT("migemo.dll");
 }
 
 std::string_view CMigemo::_migemo_query(const std::string& query) noexcept
@@ -105,7 +105,7 @@ std::string_view CMigemo::_migemo_query(const std::string& query) noexcept
 	return (LPCSTR)(*m_migemo_query)(m_migemo, LPBYTE(query.c_str()));
 }
 
-std::wstring CMigemo::migemo_query_w(std::wstring_view query) noexcept
+sakura::wstring CMigemo::migemo_query_w(sakura::wstring_view query) noexcept
 {
 	try {
 		const UINT codePage = m_bUtf8 ? CP_UTF8 : CP_SJIS;
@@ -115,7 +115,7 @@ std::wstring CMigemo::migemo_query_w(std::wstring_view query) noexcept
 		return ret;
 
 	} catch (const std::invalid_argument&) {
-		return std::wstring(query);
+		return sakura::wstring(query);
 	}
 }
 
@@ -153,7 +153,7 @@ int CMigemo::migemo_load_all() noexcept
 
 		std::filesystem::path path;
 		if (dictPath.empty()) {
-			path = GetIniFileName().parent_path() / L"dict";
+			path = GetIniFileName().parent_path() / LTEXT("dict");
 		} else if (dictPath.is_relative()){
 			path = GetIniFileName().parent_path() / dictPath;
 		} else {
@@ -161,21 +161,21 @@ int CMigemo::migemo_load_all() noexcept
 		}
 
 		// ver1.3 utf8対応
-		if (fexist(path / L"utf-8" / L"migemo-dict")) {
-			path /= L"utf-8";
+		if (fexist(path / LTEXT("utf-8") / LTEXT("migemo-dict"))) {
+			path /= LTEXT("utf-8");
 			m_bUtf8 = true;
-		} else if (fexist(path / L"cp932" / L"migemo-dict" )) {
-			path /= L"cp932";
+		} else if (fexist(path / LTEXT("cp932") / LTEXT("migemo-dict") )) {
+			path /= LTEXT("cp932");
 			m_bUtf8 = false;
 		} else {
 			return 0;
 		}
 
-		_migemo_load(MIGEMO_DICTID_MIGEMO,		path / L"migemo-dict");
-		_migemo_load(MIGEMO_DICTID_HAN2ZEN,		path / L"han2zen.dat");
-		_migemo_load(MIGEMO_DICTID_HIRA2KATA,	path / L"hira2kata.dat");
-		_migemo_load(MIGEMO_DICTID_ROMA2HIRA,	path / L"roma2hira.dat");
-		_migemo_load(MIGEMO_DICTID_ZEN2HAN,		path / L"zen2han.dat");
+		_migemo_load(MIGEMO_DICTID_MIGEMO,		path / LTEXT("migemo-dict"));
+		_migemo_load(MIGEMO_DICTID_HAN2ZEN,		path / LTEXT("han2zen.dat"));
+		_migemo_load(MIGEMO_DICTID_HIRA2KATA,	path / LTEXT("hira2kata.dat"));
+		_migemo_load(MIGEMO_DICTID_ROMA2HIRA,	path / LTEXT("roma2hira.dat"));
+		_migemo_load(MIGEMO_DICTID_ZEN2HAN,		path / LTEXT("zen2han.dat"));
 
 		// 2011.12.11 Moca 辞書登録後でないとmigemo内臓のものに変更されてしまう
 		if( m_bUtf8 ){

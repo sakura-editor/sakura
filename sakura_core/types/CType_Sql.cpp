@@ -17,14 +17,14 @@
 void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"PL/SQL" );
-	wcscpy( pType->m_szTypeExts, L"sql,plsql" );
+	wcscpy( pType->m_szTypeName, LTEXT("PL/SQL") );
+	wcscpy( pType->m_szTypeExts, LTEXT("sql,plsql") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"--", -1 );					/* 行コメントデリミタ */
-	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ブロックコメントデリミタ */
+	pType->m_cLineComment.CopyTo( 0, LTEXT("--"), -1 );					/* 行コメントデリミタ */
+	pType->m_cBlockComments[0].SetBlockCommentRule( LTEXT("/*"), LTEXT("*/") );	/* ブロックコメントデリミタ */
 	pType->m_nStringType = STRING_LITERAL_PLSQL;					/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	wcscpy( pType->m_szIndentChars, L"|★" );						/* その他のインデント対象文字 */
+	wcscpy( pType->m_szIndentChars, LTEXT("|★") );						/* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 2;									/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* アウトライン解析方法 */
 }
@@ -32,16 +32,16 @@ void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 /*! PL/SQL関数リスト作成 */
 void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	int			i;
 	int			nCharChars;
-	wchar_t		szWordPrev[100];
-	wchar_t		szWord[100];
+	WCHAR		szWordPrev[100];
+	WCHAR		szWord[100];
 	int			nWordIdx = 0;
 	int			nMaxWordLeng = 70;
 	int			nMode;
-	wchar_t		szFuncName[100];
+	WCHAR		szFuncName[100];
 	CLogicInt	nFuncLine(0);
 	int			nFuncId = 0;
 	int			nFuncNum;
@@ -49,8 +49,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	int			nParseCnt = 0;
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
 
-	szWordPrev[0] = L'\0';
-	szWord[nWordIdx] = L'\0';
+	szWordPrev[0] = LCHAR('\0');
+	szWord[nWordIdx] = LCHAR('\0');
 	nMode = 0;
 	nFuncNum = 0;
 	CLogicInt	nLineCount;
@@ -69,8 +69,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //			}
 			/* シングルクォーテーション文字列読み込み中 */
 			if( 20 == nMode ){
-				if( L'\'' == pLine[i] ){
-					if( i + 1 < nLineLen && L'\'' == pLine[i + 1] ){
+				if( LCHAR('\'') == pLine[i] ){
+					if( i + 1 < nLineLen && LCHAR('\'') == pLine[i + 1] ){
 						++i;
 					}else{
 						nMode = 0;
@@ -81,7 +81,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* コメント読み込み中 */
 			if( 8 == nMode ){
-				if( i + 1 < nLineLen && L'*' == pLine[i] &&  L'/' == pLine[i + 1] ){
+				if( i + 1 < nLineLen && LCHAR('*') == pLine[i] &&  LCHAR('/') == pLine[i + 1] ){
 					++i;
 					nMode = 0;
 					continue;
@@ -91,12 +91,12 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 			/* 単語読み込み中 */
 			if( 1 == nMode ){
 				if( (1 == nCharChars && (
-					L'_' == pLine[i] ||
-					L'~' == pLine[i] ||
-					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
+					LCHAR('_') == pLine[i] ||
+					LCHAR('~') == pLine[i] ||
+					(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+					(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+					(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+					(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 					) )
 				 || 2 == nCharChars
 				){
@@ -109,27 +109,27 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //						szWord[nWordIdx] = pLine[i];
 //						szWord[nWordIdx + 1] = '\0';
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 					}
 				}
 				else{
-					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"FUNCTION" ) ){
+					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("FUNCTION") ) ){
 						nFuncOrProc = 1;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"PROCEDURE" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("PROCEDURE") ) ){
 						nFuncOrProc = 2;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"PACKAGE" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("PACKAGE") ) ){
 						nFuncOrProc = 3;
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == _wcsicmp( szWord, L"BODY" ) ){
+					else if( 1 == nParseCnt && 3 == nFuncOrProc && 0 == _wcsicmp( szWord, LTEXT("BODY") ) ){
 						nFuncOrProc = 4;
 						nParseCnt = 1;
 					}
@@ -145,7 +145,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						}
 					}else
 					if( 2 == nParseCnt ){
-						if( 0 == _wcsicmp( szWord, L"IS" ) ){
+						if( 0 == _wcsicmp( szWord, LTEXT("IS") ) ){
 							if( 1 == nFuncOrProc ){
 								nFuncId = 11;	/* ファンクション本体 */
 							}else
@@ -173,7 +173,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							pcFuncInfoArr->AppendData( nFuncLine, ptPos.GetY2() + CLayoutInt(1), szFuncName, nFuncId );
 							nParseCnt = 0;
 						}
-						if( 0 == _wcsicmp( szWord, L"AS" ) ){
+						if( 0 == _wcsicmp( szWord, LTEXT("AS") ) ){
 							if( 3 == nFuncOrProc ){
 								nFuncId = 31;	/* パッケージ仕様部 */
 								++nFuncNum;
@@ -212,7 +212,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					}
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
@@ -220,28 +220,28 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 			}else
 			/* 記号列読み込み中 */
 			if( 2 == nMode ){
-				if( L'_' == pLine[i] ||
-					L'~' == pLine[i] ||
-					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
-					L'\t' == pLine[i] ||
-					 L' ' == pLine[i] ||
+				if( LCHAR('_') == pLine[i] ||
+					LCHAR('~') == pLine[i] ||
+					(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+					(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+					(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+					(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
+					LCHAR('\t') == pLine[i] ||
+					 LCHAR(' ') == pLine[i] ||
 					 WCODE::IsLineDelimiter(pLine[i], bExtEol) ||
-					 L'{' == pLine[i] ||
-					 L'}' == pLine[i] ||
-					 L'(' == pLine[i] ||
-					 L')' == pLine[i] ||
-					 L';' == pLine[i] ||
-					L'\'' == pLine[i] ||
-					 L'/' == pLine[i] ||
-					 L'-' == pLine[i] ||
+					 LCHAR('{') == pLine[i] ||
+					 LCHAR('}') == pLine[i] ||
+					 LCHAR('(') == pLine[i] ||
+					 LCHAR(')') == pLine[i] ||
+					 LCHAR(';') == pLine[i] ||
+					LCHAR('\'') == pLine[i] ||
+					 LCHAR('/') == pLine[i] ||
+					 LCHAR('-') == pLine[i] ||
 					 2 == nCharChars
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
@@ -254,7 +254,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //						szWord[nWordIdx] = pLine[i];
 //						szWord[nWordIdx + 1] = '\0';
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 					}
 				}
@@ -262,8 +262,8 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 			/* 長過ぎる単語無視中 */
 			if( 999 == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					nMode = 0;
@@ -273,25 +273,25 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 			/* ノーマルモード */
 			if( 0 == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					continue;
 				}else
-				if( i < nLineLen - 1 && L'-' == pLine[i] &&  L'-' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('-') == pLine[i] &&  LCHAR('-') == pLine[i + 1] ){
 					break;
 				}else
-				if( i < nLineLen - 1 && L'/' == pLine[i] &&  L'*' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('/') == pLine[i] &&  LCHAR('*') == pLine[i + 1] ){
 					++i;
 					nMode = 8;
 					continue;
 				}else
-				if( L'\'' == pLine[i] ){
+				if( LCHAR('\'') == pLine[i] ){
 					nMode = 20;
 					continue;
 				}else
-				if( L';' == pLine[i] ){
+				if( LCHAR(';') == pLine[i] ){
 					if( 2 == nParseCnt ){
 						if( 1 == nFuncOrProc ){
 							nFuncId = 10;	/* ファンクション宣言 */
@@ -317,12 +317,12 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					continue;
 				}else{
 					if( (1 == nCharChars && (
-						L'_' == pLine[i] ||
-						L'~' == pLine[i] ||
-						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
+						LCHAR('_') == pLine[i] ||
+						LCHAR('~') == pLine[i] ||
+						(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+						(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+						(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+						(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 						) )
 					 || 2 == nCharChars
 					){
@@ -332,7 +332,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //						szWord[nWordIdx] = pLine[i];
 //						szWord[nWordIdx + 1] = '\0';
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 
 						nMode = 1;
@@ -343,7 +343,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 //						szWord[nWordIdx + 1] = '\0';
 
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 
 						nMode = 2;
@@ -356,86 +356,86 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 	return;
 }
 
-const wchar_t* g_ppszKeywordsPLSQL[] = {
-	L"AND",
-	L"AS",
-	L"BEGIN",
-	L"BINARY_INTEGER",
-	L"BODY",
-	L"BOOLEAN",
-	L"BY",
-	L"CHAR",
-	L"CHR",
-	L"COMMIT",
-	L"COUNT",
-	L"CREATE",
-	L"CURSOR",
-	L"DATE",
-	L"DECLARE",
-	L"DEFAULT",
-	L"DELETE",
-	L"ELSE",
-	L"ELSIF",
-	L"END",
-	L"ERRORS",
-	L"EXCEPTION",
-	L"FALSE",
-	L"FOR",
-	L"FROM",
-	L"FUNCTION",
-	L"GOTO",
-	L"HTP",
-	L"IDENT_ARR",
-	L"IF",
-	L"IN",
-	L"INDEX",
-	L"INTEGER",
-	L"IS",
-	L"LOOP",
-	L"NOT",
-	L"NO_DATA_FOUND",
-	L"NULL",
-	L"NUMBER",
-	L"OF",
-	L"OR",
-	L"ORDER",
-	L"OUT",
-	L"OWA_UTIL",
-	L"PACKAGE",
-	L"PRAGMA",
-	L"PRN",
-	L"PROCEDURE",
-	L"REPLACE",
-	L"RESTRICT_REFERENCES",
-	L"RETURN",
-	L"ROWTYPE",
-	L"SELECT",
-	L"SHOW",
-	L"SUBSTR",
-	L"TABLE",
-	L"THEN",
-	L"TRUE",
-	L"TYPE",
-	L"UPDATE",
-	L"VARCHAR",
-	L"VARCHAR2",
-	L"WHEN",
-	L"WHERE",
-	L"WHILE",
-	L"WNDS",
-	L"WNPS",
-	L"RAISE",
-	L"INSERT",
-	L"INTO",
-	L"VALUES",
-	L"SET",
-	L"SYSDATE",
-	L"RTRIM",
-	L"LTRIM",
-	L"TO_CHAR",
-	L"DUP_VAL_ON_INDEX",
-	L"ROLLBACK",
-	L"OTHERS",
-	L"SQLCODE"
+const WCHAR* g_ppszKeywordsPLSQL[] = {
+	LTEXT("AND"),
+	LTEXT("AS"),
+	LTEXT("BEGIN"),
+	LTEXT("BINARY_INTEGER"),
+	LTEXT("BODY"),
+	LTEXT("BOOLEAN"),
+	LTEXT("BY"),
+	LTEXT("CHAR"),
+	LTEXT("CHR"),
+	LTEXT("COMMIT"),
+	LTEXT("COUNT"),
+	LTEXT("CREATE"),
+	LTEXT("CURSOR"),
+	LTEXT("DATE"),
+	LTEXT("DECLARE"),
+	LTEXT("DEFAULT"),
+	LTEXT("DELETE"),
+	LTEXT("ELSE"),
+	LTEXT("ELSIF"),
+	LTEXT("END"),
+	LTEXT("ERRORS"),
+	LTEXT("EXCEPTION"),
+	LTEXT("FALSE"),
+	LTEXT("FOR"),
+	LTEXT("FROM"),
+	LTEXT("FUNCTION"),
+	LTEXT("GOTO"),
+	LTEXT("HTP"),
+	LTEXT("IDENT_ARR"),
+	LTEXT("IF"),
+	LTEXT("IN"),
+	LTEXT("INDEX"),
+	LTEXT("INTEGER"),
+	LTEXT("IS"),
+	LTEXT("LOOP"),
+	LTEXT("NOT"),
+	LTEXT("NO_DATA_FOUND"),
+	LTEXT("NULL"),
+	LTEXT("NUMBER"),
+	LTEXT("OF"),
+	LTEXT("OR"),
+	LTEXT("ORDER"),
+	LTEXT("OUT"),
+	LTEXT("OWA_UTIL"),
+	LTEXT("PACKAGE"),
+	LTEXT("PRAGMA"),
+	LTEXT("PRN"),
+	LTEXT("PROCEDURE"),
+	LTEXT("REPLACE"),
+	LTEXT("RESTRICT_REFERENCES"),
+	LTEXT("RETURN"),
+	LTEXT("ROWTYPE"),
+	LTEXT("SELECT"),
+	LTEXT("SHOW"),
+	LTEXT("SUBSTR"),
+	LTEXT("TABLE"),
+	LTEXT("THEN"),
+	LTEXT("TRUE"),
+	LTEXT("TYPE"),
+	LTEXT("UPDATE"),
+	LTEXT("VARCHAR"),
+	LTEXT("VARCHAR2"),
+	LTEXT("WHEN"),
+	LTEXT("WHERE"),
+	LTEXT("WHILE"),
+	LTEXT("WNDS"),
+	LTEXT("WNPS"),
+	LTEXT("RAISE"),
+	LTEXT("INSERT"),
+	LTEXT("INTO"),
+	LTEXT("VALUES"),
+	LTEXT("SET"),
+	LTEXT("SYSDATE"),
+	LTEXT("RTRIM"),
+	LTEXT("LTRIM"),
+	LTEXT("TO_CHAR"),
+	LTEXT("DUP_VAL_ON_INDEX"),
+	LTEXT("ROLLBACK"),
+	LTEXT("OTHERS"),
+	LTEXT("SQLCODE")
 };
 int g_nKeywordsPLSQL = int(std::size(g_ppszKeywordsPLSQL));

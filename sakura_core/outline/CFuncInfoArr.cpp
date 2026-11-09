@@ -105,23 +105,23 @@ void CFuncInfoArr::AppendData(
 void CFuncInfoArr::DUMP()
 {
 #ifdef _DEBUG
-	MYTRACE( L"=============================\n" );
+	MYTRACE( LTEXT("=============================\n") );
 	for (int i = 0; i < GetNum(); ++i) {
-		MYTRACE( L"[%d]------------------\n", i );
-		MYTRACE( L"m_nFuncLineCRLF\t\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineCRLF) );
-		MYTRACE( L"m_nFuncLineLAYOUT\t=%d\n", int(m_funcInfoArr[i]->m_nFuncLineLAYOUT) );
-		MYTRACE( L"m_cmemFuncName\t=[%s]\n", m_funcInfoArr[i]->m_cmemFuncName );
-		MYTRACE( L"m_cmemFileName\t=[%s]\n",
+		MYTRACE( LTEXT("[%d]------------------\n"), i );
+		MYTRACE( LTEXT("m_nFuncLineCRLF\t\t=%d\n"), int(m_funcInfoArr[i]->m_nFuncLineCRLF) );
+		MYTRACE( LTEXT("m_nFuncLineLAYOUT\t=%d\n"), int(m_funcInfoArr[i]->m_nFuncLineLAYOUT) );
+		MYTRACE( LTEXT("m_cmemFuncName\t=[%s]\n"), m_funcInfoArr[i]->m_cmemFuncName );
+		MYTRACE( LTEXT("m_cmemFileName\t=[%s]\n"),
 			(m_funcInfoArr[i]->m_cmemFileName.IsValid()
 				? m_funcInfoArr[i]->m_cmemFileName.GetStringPtr()
-				: L"NULL") );
-		MYTRACE( L"m_nInfo\t\t\t=%d\n", m_funcInfoArr[i]->m_nInfo );
+				: LTEXT("NULL")) );
+		MYTRACE( LTEXT("m_nInfo\t\t\t=%d\n"), m_funcInfoArr[i]->m_nInfo );
 	}
-	MYTRACE( L"=============================\n" );
+	MYTRACE( LTEXT("=============================\n") );
 #endif
 }
 
-void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
+void CFuncInfoArr::SetAppendText( int info, sakura::wstring s, bool overwrite )
 {
 	if (!m_AppendTextArr.contains(info)) {
 		// キーが存在しない場合、追加する
@@ -139,7 +139,7 @@ void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )
 	}
 }
 
-std::wstring CFuncInfoArr::GetAppendText(int info) const
+sakura::wstring CFuncInfoArr::GetAppendText(int info) const
 {
 	// キーが存在する場合、値を返す
 	if (const auto found = m_AppendTextArr.find(info);

@@ -235,7 +235,7 @@ protected:
 	bool Import(HWND hwndDlg);											//!< インポート
 	bool Export(HWND hwndDlg);											//!< エクスポート
 private:
-	BOOL RegexKakomiCheck(const wchar_t *s);	//@@@ 2001.11.17 add MIK
+	BOOL RegexKakomiCheck(const WCHAR *s);	//@@@ 2001.11.17 add MIK
 
 	bool CheckKeywordList(HWND hwndDlg, const WCHAR* szNewKeyWord, int nUpdateItem);
 };

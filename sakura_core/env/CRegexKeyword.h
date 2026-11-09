@@ -63,7 +63,7 @@ public:
 	BOOL RegexKeySetTypes( const STypeConfig *pTypesPtr );
 
 	//! 書式(囲み)チェック
-	static BOOL RegexKeyCheckSyntax( const wchar_t *s );
+	static BOOL RegexKeyCheckSyntax( const WCHAR *s );
 
 	static DWORD GetNewMagicNumber();
 
@@ -83,7 +83,7 @@ private:
 	DWORD			m_nCompiledMagicNumber;		//!< コンパイル済みか？
 	int				m_nRegexKeyCount;			//!< 現在のキーワード数
 	REGEX_INFO		m_sInfo[MAX_REGEX_KEYWORD];	//!< キーワード一覧(BREGEXPコンパイル対象)
-	wchar_t			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
+	WCHAR			m_szMsg[256];				//!< BREGEXP_Wからのメッセージを保持する
 };
 
 //@@@ 2001.11.17 add end MIK

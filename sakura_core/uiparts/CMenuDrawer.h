@@ -69,7 +69,7 @@ public:
 	void MyAppendMenu( HMENU hMenu, int nFlag, UINT_PTR nFuncId, const WCHAR*     pszLabel, const WCHAR*     pszKey, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 );	/* メニュー項目を追加 */	//お気に入り	//@@@ 2003.04.08 MIK	// add pszKey	2010/5/17 Uchi
 	void MyAppendMenuSep( HMENU hMenu, int nFlag, int nFuncId, const WCHAR* pszLabel, BOOL bAddKeyStr = TRUE, int nForceIconId = -1 )
 	{
-		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,L"",bAddKeyStr,nForceIconId);
+		MyAppendMenu(hMenu,nFlag,nFuncId,pszLabel,LTEXT(""),bAddKeyStr,nForceIconId);
 	}
 	LRESULT OnMenuChar( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 	int FindToolbarNoFromCommandId( int idCommand, bool bOnlyFunc = true )const; // ツールバーNoの取得
@@ -91,7 +91,7 @@ private:
 	int FindIndexFromCommandId( int idCommand, bool bOnlyFunc = true ) const;  /* ツールバーIndexの取得 */// 20050809 aroka
 	int Find( int nFuncID );
 	const WCHAR* GetLabel( int nFuncID );
-	WCHAR	GetAccelCharFromLabel(std::wstring_view label) const;
+	WCHAR	GetAccelCharFromLabel(sakura::wstring_view label) const;
 	int ToolbarNoToIndex( int nToolbarNo ) const;
 
 	HINSTANCE		m_hInstance = nullptr;

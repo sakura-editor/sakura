@@ -38,7 +38,7 @@ void CMainToolBar::ProcSearchBox( MSG *msg )
 		if( msg->wParam == VK_RETURN )  //リターンキー
 		{
 			//検索キーワードを取得
-			std::wstring strText;
+			sakura::wstring strText;
 			if( 0 < GetSearchKey(strText) )	//キー文字列がある
 			{
 				if( strText.size() < _MAX_PATH ){
@@ -130,7 +130,7 @@ void CMainToolBar::CreateToolBar( void )
 			nullptr
 		);
 		if (IsDarkModeActive()) {
-			SetWindowTheme(m_hwndReBar, L"", L"");
+			SetWindowTheme(m_hwndReBar, LTEXT(""), LTEXT(""));
 			SendMessage(m_hwndReBar, RB_SETBKCOLOR, 0, DarkMode::getBackgroundColor());
 		}
 
@@ -310,7 +310,7 @@ void CMainToolBar::CreateToolBar( void )
 						rc.right -= cxBorder;
 
 						//コンボボックスを作る
-						m_hwndSearchBox = CreateWindow( WC_COMBOBOX, L"Combo",
+						m_hwndSearchBox = CreateWindow( WC_COMBOBOX, LTEXT("Combo"),
 								WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWN
 								/*| CBS_SORT*/ | CBS_AUTOHSCROLL /*| CBS_DISABLENOSCROLL*/,
 								rc.left, rc.top, rc.right - rc.left, (rc.bottom - rc.top) * 10,
@@ -540,19 +540,19 @@ void CMainToolBar::AcceptSharedSearchKey()
 		{
 			ApiWrap::Combo_AddString( m_hwndSearchBox, GetDllShareData().m_sSearchKeywords.m_aSearchKeys[i] );
 		}
-		const wchar_t* pszText;
+		const WCHAR* pszText;
 		if( (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
 			&& m_pOwner->GetActiveView().m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence)
 				|| 0 == m_pOwner->GetActiveView().m_strCurSearchKey.size() ){
 			if( 0 < nSize ){
 				pszText = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];
 			}else{
-				pszText = L"";
+				pszText = LTEXT("");
 			}
 		}else{
 			pszText = m_pOwner->GetActiveView().m_strCurSearchKey.c_str();
 		}
-		std::wstring strText;
+		sakura::wstring strText;
 		GetSearchKey(strText);
 		if( 0 < nSize && 0 != strText.compare(pszText) ){
 			::SetWindowText(m_hwndSearchBox, pszText);
@@ -560,7 +560,7 @@ void CMainToolBar::AcceptSharedSearchKey()
 	}
 }
 
-size_t CMainToolBar::GetSearchKey(std::wstring& strText)
+size_t CMainToolBar::GetSearchKey(sakura::wstring& strText)
 {
 	if( m_hwndSearchBox ){
 		ApiWrap::Wnd_GetText( m_hwndSearchBox, strText );

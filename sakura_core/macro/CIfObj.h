@@ -41,7 +41,7 @@ public:
 	struct CMethodInfo
 	{
 		FUNCDESC		Desc;
-		wchar_t			Name[64];
+		WCHAR			Name[64];
 		CIfObjMethod	Method;
 		ELEMDESC		Arguments[9];
 		int				ID;
@@ -50,21 +50,21 @@ public:
 
 	// コンストラクタ・デストラクタ
 protected:
-	CIfObj(std::wstring_view name, bool isGlobal);
+	CIfObj(sakura::wstring_view name, bool isGlobal);
 
 public:
 	~CIfObj() override;
 
 	// フィールド・アクセサ
-	const std::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インターフェースオブジェクト名
+	const sakura::wstring::value_type* Name() const { return this->m_sName.c_str(); } // インターフェースオブジェクト名
 	bool IsGlobal() const { return this->m_isGlobal; } //オブジェクト名の省略可否
 	IWSHClient* Owner() const { return this->m_Owner; } // オーナーIWSHClient
-	std::wstring m_sName;
+	sakura::wstring m_sName;
 	bool m_isGlobal;
 	IWSHClient *m_Owner = nullptr;
 
 	// 操作
-	void AddMethod(const wchar_t* Name, int ID, VARTYPE *ArgumentTypes,
+	void AddMethod(const WCHAR* Name, int ID, VARTYPE *ArgumentTypes,
 		int ArgumentCount, VARTYPE ResultType, CIfObjMethod Method);
 	void ReserveMethods(int Count)
 	{

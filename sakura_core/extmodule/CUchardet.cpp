@@ -12,7 +12,7 @@
  */
 LPCWSTR CUchardet::GetDllNameImp( [[maybe_unused]] int index )
 {
-	return L"uchardet.dll";
+	return LTEXT("uchardet.dll");
 }
 
 /*!

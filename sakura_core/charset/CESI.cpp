@@ -525,8 +525,8 @@ void CESI::GetEncodingInfo_meta( const char* pS, const int nLen )
 */
 bool CESI::_CheckUtf16Eol( const char* pS, const size_t nLen, const bool bbig_endian )
 {
-	wchar_t wc0;
-	wchar_t wc1;
+	WCHAR wc0;
+	WCHAR wc1;
 
 	if( nLen >= 4 ){
 		if( bbig_endian ){
@@ -586,8 +586,8 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 
 	for( ; ; ){
 
-		nret1 = CheckUtf16leChar( reinterpret_cast<const wchar_t*>(pr1), (pr_end - pr1)/sizeof(wchar_t), &echarset1, 0 );
-		nret2 = CheckUtf16beChar( reinterpret_cast<const wchar_t*>(pr2), (pr_end - pr2)/sizeof(wchar_t), &echarset2, 0 );
+		nret1 = CheckUtf16leChar( reinterpret_cast<const WCHAR*>(pr1), (pr_end - pr1)/sizeof(WCHAR), &echarset1, 0 );
+		nret2 = CheckUtf16beChar( reinterpret_cast<const WCHAR*>(pr2), (pr_end - pr2)/sizeof(WCHAR), &echarset2, 0 );
 		if( nret1 == 0 && nret2 == 0 ){
 			// LE BE 両方共のチェックが終了した。
 			break;
@@ -605,13 +605,13 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 					if( _CheckUtf16EolLE(pr1, pr_end-pr1) ){ nnewlinew1++; }
 				}
 			}else{
-				unsigned int n = GuessUtf16Charsz( pr1[0] | static_cast<wchar_t>(pr1[1] << 8) );
-				if( (pr_end-pr1)/sizeof(wchar_t) < n ){
+				unsigned int n = GuessUtf16Charsz( pr1[0] | static_cast<WCHAR>(pr1[1] << 8) );
+				if( (pr_end-pr1)/sizeof(WCHAR) < n ){
 					break;
 				}
-				nillbytes1 += nret1*sizeof(wchar_t);
+				nillbytes1 += nret1*sizeof(WCHAR);
 			}
-			pr1 += nret1*sizeof(wchar_t);
+			pr1 += nret1*sizeof(WCHAR);
 		}
 
 		// UTF-16 BE の処理
@@ -622,13 +622,13 @@ void CESI::GetEncodingInfo_uni( const char* pS, const int nLen )
 					if( _CheckUtf16EolBE(pr2, pr_end-pr2) ){ nnewlinew2++; }
 				}
 			}else{
-				unsigned int n = GuessUtf16Charsz((static_cast<wchar_t>(pr2[0] << 8)) | pr2[1]);
-				if( (pr_end-pr2)/sizeof(wchar_t) < n ){
+				unsigned int n = GuessUtf16Charsz((static_cast<WCHAR>(pr2[0] << 8)) | pr2[1]);
+				if( (pr_end-pr2)/sizeof(WCHAR) < n ){
 					break;
 				}
-				nillbytes2 += nret2*sizeof(wchar_t);
+				nillbytes2 += nret2*sizeof(WCHAR);
 			}
-			pr2 += nret2*sizeof(wchar_t);
+			pr2 += nret2*sizeof(WCHAR);
 		}
 	}
 
@@ -1319,14 +1319,14 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 
 	pcmtxtOut->AppendString( LS(STR_ESI_DOC_TYPE) );	// "文書種別\r\n"
 
-	auto_sprintf( szWork, L"\t%s\r\n", doc.m_cDocType.GetDocumentAttribute().m_szTypeName );
+	auto_sprintf( szWork, LTEXT("\t%s\r\n"), doc.m_cDocType.GetDocumentAttribute().m_szTypeName );
 	pcmtxtOut->AppendString( szWork );
 
 	pcmtxtOut->AppendString( LS(STR_ESI_DEFAULT_CHARCODE) );	// "デフォルト文字コード\r\n"
 
 	WCHAR szCpName[100];
 	CCodePage::GetNameNormal(szCpName, doc.m_cDocType.GetDocumentAttribute().m_encoding.m_eDefaultCodetype);
-	auto_sprintf( szWork, L"\t%s\r\n", szCpName );
+	auto_sprintf( szWork, LTEXT("\t%s\r\n"), szCpName );
 	pcmtxtOut->AppendString( szWork );
 
 	pcmtxtOut->AppendString( LS(STR_ESI_SAMPLE_LEN) );	// "サンプルデータ長\r\n"
@@ -1336,7 +1336,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 
 	pcmtxtOut->AppendString( LS(STR_ESI_BYTES_AND_POINTS) );	// "固有バイト数とポイント数\r\n"
 
-	pcmtxtOut->AppendString( L"\tUNICODE\r\n" );
+	pcmtxtOut->AppendString( LTEXT("\tUNICODE\r\n") );
 	cesi.GetEvaluation( CODE_UNICODE, &v1, &v2 );
 	cesi.GetEvaluation( CODE_UNICODEBE, &v3, &v4 );
 	auto_sprintf( szWork, LS(STR_ESI_UTF16LE_B_AND_P), v1, v2 ); // "\t\tUTF16LE 固有バイト数 %d,\tポイント数 %d\r\n"
@@ -1346,10 +1346,10 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 	pcmtxtOut->AppendString( LS(STR_ESI_BOM) );	// "\t\tBOM の推測結果　"
 	switch( cesi.m_eWcBomType ){
 	case ESI_BOMTYPE_LE:
-		wcsncpy_s( szWork, L"LE\r\n", _TRUNCATE );
+		wcsncpy_s( szWork, LTEXT("LE\r\n"), _TRUNCATE );
 		break;
 	case ESI_BOMTYPE_BE:
-		wcsncpy_s( szWork, L"BE\r\n", _TRUNCATE );
+		wcsncpy_s( szWork, LTEXT("BE\r\n"), _TRUNCATE );
 		break;
 	default:
 		wcsncpy_s( szWork, LS(STR_ESI_BOM_UNKNOWN), _TRUNCATE );	// "不明\r\n"
@@ -1370,7 +1370,7 @@ void CESI::GetDebugInfo( const char* pS, const int nLen, CNativeW* pcmtxtOut )
 
 	pcmtxtOut->AppendString( LS(STR_ESI_RESULT) );	// "判定結果\r\n"
 
-	auto_sprintf( szWork, L"\t%s\r\n", CCodeTypeName(ecode_result).Normal() );
+	auto_sprintf( szWork, LTEXT("\t%s\r\n"), CCodeTypeName(ecode_result).Normal() );
 	pcmtxtOut->AppendString( szWork );
 
 	return;

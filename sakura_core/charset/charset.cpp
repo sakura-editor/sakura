@@ -36,16 +36,16 @@ struct SCodeSet {
 
 // 文字コードセット(初期データ)
 static	SCodeSet	ASCodeSet[] = {
-	{ CODE_AUTODETECT,	L"Auto",	L"Auto",	L"自動選択",	false,	false,	false },	//!< 文字コード自動判別	//mapには入れない
-	{ CODE_SJIS,		L"SJIS",	L"SJIS",	L"SJIS",		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
-	{ CODE_JIS,			L"JIS",		L"JIS",		L"JIS",			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
-	{ CODE_EUC,			L"EUC",		L"EUC",		L"EUC-JP",		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ではない
-	{ CODE_LATIN1,		L"Latin1",	L"Latin1",	L"Latin1",		false,	false,	true  },	//!< Latin1				(欧文, Windows-932, Windows Codepage 1252 West European)
-	{ CODE_UNICODE,		L"UTF-16",	L"UTF-16",	L"UTF-16",		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
-	{ CODE_UNICODEBE,	L"U16BE",	L"U16BE",	L"UTF-16BE",	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
-	{ CODE_UTF8,		L"UTF-8",	L"UTF-8",	L"UTF-8",		true,	false,	true  },	//!< UTF-8
-	{ CODE_CESU8,		L"CESU-8",	L"CESU-8",	L"CESU-8",		true,	false,	true  },	//!< CESU-8				(UCS-2からUTF-8化)
-	{ CODE_UTF7,		L"UTF-7",	L"UTF-7",	L"UTF-7",		true,	false,	false },	//!< UTF-7
+	{ CODE_AUTODETECT,	LTEXT("Auto"),	LTEXT("Auto"),	LTEXT("自動選択"),	false,	false,	false },	//!< 文字コード自動判別	//mapには入れない
+	{ CODE_SJIS,		LTEXT("SJIS"),	LTEXT("SJIS"),	LTEXT("SJIS"),		false,	false,	true  },	//!< SJIS				(MS-CP932(Windows-31J), シフトJIS(Shift_JIS))
+	{ CODE_JIS,			LTEXT("JIS"),		LTEXT("JIS"),		LTEXT("JIS"),			false,	false,	false },	//!< JIS				(MS-CP5022x(ISO-2022-JP-MS))
+	{ CODE_EUC,			LTEXT("EUC"),		LTEXT("EUC"),		LTEXT("EUC-JP"),		false,	false,	true  },	//!< EUC				(MS-CP51932)	// eucJP-ms(eucJP-open)ではない
+	{ CODE_LATIN1,		LTEXT("Latin1"),	LTEXT("Latin1"),	LTEXT("Latin1"),		false,	false,	true  },	//!< Latin1				(欧文, Windows-932, Windows Codepage 1252 West European)
+	{ CODE_UNICODE,		LTEXT("UTF-16"),	LTEXT("UTF-16"),	LTEXT("UTF-16"),		true,	true,	true  },	//!< Unicode			(UTF-16 LittleEndian)	// UCS-2
+	{ CODE_UNICODEBE,	LTEXT("U16BE"),	LTEXT("U16BE"),	LTEXT("UTF-16BE"),	true,	true,	true  },	//!< Unicode BigEndian	(UTF-16 BigEndian)		// UCS-2
+	{ CODE_UTF8,		LTEXT("UTF-8"),	LTEXT("UTF-8"),	LTEXT("UTF-8"),		true,	false,	true  },	//!< UTF-8
+	{ CODE_CESU8,		LTEXT("CESU-8"),	LTEXT("CESU-8"),	LTEXT("CESU-8"),		true,	false,	true  },	//!< CESU-8				(UCS-2からUTF-8化)
+	{ CODE_UTF7,		LTEXT("UTF-7"),	LTEXT("UTF-7"),	LTEXT("UTF-7"),		true,	false,	false },	//!< UTF-7
 };
 
 // 文字コードセット
@@ -120,7 +120,7 @@ LPCWSTR CCodeTypeName::Short() const
 	return it->second.m_sShort;
 }
 
-std::wstring CCodeTypeName::Bracket() const
+sakura::wstring CCodeTypeName::Bracket() const
 {
 	const auto pszShort = Short();
 	if (pszShort == nullptr) {
@@ -128,7 +128,7 @@ std::wstring CCodeTypeName::Bracket() const
 	}
 
 	// 値で返すので組み立て用の共有バッファは要らない
-	return std::format(L"  [{}]", pszShort);
+	return std::format(LTEXT("  [{}]"), pszShort);
 }
 
 bool CCodeTypeName::UseBom()

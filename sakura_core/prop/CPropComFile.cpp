@@ -270,7 +270,7 @@ void CPropFile::SetData( HWND hwndDlg )
 	nN = nN < 1  ?  1 : nN;
 	nN = nN > 35791 ? 35791 : nN;
 
-	auto_sprintf( buf, L"%d", nN);
+	auto_sprintf( buf, LTEXT("%d"), nN);
 	ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, buf );
 	//	To Here Aug. 21, 2000 genta
 
@@ -346,9 +346,9 @@ int CPropFile::GetData( HWND hwndDlg )
 
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_AUTOBACKUP_INTERVAL, szNumBuf, /*5*/ 6 );	//@@@ 2001.03.21 by MIK
 
-	for( nN = 0, pDigit = szNumBuf; *pDigit != L'\0'; pDigit++ ){
-		if( L'0' <= *pDigit && *pDigit <= L'9' ){
-			nN = nN * 10 + *pDigit - L'0';
+	for( nN = 0, pDigit = szNumBuf; *pDigit != LCHAR('\0'); pDigit++ ){
+		if( LCHAR('0') <= *pDigit && *pDigit <= LCHAR('9') ){
+			nN = nN * 10 + *pDigit - LCHAR('0');
 		}
 		else
 			break;

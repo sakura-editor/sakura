@@ -41,7 +41,7 @@ namespace basis {
  *
  * いまとなっては必要性に疑問のある仕様だが、一旦残しておく。
  */
-std::wstring GetBugReportCaption()
+sakura::wstring GetBugReportCaption()
 {
 	// L"sakura: 作者に教えて欲しいエラー"
 	return LS(STR_ERR_DLGDOCLMN1);
@@ -91,10 +91,10 @@ int User32::MessageBoxExW(
  * @returns メッセージボックスがどのボタンで閉じられたかを示す値。IDYESなど。
  */
 int MessageBoxS(
-	const std::wstring& text,						// NUL終端を保証したいため、あえて std::wstring にする
+	const sakura::wstring& text,						// NUL終端を保証したいため、あえて std::wstring にする
 	UINT uType,
 	_In_opt_ HWND hWndOwner,
-	const std::optional<std::wstring>& optCaption	// NUL終端を保証したいため、あえて std::wstring にする
+	const std::optional<sakura::wstring>& optCaption	// NUL終端を保証したいため、あえて std::wstring にする
 )
 {
 	// メッセージボックスはモーダルダイアログなので、オーナーを指定する
@@ -136,7 +136,7 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType)
 
 	// メッセージボックスを表示する
 	return MessageBoxS(
-		std::wstring{ text.str() },	// NUL終端を保証するため、ここでコピーする
+		sakura::wstring{ text.str() },	// NUL終端を保証するため、ここでコピーする
 		uType,
 		hWnd,
 		capStr.optStr()	// 指定されている場合、ここで std::wstring が生成される

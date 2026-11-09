@@ -18,10 +18,10 @@
 /*!
 	UTF-7 Set D 部分の読み込み。
 */
-int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst )
+int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, WCHAR* pDst )
 {
 	const char* pr = pSrc;
-	wchar_t* pw = pDst;
+	WCHAR* pw = pDst;
 
 	for( ; pr < pSrc+nSrcLen; ++pr ){
 		if( IsUtf7Direct(*pr) ){
@@ -37,7 +37,7 @@ int CUtf7::_Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 /*!
 	UTF-7 Set B 部分の読み込み
 */
-int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError )
 {
 	char* pbuf = new (std::nothrow) char[nSrcLen];
 	if (pbuf == nullptr) {
@@ -47,22 +47,22 @@ int CUtf7::_Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* p
 		return 0;
 	}
 	int ndecoded_len = _DecodeBase64( pSrc, nSrcLen, pbuf );
-	int nModLen = ndecoded_len % sizeof(wchar_t);
+	int nModLen = ndecoded_len % sizeof(WCHAR);
 	ndecoded_len = ndecoded_len - nModLen;
 	CMemory::SwapHLByte( pbuf, ndecoded_len );  // UTF-16 BE を UTF-16 LE に直す
 	memcpy( reinterpret_cast<char*>(pDst), pbuf, ndecoded_len );
 	if( nModLen ){
 		ndecoded_len += BinToText( reinterpret_cast<const unsigned char *>(pbuf) + ndecoded_len,
-			nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(wchar_t)]) * sizeof(wchar_t);
+			nModLen, &reinterpret_cast<unsigned short*>(pDst)[ndecoded_len / sizeof(WCHAR)]) * sizeof(WCHAR);
 		if( pbError ){
 			*pbError = true;
 		}
 	}
 	delete [] pbuf;
-	return ndecoded_len / sizeof(wchar_t);
+	return ndecoded_len / sizeof(WCHAR);
 }
 
-int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError )
 {
 	bool berror = false;
 
@@ -101,7 +101,7 @@ int CUtf7::Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* 
 			}
 			if( nblocklen < 1 && pr < pr_next && *(pr_next - 1) == '-' ){
 				// +- → + 変換
-				*pw = L'+';
+				*pw = LCHAR('+');
 				++pw;
 			}else{
 				pw += _Utf7SetBToUni_block( &*pr, nblocklen, pw, &berror_tmp );
@@ -132,7 +132,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	const char* pData = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 必要なバッファサイズを調べて確保
-	wchar_t* pDst = new (std::nothrow) wchar_t[nDataLen + 1];
+	WCHAR* pDst = new (std::nothrow) WCHAR[nDataLen + 1];
 	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
@@ -141,7 +141,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	int nDstLen = Utf7ToUni( pData, nDataLen, pDst, &bError );
 
 	// pDstMem を設定
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(WCHAR) );
 
 	delete [] pDst;
 
@@ -152,7 +152,7 @@ EConvertResult CUtf7::UTF7ToUnicode( const CMemory& cSrc, CNativeW* pDstMem )
 	}
 }
 
-int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetD_block( const WCHAR* pSrc, const int nSrcLen, char* pDst )
 {
 	int i;
 
@@ -167,7 +167,7 @@ int CUtf7::_UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return i;
 }
 
-int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst )
+int CUtf7::_UniToUtf7SetB_block( const WCHAR* pSrc, const int nSrcLen, char* pDst )
 {
 	char* pw;
 
@@ -175,20 +175,20 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 		return 0;
 	}
 
-	wchar_t* psrc = new (std::nothrow) wchar_t[nSrcLen];
+	WCHAR* psrc = new (std::nothrow) WCHAR[nSrcLen];
 	if( psrc == nullptr ){
 		return 0;
 	}
 
 	// // UTF-16 LE → UTF-16 BE
 	wcsncpy( &psrc[0], pSrc, nSrcLen );
-	CMemory::SwapHLByte( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t) );
+	CMemory::SwapHLByte( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(WCHAR) );
 
 	// 書き込み
 	pw = pDst;
 	pw[0] = '+';
 	++pw;
-	pw += _EncodeBase64( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(wchar_t), pw );
+	pw += _EncodeBase64( reinterpret_cast<char*>(psrc), nSrcLen*sizeof(WCHAR), pw );
 	pw[0] = '-';
 	++pw;
 
@@ -197,10 +197,10 @@ int CUtf7::_UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* p
 	return int(pw - pDst);
 }
 
-int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstLen )
+int CUtf7::UniToUtf7( const WCHAR* pSrc, const int nSrcLen, char* pDst, int nDstLen )
 {
-	const wchar_t *pr, *pr_base;
-	const wchar_t* pr_end;
+	const WCHAR *pr, *pr_base;
+	const WCHAR* pr_end;
 	char* pw;
 
 	pr = pSrc;
@@ -217,7 +217,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 		pw += _UniToUtf7SetD_block( pr_base, int(pr - pr_base), pw );
 		pr_base = pr;
 
-		if( *pr == L'+' ){
+		if( *pr == LCHAR('+') ){
 			// '+' → "+-"
 			if( nDstLen < pw + 2 - pDst ){
 				break;
@@ -245,7 +245,7 @@ int CUtf7::UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nD
 EConvertResult CUtf7::UnicodeToUTF7( const CNativeW& cSrc, CMemory* pDstMem )
 {
 	// データ取得
-	const wchar_t* pSrc = cSrc.GetStringPtr();
+	const WCHAR* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 出力先バッファの確保

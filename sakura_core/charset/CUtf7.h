@@ -26,12 +26,12 @@ public:
 protected:
 
 	// 2008.11.10 変換ロジックを書き直す
-	static int _Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst );
-	static int _Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
-	static int Utf7ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
+	static int _Utf7SetDToUni_block( const char* pSrc, const int nSrcLen, WCHAR* pDst );
+	static int _Utf7SetBToUni_block( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError );
+	static int Utf7ToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError );
 
-	static int _UniToUtf7SetD_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
-	static int _UniToUtf7SetB_block( const wchar_t* pSrc, const int nSrcLen, char* pDst );
-	static int UniToUtf7( const wchar_t* pSrc, const int nSrcLen, char* pDst, int nDstLen );
+	static int _UniToUtf7SetD_block( const WCHAR* pSrc, const int nSrcLen, char* pDst );
+	static int _UniToUtf7SetB_block( const WCHAR* pSrc, const int nSrcLen, char* pDst );
+	static int UniToUtf7( const WCHAR* pSrc, const int nSrcLen, char* pDst, int nDstLen );
 };
 #endif /* SAKURA_CUTF7_55498766_1C8A_416B_9F39_88D3D83B8B65_H_ */

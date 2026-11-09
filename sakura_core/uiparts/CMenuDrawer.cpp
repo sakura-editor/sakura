@@ -839,10 +839,10 @@ void CMenuDrawer::MyAppendMenu(
 
 	if( nForceIconId == -1 ) nForceIconId = int(nFuncId);	//お気に入り	//@@@ 2003.04.08 MIK
 
-	szLabel[0] = L'\0';
+	szLabel[0] = LCHAR('\0');
 	if( nullptr != pszLabel ){
 		wcsncpy( szLabel, pszLabel, int(std::size(szLabel)) - 1 );
-		szLabel[std::size(szLabel) - 1 ] = L'\0';
+		szLabel[std::size(szLabel) - 1 ] = LCHAR('\0');
 	}
 	wcscpy( szKey, pszKey); 
 	if( nFuncId != 0 ){
@@ -1045,11 +1045,11 @@ const WCHAR* CMenuDrawer::GetLabel( int nFuncID )
 	return m_menuItems[i].m_cmemLabel.GetStringPtr();
 }
 
-WCHAR CMenuDrawer::GetAccelCharFromLabel(std::wstring_view label) const
+WCHAR CMenuDrawer::GetAccelCharFromLabel(sakura::wstring_view label) const
 {
-	const auto pos = label.find(L'&');
-	if (std::wstring_view::npos == pos || std::size(label) <= pos + 1) {
-		return L'\0';	// L'&'が見付からない、または、L'&'の後に文字がない場合、L'\0'を返す
+	const auto pos = label.find(LCHAR('&'));
+	if (sakura::wstring_view::npos == pos || std::size(label) <= pos + 1) {
+		return LCHAR('\0');	// L'&'が見付からない、または、L'&'の後に文字がない場合、L'\0'を返す
 	}
 	return (WCHAR)towupper(label[pos + 1]);
 }
@@ -1087,7 +1087,7 @@ LRESULT CMenuDrawer::OnMenuChar( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UI
 		mii.cbSize = sizeof(MENUITEMINFO);
 		mii.fMask = MIIM_CHECKMARKS | MIIM_DATA | MIIM_ID | MIIM_STATE | MIIM_SUBMENU | MIIM_TYPE;
 		mii.fType = MFT_STRING;
-		wcscpy( szText, L"--unknown--" );
+		wcscpy( szText, LTEXT("--unknown--") );
 		mii.dwTypeData = szText;
 		mii.cch = int(std::size(szText)) - 1;
 		if( 0 == ::GetMenuItemInfo( hmenu, i, TRUE, &mii ) ){

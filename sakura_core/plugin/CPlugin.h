@@ -23,28 +23,28 @@ typedef int PluginId;
 typedef int PlugId;
 
 //プラグイン定義ファイル名
-#define PII_FILENAME				L"plugin.def"
-#define PII_L10NDIR					L"local"
-#define PII_L10NFILEBASE			L"plugin_"
-#define PII_L10NFILEEXT				L".def"
+#define PII_FILENAME				LTEXT("plugin.def")
+#define PII_L10NDIR					LTEXT("local")
+#define PII_L10NFILEBASE			LTEXT("plugin_")
+#define PII_L10NFILEEXT				LTEXT(".def")
 //オプションファイル拡張子（オプションファイル＝個別フォルダー名＋拡張子）
-#define PII_OPTFILEEXT				L".ini"
+#define PII_OPTFILEEXT				LTEXT(".ini")
 
 //プラグイン定義ファイル・キー文字列
-#define	PII_PLUGIN					L"Plugin"		//共通情報
-#define	PII_PLUGIN_ID				L"Id"			//ID：プラグインID
-#define	PII_PLUGIN_NAME				L"Name"			//名前：プラグイン名
-#define	PII_PLUGIN_DESCRIPTION		L"Description"	//説明：簡潔な説明
-#define	PII_PLUGIN_PLUGTYPE			L"Type"			//種別：wsh / dll
-#define	PII_PLUGIN_AUTHOR			L"Author"		//作者：著作権者名
-#define	PII_PLUGIN_VERSION			L"Version"		//バージョン：プラグインのバージョン
-#define	PII_PLUGIN_URL				L"Url"			//配布URL：配布元URL
+#define	PII_PLUGIN					LTEXT("Plugin")		//共通情報
+#define	PII_PLUGIN_ID				LTEXT("Id")			//ID：プラグインID
+#define	PII_PLUGIN_NAME				LTEXT("Name")			//名前：プラグイン名
+#define	PII_PLUGIN_DESCRIPTION		LTEXT("Description")	//説明：簡潔な説明
+#define	PII_PLUGIN_PLUGTYPE			LTEXT("Type")			//種別：wsh / dll
+#define	PII_PLUGIN_AUTHOR			LTEXT("Author")		//作者：著作権者名
+#define	PII_PLUGIN_VERSION			LTEXT("Version")		//バージョン：プラグインのバージョン
+#define	PII_PLUGIN_URL				LTEXT("Url")			//配布URL：配布元URL
 
-#define PII_PLUG					L"Plug"			//プラグ情報
-#define PII_STRING					L"String"		//文字列情報
+#define PII_PLUG					LTEXT("Plug")			//プラグ情報
+#define PII_STRING					LTEXT("String")		//文字列情報
 
-#define PII_COMMAND					L"Command"		//コマンド情報
-#define PII_OPTION					L"Option"		//オプション定義情報	// 2010/3/24 Uchi
+#define PII_COMMAND					LTEXT("Command")		//コマンド情報
+#define PII_OPTION					LTEXT("Option")		//オプション定義情報	// 2010/3/24 Uchi
 
 class CPlugin;
 
@@ -64,7 +64,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
+	CPlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel )
 		: m_id( id )
 		, m_sJack( sJack )
 		, m_sHandler( sHandler )
@@ -143,15 +143,15 @@ public:
 	//メンバ変数
 public:
 	const PlugId m_id;					//プラグID
-	const std::wstring m_sJack;			//関連付けるジャック名
-	const std::wstring m_sHandler;		//ハンドラ文字列（関数名）
-	const std::wstring m_sLabel;		//ラベル文字列
-	std::wstring m_sIcon;				//アイコンのファイルパス
+	const sakura::wstring m_sJack;			//関連付けるジャック名
+	const sakura::wstring m_sHandler;		//ハンドラ文字列（関数名）
+	const sakura::wstring m_sLabel;		//ラベル文字列
+	sakura::wstring m_sIcon;				//アイコンのファイルパス
 	CPlugin& m_cPlugin;					//親プラグイン
 };
 
 // オプション定義	// 2010/3/24 Uchi
-std::vector<std::wstring> wstring_split( std::wstring, wchar_t );
+std::vector<sakura::wstring> wstring_split( sakura::wstring, WCHAR );
 
 class CPluginOption
 {
@@ -162,7 +162,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPluginOption( CPlugin* parent, std::wstring sLabel, std::wstring sSection, std::wstring sKey, std::wstring sType, std::wstring sSelects, std::wstring sDefaultVal, int index) 
+	CPluginOption( CPlugin* parent, sakura::wstring sLabel, sakura::wstring sSection, sakura::wstring sKey, sakura::wstring sType, sakura::wstring sSelects, sakura::wstring sDefaultVal, int index) 
 		: m_sLabel(sLabel), m_sSection(sSection), m_sKey(sKey)
 	{
 		m_parent	= parent;
@@ -180,27 +180,27 @@ public:
 
 	//操作
 public:
-	std::wstring	GetLabel( void ) const  { return m_sLabel; }
-	void	GetKey( std::wstring* sectin, std::wstring* key ) const {
+	sakura::wstring	GetLabel( void ) const  { return m_sLabel; }
+	void	GetKey( sakura::wstring* sectin, sakura::wstring* key ) const {
 		*sectin = m_sSection; 
 		*key = m_sKey;
 	}
-	std::wstring	GetType( void ) const	{ return m_sType; }
+	sakura::wstring	GetType( void ) const	{ return m_sType; }
 	int 	GetIndex( void ) const	{ return m_index; }
-	std::vector<std::wstring>	GetSelects() const
+	std::vector<sakura::wstring>	GetSelects() const
 	{
-		return (wstring_split(m_sSelects, L'|'));
+		return (wstring_split(m_sSelects, LCHAR('|')));
 	}
-	std::wstring	GetDefaultVal() const { return m_sDefaultVal; }
+	sakura::wstring	GetDefaultVal() const { return m_sDefaultVal; }
 
 protected:
 	CPlugin*	m_parent;
-	std::wstring		m_sLabel;
-	std::wstring		m_sSection;
-	std::wstring		m_sKey;
-	std::wstring		m_sType;
-	std::wstring		m_sSelects;		// 選択候補
-	std::wstring		m_sDefaultVal;
+	sakura::wstring		m_sLabel;
+	sakura::wstring		m_sSection;
+	sakura::wstring		m_sKey;
+	sakura::wstring		m_sType;
+	sakura::wstring		m_sSelects;		// 選択候補
+	sakura::wstring		m_sDefaultVal;
 	int 		m_index; 
 };
 
@@ -217,7 +217,7 @@ public:
 
 	//コンストラクタ
 public:
-	CPlugin(std::wstring_view baseDir);
+	CPlugin(sakura::wstring_view baseDir);
 	CPlugin(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CPlugin(Me&&) noexcept = delete;
@@ -240,7 +240,7 @@ protected:
 	bool ReadPluginDefString( CDataProfile *cProfile, CDataProfile *cProfileMlang );					//プラグイン定義ファイルのStringセクションを読み込む
 
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
-	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
+	virtual CPlug* CreatePlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel )
 	{
 		return new CPlug( plugin, id, sJack, sHandler, sLabel );
 	}
@@ -249,26 +249,26 @@ protected:
 
 	//属性
 public:
-	std::wstring GetFilePath( const std::wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
-	std::wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
-	std::wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
-	std::wstring GetFolderName() const;	//プラグインのフォルダー名を取得
+	sakura::wstring GetFilePath( const sakura::wstring& sFileName ) const;				//プラグインフォルダー基準の相対パスをフルパスに変換
+	sakura::wstring GetPluginDefPath() const{ return GetFilePath( PII_FILENAME ); }	//プラグイン定義ファイルのパス
+	sakura::wstring GetOptionPath() const{ return m_sOptionDir + PII_OPTFILEEXT; }	//オプションファイルのパス
+	sakura::wstring GetFolderName() const;	//プラグインのフォルダー名を取得
 	virtual CPlug::Array GetPlugs() const = 0;								//プラグの一覧
 
 	//メンバ変数
 public:
 	PluginId m_id;					//!< プラグイン番号（エディタがふる0～MAX_PLUGIN-1の番号）
-	std::wstring m_sId;				//!< プラグインID
-	std::wstring m_sName;			//!< プラグイン和名
-	std::wstring m_sDescription;	//!< プラグインについての簡単な記述
-	std::wstring m_sAuthor;			//!< 作者
-	std::wstring m_sVersion;		//!< バージョン
-	std::wstring m_sUrl;			//!< 配布URL
-	std::wstring m_sBaseDir;
-	std::wstring m_sOptionDir;
-	std::wstring m_sLangName;		//!< 言語名
+	sakura::wstring m_sId;				//!< プラグインID
+	sakura::wstring m_sName;			//!< プラグイン和名
+	sakura::wstring m_sDescription;	//!< プラグインについての簡単な記述
+	sakura::wstring m_sAuthor;			//!< 作者
+	sakura::wstring m_sVersion;		//!< バージョン
+	sakura::wstring m_sUrl;			//!< 配布URL
+	sakura::wstring m_sBaseDir;
+	sakura::wstring m_sOptionDir;
+	sakura::wstring m_sLangName;		//!< 言語名
 	CPluginOption::Array m_options;	// オプション	// 2010/3/24 Uchi
-	std::vector<std::wstring> m_aStrings;	// 文字列
+	std::vector<sakura::wstring> m_aStrings;	// 文字列
 protected:
 	CPlug::Array m_plugs;
 	int m_nCommandCount = 0;

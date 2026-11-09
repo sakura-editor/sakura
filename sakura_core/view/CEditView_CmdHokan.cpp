@@ -180,24 +180,24 @@ void CEditView::ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided )
 	@date 2010.06.16 Moca ひらがなで続行する場合、直前を漢字に制限
 */
 size_t CEditView::HokanSearchByFile(
-	const wchar_t*	pszKey,			//!< [in]
+	const WCHAR*	pszKey,			//!< [in]
 	bool			bHokanLoHiCase,	//!< [in] 英大文字小文字を同一視する
-	vector_ex<std::wstring>& 	vKouho,	//!< [in,out] 候補
+	vector_ex<sakura::wstring>& 	vKouho,	//!< [in,out] 候補
 	size_t			nMaxKouho		//!< [in] Max候補数(0==無制限)
 ){
 	const auto nKeyLen = int(wcslen(pszKey));
 	int nLines = m_pcEditDoc->m_cDocLineMgr.GetLineCount();
 	int j, nWordLen, nLineLen, nRet, nCharSize, nWordBegin, nWordLenStop;
 
-	const wchar_t* pszLine;
-	const wchar_t* word;
+	const WCHAR* pszLine;
+	const WCHAR* word;
 
 	CLogicPoint ptCur = GetCaret().GetCaretLogicPos(); //物理カーソル位置
 	bool bKeyStartWithMark;			//キーが記号で始まるか
 	bool bWordStartWithMark;		//候補が記号で始まるか
 
 	// キーの先頭が記号(#$@\)かどうか判定
-	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != nullptr ? true : false );
+	bKeyStartWithMark = ( wcschr( LTEXT("$@#\\"), pszKey[0] ) != nullptr ? true : false );
 
 	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
 		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
@@ -209,7 +209,7 @@ size_t CEditView::HokanSearchByFile(
 			if ( pszLine[j] < 0x00C0 && !IS_KEYWORD_CHAR( pszLine[j] ) )continue;
 
 			// キーの先頭が記号以外の場合、記号で始まる単語は候補からはずす
-			if( !bKeyStartWithMark && wcschr( L"$@#\\", pszLine[j] ) != nullptr )continue;
+			if( !bKeyStartWithMark && wcschr( LTEXT("$@#\\"), pszLine[j] ) != nullptr )continue;
 
 			// 文字種類取得
 			ECharKind kindPre = CWordParse::WhatKindOfChar( pszLine, nLineLen, j );	// 文字種類取得
@@ -218,7 +218,7 @@ size_t CEditView::HokanSearchByFile(
 			if ( kindPre == CK_ZEN_SPACE || kindPre == CK_ZEN_NOBASU || kindPre == CK_ZEN_DAKU ||
 				 kindPre == CK_ZEN_KIGO  || kindPre == CK_ZEN_SKIGO )continue;
 
-			bWordStartWithMark = ( wcschr( L"$@#\\", pszLine[j] ) != nullptr ? true : false );
+			bWordStartWithMark = ( wcschr( LTEXT("$@#\\"), pszLine[j] ) != nullptr ? true : false );
 
 			nWordBegin = j;
 			// 候補単語の終了位置を求める
@@ -286,7 +286,7 @@ size_t CEditView::HokanSearchByFile(
 
 			// 候補を追加(重複は除く)
 			{
-				std::wstring strWord(word, nWordLen);
+				sakura::wstring strWord(word, nWordLen);
 				CHokanMgr::AddKouhoUnique(vKouho, strWord);
 			}
 			if( 0 != nMaxKouho && nMaxKouho <= vKouho.size() ){

@@ -289,7 +289,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 //			idListBox = (int) LOWORD(wParam);	// identifier of list box
 //			hwndListBox = (HWND) lParam;		// handle of list box
 				WCHAR		szKey[2];
-				auto_sprintf( szKey, L"%hc", m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
+				auto_sprintf( szKey, LTEXT("%hc"), m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2] );
 				{
 					BOOL bDlgInputResult = cDlgInput1.DoModal(
 						G_AppInstance(),
@@ -312,13 +312,13 @@ INT_PTR CPropCustmenu::DispatchEvent(
 				}
 //@@@ 2002.01.08 YAZAKI カスタムメニューでアクセスキーを消した時、左カッコ ( がメニュー項目に一回残るバグ修正
 				if (m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]){
-					auto_sprintf( szLabel2, L"%s(%hc)",
+					auto_sprintf( szLabel2, LTEXT("%s(%hc)"),
 						szLabel,
 						m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx1][nIdx2]
 					);
 				}
 				else {
-					auto_sprintf( szLabel2, L"%ls", szLabel );
+					auto_sprintf( szLabel2, LTEXT("%ls"), szLabel );
 				}
 
 				ApiWrap::List_InsertString( hwndLIST_RES, nIdx2, szLabel2 );
@@ -696,7 +696,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 	for( i = 0; i < m_Common.m_sCustomMenu.m_nCustMenuItemNumArr[nIdx]; ++i ){
 		if( 0 == m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i] ){
 			wcsncpy( szLabel, LS(STR_PROPCOMCUSTMENU_SEP), int(std::size(szLabel)) - 1 );	//Oct. 18, 2000 JEPRO 「ツールバー」タブで使っているセパレータと同じ線種に統一した
-			szLabel[std::size(szLabel) - 1] = L'\0';
+			szLabel[std::size(szLabel) - 1] = LCHAR('\0');
 		}else{
 			EFunctionCode code = m_Common.m_sCustomMenu.m_nCustMenuItemFuncArr[nIdx][i];
 			//	Oct. 3, 2001 genta
@@ -706,7 +706,7 @@ void CPropCustmenu::SetDataMenuList(HWND hwndDlg, int nIdx)
 		if( '\0' == m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i] ){
 			wcscpy( szLabel2, szLabel );
 		}else{
-			auto_sprintf( szLabel2, L"%ls(%hc)",
+			auto_sprintf( szLabel2, LTEXT("%ls(%hc)"),
 				szLabel,
 				m_Common.m_sCustomMenu.m_nCustMenuItemKeyArr[nIdx][i]
 			);

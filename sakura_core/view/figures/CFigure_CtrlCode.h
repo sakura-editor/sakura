@@ -15,12 +15,12 @@
 class CFigure_CtrlCode : public CFigureSpace{
 public:
 	//traits
-	bool Match(const wchar_t* pText, int nTextLen) const override;
+	bool Match(const WCHAR* pText, int nTextLen) const override;
 
 	//action
 	bool DrawImp(SColorStrategyInfo* pInfo) override;
 	virtual void DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* pcView, bool bTrans, int width) const;
-	virtual wchar_t GetAlternateChar() const{ return L'･'; }
+	virtual WCHAR GetAlternateChar() const{ return LCHAR('･'); }
 	void DispSpace([[maybe_unused]] CGraphics& gr, [[maybe_unused]] DispPos* pDispPos, [[maybe_unused]] CEditView* pcView, [[maybe_unused]] bool bTrans) const override
 	{
 		assert(0);

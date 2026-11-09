@@ -29,7 +29,7 @@ static void MacroError(BSTR Description, BSTR Source, void *Data)
 	MessageBox(View->GetHwnd(), Description, Source, MB_ICONERROR);
 }
 
-CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)
+CWSHMacroManager::CWSHMacroManager(sakura::wstring const AEngineName) : m_EngineName(AEngineName)
 {
 	return;
 }
@@ -86,7 +86,7 @@ BOOL CWSHMacroManager::LoadKeyMacro(
 	}
 
 	while(in){
-		m_Source+=in.ReadLineW()+L"\r\n";
+		m_Source+=in.ReadLineW()+LTEXT("\r\n");
 	}
 
 	SetReady();
@@ -117,12 +117,12 @@ CMacroManagerBase* CWSHMacroManager::Creator(const WCHAR* FileExt)
 {
 	WCHAR FileExtWithDot[1024], FileType[1024], EngineName[1024]; //1024を超えたら後は知りません
 	
-	wcscpy( FileExtWithDot, L"." );
+	wcscpy( FileExtWithDot, LTEXT(".") );
 	wcscat( FileExtWithDot, FileExt );
 
 	if(ReadRegistry(HKEY_CLASSES_ROOT, FileExtWithDot, nullptr, FileType, 1024))
 	{
-		::wcsncat_s(FileType, L"\\ScriptEngine", _TRUNCATE);
+		::wcsncat_s(FileType, LTEXT("\\ScriptEngine"), _TRUNCATE);
 		if(ReadRegistry(HKEY_CLASSES_ROOT, FileType, nullptr, EngineName, 1024))
 		{
 			return new CWSHMacroManager(EngineName);

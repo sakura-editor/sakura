@@ -22,10 +22,10 @@
  * @param [in] wide 表示する文字
  * @param [in] sStatusBar 共通設定 ステータスバー
  */
-/* static */ std::wstring CMainStatusBar::UnicodeToHex(ECodeType eCodeType, std::wstring_view wide, const CommonSetting_Statusbar& sStatusBar)
+/* static */ sakura::wstring CMainStatusBar::UnicodeToHex(ECodeType eCodeType, sakura::wstring_view wide, const CommonSetting_Statusbar& sStatusBar)
 {
 	// 出力先バッファを確保する
-	std::wstring buffer(32, L'\0');
+	sakura::wstring buffer(32, LCHAR('\0'));
 
 	// Hex変換
 	if (CCodeFactory::CreateCodeBase(eCodeType)->UnicodeToHex(std::data(wide), int(std::size(wide)), std::data(buffer), &sStatusBar) != RESULT_COMPLETE) {
@@ -169,7 +169,7 @@ bool CMainStatusBar::SetStatusText(int nIndex, int nOption, const WCHAR* pszText
 		// NULL を渡しても問題が無いのかどうか公式ドキュメントに記載されていない
 		// NULL のままでも問題は発生しないようだが念の為に対策を追加
 		if( pszText == nullptr ){
-			static const wchar_t emptyStr[] = L"";
+			static const WCHAR emptyStr[] = LTEXT("");
 			pszText = emptyStr;
 			textLen = 0;
 		}

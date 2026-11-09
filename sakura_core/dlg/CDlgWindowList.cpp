@@ -225,7 +225,7 @@ BOOL CDlgWindowList::OnInitDialog(HWND hwndDlg, WPARAM wParam, LPARAM lParam)
 	col.mask     = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt      = LVCFMT_LEFT;
 	col.cx       = rcListView.right - rcListView.left - ::GetSystemMetrics(SM_CXVSCROLL) - 10;
-	WCHAR szNull[] = L"";
+	WCHAR szNull[] = LTEXT("");
 	col.pszText  = szNull;
 	col.iSubItem = 0;
 	ListView_InsertColumn(hwndList, 0, &col);

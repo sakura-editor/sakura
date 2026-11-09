@@ -192,7 +192,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				/* 更新するキー情報を取得する。 */
 				wmemset(szPath, 0, int(std::size(szPath)));
 				ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_KEYHELP, szPath, int(std::size(szPath)) );
-				if( szPath[0] == L'\0' ) return FALSE;
+				if( szPath[0] == LCHAR('\0') ) return FALSE;
 				/* 重複検査 */
 				nIndex2 = ListView_GetItemCount(hwndList);
 				WCHAR szPath2[_MAX_PATH];
@@ -217,7 +217,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 						return FALSE;
 					}
 					// 開けたなら1行目を取得してから閉じる -> szAbout
-					std::wstring line=in.ReadLineW();
+					sakura::wstring line=in.ReadLineW();
 					wcsncpy_s(szAbout, line.c_str(), _TRUNCATE);
 					in.Close();
 				}
@@ -422,7 +422,7 @@ INT_PTR CPropTypesKeyHelp::DispatchEvent(
 				{
 					/* ファイルオープンダイアログの初期化 */
 					// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), L"*.khp", true, EFITER_TEXT);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_KEYHELP), LTEXT("*.khp"), true, EFITER_TEXT);
 				}
 				return TRUE;
 
@@ -533,7 +533,7 @@ void CPropTypesKeyHelp::SetData( HWND hwndDlg )
 	ListView_SetExtendedListViewStyle( hwndWork, dwStyle );
 	/* データ表示 */
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
-		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == L'\0' ) break;
+		if( m_Types.m_KeyHelpArr[i].m_szPath[0] == LCHAR('\0') ) break;
 		/* ON-OFF */
 		lvi.mask     = LVIF_TEXT;
 		lvi.iItem    = i;
@@ -588,8 +588,8 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 	for(i = 0; i < MAX_KEYHELP_FILE; i++){
 		if( i < nIndex ){
 			bool		bUse = false;						/* 辞書ON(1)/OFF(0) */
-			szAbout[0]	= L'\0';
-			szPath[0]	= L'\0';
+			szAbout[0]	= LCHAR('\0');
+			szPath[0]	= LCHAR('\0');
 			/* チェックボックス状態を取得してbUseにセット */
 			if(ListView_GetCheckState(hwndList, i))
 				bUse = true;
@@ -599,7 +599,7 @@ int CPropTypesKeyHelp::GetData( HWND hwndDlg )
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szAbout, szAbout);
 			wcscpy(m_Types.m_KeyHelpArr[i].m_szPath, szPath);
 		}else{	/* 未登録部分はクリアする */
-			m_Types.m_KeyHelpArr[i].m_szPath[0] = L'\0';
+			m_Types.m_KeyHelpArr[i].m_szPath[0] = LCHAR('\0');
 		}
 	}
 	/* 辞書の冊数を取得 */
@@ -647,15 +647,15 @@ static WCHAR* strcnv(WCHAR *str)
 {
 	WCHAR* p=str;
 	/* 改行コードの削除 */
-	if( nullptr != (p=wcschr(p,L'\n')) )
-		*p=L'\0';
+	if( nullptr != (p=wcschr(p,LCHAR('\n'))) )
+		*p=LCHAR('\0');
 	p=str;
-	if( nullptr != (p=wcschr(p,L'\r')) )
-		*p=L'\0';
+	if( nullptr != (p=wcschr(p,LCHAR('\r'))) )
+		*p=LCHAR('\0');
 	/* カンマの置換 */
 	p=str;
-	for(; (p=wcschr(p,L',')) != nullptr; ){
-		*p=L'.';
+	for(; (p=wcschr(p,LCHAR(','))) != nullptr; ){
+		*p=LCHAR('.');
 	}
 	return str;
 }

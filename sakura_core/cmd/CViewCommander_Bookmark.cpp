@@ -60,7 +60,7 @@ void CViewCommander::Command_JUMP_DIALOG( void )
 /* 指定行ヘジャンプ */
 void CViewCommander::Command_JUMP( void )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	int			nMode;
 	int			bValidLine;
 	int			nCurrentLine;
@@ -140,7 +140,7 @@ void CViewCommander::Command_JUMP( void )
 		pLine = GetDocument()->m_cDocLineMgr.GetLine(CLogicInt(nLineCount))->GetDocLineStrWithEOL(&nLineLen);
 		bValidLine = FALSE;
 		for( i = CLogicInt(0); i < nLineLen; ++i ){
-			if( L' ' != pLine[i] &&
+			if( LCHAR(' ') != pLine[i] &&
 				WCODE::TAB != pLine[i]
 			){
 				break;
@@ -151,8 +151,8 @@ void CViewCommander::Command_JUMP( void )
 			/* シングルクォーテーション文字列読み込み中 */
 			if( 20 == nMode ){
 				bValidLine = TRUE;
-				if( L'\'' == pLine[i] ){
-					if( i > 0 && L'\\' == pLine[i - 1] ){
+				if( LCHAR('\'') == pLine[i] ){
+					if( i > 0 && LCHAR('\\') == pLine[i - 1] ){
 					}else{
 						nMode = 0;
 						continue;
@@ -163,8 +163,8 @@ void CViewCommander::Command_JUMP( void )
 			/* ダブルクォーテーション文字列読み込み中 */
 			if( 21 == nMode ){
 				bValidLine = TRUE;
-				if( L'"' == pLine[i] ){
-					if( i > 0 && L'\\' == pLine[i - 1] ){
+				if( LCHAR('"') == pLine[i] ){
+					if( i > 0 && LCHAR('\\') == pLine[i - 1] ){
 					}else{
 						nMode = 0;
 						continue;
@@ -174,7 +174,7 @@ void CViewCommander::Command_JUMP( void )
 			}else
 			/* コメント読み込み中 */
 			if( 8 == nMode ){
-				if( i < nLineLen - 1 && L'*' == pLine[i] &&  L'/' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('*') == pLine[i] &&  LCHAR('/') == pLine[i + 1] ){
 					if( /*nCommentBegin != nLineCount &&*/ nCommentBegin != 0){
 						bValidLine = TRUE;
 					}
@@ -187,27 +187,27 @@ void CViewCommander::Command_JUMP( void )
 			/* ノーマルモード */
 			if( 0 == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter( pLine[i], GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol )
 				){
 					continue;
 				}else
-				if( i < nLineLen - 1 && L'-' == pLine[i] &&  L'-' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('-') == pLine[i] &&  LCHAR('-') == pLine[i + 1] ){
 					bValidLine = TRUE;
 					break;
 				}else
-				if( i < nLineLen - 1 && L'/' == pLine[i] &&  L'*' == pLine[i + 1] ){
+				if( i < nLineLen - 1 && LCHAR('/') == pLine[i] &&  LCHAR('*') == pLine[i + 1] ){
 					++i;
 					nMode = 8;
 					nCommentBegin = nLineCount;
 					continue;
 				}else
-				if( L'\'' == pLine[i] ){
+				if( LCHAR('\'') == pLine[i] ){
 					nMode = 20;
 					continue;
 				}else
-				if( L'"' == pLine[i] ){
+				if( LCHAR('"') == pLine[i] ){
 					nMode = 21;
 					continue;
 				}else{

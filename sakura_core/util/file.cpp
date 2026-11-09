@@ -28,7 +28,7 @@
 #include "env/CFileNameManager.h"
 
 //! ファイル名に使えない文字(ADSを使えるように':'は除外する)
-static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
+static constexpr auto& g_InvalidChars = LTEXT(R"(*?"<>|)");
 
 bool fexist(LPCWSTR pszPath)
 {
@@ -49,7 +49,7 @@ bool fexist(const std::filesystem::path& path) noexcept
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
 bool IsInvalidFilenameChars(
-	std::wstring_view szPath
+	sakura::wstring_view szPath
 )
 {
 	// 引数からパスオブジェクトを作成する
@@ -70,7 +70,7 @@ bool IsInvalidFilenameChars(
 	const auto& filename = path.native();
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
-	return std::wstring::npos != filename.find_first_of(g_InvalidChars);
+	return sakura::wstring::npos != filename.find_first_of(g_InvalidChars);
 }
 
 /*!	ファイル名の切り出し
@@ -91,13 +91,13 @@ bool IsInvalidFilenameChars(
 	@date 2013.05.27 Moca 最長一致に変更
 */
 bool IsFilePath(
-	const wchar_t*	pLine,		//!< [in]  探査対象文字列
+	const WCHAR*	pLine,		//!< [in]  探査対象文字列
 	size_t*			pnBgn,		//!< [out] 先頭offset。pLine + *pnBgnがファイル名先頭へのポインタ。
 	size_t*			pnPathLen,	//!< [out] ファイル名の長さ
 	bool			bFileOnly	//!< [in]  true: ファイルのみ対象 / false: ディレクトリも対象
 )
 {
-	wchar_t	szJumpToFile[_MAX_PATH];
+	WCHAR	szJumpToFile[_MAX_PATH];
 	wmemset( szJumpToFile, 0, int(std::size(szJumpToFile)) );
 
 	size_t	nLineLen = wcslen( pLine );
@@ -105,17 +105,17 @@ bool IsFilePath(
 	//先頭の空白を読み飛ばす
 	size_t	i;
 	for( i = 0; i < nLineLen; ++i ){
-		wchar_t c = pLine[i];
-		if( L' '!=c && L'\t'!=c && L'\"'!=c ){
+		WCHAR c = pLine[i];
+		if( LCHAR(' ')!=c && LCHAR('\t')!=c && LCHAR('\"')!=c ){
 			break;
 		}
 	}
 
 	//	#include <ファイル名>の考慮
 	//	#で始まるときは"または<まで読み飛ばす
-	if( i < nLineLen && L'#' == pLine[i] ){
+	if( i < nLineLen && LCHAR('#') == pLine[i] ){
 		for( ; i < nLineLen; ++i ){
-			if( L'<'  == pLine[i] || L'\"' == pLine[i]){
+			if( LCHAR('<')  == pLine[i] || LCHAR('\"') == pLine[i]){
 				++i;
 				break;
 			}
@@ -132,7 +132,7 @@ bool IsFilePath(
 	size_t tmp_end = 0;
 	for( ; i <= nLineLen && cur_pos + 1 < int(std::size(szJumpToFile)); ++i ){
 		//ファイル名終端を検知する
-		if( WCODE::IsLineDelimiterExt(pLine[i]) || pLine[i] == L'\0' ){
+		if( WCODE::IsLineDelimiterExt(pLine[i]) || pLine[i] == LCHAR('\0') ){
 			break;
 		}
 
@@ -140,9 +140,9 @@ bool IsFilePath(
 		if( ( i == nLineLen    ||
 			  // 2002.01.08 YAZAKI タブ文字も。
 			  // 2013.05.27 Moca 文字種追加
-			  wcschr(L" \t(\")'`[]{};#!@&%$", pLine[i]) != nullptr
+			  wcschr(LTEXT(" \t(\")'`[]{};#!@&%$"), pLine[i]) != nullptr
 			) &&
-			szJumpToFile[0] != L'\0'
+			szJumpToFile[0] != LCHAR('\0')
 		){
 			//	ファイル存在確認
 			if( IsFileExists(szJumpToFile, bFileOnly)){
@@ -151,7 +151,7 @@ bool IsFilePath(
 		}
 
 		// May 29, 2004 genta C:\の:はファイル区切りと見なして欲しくない
-		if( cur_pos > 1 && pLine[i] == L':' ){   //@@@ 2003/1/15/ matsumo (for gcc)
+		if( cur_pos > 1 && pLine[i] == LCHAR(':') ){   //@@@ 2003/1/15/ matsumo (for gcc)
 			break;
 		}
 		//ファイル名に使えない文字が含まれていたら、即ループ終了
@@ -165,7 +165,7 @@ bool IsFilePath(
 
 	//	Jan. 04, 2002 genta
 	//	ファイル存在確認方法変更
-	if( szJumpToFile[0] != L'\0' && IsFileExists(szJumpToFile, bFileOnly)){
+	if( szJumpToFile[0] != LCHAR('\0') && IsFileExists(szJumpToFile, bFileOnly)){
 		tmp_end = cur_pos;
 	}
 	if( tmp_end != 0 ){
@@ -198,14 +198,14 @@ bool IsLocalDrive( const WCHAR* pszDrive )
 	long	lngRet;
 
 	if( iswalpha(pszDrive[0]) ){
-		auto_sprintf(szDriveType, L"%c:\\", towupper(pszDrive[0]));
+		auto_sprintf(szDriveType, LTEXT("%c:\\"), towupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
 			return false;
 		}
 	}
-	else if (pszDrive[0] == L'\\' && pszDrive[1] == L'\\') {
+	else if (pszDrive[0] == LCHAR('\\') && pszDrive[1] == LCHAR('\\')) {
 		// ネットワークパス	2010/5/27 Uchi
 		return false;
 	}
@@ -219,8 +219,8 @@ bool IsLocalDrive( const WCHAR* pszDrive )
  */
 const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 {
-	std::wstring_view name(pszPath);
-	if (const size_t sep = name.find_last_of(L'\\'); sep != std::wstring_view::npos) {
+	sakura::wstring_view name(pszPath);
+	if (const size_t sep = name.find_last_of(LCHAR('\\')); sep != sakura::wstring_view::npos) {
 		if (sep + 1 == name.length()) {
 			return pszPath + name.length();
 		}
@@ -265,8 +265,8 @@ FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 {
 	if( 3 == wcslen( pszFolder )
-	 && pszFolder[1] == L':'
-	 && pszFolder[2] == L'\\'
+	 && pszFolder[1] == LCHAR(':')
+	 && pszFolder[2] == LCHAR('\\')
 	){
 		/* ドライブ名:\ */
 	}else{
@@ -276,8 +276,8 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
-			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = L'\0';
+			if( 1 == nCharChars && LCHAR('\\') == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = LCHAR('\0');
 			}
 		}
 	}
@@ -300,9 +300,9 @@ void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 
 	/* フォルダー文字列の末尾がフォルダー区切り文字になっていない場合は付加する */
 	if (const auto lastChar = pszFolder[nFolderLen - 1];
-		L'\\' != lastChar && L'/' != lastChar)
+		LCHAR('\\') != lastChar && LCHAR('/') != lastChar)
 	{
-		::wcscat_s(pszFolder, cchFolder, L"\\");
+		::wcscat_s(pszFolder, cchFolder, LTEXT("\\"));
 	}
 
 	return;
@@ -311,14 +311,14 @@ void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 } // namespace cxx
 
 //! パスらしき文字列の末尾に'\\'または'/'がなかったら'\\'を付加する
-std::wstring AddLastYenPath(std::wstring_view path)
+sakura::wstring AddLastYenPath(sakura::wstring_view path)
 {
-	std::wstring ret{ path };
+	sakura::wstring ret{ path };
 	if (0 == ret.size()) {
 		return ret;
 	}
-	if (auto c = ret.back(); !(c == L'\\' || c == L'/')) {
-		ret.append(L"\\");
+	if (auto c = ret.back(); !(c == LCHAR('\\') || c == LCHAR('/'))) {
+		ret.append(LTEXT("\\"));
 	}
 	return ret;
 }
@@ -329,13 +329,13 @@ std::wstring AddLastYenPath(std::wstring_view path)
 	ファイルダイアログの「ファイル名」に / 区切りのパスを入力したときに使う(Issue #2727)。
 	URL(:// を含むもの)は変えない。
 */
-std::wstring ReplaceSlashToYen(std::wstring_view path)
+sakura::wstring ReplaceSlashToYen(sakura::wstring_view path)
 {
-	std::wstring ret{ path };
-	if (ret.find(L"://") != std::wstring::npos) {
+	sakura::wstring ret{ path };
+	if (ret.find(LTEXT("://")) != sakura::wstring::npos) {
 		return ret;
 	}
-	std::ranges::replace(ret, L'/', L'\\');
+	std::ranges::replace(ret, LCHAR('/'), LCHAR('\\'));
 	return ret;
 }
 
@@ -357,8 +357,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
 			nCharChars = int(&pszFolder[nFolderLen] - CNativeW::GetCharPrev( pszFolder, nFolderLen, &pszFolder[nFolderLen] ));
-			if( 1 == nCharChars && L'\\' == pszFolder[nFolderLen - 1] ){
-				pszFolder[nFolderLen - 1] = L'\0';
+			if( 1 == nCharChars && LCHAR('\\') == pszFolder[nFolderLen - 1] ){
+				pszFolder[nFolderLen - 1] = LCHAR('\0');
 			}
 		}
 	}
@@ -427,7 +427,7 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 	WCHAR*	pszWork;
 	_wsplitpath_s( pszPath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, std::size(szExt) );
 	pszWork = szExt;
-	if( pszWork[0] == L'.' ){
+	if( pszWork[0] == LCHAR('.') ){
 		pszWork++;
 	}
 	if( 0 == _wcsicmp( pszExt, pszWork ) ){
@@ -444,9 +444,9 @@ BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt )
 bool _IS_REL_PATH(const WCHAR* path)
 {
 	bool ret = true;
-	if( (((L'A' <= path[0] && path[0] <= L'Z') || (L'a' <= path[0] && path[0] <= L'z'))
-		&& path[1] == L':' && path[2] == L'\\')
-		|| (path[0] == L'\\' && path[1] == L'\\')
+	if( (((LCHAR('A') <= path[0] && path[0] <= LCHAR('Z')) || (LCHAR('a') <= path[0] && path[0] <= LCHAR('z')))
+		&& path[1] == LCHAR(':') && path[2] == LCHAR('\\'))
+		|| (path[0] == LCHAR('\\') && path[1] == LCHAR('\\'))
 		 ){
 		ret = false;
 	}
@@ -468,31 +468,31 @@ int CalcDirectoryDepth(
 	int depth = 0;
 
 	//	とりあえず\の数を数える
-	std::wstring_view p(path);
-	std::wstring_view::size_type pos = 0;
+	sakura::wstring_view p(path);
+	sakura::wstring_view::size_type pos = 0;
 	do {
-		pos = p.find_first_of(L'\\', pos);
-		if (pos == std::wstring_view::npos) break;
+		pos = p.find_first_of(LCHAR('\\'), pos);
+		if (pos == sakura::wstring_view::npos) break;
 		++depth;
 		++pos;
 
 		//	フルパスには入っていないはずだが念のため
 		//	.\はカレントディレクトリなので，深さに関係ない．
 		while (pos + 2 <= p.length()
-			&& p[pos + 0] == L'.'
-			&& p[pos + 1] == L'\\') {
+			&& p[pos + 0] == LCHAR('.')
+			&& p[pos + 1] == LCHAR('\\')) {
 			pos += 2;
 		}
 	} while (pos < p.length());
  
 	//	補正
 	//	ドライブ名はパスの深さに数えない
-	if (std::regex_search(path, std::wregex(LR"(^[A-Z]:\\)", std::wregex::icase))) {
+	if (std::regex_search(path, std::wregex(LTEXT(R"(^[A-Z]:\\)"), std::wregex::icase))) {
 		//フルパス
 		--depth; // C:\ の \ はルートの記号なので階層深さではない
 	}
-	else if( path[0] == L'\\' ){
-		if( path[1] == L'\\' ){
+	else if( path[0] == LCHAR('\\') ){
+		if( path[1] == LCHAR('\\') ){
 			//	ネットワークパス
 			//	先頭の2つはネットワークを表し，その次はホスト名なので
 			//	ディレクトリ階層とは無関係
@@ -543,12 +543,12 @@ void GetExedir(
 	if( pDir == nullptr )
 		return;
 
-	std::wstring partialPath;
+	sakura::wstring partialPath;
 	if (szFile != nullptr) {
 		partialPath = szFile;
 	}
-	if (partialPath.empty() || partialPath[0] != L'\\') {
-		partialPath.insert(partialPath.cbegin(), L'\\');
+	if (partialPath.empty() || partialPath[0] != LCHAR('\\')) {
+		partialPath.insert(partialPath.cbegin(), LCHAR('\\'));
 	}
 
 	// exeフォルダーのフルパス、またはexe基準のファイルパスを取得
@@ -564,7 +564,7 @@ std::filesystem::path GetIniFileName()
 	if (const auto pProcess = CProcess::getInstance(); pProcess != nullptr) {
 		return pProcess->GetIniFileName();
 	}
-	return GetExeFileName().replace_extension(L".ini");
+	return GetExeFileName().replace_extension(LTEXT(".ini"));
 }
 
 /*!
@@ -581,12 +581,12 @@ void GetInidir(
 	if( pDir == nullptr )
 		return;
 	
-	std::wstring partialPath;
+	sakura::wstring partialPath;
 	if (szFile != nullptr) {
 		partialPath = szFile;
 	}
-	if (partialPath.empty() || partialPath[0] != L'\\') {
-		partialPath.insert(partialPath.cbegin(), L'\\');
+	if (partialPath.empty() || partialPath[0] != LCHAR('\\')) {
+		partialPath.insert(partialPath.cbegin(), LCHAR('\\'));
 	}
 
 	// 設定フォルダーのフルパス、またはini基準のファイルパスを取得
@@ -611,7 +611,7 @@ void GetInidirOrExedir(
 	WCHAR	szExedir[_MAX_PATH];
 
 	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
-	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == L'\0') ){
+	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == LCHAR('\0')) ){
 		GetExedir( pDir );
 		return;
 	}
@@ -643,12 +643,12 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
 	WCHAR szPath[_MAX_PATH + 1];
 	LPCWSTR pszFileName = pszPath;
 
-	GetInidir( szPath, L"" );
+	GetInidir( szPath, LTEXT("") );
 	auto nLen = int(wcslen(szPath));
 	if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 		pszFileName = pszPath + nLen;
 	}else{
-		GetExedir( szPath, L"" );
+		GetExedir( szPath, LTEXT("") );
 		nLen = (int)wcslen( szPath );
 		if( 0 == wmemicmp( szPath, pszPath, nLen ) ){
 			pszFileName = pszPath + nLen;
@@ -670,7 +670,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
  */
 // TODO: いつか廃止する
 std::filesystem::path GetTempFilePath(
-	std::wstring_view prefix,
+	sakura::wstring_view prefix,
 	const std::optional<std::filesystem::path>& optTempDir
 )
 {
@@ -686,7 +686,7 @@ std::filesystem::path GetTempFilePath(
 
 	// パス生成に必要なバッファを確保する
 	// （一時フォルダーのパス＋接頭辞(3文字)＋4桁の16進数＋拡張子＋NUL終端）
-	std::wstring buf(std::size(tempDir.native()) + 3 + 4 + 4 + 1, L'\0');
+	sakura::wstring buf(std::size(tempDir.native()) + 3 + 4 + 4 + 1, LCHAR('\0'));
 
 	// Windows API関数を呼び出す。
 	// （オーバーフローしないので、エラーチェック省略）
@@ -707,14 +707,14 @@ bool IsValidPathAvailableChar(const std::filesystem::path& path) noexcept
 		// 空文字列セーフ
 		return true;
 	}
-	constexpr auto& dos_device_path = LR"(\\?\)";
-	std::wstring_view pathStr{ path.native() };
+	constexpr auto& dos_device_path = LTEXT(R"(\\?\)");
+	sakura::wstring_view pathStr{ path.native() };
 	size_t pos = 0;
 	if (pathStr.starts_with(dos_device_path)) {
 		pos = std::size(dos_device_path) - 1;
 	}
 	// ファイル名に使えない文字が含まれない場合、trueを返す
-	return pathStr.find_first_of(g_InvalidChars, pos) == std::wstring::npos;
+	return pathStr.find_first_of(g_InvalidChars, pos) == sakura::wstring::npos;
 }
 
 /**	ファイルの存在チェック
@@ -780,7 +780,7 @@ bool IsDirectory(LPCWSTR pszPath)
  * @returns ファイルの更新日時
  */
 FILETIME GetLastWriteTime(
-	std::wstring_view	fileName	//!< [in]  ファイルのパス
+	sakura::wstring_view	fileName	//!< [in]  ファイルのパス
 )
 {
 	using namespace cxx;
@@ -875,22 +875,22 @@ char *sjis_strrchr2( const char *pt , const char ch1 , const char ch2 ){
 	}
 	return	(char *)pf;
 }
-wchar_t* wcsrchr2( const wchar_t *pt , const wchar_t ch1 , const wchar_t ch2 ){
-	const wchar_t *pf = nullptr;
-	while( *pt != L'\0' ){	/* 文字列の終端まで調べる。 */
+WCHAR* wcsrchr2( const WCHAR *pt , const WCHAR ch1 , const WCHAR ch2 ){
+	const WCHAR *pf = nullptr;
+	while( *pt != LCHAR('\0') ){	/* 文字列の終端まで調べる。 */
 		if( ( *pt == ch1 ) || ( *pt == ch2 ) )	pf = pt;	/* pf = 検索文字の位置 */
 		if( *pt != '\0' )		pt++;	/* 次の文字へ */
 	}
-	return	(wchar_t *)pf;
+	return	(WCHAR *)pf;
 }
 
 #define		GetExistPath_NO_DriveLetter	0	/* ドライブレターが無い */
 #define		GetExistPath_IV_Drive		1	/* ドライブが無効 */
 #define		GetExistPath_AV_Drive		2	/* ドライブが有効 */
 
-void GetExistPathW( wchar_t *po , const wchar_t *pi )
+void GetExistPathW( WCHAR *po , const WCHAR *pi )
 {
-	wchar_t	*pw,*ps;
+	WCHAR	*pw,*ps;
 	int		cnt;
 	int		dl;		/* ドライブの状態 */
 
@@ -899,18 +899,18 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	/ ・ / を \ に変換しつつ(Win32API では / も \ と同等に扱われるから)
 	/ ・最大 ( _MAX_PATH-1 ) 文字まで
 	/ po にコピーする。 */
-	for( pw=po,cnt=0 ; ( *pi != L'\0' ) && ( cnt < _MAX_PATH-1 ) ; pi++ ){
+	for( pw=po,cnt=0 ; ( *pi != LCHAR('\0') ) && ( cnt < _MAX_PATH-1 ) ; pi++ ){
 		/* /," 共に Shift_JIS の漢字コード中には含まれないので Shift_JIS 判定は不要。 */
-		if( *pi == L'\"' )	continue;		/*  " なら何もしない。次の文字へ */
-		if( *pi == L'/' )	*pw++ = L'\\';	/*  / なら \ に変換してコピー    */
+		if( *pi == LCHAR('\"') )	continue;		/*  " なら何もしない。次の文字へ */
+		if( *pi == LCHAR('/') )	*pw++ = LCHAR('\\');	/*  / なら \ に変換してコピー    */
 		else				*pw++ = *pi;	/* その他の文字はそのままコピー  */
 		cnt++;	/* コピーした文字数 ++ */
 	}
-	*pw = L'\0';		/* 文字列終端 */
+	*pw = LCHAR('\0');		/* 文字列終端 */
 
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
-	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
-		wchar_t	drv[4] = L"_:\\";
+	if( *(po+1)==LCHAR(':') && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+		WCHAR	drv[4] = LTEXT("_:\\");
 		drv[0] = *po;
 		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
 		else						dl = GetExistPath_IV_Drive;		/* 無効 */
@@ -919,16 +919,16 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	if( dl == GetExistPath_IV_Drive ){	/* ドライブ自体が無効 */
 		/* フロッピーディスク中のファイルが指定されていて、
 		　 そのドライブにフロッピーディスクが入っていない、とか */
-		*po = L'\0';	/* 返値文字列 = "";(空文字列) */
+		*po = LCHAR('\0');	/* 返値文字列 = "";(空文字列) */
 		return;		/* これ以上何もしない */
 	}
 
 	/* ps = 検索開始位置 */
 	ps = po;	/* ↓文字列の先頭が \\ なら、\ 検索処理の対象から外す */
-	if( ( *po == L'\\' )&&( *(po+1) == L'\\' ) )	ps +=2;
+	if( ( *po == LCHAR('\\') )&&( *(po+1) == LCHAR('\\') ) )	ps +=2;
 
-	if( *ps == L'\0' ){	/* 検索対象が空文字列なら */
-		*po = L'\0';		/* 返値文字列 = "";(空文字列) */
+	if( *ps == LCHAR('\0') ){	/* 検索対象が空文字列なら */
+		*po = LCHAR('\0');		/* 返値文字列 = "";(空文字列) */
 		return;			/*これ以上何もしない */
 	}
 
@@ -943,21 +943,21 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 			　 たい。以下↓は、そのための処理。 */
 			if( dl == GetExistPath_AV_Drive ){
 				/* 先頭に有効なドライブのドライブレターがある。 */
-				*(po+2) = L'\0';		/* ドライブレター部の文字列のみ返す */
+				*(po+2) = LCHAR('\0');		/* ドライブレター部の文字列のみ返す */
 			}
 			else{	/* 有効なパス部分が全く見つからなかった */
-				*po = L'\0';	/* 返値文字列 = "";(空文字列) */
+				*po = LCHAR('\0');	/* 返値文字列 = "";(空文字列) */
 			}
 			break;		/* ループを抜ける */
 		}
 		/* ↓ルートディレクトリを引っかけるための処理 */
-		if( ( *pw == L'\\' )&&( ps < pw )&&( *(pw-1) == L':' ) ){	/* C:\ とかの \ っぽい */
-			* (pw+1) = L'\0';		/* \ の後ろの位置を文字列の終端にする。 */
+		if( ( *pw == LCHAR('\\') )&&( ps < pw )&&( *(pw-1) == LCHAR(':') ) ){	/* C:\ とかの \ っぽい */
+			* (pw+1) = LCHAR('\0');		/* \ の後ろの位置を文字列の終端にする。 */
 			if( _waccess(po,0) == 0 )	break;	/* 有効なパス文字列が見つかった */
 		}
-		*pw = L'\0';		/* \ か ' ' の位置を文字列の終端にする。 */
+		*pw = LCHAR('\0');		/* \ か ' ' の位置を文字列の終端にする。 */
 		/* ↓末尾がスペースなら、スペースを全て削除する */
-		while( ( pw != ps ) && ( *(pw-1) == L' ' ) )	* --pw = L'\0';
+		while( ( pw != ps ) && ( *(pw-1) == LCHAR(' ') ) )	* --pw = LCHAR('\0');
 	}
 
 	return;
@@ -967,35 +967,35 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 　 のパス文字列を抽出し、そのパスを分解して drv dir fnm ext に書き込む。
 　 先頭部分に有効なパス名が存在しない場合、全てに空文字列が返る。 */
 void my_splitpath_w (
-	const wchar_t *comln,
-	wchar_t *drv,
-	wchar_t *dir,
-	wchar_t *fnm,
-	wchar_t *ext
+	const WCHAR *comln,
+	WCHAR *drv,
+	WCHAR *dir,
+	WCHAR *fnm,
+	WCHAR *ext
 )
 {
-	wchar_t	ppp[_MAX_PATH];		/* パス格納（作業用） */
-	wchar_t	*pd;
-	wchar_t	*pf;
-	wchar_t	*pe;
-	wchar_t	ch;
+	WCHAR	ppp[_MAX_PATH];		/* パス格納（作業用） */
+	WCHAR	*pd;
+	WCHAR	*pf;
+	WCHAR	*pe;
+	WCHAR	ch;
 	DWORD	attr;
 	int		a_dir;
 
-	if( drv != nullptr )	*drv = L'\0';
-	if( dir != nullptr )	*dir = L'\0';
-	if( fnm != nullptr )	*fnm = L'\0';
-	if( ext != nullptr )	*ext = L'\0';
-	if( *comln == L'\0' )	return;
+	if( drv != nullptr )	*drv = LCHAR('\0');
+	if( dir != nullptr )	*dir = LCHAR('\0');
+	if( fnm != nullptr )	*fnm = LCHAR('\0');
+	if( ext != nullptr )	*ext = LCHAR('\0');
+	if( *comln == LCHAR('\0') )	return;
 
 	/* コマンドライン先頭部分の実在するパス名を ppp に書き出す。 */
 	GetExistPathW( ppp , comln );
 
-	if( *ppp != L'\0' ) {	/* ファイル・ディレクトリが存在する場合 */
+	if( *ppp != LCHAR('\0') ) {	/* ファイル・ディレクトリが存在する場合 */
 		/* 先頭文字がドライブレターかどうか判定し、
 		　 pd = ディレクトリ名の先頭位置に設定する。 */
 		pd = ppp;
-		if(*(pd+1)==L':' && WCODE::IsAZ(*pd)){	/* 先頭にドライブレターがある。 */
+		if(*(pd+1)==LCHAR(':') && WCODE::IsAZ(*pd)){	/* 先頭にドライブレターがある。 */
 			pd += 2;	/* pd = ドライブレター部の後ろ         */
 		}				/*      ( = ディレクトリ名の先頭位置 ) */
 		/* ここまでで、pd = ディレクトリ名の先頭位置 */
@@ -1004,45 +1004,45 @@ void my_splitpath_w (
 		a_dir = ( attr & FILE_ATTRIBUTE_DIRECTORY ) ?  1 : 0;
 
 		if( ! a_dir ){	/* 見つけた物がファイルだった場合。 */
-			pf = wcsrchr(ppp,L'\\');	/* 最末尾の \ を探す。 */
+			pf = wcsrchr(ppp,LCHAR('\\'));	/* 最末尾の \ を探す。 */
 			if(pf != nullptr)	pf++;		/* 見つかった→  pf=\の次の文字の位置*/
 			else			pf = pd;	/* 見つからない→pf=パス名の先頭位置 */
 			/* ここまでで pf = ファイル名の先頭位置 */
-			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
+			pe = wcsrchr(pf,LCHAR('.'));		/* 最末尾の '.' を探す。 */
 			if( pe != nullptr ){					/* 見つかった(pe = L'.'の位置)*/
 				if( ext != nullptr ){	/* 拡張子を返値として書き込む。 */
 					wcsncpy(ext,pe,_MAX_EXT-1);
-					ext[_MAX_EXT -1] = L'\0';
+					ext[_MAX_EXT -1] = LCHAR('\0');
 				}
-				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
+				*pe = LCHAR('\0');	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
 			}
 			if( fnm != nullptr ){	/* ファイル名を返値として書き込む。 */
 				wcsncpy(fnm,pf,_MAX_FNAME-1);
-				fnm[_MAX_FNAME -1] = L'\0';
+				fnm[_MAX_FNAME -1] = LCHAR('\0');
 			}
-			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
+			*pf = LCHAR('\0');	/* ファイル名の先頭位置を文字列終端にする。 */
 		}
 		/* ここまでで文字列 ppp はドライブレター＋ディレクトリ名のみになっている */
 		if( dir != nullptr ){
 			/* ディレクトリ名の最後の文字が \ ではない場合、\ にする。 */
 
 			/* ↓最後の文字を ch に得る。(ディレクトリ文字列が空の場合 ch=L'\\' となる) */
-			for( ch = L'\\' , pf = pd ; *pf != L'\0' ; pf++ ){
+			for( ch = LCHAR('\\') , pf = pd ; *pf != LCHAR('\0') ; pf++ ){
 				ch = *pf;
 			}
 			/* 文字列が空でなく、かつ、最後の文字が \ でなかったならば \ を追加。 */
-			if( ( ch != L'\\' ) && ( wcslen(ppp) < _MAX_PATH -1 ) ){
-				*pf++ = L'\\';	*pf = L'\0';
+			if( ( ch != LCHAR('\\') ) && ( wcslen(ppp) < _MAX_PATH -1 ) ){
+				*pf++ = LCHAR('\\');	*pf = LCHAR('\0');
 			}
 
 			/* ディレクトリ名を返値として書き込む。 */
 			wcsncpy(dir,pd,_MAX_DIR -1);
-			dir[_MAX_DIR -1] = L'\0';
+			dir[_MAX_DIR -1] = LCHAR('\0');
 		}
-		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
+		*pd = LCHAR('\0');		/* ディレクトリ名の先頭位置を文字列終端にする。 */
 		if( drv != nullptr ){	/* ドライブレターを返値として書き込む。 */
 			wcsncpy(drv,ppp,_MAX_DRIVE -1);
-			drv[_MAX_DRIVE -1] = L'\0';
+			drv[_MAX_DRIVE -1] = LCHAR('\0');
 		}
 	}
 	return;
@@ -1058,7 +1058,7 @@ int FileMatchScore( const WCHAR *file1, const WCHAR *file2 );
 
 // フルパスからファイル名と拡張子（ファイル名の.以降）を分離する
 // @date 2014/06/15 moca_skr フォルダー名に.が含まれた場合、フォルダーが分離されたのを修正した対応で新規作成
-static void FileNameSepExt(const std::filesystem::path& path, std::wstring& outFile, std::wstring& outExt)
+static void FileNameSepExt(const std::filesystem::path& path, sakura::wstring& outFile, sakura::wstring& outExt)
 {
 	if (path.has_filename()) {
 		if (path.has_extension()) {
@@ -1075,12 +1075,12 @@ static void FileNameSepExt(const std::filesystem::path& path, std::wstring& outF
 	}
 }
 
-int FileMatchScoreSepExt( std::wstring_view file1, std::wstring_view file2 )
+int FileMatchScoreSepExt( sakura::wstring_view file1, sakura::wstring_view file2 )
 {
-	std::wstring szFile1;
-	std::wstring szFile2;
-	std::wstring szFileExt1;
-	std::wstring szFileExt2;
+	sakura::wstring szFile1;
+	sakura::wstring szFile2;
+	sakura::wstring szFileExt1;
+	sakura::wstring szFileExt2;
 	FileNameSepExt(file1, szFile1, szFileExt1);
 	FileNameSepExt(file2, szFile2, szFileExt2);
 	int score = FileMatchScore(szFile1.c_str(), szFile2.c_str());
@@ -1152,17 +1152,17 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
-	std::wstring strTemp;
-	std::wstring strTempOld;
+	sakura::wstring strTemp;
+	sakura::wstring strTempOld;
 	int nPos = 0;
-	while( path[nPos] != L'\0' ){
+	while( path[nPos] != LCHAR('\0') ){
 		strTemp.assign(path, nPos);
-		std::wstring strTemp2 = strTemp;
-		strTemp2 += L"...";
+		sakura::wstring strTemp2 = strTemp;
+		strTemp2 += LTEXT("...");
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
 			wcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
-			wcscat_s(dest, nSize, L"...");
+			wcscat_s(dest, nSize, LTEXT("..."));
 			return;
 		}
 		strTempOld = strTemp;
@@ -1188,8 +1188,8 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 		wcsncpy_s(dest, nSize, path, _TRUNCATE);
 		return;
 	}
-	if( path[0] == L'\\' && path[1] == L'\\' ){
-		if( path[2] == L'?' && path[4] == L'\\' ){
+	if( path[0] == LCHAR('\\') && path[1] == LCHAR('\\') ){
+		if( path[2] == LCHAR('?') && path[4] == LCHAR('\\') ){
 			// [\\?\A:\]
 			nLeft = 4;
 		}else{
@@ -1199,22 +1199,22 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 	}else{
 		// http://server/ とか ftp://server/ とかを保持
 		int nTop = 0;
-		while( path[nTop] != L'\0' && path[nTop] != L'/' ){
+		while( path[nTop] != LCHAR('\0') && path[nTop] != LCHAR('/') ){
 			nTop += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nTop));
 		}
 		if( 0 < nTop && path[nTop - 1] == ':' ){
 			// 「ほにゃらら:/」だった /が続いてる間飛ばす
-			while( path[nTop] == L'/' ){
+			while( path[nTop] == LCHAR('/') ){
 				nTop += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nTop));
 			}
 			nLeft = nTop;
 		}
 	}
 	for( int i = 0; i < nSkipLevel; i++ ){
-		while( path[nLeft] != L'\0' && path[nLeft] != L'\\' && path[nLeft] != L'/' ){
+		while( path[nLeft] != LCHAR('\0') && path[nLeft] != LCHAR('\\') && path[nLeft] != LCHAR('/') ){
 			nLeft += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nLeft));
 		}
-		if( path[nLeft] != L'\0' ){
+		if( path[nLeft] != LCHAR('\0') ){
 			if( i + 1 < nSkipLevel ){
 				nLeft++;
 			}
@@ -1229,18 +1229,18 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 		}
 	}
 	int nRight = nLeft; // 右側の表示開始位置(nRightは\を指している)
-	while( path[nRight] != L'\0' ){
+	while( path[nRight] != LCHAR('\0') ){
 		int nNext = nRight;
 		nNext++;
-		while( path[nNext] != L'\0' && path[nNext] != L'\\' && path[nNext] != L'/' ){
+		while( path[nNext] != LCHAR('\0') && path[nNext] != LCHAR('\\') && path[nNext] != LCHAR('/') ){
 			nNext += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nNext));
 		}
-		if( path[nNext] != L'\0' ){
+		if( path[nNext] != LCHAR('\0') ){
 			// サブフォルダー省略
 			// C:\...\dir\file.ext
-			std::wstring strTemp(path, nLeft + 1);
+			sakura::wstring strTemp(path, nLeft + 1);
 			if( nLeft + 1 < nRight ){
-				strTemp += L"...";
+				strTemp += LTEXT("...");
 			}
 			strTemp += &path[nRight];
 			if( calc.GetTextWidth(strTemp.c_str()) <= nPxWidth ){
@@ -1248,7 +1248,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				return;
 			}
 			// C:\...\dir\   フォルダーパスだった。最後のフォルダーを表示
-			if( path[nNext+1] == L'\0' ){
+			if( path[nNext+1] == LCHAR('\0') ){
 				if( bFitMode ){
 					GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);
 					return;
@@ -1267,9 +1267,9 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 	if( nLeftLen && nLeftLen != nRight ){
 		nLeftLen++;
 	}
-	std::wstring strTemp(path, nLeftLen);
+	sakura::wstring strTemp(path, nLeftLen);
 	if( nLeft != nRight ){
-		strTemp += L"...";
+		strTemp += LTEXT("...");
 	}
 	strTemp += &path[nRight];
 	if( bFitMode ){
@@ -1282,24 +1282,24 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 		{
 			// 拡張子の.を探す
 			int nExt = nRight;
-			while( path[nExt] != L'\0' ){
-				if( path[nExt] == L'.' ){
+			while( path[nExt] != LCHAR('\0') ){
+				if( path[nExt] == LCHAR('.') ){
 					nExtPos = nExt;
 				}
 				nExt += t_max(1, (int)(Int)CNativeW::GetSizeOfChar(path, nPathLen, nExt));
 			}
 		}
 		if( nExtPos != -1 ){
-			std::wstring strLeftFile(path, nLeftLen); // [C:\]  
+			sakura::wstring strLeftFile(path, nLeftLen); // [C:\]  
 			if( nLeft != nRight ){
-				strLeftFile += L"..."; // C:\...
+				strLeftFile += LTEXT("..."); // C:\...
 			}
 			int nExtWidth = calc.GetTextWidth(&path[nExtPos]);
 			int nLeftWidth = calc.GetTextWidth(strLeftFile.c_str());
 			int nFileNameWidth = nPxWidth - nLeftWidth - nExtWidth;
 			if( 0 < nFileNameWidth ){
 				// 拡張子は省略しない(ファイルタイトルを省略)
-				std::wstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
+				sakura::wstring strFile(&path[nRight], nExtPos - nRight); // \longfilename
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);

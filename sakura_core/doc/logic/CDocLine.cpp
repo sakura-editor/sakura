@@ -32,11 +32,11 @@ CDocLine::~CDocLine() = default;
 */
 bool CDocLine::IsEmptyLine() const
 {
-	const wchar_t* pLine = GetPtr();
+	const WCHAR* pLine = GetPtr();
 	int nLineLen = GetLengthWithoutEOL();
 	int i;
 	for ( i = 0; i < nLineLen; i++ ){
-		if (pLine[i] != L' ' && pLine[i] != L'\t'){
+		if (pLine[i] != LCHAR(' ') && pLine[i] != LCHAR('\t')){
 			return false;	//	スペースでもタブでもない文字があったらfalse。
 		}
 	}
@@ -45,10 +45,10 @@ bool CDocLine::IsEmptyLine() const
 
 void CDocLine::SetEol(bool bEnableExtEol)
 {
-	const wchar_t* pData = m_cLine.GetStringPtr();
+	const WCHAR* pData = m_cLine.GetStringPtr();
 	int nLength = m_cLine.GetStringLength();
 	//改行コード設定
-	const wchar_t* p = &pData[nLength] - 1;
+	const WCHAR* p = &pData[nLength] - 1;
 	while(p>=pData && WCODE::IsLineDelimiter(*p, bEnableExtEol))p--;
 	p++;
 	if(p>=pData){
@@ -59,7 +59,7 @@ void CDocLine::SetEol(bool bEnableExtEol)
 	}
 }
 
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol)
+void CDocLine::SetDocLineString(const WCHAR* pData, int nLength, bool bEnableExtEol)
 {
 	m_cLine.SetString(pData, nLength);
 	SetEol(bEnableExtEol);

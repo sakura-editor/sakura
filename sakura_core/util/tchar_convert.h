@@ -21,19 +21,19 @@ const WCHAR* to_wchar(const ACHAR* src);
 const WCHAR* to_wchar(const ACHAR* pSrc, size_t nSrcLength);
 
 //ACHARに変換
-const ACHAR* to_achar(std::wstring_view source);
+const ACHAR* to_achar(sakura::wstring_view source);
 const ACHAR* to_achar(const WCHAR* src);
 const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength);
 
 namespace cxx {
 
 int		MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR> buffer);
-int		MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer);
-int		WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer);
-int		WideCharToMultiByte(UINT codePage, std::wstring_view source, std::string& buffer);
+int		MultiByteToWideChar(UINT codePage, std::string_view source, sakura::wstring& buffer);
+int		WideCharToMultiByte(UINT codePage, sakura::wstring_view source, std::span<CHAR> buffer);
+int		WideCharToMultiByte(UINT codePage, sakura::wstring_view source, std::string& buffer);
 
-std::string		to_string(std::wstring_view source, _In_opt_ UINT codePage = CP_ACP);
-std::wstring	to_wstring(std::string_view source, _In_opt_ UINT codePage = CP_ACP);
+std::string		to_string(sakura::wstring_view source, _In_opt_ UINT codePage = CP_ACP);
+sakura::wstring	to_wstring(std::string_view source, _In_opt_ UINT codePage = CP_ACP);
 
 } // namespace cxx
 

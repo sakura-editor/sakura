@@ -27,16 +27,16 @@ public:
 
 	bool ImportUI(HINSTANCE hInstance, HWND hwndParent);
 	bool ExportUI(HINSTANCE hInstance, HWND hwndParent);
-	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg);
-	virtual bool Import(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
-	virtual bool Export(const std::wstring& sFileName, std::wstring& sErrMsg) = 0;
+	virtual bool ImportAscertain(HINSTANCE hInstance, HWND hwndParent, const sakura::wstring& sFileName, sakura::wstring& sErrMsg);
+	virtual bool Import(const sakura::wstring& sFileName, sakura::wstring& sErrMsg) = 0;
+	virtual bool Export(const sakura::wstring& sFileName, sakura::wstring& sErrMsg) = 0;
 
 	// ファイル名の初期値を設定
-	void SetBaseName(const std::wstring& sBase);
+	void SetBaseName(const sakura::wstring& sBase);
 
 	// ファイル名の初期値を設定
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<std::remove_cvref_t<A>, std::wstring>)
+		requires (!std::is_same_v<std::remove_cvref_t<A>, sakura::wstring>)
 	void SetBaseName(A baseName)
 	{
 		// 引数はNUL終端文字列として扱う
@@ -44,43 +44,43 @@ public:
 
 		// 文字列を渡すバージョンを呼び出す
 		return SetBaseName(
-			std::wstring{ _BaseName.str() }
+			sakura::wstring{ _BaseName.str() }
 		);
 	}
 
 	// フルパス名を取得
-	inline std::wstring GetFullPath() const
+	inline sakura::wstring GetFullPath() const
 	{
 		return MakeFullPath(m_sOriginName);
 	}
 	// フルパス名を取得
-	inline std::wstring MakeFullPath(std::wstring_view sFileName) const
+	inline sakura::wstring MakeFullPath(sakura::wstring_view sFileName) const
 	{
 		return (std::filesystem::path{ GetDllShareData().m_sHistory.m_szIMPORTFOLDER } / sFileName).native();
 	}
 	// ファイル名を取得
-	inline std::wstring GetFileName() const { return m_sOriginName; }
+	inline sakura::wstring GetFileName() const { return m_sOriginName; }
 
 protected:
 	// Import Folderの設定
-	inline void SetImportFolder(std::wstring_view importPath) const
+	inline void SetImportFolder(sakura::wstring_view importPath) const
 	{
 		/* ファイルのフルパスをフォルダーとファイル名に分割 */
 		/* [c:\work\test\aaa.txt] → [c:\work\test] + [aaa.txt] */
 		const auto szPath = std::data(importPath);
 		::SplitPath_FolderAndFile( szPath, GetDllShareData().m_sHistory.m_szIMPORTFOLDER, nullptr);
 
-		wcscat_s(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, L"\\");
+		wcscat_s(GetDllShareData().m_sHistory.m_szIMPORTFOLDER, LTEXT("\\"));
 	}
 
 	// デフォルト拡張子の取得(「*.txt」形式)
 	virtual const WCHAR* GetDefaultExtension();
 	// デフォルト拡張子の取得(「txt」形式)
-	virtual const wchar_t* GetOriginExtension();
+	virtual const WCHAR* GetOriginExtension();
 
 protected:
-	std::wstring		m_sBase;
-	std::wstring		m_sOriginName;
+	sakura::wstring		m_sBase;
+	sakura::wstring		m_sOriginName;
 };
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -97,13 +97,13 @@ public:
 	{
 	}
 
-	bool ImportAscertain( HINSTANCE, HWND, const std::wstring&, std::wstring& ) override;
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool ImportAscertain( HINSTANCE, HWND, const sakura::wstring&, sakura::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.ini"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("ini"); }
 
 	bool	IsAddType() const noexcept { return m_bAddType; }
 
@@ -115,7 +115,7 @@ private:
 
 	// 内部使用
 	int				m_nColorType = -1;
-	std::wstring 	m_sColorFile;
+	sakura::wstring 	m_sColorFile;
 	bool			m_bAddType = false;
 	CDataProfile	m_cProfile;
 };
@@ -132,12 +132,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.col"; }
-	const wchar_t* GetOriginExtension() override	{ return L"col"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.col"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("col"); }
 
 private:
 	ColorInfo*		m_ColorInfoArr;
@@ -155,12 +155,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.rkw"; }
-	const wchar_t* GetOriginExtension() override	{ return L"rkw"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.rkw"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("rkw"); }
 
 private:
 	STypeConfig&	m_Types;
@@ -178,12 +178,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.txt"; }
-	const wchar_t* GetOriginExtension() override	{ return L"txt"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.txt"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("txt"); }
 
 private:
 	STypeConfig&	m_Types;
@@ -201,12 +201,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.key"; }
-	const wchar_t* GetOriginExtension() override	{ return L"key"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.key"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("key"); }
 
 private:
 	CommonSetting&		m_Common;
@@ -224,12 +224,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.mnu"; }
-	const wchar_t* GetOriginExtension() override	{ return L"mnu"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.mnu"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("mnu"); }
 
 private:
 	CommonSetting&		m_Common;
@@ -249,12 +249,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.kwd"; }
-	const wchar_t* GetOriginExtension() override	{ return L"kwd"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.kwd"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("kwd"); }
 
 private:
 	CommonSetting&		m_Common;
@@ -274,12 +274,12 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.ini"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("ini"); }
 
 private:
 	CommonSetting&		m_Common;
@@ -297,13 +297,13 @@ public:
 	{
 	}
 
-	bool Import( const std::wstring&, std::wstring& ) override;
-	bool Export( const std::wstring&, std::wstring& ) override;
+	bool Import( const sakura::wstring&, sakura::wstring& ) override;
+	bool Export( const sakura::wstring&, sakura::wstring& ) override;
 	static void IO_FileTreeIni( CDataProfile&, std::vector<SFileTreeItem>& );
 
 	// デフォルト拡張子の取得
-	const WCHAR* GetDefaultExtension() override	{ return L"*.ini"; }
-	const wchar_t* GetOriginExtension() override	{ return L"ini"; }
+	const WCHAR* GetDefaultExtension() override	{ return LTEXT("*.ini"); }
+	const WCHAR* GetOriginExtension() override	{ return LTEXT("ini"); }
 
 private:
 	std::vector<SFileTreeItem>&		m_aFileTreeItems;

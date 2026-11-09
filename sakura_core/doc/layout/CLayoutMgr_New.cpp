@@ -33,7 +33,7 @@
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuHead( wchar_t wc ) const
+bool CLayoutMgr::IsKinsokuHead( WCHAR wc ) const
 {
 	return m_pszKinsokuHead_1.exist(wc);
 }
@@ -45,7 +45,7 @@ bool CLayoutMgr::IsKinsokuHead( wchar_t wc ) const
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuTail( wchar_t wc ) const
+bool CLayoutMgr::IsKinsokuTail( WCHAR wc ) const
 {
 	return m_pszKinsokuTail_1.exist(wc);
 }
@@ -57,7 +57,7 @@ bool CLayoutMgr::IsKinsokuTail( wchar_t wc ) const
 	@retval true 禁則文字に該当
 	@retval false 禁則文字に該当しない
 */
-bool CLayoutMgr::IsKinsokuKuto( wchar_t wc ) const
+bool CLayoutMgr::IsKinsokuKuto( WCHAR wc ) const
 {
 	return m_pszKinsokuKuto_1.exist(wc);
 }
@@ -145,7 +145,7 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 
 	//	Jul. 20, 2003 genta 自動インデントに準じた動作にする
 	bool bZenSpace = m_pTypeConfig->m_bAutoIndent_ZENSPACE;
-	const wchar_t* szSpecialIndentChar = m_pTypeConfig->m_szIndentChars;
+	const WCHAR* szSpecialIndentChar = m_pTypeConfig->m_szIndentChars;
 	while( !it.end() ){
 		it.scanNext();
 		if ( it.getIndexDelta() == 1 && WCODE::IsIndentChar(it.getCurrentChar(),bZenSpace) )
@@ -153,10 +153,10 @@ CLayoutInt CLayoutMgr::getIndentOffset_LeftSpace( CLayout* pLayoutPrev )
 			//	インデントのカウントを継続する
 		}
 		//	Jul. 20, 2003 genta インデント対象文字
-		else if( szSpecialIndentChar[0] != L'\0' ){
-			wchar_t buf[3]; // 文字の長さは1 or 2
+		else if( szSpecialIndentChar[0] != LCHAR('\0') ){
+			WCHAR buf[3]; // 文字の長さは1 or 2
 			wmemcpy( buf, it.getCurrentPos(), it.getIndexDelta() );
-			buf[ it.getIndexDelta() ] = L'\0';
+			buf[ it.getIndexDelta() ] = LCHAR('\0');
 			if( nullptr != wcsstr( szSpecialIndentChar, buf )){
 				//	インデントのカウントを継続する
 			}

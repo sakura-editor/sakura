@@ -14,8 +14,8 @@
 
 #include "CPlugin.h"
 
-#define	PII_DLL							L"Dll"			//DLL情報
-#define	PII_DLL_NAME					L"Name"			//名前
+#define	PII_DLL							LTEXT("Dll")			//DLL情報
+#define	PII_DLL_NAME					LTEXT("Name")			//名前
 
 typedef void (*DllPlugHandler)();
 
@@ -23,7 +23,7 @@ class CDllPlug final
 	: public CPlug
 {
 public:
-	CDllPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
+	CDllPlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel )
 		: CPlug( plugin, id, sJack, sHandler, sLabel )
 		, m_handler( nullptr )
 	{
@@ -37,7 +37,7 @@ class CDllPlugin final
 {
 	//コンストラクタ
 public:
-	CDllPlugin( const std::wstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
+	CDllPlugin( const sakura::wstring& sBaseDir ) : CPlugin( sBaseDir ), CDllImp() {
 	}
 
 	//デストラクタ
@@ -50,7 +50,7 @@ public:
 	bool ReadPluginOption( [[maybe_unused]] CDataProfile *cProfile ) override{
 		return true;
 	}
-	CPlug* CreatePlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) override;
+	CPlug* CreatePlug( CPlugin& plugin, PlugId id, sakura::wstring sJack, sakura::wstring sHandler, sakura::wstring sLabel ) override;
 	CPlug::Array GetPlugs() const override{
 		return m_plugs;
 	}
@@ -60,11 +60,11 @@ public:
 		return true;
 	}
 	LPCWSTR GetDllNameImp([[maybe_unused]] int nIndex) override {
-		return L"";
+		return LTEXT("");
 	}
 
 	//メンバ変数
 private:
-	std::wstring m_sDllName;
+	sakura::wstring m_sDllName;
 };
 #endif /* SAKURA_CDLLPLUGIN_7F8E705E_8E61_4B89_BA48_936CD5429E1D_H_ */

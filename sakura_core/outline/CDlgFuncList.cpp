@@ -449,12 +449,12 @@ void CDlgFuncList::SetData()
 	else if( OUTLINE_HTML == m_nListType ){ //@@@ 2003.05.20 zenryaku HTMLアウトライン解析
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree(hInsertAfter);
-		::SetWindowText( GetHwnd(), L"HTML" );
+		::SetWindowText( GetHwnd(), LTEXT("HTML") );
 	}
 	else if( OUTLINE_TEX == m_nListType ){ //@@@ 2003.07.20 naoh TeXアウトライン解析
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree(hInsertAfter);
-		::SetWindowText( GetHwnd(), L"TeX" );
+		::SetWindowText( GetHwnd(), LTEXT("TeX") );
 	}
 	else if( OUTLINE_TEXT == m_nListType ){ /* テキスト・トピックリスト */
 		m_nViewType = VIEWTYPE_TREE;
@@ -485,7 +485,7 @@ void CDlgFuncList::SetData()
 	else if( OUTLINE_XML == m_nListType ){ // XMLツリー
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree(hInsertAfter);
-		::SetWindowText( GetHwnd(), L"XML" );
+		::SetWindowText( GetHwnd(), LTEXT("XML") );
 	}
 	else if ( OUTLINE_FILETREE == m_nListType ){
 		m_nViewType = VIEWTYPE_TREE;
@@ -495,17 +495,17 @@ void CDlgFuncList::SetData()
 	else if( OUTLINE_TREE == m_nListType ){ /* 汎用ツリー */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree(hInsertAfter);
-		::SetWindowText( GetHwnd(), L"" );
+		::SetWindowText( GetHwnd(), LTEXT("") );
 	}
 	else if( OUTLINE_TREE_TAGJUMP == m_nListType ){ /* 汎用ツリー(タグジャンプ付き) */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTree( hInsertAfter, true );
-		::SetWindowText( GetHwnd(), L"" );
+		::SetWindowText( GetHwnd(), LTEXT("") );
 	}
 	else if( OUTLINE_CLSTREE == m_nListType ){ /* 汎用クラスツリー */
 		m_nViewType = VIEWTYPE_TREE;
 		SetTreeJava( GetHwnd(), hInsertAfter, TRUE );
-		::SetWindowText( GetHwnd(), L"" );
+		::SetWindowText( GetHwnd(), LTEXT("") );
 	}
 	else{
 		m_nViewType = VIEWTYPE_LIST;
@@ -540,7 +540,7 @@ void CDlgFuncList::SetData()
 			::SetWindowText( GetHwnd(), LS(STR_DLGFNCLST_TITLE_BOOK) );
 			break;
 		case OUTLINE_LIST:	// 汎用リスト 2010.03.28 syat
-			::SetWindowText( GetHwnd(), L"" );
+			::SetWindowText( GetHwnd(), LTEXT("") );
 			break;
 		default:
 			break;
@@ -553,7 +553,7 @@ void CDlgFuncList::SetData()
 		WCHAR			szText[2048];
 		LV_ITEM			item;
 
-		m_cmemClipText.SetString(L"");	/* クリップボードコピー用テキスト */
+		m_cmemClipText.SetString(LTEXT(""));	/* クリップボードコピー用テキスト */
 		{
 			const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 			const int nNum = m_pcFuncInfoArr->GetNum();
@@ -575,7 +575,7 @@ void CDlgFuncList::SetData()
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			auto_sprintf_s(
 				szText,
-				L"%d",
+				LTEXT("%d"),
 				pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
 			);
 
@@ -590,7 +590,7 @@ void CDlgFuncList::SetData()
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
 			auto_sprintf_s(
 				szText,
-				L"%d",
+				LTEXT("%d"),
 				pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
 			);
 
@@ -621,18 +621,18 @@ void CDlgFuncList::SetData()
 				// Jul 10, 2003  little YOSHI
 				// ここにあったVB関係の処理はSetListVB()メソッドに移動しました。
 
-				item.pszText = const_cast<WCHAR*>(L"");
+				item.pszText = const_cast<WCHAR*>(LTEXT(""));
 			}
 			item.iItem = i;
 			item.iSubItem = FL_COL_REMARK;
 			ListView_SetItem( hwndList, &item);
 
 			/* クリップボードにコピーするテキストを編集 */
-			if(item.pszText[0] != L'\0'){
+			if(item.pszText[0] != LCHAR('\0')){
 				// 検出結果の種類(関数,,,)があるとき
 				auto_sprintf(
 					szText,
-					L"%s(%d,%d): ",
+					LTEXT("%s(%d,%d): "),
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
@@ -640,21 +640,21 @@ void CDlgFuncList::SetData()
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-				m_cmemClipText.AppendString(L"(");
+				m_cmemClipText.AppendString(LTEXT("("));
 				m_cmemClipText.AppendString(item.pszText);
-				m_cmemClipText.AppendString(L")\r\n");
+				m_cmemClipText.AppendString(LTEXT(")\r\n"));
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
 				auto_sprintf(
 					szText,
-					L"%s(%d,%d): ",
+					LTEXT("%s(%d,%d): "),
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-				m_cmemClipText.AppendString(L"\r\n");
+				m_cmemClipText.AppendString(LTEXT("\r\n"));
 			}
 		}
 		//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
@@ -686,7 +686,7 @@ void CDlgFuncList::SetData()
 	::CheckDlgButton( GetHwnd(), IDC_BUTTON_WINSIZE, m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos );
 	// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
-		m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? L"■" : L"□" );
+		m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? LTEXT("■") : LTEXT("□") );
 
 	/* ダイアログを自動的に閉じるならフォーカス移動オプションは関係ない */
 	if(m_pShareData->m_Common.m_sOutline.m_bAutoCloseDlgFuncList){
@@ -762,7 +762,7 @@ void CDlgFuncList::SetData()
 		::SetFocus(hwndShow);
 }
 
-bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wstring* pPath, int* pnItem)
+bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, sakura::wstring* pPath, int* pnItem)
 {
 	(*pPath).clear();
 	*pnItem = -1;
@@ -776,8 +776,8 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		TreeView_GetItem( hwndTree, &tvItem );
 		if( ((-tvItem.lParam) % 10) == 3 ){
 			*pnItem = int((-tvItem.lParam) / 10);
-			std::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
-			path += L"\\";
+			sakura::wstring path = m_pcFuncInfoArr->GetAt(*pnItem)->m_cmemFileName.GetStringPtr();
+			path += LTEXT("\\");
 			path += *pPath;
 			*pPath = std::move(path);
 			return true;
@@ -785,9 +785,9 @@ bool CDlgFuncList::GetTreeFileFullName(HWND hwndTree, HTREEITEM target, std::wst
 		if( tvItem.lParam != -1 && tvItem.lParam != -2 ){
 			return false;
 		}
-		if( *pPath != L"" ){
-			std::wstring path = szFileName;
-			path += L"\\";
+		if( *pPath != LTEXT("") ){
+			sakura::wstring path = szFileName;
+			path += LTEXT("\\");
 			path += *pPath;
 			*pPath = std::move(path);
 		}else{
@@ -910,7 +910,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	HTREEITEM		htiItem;
 	TV_ITEM			tvi;
 	int				nClassNest;
-	std::vector<std::wstring> vStrClasses;
+	std::vector<sakura::wstring> vStrClasses;
 
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 	m_bDummyLParamMode = true;
@@ -919,7 +919,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 
 	hwndTree = GetItemHwnd( IDC_TREE_FL );
 
-	m_cmemClipText.SetString( L"" );
+	m_cmemClipText.SetString( LTEXT("") );
 	{
 		const int nBuffLenTag = int(13 + wcslen(m_pcFuncInfoArr->m_szFilePath));
 		const int nNum = m_pcFuncInfoArr->GetNum();
@@ -950,8 +950,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		vStrClasses.clear();
 		nClassNest = 0;
 		/* クラス名::メソッドの場合 */
-		if( nullptr != ( pPos = wcsstr( pWork, L"::" ) )
-			&& wcsncmp_literal(pWork, L"operator ") != 0 ){
+		if( nullptr != ( pPos = wcsstr( pWork, LTEXT("::") ) )
+			&& wcsncmp_literal(pWork, LTEXT("operator ")) != 0 ){
 			/* インナークラスのネストレベルを調べる */
 			int	k;
 			int	nWorkLen;
@@ -965,34 +965,34 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 					break;
 				}
 				nCharChars = CNativeW::GetSizeOfChar( pWork, nWorkLen, k );
-				if( 1 == nCharChars && 0 == nNestTemplate && L':' == pWork[k] ){
+				if( 1 == nCharChars && 0 == nNestTemplate && LCHAR(':') == pWork[k] ){
 					//	Jan. 04, 2001 genta
 					//	C++の統合のため、\に加えて::をクラス区切りとみなすように
-					if( k < nWorkLen - 1 && L':' == pWork[k+1] ){
-						std::wstring strClass(&pWork[m], k - m);
+					if( k < nWorkLen - 1 && LCHAR(':') == pWork[k+1] ){
+						sakura::wstring strClass(&pWork[m], k - m);
 						vStrClasses.push_back(strClass);
 						++nClassNest;
 						m = k + 2;
 						++k;
 						// Klass::operator std::string
-						if( wcsncmp_literal(pWork + m, L"operator ") == 0 ){
+						if( wcsncmp_literal(pWork + m, LTEXT("operator ")) == 0 ){
 							break;
 						}
 					}
 					else 
 						break;
 				}
-				else if( 1 == nCharChars && L'\\' == pWork[k] ){
-					std::wstring strClass(&pWork[m], k - m);
+				else if( 1 == nCharChars && LCHAR('\\') == pWork[k] ){
+					sakura::wstring strClass(&pWork[m], k - m);
 					vStrClasses.push_back(strClass);
 					++nClassNest;
 					m = k + 1;
 				}
-				else if( 1 == nCharChars && L'<' == pWork[k] ){
+				else if( 1 == nCharChars && LCHAR('<') == pWork[k] ){
 					// namesp::function<std::string> のようなものを処理する
 					nNestTemplate++;
 				}
-				else if( 1 == nCharChars && L'>' == pWork[k] ){
+				else if( 1 == nCharChars && LCHAR('>') == pWork[k] ){
 					if( 0 < nNestTemplate ){
 						nNestTemplate--;
 					}
@@ -1033,11 +1033,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 						const WCHAR* pszLabel = &vecStr[0];
 						if( 0 == wcsncmp(vStrClasses[k].c_str(), pszLabel, nClassNameLen) ){
 							if( bAddClass ){
-								if( pszLabel[nClassNameLen]==L' ' ){
+								if( pszLabel[nClassNameLen]==LCHAR(' ') ){
 									break;
 								}
 							}else{
-								if( pszLabel[nClassNameLen]==L'\0' ){
+								if( pszLabel[nClassNameLen]==LCHAR('\0') ){
 									break;
 								}
 							}
@@ -1048,7 +1048,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 				/* クラス名のアイテムが登録されていないので登録 */
 				if( nullptr == htiClass ){
 					// 2002/10/28 frozen 上からここへ移動
-					std::wstring strClassName = vStrClasses[k];
+					sakura::wstring strClassName = vStrClasses[k];
 					
 					if( bAddClass )
 					{
@@ -1111,7 +1111,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 				htiClass = htiGlobal;
 			}
 		}
-		std::wstring strFuncName = pWork;
+		sakura::wstring strFuncName = pWork;
 
 		// 2002/10/27 frozen 追加文字列の種類を増やした
 		switch(pcFuncInfo->m_nInfo)
@@ -1137,7 +1137,7 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		WCHAR szText[2048];
 		auto_sprintf(
 			szText,
-			L"%s(%d,%d): ",
+			LTEXT("%s(%d,%d): "),
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
 			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
 			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
@@ -1145,8 +1145,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
 		m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : L"" ); 	//	Jan. 04, 2001 genta C++で使用
-		m_cmemClipText.AppendString(L"\r\n");
+		m_cmemClipText.AppendString(FL_OBJ_DECLARE == pcFuncInfo->m_nInfo ? m_pcFuncInfoArr->GetAppendText( FL_OBJ_DECLARE ).c_str() : LTEXT("") ); 	//	Jan. 04, 2001 genta C++で使用
+		m_cmemClipText.AppendString(LTEXT("\r\n"));
 
 		//	Jan. 04, 2001 genta
 		//	deleteはその都度行うのでここでは不要
@@ -1221,17 +1221,17 @@ void CDlgFuncList::SetListVB (void)
 		/* 現在の解析結果要素 */
 		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
-		szOption = L"";
-		szType = L"";
-		szTypeOption = L"";
+		szOption = LTEXT("");
+		szType = LTEXT("");
+		szTypeOption = LTEXT("");
 
-		szText = L"";
+		szText = LTEXT("");
 
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
 		auto_sprintf_s(
 			szText,
-			L"%d",
+			LTEXT("%d"),
 			pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
 		);
 
@@ -1245,7 +1245,7 @@ void CDlgFuncList::SetListVB (void)
 		// 2010.03.17 syat 桁追加
 		auto_sprintf_s(
 			szText,
-			L"%d",
+			LTEXT("%d"),
 			pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
 		);
 
@@ -1274,7 +1274,7 @@ void CDlgFuncList::SetListVB (void)
 		const auto vbAccessModifierId = (pcFuncInfo->m_nInfo >> 4) & 0x0f;
 
 		// VBアクセス識別子のIDとラベルのマップ
-		const std::map<int, std::wstring_view> vbAccessModifiers{
+		const std::map<int, sakura::wstring_view> vbAccessModifiers{
 			{ 1, LS(STR_DLGFNCLST_VB_PUBLIC) },		// パブリック(Public)
 			{ 2, LS(STR_DLGFNCLST_VB_PRIVATE) },	// プライベート(Private)
 			{ 3, LS(STR_DLGFNCLST_VB_FRIEND) },		// フレンド(Friend)
@@ -1295,7 +1295,7 @@ void CDlgFuncList::SetListVB (void)
 		int nInfo = pcFuncInfo->m_nInfo;
 
 		// VBタイプ識別子のIDとラベルのマップ
-		std::map<int, std::wstring_view> vbTypes{
+		std::map<int, sakura::wstring_view> vbTypes{
 			{ 1, LS(STR_DLGFNCLST_VB_FUNCTION) },	// 関数(Function)
 			{ 2, LS(STR_DLGFNCLST_VB_PROC) },		// プロシージャ(Sub)
 			{ 3, LS(STR_DLGFNCLST_VB_PROPGET) },	// プロパティ 取得(Property Get)
@@ -1328,12 +1328,12 @@ void CDlgFuncList::SetListVB (void)
 		}
 
 		if ( 0 == nInfo ) {
-			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
+			szTypeOption[0] = LCHAR('\0');	//	2006.12.17 genta 全体を0で埋める必要はない
 		} else {
-			auto_sprintf_s(szTypeOption, L"%s", szType);
+			auto_sprintf_s(szTypeOption, LTEXT("%s"), szType);
 
 			if (!szOption.empty()) {
-				auto_strcat_s(szTypeOption, strprintf(L"（%s）", szOption));
+				auto_strcat_s(szTypeOption, strprintf(LTEXT("（%s）"), szOption));
 			}
 		}
 
@@ -1345,7 +1345,7 @@ void CDlgFuncList::SetListVB (void)
 
 		/* クリップボードにコピーするテキストを編集 */
 		m_cmemClipText.AppendStringF(
-			L"%s(%d,%d): %s",
+			LTEXT("%s(%d,%d): %s"),
 			m_pcFuncInfoArr->m_szFilePath,	// 解析対象ファイル名
 			pcFuncInfo->m_nFuncLineCRLF,	// 検出行番号
 			pcFuncInfo->m_nFuncColCRLF,		// 検出桁番号
@@ -1354,11 +1354,11 @@ void CDlgFuncList::SetListVB (void)
 		// 検出結果の種類(関数,,,)があるとき
 		if (!szTypeOption.empty()) {
 			m_cmemClipText.AppendStringF(
-				L"(%s)",
+				LTEXT("(%s)"),
 				szTypeOption
 			);
 		}
-		m_cmemClipText.AppendString(L"\r\n");
+		m_cmemClipText.AppendString(LTEXT("\r\n"));
 	}
 
 	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
@@ -1399,7 +1399,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 	phParentStack = (HTREEITEM*)malloc( nStackDepth * sizeof( HTREEITEM ) );
 	phParentStack[ nStackPointer ] = TVI_ROOT;
 
-	m_cmemClipText.SetString(L"");
+	m_cmemClipText.SetString(LTEXT(""));
 	{
 		int nCount = 0;
 		int nBuffLen = 0;
@@ -1475,7 +1475,7 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					auto_sprintf( linenum, L"(%d,%d): ",
+					auto_sprintf( linenum, LTEXT("(%d,%d): "),
 						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
 						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);
@@ -1485,13 +1485,13 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 
 			if( !nolabel ){
 				for( int cnt = 0; cnt < nStackPointer; cnt++ ){
-					text.AppendString(L"  ");
+					text.AppendString(LTEXT("  "));
 				}
-				text.AppendString(L" ");
+				text.AppendString(LTEXT(" "));
 				
 				text.AppendNativeData( pcFuncInfo->m_cmemFuncName );
 			}
-			text.AppendString( L"\r\n" );
+			text.AppendString( LTEXT("\r\n") );
 			m_cmemClipText.AppendNativeData( text );	/* クリップボードコピー用テキスト */
 		}
 	}
@@ -1535,7 +1535,7 @@ void CDlgFuncList::SetTreeFile()
 {
 	HWND hwndTree = GetItemHwnd( IDC_TREE_FL );
 
-	m_cmemClipText.SetString(L"");
+	m_cmemClipText.SetString(LTEXT(""));
 	SFilePath IniDirPath;
 	LoadFileTreeSetting( m_fileTreeSetting, IniDirPath );
 	m_pcFuncInfoArr->Empty();
@@ -1548,15 +1548,15 @@ void CDlgFuncList::SetTreeFile()
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
 		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, int(std::size(szPath))) ){
-			wcscpy_s(szPath, std::size(szPath), L"<Error:Long Path>");
+			wcscpy_s(szPath, std::size(szPath), LTEXT("<Error:Long Path>"));
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
-		if( m_fileTreeSetting.m_szLoadProjectIni[0] != L'\0'){
+		if( m_fileTreeSetting.m_szLoadProjectIni[0] != LCHAR('\0')){
 			CNativeW strTemp(pszFrom);
-			strTemp.Replace(L"<iniroot>", IniDirPath.c_str());
+			strTemp.Replace(LTEXT("<iniroot>"), IniDirPath.c_str());
 			if( int(std::size(szPath2)) <= strTemp.GetStringLength() ){
-				wcscpy_s(szPath2, std::size(szPath), L"<Error:Long Path>");
+				wcscpy_s(szPath2, std::size(szPath), LTEXT("<Error:Long Path>"));
 			}else{
 				wcscpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr());
 			}
@@ -1573,7 +1573,7 @@ void CDlgFuncList::SetTreeFile()
 			hParentTree.resize(hParentTree.size() - 1);
 		}
 		const WCHAR* pszLabel = szPath;
-		if( item.m_szLabelName[0] != L'\0' ){
+		if( item.m_szLabelName[0] != LCHAR('\0') ){
 			pszLabel = item.m_szLabelName;
 		}
 		// lvis.item.lParam
@@ -1586,22 +1586,22 @@ void CDlgFuncList::SetTreeFile()
 		tvis.hParent      = hParentTree.back();
 		tvis.item.mask    = TVIF_TEXT | TVIF_PARAM;
 		if( item.m_eFileTreeItemType == EFileTreeItemType_Grep ){
-			m_pcFuncInfoArr->AppendData( CLogicInt(-1), CLogicInt(-1), CLayoutInt(-1), CLayoutInt(-1), L"", szPath, 0, 0 );
+			m_pcFuncInfoArr->AppendData( CLogicInt(-1), CLogicInt(-1), CLayoutInt(-1), CLayoutInt(-1), LTEXT(""), szPath, 0, 0 );
 			tvis.item.pszText = const_cast<WCHAR*>(pszLabel);
 			tvis.item.lParam  = -(nFuncInfo * 10 + 3);
 			HTREEITEM hParent = TreeView_InsertItem(hwndTree, &tvis);
 			nFuncInfo++;
 			SetTreeFileSub( hParent, nullptr );
 		}else if( item.m_eFileTreeItemType == EFileTreeItemType_File ){
-			m_pcFuncInfoArr->AppendData( CLogicInt(-1), CLogicInt(-1), CLayoutInt(-1), CLayoutInt(-1), L"", szPath, 0, 0 );
+			m_pcFuncInfoArr->AppendData( CLogicInt(-1), CLogicInt(-1), CLayoutInt(-1), CLayoutInt(-1), LTEXT(""), szPath, 0, 0 );
 			tvis.item.pszText = const_cast<WCHAR*>(pszLabel);
 			tvis.item.lParam  = nFuncInfo;
 			TreeView_InsertItem(hwndTree, &tvis);
 			nFuncInfo++;
 		}else if( item.m_eFileTreeItemType == EFileTreeItemType_Folder ){
 			pszLabel = item.m_szLabelName;
-			if( pszLabel[0] == L'\0' ){
-				pszLabel = L"Folder";
+			if( pszLabel[0] == LCHAR('\0') ){
+				pszLabel = LTEXT("Folder");
 			}
 			tvis.item.pszText = const_cast<WCHAR*>(pszLabel);
 			tvis.item.lParam  = -4;
@@ -1621,7 +1621,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 
 	HTREEITEM hItemSelected = nullptr;
 
-	std::wstring basePath;
+	sakura::wstring basePath;
 	int nItem = 0; // 設定Item番号
 	if( !GetTreeFileFullName( hwndTree, hParent, &basePath, &nItem ) ){
 		return; // error
@@ -1634,7 +1634,7 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 		TVINSERTSTRUCT tvis;
 		tvis.hParent      = hParent;
 		tvis.item.mask    = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
-		tvis.item.pszText = const_cast<WCHAR*>(L"<Wild Card Error>");
+		tvis.item.pszText = const_cast<WCHAR*>(LTEXT("<Wild Card Error>"));
 		tvis.item.lParam = -4;
 		TreeView_InsertItem(hwndTree, &tvis);
 		return;
@@ -1644,9 +1644,9 @@ void CDlgFuncList::SetTreeFileSub( HTREEITEM hParent, const WCHAR* pszFile )
 	cGrepEnumOptions.m_bIgnoreReadOnly = m_fileTreeSetting.m_aItems[nItem].m_bIgnoreReadOnly;
 	cGrepEnumOptions.m_bIgnoreSystem   = m_fileTreeSetting.m_aItems[nItem].m_bIgnoreSystem;
 	CGrepEnumFiles cGrepExceptAbsFiles;
-	cGrepExceptAbsFiles.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFileKeys, cGrepEnumOptions);
+	cGrepExceptAbsFiles.Enumerates(LTEXT(""), cGrepEnumKeys.m_vecExceptAbsFileKeys, cGrepEnumOptions);
 	CGrepEnumFolders cGrepExceptAbsFolders;
-	cGrepExceptAbsFolders.Enumerates(L"", cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
+	cGrepExceptAbsFolders.Enumerates(LTEXT(""), cGrepEnumKeys.m_vecExceptAbsFolderKeys, cGrepEnumOptions);
 
 	//フォルダー一覧作成
 	CGrepEnumFilterFolders cGrepEnumFilterFolders;
@@ -1743,7 +1743,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	col.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	col.fmt = LVCFMT_LEFT;
 	col.cx = nColWidthArr[FL_COL_REMARK];
-	col.pszText = const_cast<WCHAR*>(L" ");
+	col.pszText = const_cast<WCHAR*>(LTEXT(" "));
 	col.iSubItem = FL_COL_REMARK;
 	ListView_InsertColumn( hwndList, FL_COL_REMARK, &col);
 
@@ -1933,7 +1933,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 		}
 		// ボタンが押されているかはっきりさせる 2008/6/5 Uchi
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_BUTTON_WINSIZE,
-			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? L"■" : L"□" );
+			m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ? LTEXT("■") : LTEXT("□") );
 		return TRUE;
 	//2002.02.08 オプション切替後List/Treeにフォーカス移動
 	case IDC_CHECK_bAutoCloseDlgFuncList:
@@ -2177,7 +2177,7 @@ void CDlgFuncList::SortListView(HWND hwndList, int sortcol)
 		col_no = FL_COL_REMARK;
 	// From Here 2001.12.07 hor
 		col.mask = LVCF_TEXT;
-		col.pszText = const_cast<WCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_M) : L"" );
+		col.pszText = const_cast<WCHAR*>( sortcol == col_no ? LS(STR_DLGFNCLST_LIST_M) : LTEXT("") );
 		col.iSubItem = 0;
 		ListView_SetColumn( hwndList, col_no, &col );
 	// To Here 2001.12.07 hor
@@ -2271,14 +2271,14 @@ static int CALLBACK Compare_by_ItemDataDesc(LPARAM lParam1, LPARAM lParam2, LPAR
 }
 
 struct STreeViewSortData{
-	std::vector<std::wstring> m_vecText;
+	std::vector<sakura::wstring> m_vecText;
 };
 
 static int CALLBACK Compare_by_ItemText(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
 	STreeViewSortData* pData = (STreeViewSortData*)lParamSort;
-	std::wstring* pText1 = &pData->m_vecText[lParam1];
-	std::wstring* pText2 = &pData->m_vecText[lParam2];
+	sakura::wstring* pText1 = &pData->m_vecText[lParam1];
+	sakura::wstring* pText2 = &pData->m_vecText[lParam2];
 	int result = ::lstrcmpi(pText1->c_str(), pText2->c_str());
 	if( result == 0 ){
 		// 同じ名前は登録順
@@ -2436,7 +2436,7 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 
 	// ファイルを開いていない場合は自分で開く
 	if( pcView->GetDocument()->IsAcceptLoad() ){
-		std::wstring strFile = pFile;
+		sakura::wstring strFile = pFile;
 		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), nullptr );
 		if( point.y != -1 ){
 			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -3150,7 +3150,7 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	// ↓DC_SMALLCAP 指定のものを Win7(64bit版) で動かしてみたら描画位置が下にずれて上半分しか見えなかった（x86ビルド/x64ビルドのどちらも NG）
 	gr.SetTextForeColor(DarkMode::getTextColor());
 	gr.SetTextBackColor(DarkMode::getBackgroundColor());
-	wchar_t buff[256];
+	WCHAR buff[256];
 	::GetWindowText(GetHwnd(), buff, 256);
 	COLORREF clrCaption = bActive ? DarkMode::getHotBackgroundColor() : DarkMode::getBackgroundColor();
 	::MyFillRect( gr, rcWk, clrCaption );
@@ -3165,9 +3165,9 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	memset( &lf, 0, sizeof(LOGFONT) );
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfHeight = ncm.lfCaptionFont.lfHeight;
-	::lstrcpy( lf.lfFaceName, L"Marlett" );
+	::lstrcpy( lf.lfFaceName, LTEXT("Marlett") );
 	HFONT hFont = ::CreateFontIndirect( &lf );
-	::lstrcpy( lf.lfFaceName, L"Webdings" );
+	::lstrcpy( lf.lfFaceName, LTEXT("Webdings") );
 	HFONT hFont2 = ::CreateFontIndirect( &lf );
 	gr.SetTextBackTransparent( true );
 
@@ -3900,17 +3900,17 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 	data.m_eFileTreeSettingLoadType = data.m_eFileTreeSettingOrgType;
 	data.m_bProject = pFileTree->m_bProject;
 	data.m_szDefaultProjectIni = pFileTree->m_szProjectIni;
-	data.m_szLoadProjectIni = L"";
+	data.m_szLoadProjectIni = LTEXT("");
 	if( data.m_bProject ){
 		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
-		::GetLongFileName( L".", szPath );
-		wcscat( szPath, L"\\" );
+		::GetLongFileName( LTEXT("."), szPath );
+		wcscat( szPath, LTEXT("\\") );
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;
 			cProfile.SetReadingMode();
-			std::wstring strIniFileName;
+			sakura::wstring strIniFileName;
 			strIniFileName += szPath;
 			strIniFileName += CommonSet().m_sFileTreeDefIniName;
 			if( cProfile.ReadProfile(strIniFileName.c_str()) ){
@@ -3924,10 +3924,10 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 			CDlgTagJumpList::DirUp( szPath );
 		}
 	}
-	if( data.m_szLoadProjectIni[0] == L'\0' ){
+	if( data.m_szLoadProjectIni[0] == LCHAR('\0') ){
 		// デフォルトプロジェクトファイル読み込み
 		bool bReadIni = false;
-		if( pFileTree->m_szProjectIni[0] != L'\0' ){
+		if( pFileTree->m_szProjectIni[0] != LCHAR('\0') ){
 			CDataProfile cProfile;
 			cProfile.SetReadingMode();
 			const WCHAR* pszIniFileName;

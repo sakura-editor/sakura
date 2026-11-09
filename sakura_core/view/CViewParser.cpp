@@ -17,7 +17,7 @@
 */
 int CViewParser::GetLeftWord( CNativeW* pcmemWord, [[maybe_unused]] int nMaxWordLen ) const
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdx;
 	CLogicInt		nIdxTo;

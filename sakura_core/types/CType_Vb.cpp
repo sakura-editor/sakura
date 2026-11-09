@@ -20,11 +20,11 @@
 void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Visual Basic" );
-	wcscpy( pType->m_szTypeExts, L"bas,frm,cls,ctl,pag,dob,dsr,vb" );
+	wcscpy( pType->m_szTypeName, LTEXT("Visual Basic") );
+	wcscpy( pType->m_szTypeExts, LTEXT("bas,frm,cls,ctl,pag,dob,dsr,vb") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"'", -1 );				/* 行コメントデリミタ */
+	pType->m_cLineComment.CopyTo( 0, LTEXT("'"), -1 );				/* 行コメントデリミタ */
 	pType->m_eDefaultOutline = OUTLINE_VB;						/* アウトライン解析方法 */
 	pType->m_nKeyWordSetIdx[0]  = 13;							/* キーワードセット */
 	pType->m_nKeyWordSetIdx[1] = 14;							/* キーワードセット2 */
@@ -50,15 +50,15 @@ void CType_Vb::InitTypeConfigImp(STypeConfig* pType)
 void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 {
 	const int	nMaxWordLeng = 255;	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen = CLogicInt(0);//: 2002/2/3 aroka 警告対策：初期化
 	int			i;
 	int			nCharChars;
-	wchar_t		szWordPrev[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
-	wchar_t		szWord[256];		// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
+	WCHAR		szWordPrev[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
+	WCHAR		szWord[256];		// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
 	int			nWordIdx = 0;
 	int			nMode;
-	wchar_t		szFuncName[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
+	WCHAR		szFuncName[256];	// Aug 7, 2003 little YOSHI  VBの名前付け規則より255文字に拡張
 	CLogicInt	nFuncLine(0);
 	int			nFuncId;
 	int			nParseCnt = 0;
@@ -71,20 +71,20 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 	bClass	= false;
 	auto filelen = int(wcslen(m_pcDocRef->m_cDocFile.GetFilePath()));
 	if ( 4 < filelen ) {
-		if ( 0 == _wcsicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), L".cls") ) {
+		if ( 0 == _wcsicmp((m_pcDocRef->m_cDocFile.GetFilePath() + filelen - 4), LTEXT(".cls")) ) {
 			bClass	= true;
 		}
 	}
 
-	szWordPrev[0] = L'\0';
-	szWord[nWordIdx] = L'\0';
+	szWordPrev[0] = LCHAR('\0');
+	szWord[nWordIdx] = LCHAR('\0');
 	nMode = 0;
 	pLine = nullptr;
 	bProcedure	= false;
 	CLogicInt		nLineCount;
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
 		if( nullptr != pLine ){
-			if( L'_' != pLine[nLineLen-1]){
+			if( LCHAR('_') != pLine[nLineLen-1]){
 				nParseCnt = 0;
 			}
 		}
@@ -100,12 +100,12 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			/* 単語読み込み中 */
 			if( 1 == nMode ){
 				if( (1 == nCharChars && (
-					L'_' == pLine[i] ||
-					L'~' == pLine[i] ||
-					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
+					LCHAR('_') == pLine[i] ||
+					LCHAR('~') == pLine[i] ||
+					(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+					(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+					(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+					(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 					) )
 				 || 2 == nCharChars
 				){
@@ -115,7 +115,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						continue;
 					}else{
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 					}
 				} else if (1 == nCharChars && '"' == pLine[i]) {
@@ -123,29 +123,29 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 					// テキストの中は無視します。
 					nMode	= 3;
 				}else{
-					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Public") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, LTEXT("Public")) ) {
 						// パブリック宣言を見つけた！
 						nFuncId |= 0x10;
 					}else
-					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Private") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, LTEXT("Private")) ) {
 						// プライベート宣言を見つけた！
 						nFuncId |= 0x20;
 					}else
-					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Friend") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, LTEXT("Friend")) ) {
 						// フレンド宣言を見つけた！
 						nFuncId |= 0x30;
 					}else
-					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, L"Static") ) {
+					if ( 0 == nParseCnt && 0 == _wcsicmp(szWord, LTEXT("Static")) ) {
 						// スタティック宣言を見つけた！
 						nFuncId |= 0x100;
 					}else
-					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Function" ) ){
-						if ( 0 == _wcsicmp( szWordPrev, L"End" ) ){
+					if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Function") ) ){
+						if ( 0 == _wcsicmp( szWordPrev, LTEXT("End") ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != _wcsicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == _wcsicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != _wcsicmp( szWordPrev, LTEXT("Exit") ) ){
+							if( 0 == _wcsicmp( szWordPrev, LTEXT("Declare") ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -155,13 +155,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Sub" ) ){
-						if ( 0 == _wcsicmp( szWordPrev, L"End" ) ){
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Sub") ) ){
+						if ( 0 == _wcsicmp( szWordPrev, LTEXT("End") ) ){
 							// プロシージャフラグをクリア
 							bProcedure	= false;
 						}else
-						if( 0 != _wcsicmp( szWordPrev, L"Exit" ) ){
-							if( 0 == _wcsicmp( szWordPrev, L"Declare" ) ){
+						if( 0 != _wcsicmp( szWordPrev, LTEXT("Exit") ) ){
+							if( 0 == _wcsicmp( szWordPrev, LTEXT("Declare") ) ){
 								nFuncId |= 0x200;	// DLL参照宣言
 							}else{
 								bProcedure	= true;	// プロシージャフラグをセット
@@ -171,32 +171,32 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 							nFuncLine = nLineCount + CLogicInt(1);
 						}
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Get" )
-					 && 0 == _wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Get") )
+					 && 0 == _wcsicmp( szWordPrev, LTEXT("Property") )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId	|= 0x03;		// プロパティ取得
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Let" )
-					 && 0 == _wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Let") )
+					 && 0 == _wcsicmp( szWordPrev, LTEXT("Property") )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x04;		// プロパティ設定
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Set" )
-					 && 0 == _wcsicmp( szWordPrev, L"Property" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Set") )
+					 && 0 == _wcsicmp( szWordPrev, LTEXT("Property") )
 					){
 						bProcedure	= true;	// プロシージャフラグをセット
 						nFuncId |= 0x05;		// プロパティ参照
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Const" )
-					 && 0 != _wcsicmp( szWordPrev, L"#" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Const") )
+					 && 0 != _wcsicmp( szWordPrev, LTEXT("#") )
 					){
 						if ( bClass || bProcedure || 0 == ((nFuncId >> 4) & 0x0f) ) {
 							// クラスモジュールでは強制的にPrivate
@@ -209,13 +209,13 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Enum" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Enum") )
 					){
 						nFuncId	|= 0x207;		// 列挙型宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Type" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Type") )
 					){
 						if ( bClass ) {
 							// クラスモジュールでは強制的にPrivate
@@ -226,14 +226,14 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Event" )
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Event") )
 					){
 						nFuncId	|= 0x209;		// イベント宣言
 						nParseCnt = 1;
 						nFuncLine = nLineCount + CLogicInt(1);
 					}
-					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, L"Property" )
-					 && 0 == _wcsicmp( szWordPrev, L"End")
+					else if( 0 == nParseCnt && 0 == _wcsicmp( szWord, LTEXT("Property") )
+					 && 0 == _wcsicmp( szWordPrev, LTEXT("End"))
 					){
 						bProcedure	= false;	// プロシージャフラグをクリア
 					}
@@ -253,7 +253,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
@@ -263,33 +263,33 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			else if( 2 == nMode ){
 				// Jul 10, 2003  little YOSHI
 				// 「#Const」と「Const」を区別するために、「#」も識別するように変更
-				if( L'_' == pLine[i] ||
-					L'~' == pLine[i] ||
-					(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-					(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-					(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-					(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
-					L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('_') == pLine[i] ||
+					LCHAR('~') == pLine[i] ||
+					(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+					(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+					(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+					(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i]))|| // 2013.05.08 日本語対応
+					LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol) ||
-					L'{' == pLine[i] ||
-					L'}' == pLine[i] ||
-					L'(' == pLine[i] ||
-					L')' == pLine[i] ||
-					L';' == pLine[i]	||
-					L'\'' == pLine[i] ||
-					L'/' == pLine[i]	||
-					L'-' == pLine[i] ||
-					L'#' == pLine[i] ||
+					LCHAR('{') == pLine[i] ||
+					LCHAR('}') == pLine[i] ||
+					LCHAR('(') == pLine[i] ||
+					LCHAR(')') == pLine[i] ||
+					LCHAR(';') == pLine[i]	||
+					LCHAR('\'') == pLine[i] ||
+					LCHAR('/') == pLine[i]	||
+					LCHAR('-') == pLine[i] ||
+					LCHAR('#') == pLine[i] ||
 					2 == nCharChars
 				){
 					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
-					szWord[0] = L'\0';
+					szWord[0] = LCHAR('\0');
 					nMode = 0;
 					i--;
 					continue;
-				} else if (1 == nCharChars && L'"' == pLine[i]) {
+				} else if (1 == nCharChars && LCHAR('"') == pLine[i]) {
 					// Aug 7, 2003 little YOSHI  追加
 					// テキストの中は無視します。
 					nMode	= 3;
@@ -299,7 +299,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 						continue;
 					}else{
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 					}
 				}
@@ -307,8 +307,8 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			/* 長過ぎる単語無視中 */
 			if( 999 == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					nMode = 0;
@@ -318,40 +318,40 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			/* ノーマルモード */
 			if( 0 == nMode ){
 				/* 空白やタブ記号等を飛ばす */
-				if( L'\t' == pLine[i] ||
-					L' ' == pLine[i] ||
+				if( LCHAR('\t') == pLine[i] ||
+					LCHAR(' ') == pLine[i] ||
 					WCODE::IsLineDelimiter(pLine[i], bExtEol)
 				){
 					continue;
 				}else
-				if( i < nLineLen && L'\'' == pLine[i] ){
+				if( i < nLineLen && LCHAR('\'') == pLine[i] ){
 					break;
-				} else if (1 == nCharChars && L'"' == pLine[i]) {
+				} else if (1 == nCharChars && LCHAR('"') == pLine[i]) {
 					// Aug 7, 2003 little YOSHI  追加
 					// テキストの中は無視します。
 					nMode	= 3;
 				}else{
 					if( (1 == nCharChars && (
-						L'_' == pLine[i] ||
-						L'~' == pLine[i] ||
-						(L'a' <= pLine[i] &&	pLine[i] <= L'z' )||
-						(L'A' <= pLine[i] &&	pLine[i] <= L'Z' )||
-						(L'0' <= pLine[i] &&	pLine[i] <= L'9' )||
-						(L'\u00a1' <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
+						LCHAR('_') == pLine[i] ||
+						LCHAR('~') == pLine[i] ||
+						(LCHAR('a') <= pLine[i] &&	pLine[i] <= LCHAR('z') )||
+						(LCHAR('A') <= pLine[i] &&	pLine[i] <= LCHAR('Z') )||
+						(LCHAR('0') <= pLine[i] &&	pLine[i] <= LCHAR('9') )||
+						(LCHAR('\u00a1') <= pLine[i] && !iswcntrl(pLine[i]) && !iswspace(pLine[i])) // 2013.05.08 日本語対応
 						) )
 					 || 2 == nCharChars
 					){
 						nWordIdx = 0;
 
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 
 						nMode = 1;
 					}else{
 						nWordIdx = 0;
 						wmemcpy( &szWord[nWordIdx], &pLine[i], nCharChars );
-						szWord[nWordIdx + nCharChars] = L'\0';
+						szWord[nWordIdx + nCharChars] = LCHAR('\0');
 						nWordIdx += (nCharChars);
 
 						nMode = 2;
@@ -361,7 +361,7 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 			/* テキストが閉じるまで読み飛ばす */	// Aug 7, 2003 little YOSHI  追加
 			if (nMode == 3) {
 				// 連続するダブルクォーテーションは無視する
-				if (1 == nCharChars && L'"' == pLine[i]) {
+				if (1 == nCharChars && LCHAR('"') == pLine[i]) {
 					// ダブルクォーテーションが現れたらフラグを反転する
 					bDQuote	= !bDQuote;
 				} else if (bDQuote) {
@@ -381,116 +381,116 @@ void CDocOutline::MakeFuncList_VisualBasic( CFuncInfoArr* pcFuncInfoArr )
 //	To Here June 23, 2001 N.Nakatani
 
 //Jul. 10, 2001 JEPRO 追加
-const wchar_t* g_ppszKeywordsVB[] = {
-	L"And",
-	L"As",
-	L"Attribute",
-	L"Begin",
-	L"BeginProperty",
-	L"Boolean",
-	L"ByVal",
-	L"Byte",
-	L"Call",
-	L"Case",
-	L"Const",
-	L"Currency",
-	L"Date",
-	L"Declare",
-	L"Dim",
-	L"Do",
-	L"Double",
-	L"Each",
-	L"Else",
-	L"ElseIf",
-	L"Empty",
-	L"End",
-	L"EndProperty",
-	L"Error",
-	L"Eqv",
-	L"Exit",
-	L"False",
-	L"For",
-	L"Friend",
-	L"Function",
-	L"Get",
-	L"GoTo",
-	L"If",
-	L"Imp",
-	L"Integer",
-	L"Is",
-	L"Let",
-	L"Like",
-	L"Long",
-	L"Loop",
-	L"Me",
-	L"Mod",
-	L"New",
-	L"Next",
-	L"Not",
-	L"Null",
-	L"Object",
-	L"On",
-	L"Option",
-	L"Or",
-	L"Private",
-	L"Property",
-	L"Public",
-	L"RSet",
-	L"ReDim",
-	L"Rem",
-	L"Resume",
-	L"Select",
-	L"Set",
-	L"Single",
-	L"Static",
-	L"Step",
-	L"Stop",
-	L"String",
-	L"Sub",
-	L"Then",
-	L"To",
-	L"True",
-	L"Type",
-	L"Wend",
-	L"While",
-	L"With",
-	L"Xor",
-	L"#If",
-	L"#Else",
-	L"#End",
-	L"#Const",
-	L"AddressOf",
-	L"Alias",
-	L"Append",
-	L"Array",
-	L"ByRef",
-	L"Explicit",
-	L"Global",
-	L"In",
-	L"Lib",
-	L"Nothing",
-	L"Optional",
-	L"Output",
-	L"Terminate",
-	L"Until",
+const WCHAR* g_ppszKeywordsVB[] = {
+	LTEXT("And"),
+	LTEXT("As"),
+	LTEXT("Attribute"),
+	LTEXT("Begin"),
+	LTEXT("BeginProperty"),
+	LTEXT("Boolean"),
+	LTEXT("ByVal"),
+	LTEXT("Byte"),
+	LTEXT("Call"),
+	LTEXT("Case"),
+	LTEXT("Const"),
+	LTEXT("Currency"),
+	LTEXT("Date"),
+	LTEXT("Declare"),
+	LTEXT("Dim"),
+	LTEXT("Do"),
+	LTEXT("Double"),
+	LTEXT("Each"),
+	LTEXT("Else"),
+	LTEXT("ElseIf"),
+	LTEXT("Empty"),
+	LTEXT("End"),
+	LTEXT("EndProperty"),
+	LTEXT("Error"),
+	LTEXT("Eqv"),
+	LTEXT("Exit"),
+	LTEXT("False"),
+	LTEXT("For"),
+	LTEXT("Friend"),
+	LTEXT("Function"),
+	LTEXT("Get"),
+	LTEXT("GoTo"),
+	LTEXT("If"),
+	LTEXT("Imp"),
+	LTEXT("Integer"),
+	LTEXT("Is"),
+	LTEXT("Let"),
+	LTEXT("Like"),
+	LTEXT("Long"),
+	LTEXT("Loop"),
+	LTEXT("Me"),
+	LTEXT("Mod"),
+	LTEXT("New"),
+	LTEXT("Next"),
+	LTEXT("Not"),
+	LTEXT("Null"),
+	LTEXT("Object"),
+	LTEXT("On"),
+	LTEXT("Option"),
+	LTEXT("Or"),
+	LTEXT("Private"),
+	LTEXT("Property"),
+	LTEXT("Public"),
+	LTEXT("RSet"),
+	LTEXT("ReDim"),
+	LTEXT("Rem"),
+	LTEXT("Resume"),
+	LTEXT("Select"),
+	LTEXT("Set"),
+	LTEXT("Single"),
+	LTEXT("Static"),
+	LTEXT("Step"),
+	LTEXT("Stop"),
+	LTEXT("String"),
+	LTEXT("Sub"),
+	LTEXT("Then"),
+	LTEXT("To"),
+	LTEXT("True"),
+	LTEXT("Type"),
+	LTEXT("Wend"),
+	LTEXT("While"),
+	LTEXT("With"),
+	LTEXT("Xor"),
+	LTEXT("#If"),
+	LTEXT("#Else"),
+	LTEXT("#End"),
+	LTEXT("#Const"),
+	LTEXT("AddressOf"),
+	LTEXT("Alias"),
+	LTEXT("Append"),
+	LTEXT("Array"),
+	LTEXT("ByRef"),
+	LTEXT("Explicit"),
+	LTEXT("Global"),
+	LTEXT("In"),
+	LTEXT("Lib"),
+	LTEXT("Nothing"),
+	LTEXT("Optional"),
+	LTEXT("Output"),
+	LTEXT("Terminate"),
+	LTEXT("Until"),
 	//=========================================================
 	// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
 	//=========================================================
-	L"DefBool",
-	L"DefByte",
-	L"DefCur",
-	L"DefDate",
-	L"DefDbl",
-	L"DefInt",
-	L"DefLng",
-	L"DefObj",
-	L"DefSng",
-	L"DefStr",
-	L"DefVar",
-	L"LSet",
-	L"GoSub",
-	L"Return",
-	L"Variant",
+	LTEXT("DefBool"),
+	LTEXT("DefByte"),
+	LTEXT("DefCur"),
+	LTEXT("DefDate"),
+	LTEXT("DefDbl"),
+	LTEXT("DefInt"),
+	LTEXT("DefLng"),
+	LTEXT("DefObj"),
+	LTEXT("DefSng"),
+	LTEXT("DefStr"),
+	LTEXT("DefVar"),
+	LTEXT("LSet"),
+	LTEXT("GoSub"),
+	LTEXT("Return"),
+	LTEXT("Variant"),
 	//			"Option Base
 	//			"As Any
 	//=========================================================
@@ -507,201 +507,201 @@ const wchar_t* g_ppszKeywordsVB[] = {
 int g_nKeywordsVB = int(std::size(g_ppszKeywordsVB));
 
 //Jul. 10, 2001 JEPRO 追加
-const wchar_t* g_ppszKeywordsVB2[] = {
-	L"AppActivate",
-	L"Beep",
-	L"BeginTrans",
-	L"ChDir",
-	L"ChDrive",
-	L"Close",
-	L"CommitTrans",
-	L"CompactDatabase",
-	L"Date",
-	L"DeleteSetting",
-	L"Erase",
-	L"FileCopy",
-	L"FreeLocks",
-	L"Input",
-	L"Kill",
-	L"Load",
-	L"Lock",
-	L"Mid",
-	L"MidB",
-	L"MkDir",
-	L"Name",
-	L"Open",
-	L"Print",
-	L"Put",
-	L"Randomize",
-	L"RegisterDatabase",
-	L"RepairDatabase",
-	L"Reset",
-	L"RmDir",
-	L"Rollback",
-	L"SavePicture",
-	L"SaveSetting",
-	L"Seek",
-	L"SendKeys",
-	L"SetAttr",
-	L"SetDataAccessOption",
-	L"SetDefaultWorkspace",
-	L"Time",
-	L"Unload",
-	L"Unlock",
-	L"Width",
-	L"Write",
-	L"Array",
-	L"Asc",
-	L"AscB",
-	L"Atn",
-	L"CBool",
-	L"CByte",
-	L"CCur",
-	L"CDate",
-	L"CDbl",
-	L"CInt",
-	L"CLng",
-	L"CSng",
-	L"CStr",
-	L"CVErr",
-	L"CVar",
-	L"Choose",
-	L"Chr",
-	L"ChrB",
-	L"Command",
-	L"Cos",
-	L"CreateDatabase",
-	L"CreateObject",
-	L"CurDir",
-	L"DDB",
-	L"Date",
-	L"DateAdd",
-	L"DateDiff",
-	L"DatePart",
-	L"DateSerial",
-	L"DateValue",
-	L"Day",
-	L"Dir",
-	L"DoEvents",
-	L"EOF",
-	L"Environ",
-	L"Error",
-	L"Exp",
-	L"FV",
-	L"FileAttr",
-	L"FileDateTime",
-	L"FileLen",
-	L"Fix",
-	L"Format",
-	L"FreeFile",
-	L"GetAllSettings",
-	L"GetAttr",
-	L"GetObject",
-	L"GetSetting",
-	L"Hex",
-	L"Hour",
-	L"IIf",
-	L"IMEStatus",
-	L"IPmt",
-	L"IRR",
-	L"InStr",
-	L"Input",
-	L"Int",
-	L"IsArray",
-	L"IsDate",
-	L"IsEmpty",
-	L"IsError",
-	L"IsMissing",
-	L"IsNull",
-	L"IsNumeric",
-	L"IsObject",
-	L"LBound",
-	L"LCase",
-	L"LOF",
-	L"LTrim",
-	L"Left",
-	L"LeftB",
-	L"Len",
-	L"LoadPicture",
-	L"Loc",
-	L"Log",
-	L"MIRR",
-	L"Mid",
-	L"MidB",
-	L"Minute",
-	L"Month",
-	L"MsgBox",
-	L"NPV",
-	L"NPer",
-	L"Now",
-	L"Oct",
-	L"OpenDatabase",
-	L"PPmt",
-	L"PV",
-	L"Partition",
-	L"Pmt",
-	L"QBColor",
-	L"RGB",
-	L"RTrim",
-	L"Rate",
-	L"ReadProperty",
-	L"Right",
-	L"RightB",
-	L"Rnd",
-	L"SLN",
-	L"SYD",
-	L"Second",
-	L"Seek",
-	L"Sgn",
-	L"Shell",
-	L"Sin",
-	L"Space",
-	L"Spc",
-	L"Sqr",
-	L"Str",
-	L"StrComp",
-	L"StrConv",
-	L"Switch",
-	L"Tab",
-	L"Tan",
-	L"Time",
-	L"TimeSerial",
-	L"TimeValue",
-	L"Timer",
-	L"Trim",
-	L"TypeName",
-	L"UBound",
-	L"UCase",
-	L"Val",
-	L"VarType",
-	L"Weekday",
-	L"Year",
-	L"Hide",
-	L"Line",
-	L"Refresh",
-	L"Show",
+const WCHAR* g_ppszKeywordsVB2[] = {
+	LTEXT("AppActivate"),
+	LTEXT("Beep"),
+	LTEXT("BeginTrans"),
+	LTEXT("ChDir"),
+	LTEXT("ChDrive"),
+	LTEXT("Close"),
+	LTEXT("CommitTrans"),
+	LTEXT("CompactDatabase"),
+	LTEXT("Date"),
+	LTEXT("DeleteSetting"),
+	LTEXT("Erase"),
+	LTEXT("FileCopy"),
+	LTEXT("FreeLocks"),
+	LTEXT("Input"),
+	LTEXT("Kill"),
+	LTEXT("Load"),
+	LTEXT("Lock"),
+	LTEXT("Mid"),
+	LTEXT("MidB"),
+	LTEXT("MkDir"),
+	LTEXT("Name"),
+	LTEXT("Open"),
+	LTEXT("Print"),
+	LTEXT("Put"),
+	LTEXT("Randomize"),
+	LTEXT("RegisterDatabase"),
+	LTEXT("RepairDatabase"),
+	LTEXT("Reset"),
+	LTEXT("RmDir"),
+	LTEXT("Rollback"),
+	LTEXT("SavePicture"),
+	LTEXT("SaveSetting"),
+	LTEXT("Seek"),
+	LTEXT("SendKeys"),
+	LTEXT("SetAttr"),
+	LTEXT("SetDataAccessOption"),
+	LTEXT("SetDefaultWorkspace"),
+	LTEXT("Time"),
+	LTEXT("Unload"),
+	LTEXT("Unlock"),
+	LTEXT("Width"),
+	LTEXT("Write"),
+	LTEXT("Array"),
+	LTEXT("Asc"),
+	LTEXT("AscB"),
+	LTEXT("Atn"),
+	LTEXT("CBool"),
+	LTEXT("CByte"),
+	LTEXT("CCur"),
+	LTEXT("CDate"),
+	LTEXT("CDbl"),
+	LTEXT("CInt"),
+	LTEXT("CLng"),
+	LTEXT("CSng"),
+	LTEXT("CStr"),
+	LTEXT("CVErr"),
+	LTEXT("CVar"),
+	LTEXT("Choose"),
+	LTEXT("Chr"),
+	LTEXT("ChrB"),
+	LTEXT("Command"),
+	LTEXT("Cos"),
+	LTEXT("CreateDatabase"),
+	LTEXT("CreateObject"),
+	LTEXT("CurDir"),
+	LTEXT("DDB"),
+	LTEXT("Date"),
+	LTEXT("DateAdd"),
+	LTEXT("DateDiff"),
+	LTEXT("DatePart"),
+	LTEXT("DateSerial"),
+	LTEXT("DateValue"),
+	LTEXT("Day"),
+	LTEXT("Dir"),
+	LTEXT("DoEvents"),
+	LTEXT("EOF"),
+	LTEXT("Environ"),
+	LTEXT("Error"),
+	LTEXT("Exp"),
+	LTEXT("FV"),
+	LTEXT("FileAttr"),
+	LTEXT("FileDateTime"),
+	LTEXT("FileLen"),
+	LTEXT("Fix"),
+	LTEXT("Format"),
+	LTEXT("FreeFile"),
+	LTEXT("GetAllSettings"),
+	LTEXT("GetAttr"),
+	LTEXT("GetObject"),
+	LTEXT("GetSetting"),
+	LTEXT("Hex"),
+	LTEXT("Hour"),
+	LTEXT("IIf"),
+	LTEXT("IMEStatus"),
+	LTEXT("IPmt"),
+	LTEXT("IRR"),
+	LTEXT("InStr"),
+	LTEXT("Input"),
+	LTEXT("Int"),
+	LTEXT("IsArray"),
+	LTEXT("IsDate"),
+	LTEXT("IsEmpty"),
+	LTEXT("IsError"),
+	LTEXT("IsMissing"),
+	LTEXT("IsNull"),
+	LTEXT("IsNumeric"),
+	LTEXT("IsObject"),
+	LTEXT("LBound"),
+	LTEXT("LCase"),
+	LTEXT("LOF"),
+	LTEXT("LTrim"),
+	LTEXT("Left"),
+	LTEXT("LeftB"),
+	LTEXT("Len"),
+	LTEXT("LoadPicture"),
+	LTEXT("Loc"),
+	LTEXT("Log"),
+	LTEXT("MIRR"),
+	LTEXT("Mid"),
+	LTEXT("MidB"),
+	LTEXT("Minute"),
+	LTEXT("Month"),
+	LTEXT("MsgBox"),
+	LTEXT("NPV"),
+	LTEXT("NPer"),
+	LTEXT("Now"),
+	LTEXT("Oct"),
+	LTEXT("OpenDatabase"),
+	LTEXT("PPmt"),
+	LTEXT("PV"),
+	LTEXT("Partition"),
+	LTEXT("Pmt"),
+	LTEXT("QBColor"),
+	LTEXT("RGB"),
+	LTEXT("RTrim"),
+	LTEXT("Rate"),
+	LTEXT("ReadProperty"),
+	LTEXT("Right"),
+	LTEXT("RightB"),
+	LTEXT("Rnd"),
+	LTEXT("SLN"),
+	LTEXT("SYD"),
+	LTEXT("Second"),
+	LTEXT("Seek"),
+	LTEXT("Sgn"),
+	LTEXT("Shell"),
+	LTEXT("Sin"),
+	LTEXT("Space"),
+	LTEXT("Spc"),
+	LTEXT("Sqr"),
+	LTEXT("Str"),
+	LTEXT("StrComp"),
+	LTEXT("StrConv"),
+	LTEXT("Switch"),
+	LTEXT("Tab"),
+	LTEXT("Tan"),
+	LTEXT("Time"),
+	LTEXT("TimeSerial"),
+	LTEXT("TimeValue"),
+	LTEXT("Timer"),
+	LTEXT("Trim"),
+	LTEXT("TypeName"),
+	LTEXT("UBound"),
+	LTEXT("UCase"),
+	LTEXT("Val"),
+	LTEXT("VarType"),
+	LTEXT("Weekday"),
+	LTEXT("Year"),
+	LTEXT("Hide"),
+	LTEXT("Line"),
+	LTEXT("Refresh"),
+	LTEXT("Show"),
 	//=========================================================
 	// 以下はVB.NET(VB7)での廃止が決定しているキーワードです
 	//=========================================================
 	//$付き関数各種
-	L"Dir$",
-	L"LCase$",
-	L"Left$",
-	L"LeftB$",
-	L"Mid$",
-	L"MidB$",
-	L"RightB$",
-	L"Right$",
-	L"Space$",
-	L"Str$",
-	L"String$",
-	L"Trim$",
-	L"UCase$",
+	LTEXT("Dir$"),
+	LTEXT("LCase$"),
+	LTEXT("Left$"),
+	LTEXT("LeftB$"),
+	LTEXT("Mid$"),
+	LTEXT("MidB$"),
+	LTEXT("RightB$"),
+	LTEXT("Right$"),
+	LTEXT("Space$"),
+	LTEXT("Str$"),
+	LTEXT("String$"),
+	LTEXT("Trim$"),
+	LTEXT("UCase$"),
 	//VB5,6の隠し関数
-	L"VarPtr",
-	L"StrPtr",
-	L"ObjPtr",
-	L"VarPrtArray",
-	L"VarPtrStringArray"
+	LTEXT("VarPtr"),
+	LTEXT("StrPtr"),
+	LTEXT("ObjPtr"),
+	LTEXT("VarPrtArray"),
+	LTEXT("VarPtrStringArray")
 };
 int g_nKeywordsVB2 = int(std::size(g_ppszKeywordsVB2));

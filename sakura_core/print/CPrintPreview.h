@@ -114,7 +114,7 @@ protected:
 	CColorStrategy* Print_DrawLine(
 		HDC				hdc,
 		POINT			ptDraw,		//!< 描画座標。HDC内部単位。
-		const wchar_t*	pLine,
+		const WCHAR*	pLine,
 		int				nDocLineLen,
 		int				nLineStart,
 		int				nLineLen,
@@ -127,7 +127,7 @@ protected:
 	void Print_DrawBlock(
 		HDC				hdc,
 		POINT			ptDraw,		//!< 描画座標。HDC内部単位。
-		const wchar_t*	pPhysicalLine,
+		const WCHAR*	pPhysicalLine,
 		int				nBlockLen,
 		int				nKind,		//< 0:半角, 1:全角
 		const CLayout*	pcLayout,	//!< 色設定用Layout

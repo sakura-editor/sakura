@@ -28,12 +28,12 @@ public:
 	CSearchStringPattern();
 	~CSearchStringPattern();
 	void Reset();
-	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, size_t nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
+	bool SetPattern(HWND hwnd, const WCHAR* pszPattern, size_t nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
 		return SetPattern(hwnd, pszPattern, nPatternLen, nullptr, sSearchOption, pRegexp, false);
 	}
-	bool SetPattern(HWND, const wchar_t* pszPattern, size_t cchPattern, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
-	const wchar_t* GetKey() const{ return m_pszKey; }
-	const wchar_t* GetCaseKey() const{ return m_pszCaseKeyRef; }
+	bool SetPattern(HWND, const WCHAR* pszPattern, size_t cchPattern, const WCHAR* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
+	const WCHAR* GetKey() const{ return m_pszKey; }
+	const WCHAR* GetCaseKey() const{ return m_pszCaseKeyRef; }
 	int GetLen() const{ return m_nPatternLen; }
 	bool GetIgnoreCase() const{ return !m_psSearchOption->bLoHiCase; }
 	bool GetLoHiCase() const{ return m_psSearchOption->bLoHiCase; }
@@ -46,23 +46,23 @@ public:
 #ifdef SEARCH_STRING_SUNDAY_QUICK
 	const int* GetUseCharSkipMap() const{ return m_pnUseCharSkipArr; }
 
-	static int GetMapIndex( wchar_t c );
+	static int GetMapIndex( WCHAR c );
 #endif
 
 private:
 	int GetRegexpOption() const;
 
 	// 外部依存
-	const wchar_t*	m_pszKey = nullptr;
-	const wchar_t*	m_pszKey2 = nullptr;	//!< 正規表現の置換後文字列(置換でなければ nullptr)
+	const WCHAR*	m_pszKey = nullptr;
+	const WCHAR*	m_pszKey2 = nullptr;	//!< 正規表現の置換後文字列(置換でなければ nullptr)
 	const SSearchOption* m_psSearchOption = nullptr;
 	CBregexp* m_pRegexp = nullptr;
 	bool	m_bGlobal = false;				//!< 正規表現の全域オプション(/g)
 
-	const wchar_t* m_pszCaseKeyRef = nullptr;
+	const WCHAR* m_pszCaseKeyRef = nullptr;
 
 	// 内部バッファ
-	wchar_t* m_pszPatternCase = nullptr;
+	WCHAR* m_pszPatternCase = nullptr;
 	int  m_nPatternLen;
 #ifdef SEARCH_STRING_KMP
 	int* m_pnNextPossArr = nullptr;
@@ -77,32 +77,32 @@ private:
 class CSearchAgent{
 public:
 	// 文字列検索
-	static const wchar_t* SearchString(
-		const wchar_t*	pLine,
+	static const WCHAR* SearchString(
+		const WCHAR*	pLine,
 		int				nLineLen,
 		int				nIdxPos,
 		const CSearchStringPattern& pattern
 	);
 	// 単語単位で文字列検索
-	static const wchar_t* SearchStringWord(
-		const wchar_t*	pLine,
+	static const WCHAR* SearchStringWord(
+		const WCHAR*	pLine,
 		int				nLineLen,
 		int				nIdxPos,
-		const std::vector<std::pair<const wchar_t*, CLogicInt> >& searchWords,
+		const std::vector<std::pair<const WCHAR*, CLogicInt> >& searchWords,
 		bool	bLoHiCase,
 		int*	pnMatchLen
 	);
 
 	// 検索条件の情報
 	static void CreateCharCharsArr(
-		const wchar_t*	pszPattern,
+		const WCHAR*	pszPattern,
 		int				nSrcLen,
 		int**			ppnCharCharsArr
 	);
 	
 	static void CreateWordList(
-		std::vector<std::pair<const wchar_t*, CLogicInt> >&	searchWords,
-		const wchar_t*	pszPattern,
+		std::vector<std::pair<const WCHAR*, CLogicInt> >&	searchWords,
+		const WCHAR*	pszPattern,
 		int	nPatternLen
 	);
 
@@ -147,7 +147,7 @@ public:
 	CLineMatchFinder( const CSearchStringPattern& pattern, CBregexp* pRegexp );
 
 	//! nStart から後ろで最初の一致を探す。見つからなければ空
-	std::optional<SLineMatch> Find( const wchar_t* pLine, int nLineLen, int nStart ) const;
+	std::optional<SLineMatch> Find( const WCHAR* pLine, int nLineLen, int nStart ) const;
 
 	/*!
 		Find() と同じ。ただし単語単位では、nStart を含む単語から調べる
@@ -155,14 +155,14 @@ public:
 		その単語が検索語の単語と同じなら、単語の先頭を一致として返す(nStart より前のこともある)。
 		文書の中の検索で、カーソルが単語の途中にあるときに、その単語に一致させるため。
 	*/
-	std::optional<SLineMatch> FindIncludingWordAt( const wchar_t* pLine, int nLineLen, int nStart ) const;
+	std::optional<SLineMatch> FindIncludingWordAt( const WCHAR* pLine, int nLineLen, int nStart ) const;
 
 	//! 一致の次に探し始める位置。長さ 0 の一致なら 1 文字進める
-	static int GetNextStart( const wchar_t* pLine, int nLineLen, const SLineMatch& match );
+	static int GetNextStart( const WCHAR* pLine, int nLineLen, const SLineMatch& match );
 
 private:
 	const CSearchStringPattern* m_pPattern;
 	CBregexp* m_pRegexp;
-	std::vector<std::pair<const wchar_t*, CLogicInt> > m_searchWords;	//!< 単語単位で探すときの、検索語の単語
+	std::vector<std::pair<const WCHAR*, CLogicInt> > m_searchWords;	//!< 単語単位で探すときの、検索語の単語
 };
 #endif /* SAKURA_CSEARCHAGENT_9FAD6EE9_3D33_4D9F_9E9D_CAA9BE284140_H_ */

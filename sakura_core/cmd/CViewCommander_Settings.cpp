@@ -518,7 +518,7 @@ void CViewCommander::Command_SELECT_COUNT_MODE( int nMode )
 /*!	@brief 引用符の設定
 	@date Jan. 29, 2005 genta 新規作成
 */
-void CViewCommander::Command_SET_QUOTESTRING( const wchar_t* quotestr )
+void CViewCommander::Command_SET_QUOTESTRING( const WCHAR* quotestr )
 {
 	if( quotestr == nullptr )
 		return;

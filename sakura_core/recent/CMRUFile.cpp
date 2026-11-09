@@ -97,7 +97,7 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 		CFileNameManager::getInstance()->GetMenuFullLabel_MRU( szMenu, int(std::size(szMenu)), p, -1, bFavoriteLabel, i, dcFont.GetHDC() );
 
 		//	メニューに追加。
-		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, L"", TRUE,
+		pCMenuDrawer->MyAppendMenu( hMenuPopUp, MF_BYPOSITION | MF_STRING, IDM_SELMRU + i, szMenu, LTEXT(""), TRUE,
 			bFavorite ? F_FAVORITE : -1 );
 	}
 	return hMenuPopUp;
@@ -192,7 +192,7 @@ bool CMRUFile::GetEditInfo( const WCHAR* pszPath, EditInfo* pfi ) const
 void CMRUFile::Add( EditInfo* pEditInfo )
 {
 	//	ファイル名が無ければ無視
-	if( nullptr == pEditInfo || pEditInfo->m_szPath[0] == L'\0' ){
+	if( nullptr == pEditInfo || pEditInfo->m_szPath[0] == LCHAR('\0') ){
 		return;
 	}
 	

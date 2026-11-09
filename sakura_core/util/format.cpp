@@ -26,10 +26,10 @@
 	@li "%S" 2桁の秒
 	@note 書式文字列は末尾または最初のnull文字までを変換対象とします。
 */
-std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& systime )
+sakura::wstring GetDateTimeFormat( sakura::wstring_view format, const SYSTEMTIME& systime )
 {
-	std::wstring result;
-	wchar_t str[6] = {};
+	sakura::wstring result;
+	WCHAR str[6] = {};
 	bool inSpecifier = false;
 
 	result.reserve( format.length() * 2 );
@@ -37,27 +37,27 @@ std::wstring GetDateTimeFormat( std::wstring_view format, const SYSTEMTIME& syst
 	for( const auto f : format ){
 		if( inSpecifier ){
 			inSpecifier = false;
-			if( f == L'Y' ){
-				swprintf( str, int(std::size(str)), L"%d", systime.wYear );
-			}else if( f == L'y' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wYear % 100 );
-			}else if( f == L'm' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wMonth );
-			}else if( f == L'd' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wDay );
-			}else if( f == L'H' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wHour );
-			}else if( f == L'M' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wMinute );
-			}else if( f == L'S' ){
-				swprintf( str, int(std::size(str)), L"%02d", systime.wSecond );
+			if( f == LCHAR('Y') ){
+				swprintf( str, int(std::size(str)), LTEXT("%d"), systime.wYear );
+			}else if( f == LCHAR('y') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wYear % 100 );
+			}else if( f == LCHAR('m') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wMonth );
+			}else if( f == LCHAR('d') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wDay );
+			}else if( f == LCHAR('H') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wHour );
+			}else if( f == LCHAR('M') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wMinute );
+			}else if( f == LCHAR('S') ){
+				swprintf( str, int(std::size(str)), LTEXT("%02d"), systime.wSecond );
 			}else{
-				swprintf( str, int(std::size(str)), L"%c", f );
+				swprintf( str, int(std::size(str)), LTEXT("%c"), f );
 			}
 			result.append( str );
-		}else if( f == L'%' ){
+		}else if( f == LCHAR('%') ){
 			inSpecifier = true;
-		}else if( f == L'\0' ){
+		}else if( f == LCHAR('\0') ){
 			break;
 		}else{
 			result.push_back( f );
@@ -88,23 +88,23 @@ UINT32 ParseVersion( const WCHAR* sVer )
 
 	for( i=0; *p && i<4; i++){
 		//特別な文字列の処理
-		if( *p == L'a' ){
-			if( wcsncmp_literal( p, L"alpha" ) == 0 )p += 5;
+		if( *p == LCHAR('a') ){
+			if( wcsncmp_literal( p, LTEXT("alpha") ) == 0 )p += 5;
 			else p++;
 			nShift = -0x60;
 		}
-		else if( *p == L'b' ){
-			if( wcsncmp_literal( p, L"beta" ) == 0 )p += 4;
+		else if( *p == LCHAR('b') ){
+			if( wcsncmp_literal( p, LTEXT("beta") ) == 0 )p += 4;
 			else p++;
 			nShift = -0x40;
 		}
-		else if( *p == L'r' || *p == L'R' ){
-			if( wcsnicmp_literal( p, L"rc" ) == 0 )p += 2;
+		else if( *p == LCHAR('r') || *p == LCHAR('R') ){
+			if( wcsnicmp_literal( p, LTEXT("rc") ) == 0 )p += 2;
 			else p++;
 			nShift = -0x20;
 		}
-		else if( *p == L'p' ){
-			if( wcsncmp_literal( p, L"pl" ) == 0 )p += 2;
+		else if( *p == LCHAR('p') ){
+			if( wcsncmp_literal( p, LTEXT("pl") ) == 0 )p += 2;
 			else p++;
 			nShift = 0x20;
 		}
@@ -118,19 +118,19 @@ UINT32 ParseVersion( const WCHAR* sVer )
 		//数値の抽出
 		for( nVer = 0, nDigit = 0; iswdigit(*p); p++ ){
 			if( ++nDigit > 2 )break;	//数字は2桁までで止める
-			nVer = nVer * 10 + *p - L'0';
+			nVer = nVer * 10 + *p - LCHAR('0');
 		}
 		//区切り文字の処理
-		while( *p && wcschr( L".-_+", *p ) ){ p++; }
+		while( *p && wcschr( LTEXT(".-_+"), *p ) ){ p++; }
 
-		DEBUG_TRACE(L"  VersionPart%d: ver=%d,shift=%d\n", i, nVer, nShift);
+		DEBUG_TRACE(LTEXT("  VersionPart%d: ver=%d,shift=%d\n"), i, nVer, nShift);
 		ret |= ( (nShift + nVer + 128) << (24-8*i) );
 	}
 	for( ; i<4; i++ ){	//残りの部分はsigned 0 (=0x80)を埋める
 		ret |= ( 128 << (24-8*i) );
 	}
 
-	DEBUG_TRACE(L"ParseVersion %ls -> %08x\n", sVer, ret);
+	DEBUG_TRACE(LTEXT("ParseVersion %ls -> %08x\n"), sVer, ret);
 	return ret;
 }
 

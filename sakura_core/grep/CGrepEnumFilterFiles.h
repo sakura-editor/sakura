@@ -27,18 +27,18 @@ private:
 	//! 除外ファイル(正規表現)の照合に使う。Enumerates() で設定する
 	const CGrepEnumKeys* m_pGrepEnumKeys = nullptr;
 
-	std::wstring m_strBaseFolder;	//!< Enumerates() の基準フォルダー。除外ファイル(正規表現)のフルパスを作るのに使う
-	std::wstring m_strFullPath;		//!< フルパスの作業用バッファ(ファイルごとに確保しないため)
+	sakura::wstring m_strBaseFolder;	//!< Enumerates() の基準フォルダー。除外ファイル(正規表現)のフルパスを作るのに使う
+	sakura::wstring m_strFullPath;		//!< フルパスの作業用バッファ(ファイルごとに確保しないため)
 
 	/*!
 		@brief 基準フォルダーとファイル名からフルパスを作る
 		@param[in]	name	キーのフォルダー部分を含むファイル名(Enumerates() の strName)
 		@note CGrepEnumFileBase::Enumerates() の strFullPath と同じ組み立て方にする
 	*/
-	std::wstring_view MakeFullPath( std::wstring_view name ){
+	sakura::wstring_view MakeFullPath( sakura::wstring_view name ){
 		m_strFullPath.assign( m_strBaseFolder );
 		if( !m_strBaseFolder.empty() ){
-			m_strFullPath.append( L"\\" );
+			m_strFullPath.append( LTEXT("\\") );
 		}
 		m_strFullPath.append( name );
 		return m_strFullPath;
@@ -66,7 +66,7 @@ public:
 
 	int Enumerates( LPCWSTR lpBaseFolder, CGrepEnumKeys& cGrepEnumKeys, CGrepEnumOptions option, CGrepEnumFiles& pExcept ){
 		m_pGrepEnumKeys = &cGrepEnumKeys;
-		m_strBaseFolder = lpBaseFolder ? lpBaseFolder : L"";
+		m_strBaseFolder = lpBaseFolder ? lpBaseFolder : LTEXT("");
 		m_cGrepEnumExceptFiles.Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecExceptFileKeys, option, nullptr );
 		return CGrepEnumFiles::Enumerates( lpBaseFolder, cGrepEnumKeys.m_vecSearchFileKeys, option, &pExcept );
 	}

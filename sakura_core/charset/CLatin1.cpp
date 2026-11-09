@@ -40,7 +40,7 @@ int CLatin1::GetSizeOfChar( [[maybe_unused]] const char* pData, int nDataLen, in
 /*!
 	Latin1 → Unicode 変換
 */
-int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError )
+int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, WCHAR *pDst, bool* pbError )
 {
 	int nret;
 	const unsigned char *pr, *pr_end;
@@ -60,7 +60,7 @@ int CLatin1::Latin1ToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bo
 	for( ; pr < pr_end; pr++ ){
 		if (*pr >= 0x80 && *pr <=0x9f) {
 			// Windows 拡張部
-			nret = ::MultiByteToWideChar( 1252, 0, reinterpret_cast<const char*>(pr), 1, reinterpret_cast<wchar_t*>(pw), 4 );
+			nret = ::MultiByteToWideChar( 1252, 0, reinterpret_cast<const char*>(pr), 1, reinterpret_cast<WCHAR*>(pw), 4 );
 			if( nret == 0 ){
 				*pw = static_cast<unsigned short>( *pr );
 			}
@@ -85,7 +85,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	const char* pSrc = reinterpret_cast<const char*>( cSrc.GetRawPtr() );
 
 	// 変換先バッファサイズを設定してメモリ領域確保
-	wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
+	WCHAR* pDst = new (std::nothrow) WCHAR[nSrcLen];
 	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
@@ -94,7 +94,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 	int nDstLen = Latin1ToUni( pSrc, nSrcLen, pDst, &bError );
 
 	// pDstMemを更新
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(WCHAR) );
 
 	// 後始末
 	delete [] pDst;
@@ -109,7 +109,7 @@ EConvertResult CLatin1::Latin1ToUnicode( const CMemory& cSrc, CNativeW* pDstMem 
 /*
 	Unicode -> Latin1
 */
-int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError )
+int CLatin1::UniToLatin1( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool *pbError )
 {
 	int nclen;
 	const unsigned short *pr, *pr_end;
@@ -128,7 +128,7 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 	pr_end = reinterpret_cast<const unsigned short*>(pSrc+nSrcLen);
 	pw = reinterpret_cast<unsigned char*>(pDst);
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const WCHAR*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
 		// 保護コード
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
@@ -148,7 +148,7 @@ int CLatin1::UniToLatin1( const wchar_t* pSrc, const int nSrcLen, char* pDst, bo
 			}
 			pr += nclen;
 		}else{
-			if( nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr)) ){
+			if( nclen == 1 && IsBinaryOnSurrogate(static_cast<WCHAR>(*pr)) ){
 				*pw = static_cast<unsigned char>(TextToBin(*pr) & 0x000000ff);
 				++pw;
 			}else{
@@ -174,7 +174,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 	bool berror;
 
 	// ソース取得
-	const wchar_t* pSrc = cSrc.GetStringPtr();
+	const WCHAR* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 変換先バッファサイズを設定してバッファを確保
@@ -201,7 +201,7 @@ EConvertResult CLatin1::UnicodeToLatin1( const CNativeW& cSrc, CMemory* pDstMem 
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CLatin1::UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
@@ -233,10 +233,10 @@ EConvertResult CLatin1::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cCharBuffer._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, L"%02x", *ps);
+			auto_sprintf( pd, LTEXT("%02x"), *ps);
 		}
 	}else{
-		auto_sprintf( pd, L"?%02x", *ps );
+		auto_sprintf( pd, LTEXT("?%02x"), *ps );
 	}
 
 	return RESULT_COMPLETE;

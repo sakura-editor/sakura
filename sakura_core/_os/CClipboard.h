@@ -21,7 +21,7 @@ struct IWBuffer {
 	virtual void Clear() = 0;
 	virtual void Reserve(size_t nDataLen) = 0;
 	virtual size_t Capacity() const = 0;
-	virtual void Append(const wchar_t* pszData, size_t nDataLen) = 0;
+	virtual void Append(const WCHAR* pszData, size_t nDataLen) = 0;
 };
 
 struct CNativeWBuffer : public IWBuffer {
@@ -29,12 +29,12 @@ struct CNativeWBuffer : public IWBuffer {
 	void Clear() override { cmembuf->Clear(); }
 	void Reserve(size_t nDataLen) override { cmembuf->AllocStringBuffer(nDataLen); }
 	size_t Capacity() const override { return (size_t)cmembuf->capacity(); }
-	void Append(const wchar_t* pszData, size_t nDataLen) override { cmembuf->AppendString(pszData, nDataLen); }
+	void Append(const WCHAR* pszData, size_t nDataLen) override { cmembuf->AppendString(pszData, nDataLen); }
 	CNativeW* cmembuf;
 };
 
 struct StdWStringBuffer : public IWBuffer {
-	StdWStringBuffer(std::wstring* wstr) : wstr(wstr) {}
+	StdWStringBuffer(sakura::wstring* wstr) : wstr(wstr) {}
 	void Clear() override { wstr->clear(); }
 	void Reserve(size_t nDataLen) override {
 		try {
@@ -45,8 +45,8 @@ struct StdWStringBuffer : public IWBuffer {
 		}
 	}
 	size_t Capacity() const override { return wstr->capacity(); }
-	void Append(const wchar_t* pszData, size_t nDataLen) override { wstr->append(pszData, nDataLen); }
-	std::wstring* wstr;
+	void Append(const WCHAR* pszData, size_t nDataLen) override { wstr->append(pszData, nDataLen); }
+	sakura::wstring* wstr;
 };
 
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
@@ -68,14 +68,14 @@ public:
 	void	Close(); //!< クリップボードを閉じる
 
 	void Empty() const; //!< クリップボードを空にする
-	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
+	bool SetText(const WCHAR* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
 	bool SetHtmlText(const CNativeW& cmemBUf);
 	bool GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
 	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool IsIncludeClipboardFormat(const wchar_t* pFormatName);
-	bool SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
-	bool GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
+	bool GetText(sakura::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
+	bool IsIncludeClipboardFormat(const WCHAR* pFormatName);
+	bool SetClipboardByFormat(const CStringRef& cstr, const WCHAR* pFormatName, int nMode, int nEndMode);
+	bool GetClipboardByFormat(CNativeW& mem, const WCHAR* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
 	//演算子
 	explicit operator bool() const noexcept { return m_bOpenResult != FALSE; } //!< クリップボードを開けたならtrue

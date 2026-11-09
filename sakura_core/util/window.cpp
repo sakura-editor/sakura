@@ -245,10 +245,10 @@ SGetTextResult GetDlgItemTextW(HWND hWndDlg, int nIDDlgItem)
 
 	// 必要な文字数を確認する
 	const auto cchRequired = static_cast<int>(::SendDlgItemMessageW(hWndDlg, nIDDlgItem, WM_GETTEXTLENGTH, 0L, 0L));
-	if (!cchRequired) return SGetTextResult{ std::wstring() };
+	if (!cchRequired) return SGetTextResult{ sakura::wstring() };
 
 	// バッファを確保する
-	std::wstring buffer(cchRequired, L'\0');
+	sakura::wstring buffer(cchRequired, LCHAR('\0'));
 
 	// 文字列を取得する
 	const auto actualCopied = ::GetDlgItemTextW(hWndDlg, nIDDlgItem, std::data(buffer), cchRequired + 1);
@@ -284,10 +284,10 @@ SGetTextResult GetWindowTextW(HWND hWnd)
 
 	// 必要な文字数を確認する
 	const auto cchRequired = ::GetWindowTextLengthW(hWnd);
-	if (!cchRequired) return SGetTextResult{ std::wstring() };
+	if (!cchRequired) return SGetTextResult{ sakura::wstring() };
 
 	// バッファを確保する
-	std::wstring buffer(cchRequired, L'\0');
+	sakura::wstring buffer(cchRequired, LCHAR('\0'));
 
 	// 文字列を取得する
 	const auto actualCopied = ::GetWindowTextW(hWnd, std::data(buffer), cchRequired + 1);
@@ -493,7 +493,7 @@ void CFontAutoDeleter::ReleaseOnDestroy()
 HFONT GetSystemBasedFont( LONG nLogicalHeight )
 {
 	// キー:文字列化したLOGFONT
-	static std::map<std::wstring, HFONT> fontStock;
+	static std::map<sakura::wstring, HFONT> fontStock;
 
 	NONCLIENTMETRICS metrics = { CCSIZEOF_STRUCT( NONCLIENTMETRICS, lfMessageFont ) };
 	if( !SystemParametersInfo( SPI_GETNONCLIENTMETRICS, 0, &metrics, 0 ) ) {

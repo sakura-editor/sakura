@@ -172,27 +172,27 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	GetAppVersionInfo( nullptr, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
 	
 	cmemMsg.AppendStringF(
-		L"%s Ver. %d.%d.%d.%d " LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) L"\r\n",
+		LTEXT("%s Ver. %d.%d.%d.%d ") LTEXT(BUILD_ENV_NAME) LTEXT(VERSION_HASH) LTEXT("\r\n"),
 		LS(STR_GSTR_APPNAME),
 		HIWORD(dwVersionMS), LOWORD(dwVersionMS), HIWORD(dwVersionLS), LOWORD(dwVersionLS) // e.g. {2, 3, 2, 0}
 	);
 
 	// 2行目
 #ifdef GIT_COMMIT_HASH
-	cmemMsg.AppendString( L"(GitHash " _T(GIT_COMMIT_HASH) L")\r\n" );
+	cmemMsg.AppendString( LTEXT("(GitHash ") _T(GIT_COMMIT_HASH) LTEXT(")\r\n") );
 #endif
 
 	// 3行目
 #ifdef GIT_REMOTE_ORIGIN_URL
-	cmemMsg.AppendString( L"(GitURL " _T(GIT_REMOTE_ORIGIN_URL) L")\r\n");
+	cmemMsg.AppendString( LTEXT("(GitURL ") _T(GIT_REMOTE_ORIGIN_URL) LTEXT(")\r\n"));
 #endif
 
 	// 段落区切り
-	cmemMsg.AppendString( L"\r\n" );
+	cmemMsg.AppendString( LTEXT("\r\n") );
 
 	// コンパイル情報
 	cmemMsg.AppendStringF(
-		L"      Compile Info: " _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) L"%d " TSTR_TARGET_MODE L" WIN%03x/I%03x/N%03x\r\n",
+		LTEXT("      Compile Info: ") _T(COMPILER_TYPE) _T(TARGET_M_SUFFIX) LTEXT("%d ") TSTR_TARGET_MODE LTEXT(" WIN%03x/I%03x/N%03x\r\n"),
 		COMPILER_VER, WINVER, _WIN32_IE, _WIN32_WINNT
 	);
 
@@ -201,7 +201,7 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 	CFileTime cFileTime;
 	GetLastWriteTimestamp( szFile, &cFileTime );
 	cmemMsg.AppendStringF(
-		L"      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n",
+		LTEXT("      Last Modified: %d/%d/%d %02d:%02d:%02d\r\n"),
 		cFileTime->wYear,
 		cFileTime->wMonth,
 		cFileTime->wDay,
@@ -212,12 +212,12 @@ BOOL CDlgAbout::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 
 	// パッチの情報をコンパイル時に渡せるようにする
 #ifdef SKR_PATCH_INFO
-	cmemMsg.AppendString( L"      " );
+	cmemMsg.AppendString( LTEXT("      ") );
 	const WCHAR szPatchInfo[] = SKR_PATCH_INFO;
 	constexpr auto patchInfoLen = std::size(szPatchInfo) - 1;
 	cmemMsg.AppendString( szPatchInfo, t_min(80, patchInfoLen) );
 #endif
-	cmemMsg.AppendString( L"\r\n");
+	cmemMsg.AppendString( LTEXT("\r\n"));
 
 	ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_VER, cmemMsg.GetStringPtr() );
 
@@ -367,7 +367,7 @@ BOOL CUrlWnd::SetSubclassWindow( HWND hWnd )
 		SendMessageAny( hWnd, WM_SETFONT, (WPARAM)m_hFont, (LPARAM)FALSE );
 
 	// 設定されているテキストを取得する
-	std::wstring strText;
+	sakura::wstring strText;
 	if( ApiWrap::Wnd_GetText( hWnd, strText ) ){
 		// サイズを調整する
 		auto retSetText = OnSetText( strText.data(), strText.length() );

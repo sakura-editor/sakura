@@ -207,7 +207,7 @@ BOOL CViewCommander::HandleCommand(
 	switch( nCommand ){
 	case F_WCHAR:	/* 文字入力 */
 		{
-			Command_WCHAR( (wchar_t)lparam1 );
+			Command_WCHAR( (WCHAR)lparam1 );
 		}
 		break;
 
@@ -406,9 +406,9 @@ BOOL CViewCommander::HandleCommand(
 	case F_COPY_CRLF:				Command_COPY( false, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy, EEolType::cr_and_lf );break;	//CRLF改行でコピー(選択範囲をクリップボードにコピー)
 	case F_PASTE:					Command_PASTE( (int)lparam1 );break;				//貼り付け(クリップボードから貼り付け)
 	case F_PASTEBOX:				Command_PASTEBOX( (int)lparam1 );break;				//矩形貼り付け(クリップボードから矩形貼り付け)
-	case F_INSBOXTEXT:				Command_INSBOXTEXT((const wchar_t*)lparam1, (int)lparam2 );break;				//矩形テキスト挿入
-	case F_INSTEXT_W:				Command_INSTEXT( bRedraw, (const wchar_t*)lparam1, (CLogicInt)lparam2, lparam3!=FALSE );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加
-	case F_ADDTAIL_W:				Command_ADDTAIL( (const wchar_t*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
+	case F_INSBOXTEXT:				Command_INSBOXTEXT((const WCHAR*)lparam1, (int)lparam2 );break;				//矩形テキスト挿入
+	case F_INSTEXT_W:				Command_INSTEXT( bRedraw, (const WCHAR*)lparam1, (CLogicInt)lparam2, lparam3!=FALSE );break;/* テキストを貼り付け */ // 2004.05.14 Moca 長さを示す引数追加
+	case F_ADDTAIL_W:				Command_ADDTAIL( (const WCHAR*)lparam1, (int)lparam2 );break;	/* 最後にテキストを追加 */
 	case F_COPYFNAME:				Command_COPYFILENAME();break;			//このファイル名をクリップボードにコピー / /2002/2/3 aroka
 	case F_COPYPATH:				Command_COPYPATH();break;				//このファイルのパス名をクリップボードにコピー
 	case F_COPYDIRPATH:				Command_COPYDIRPATH();break;				//このファイルのフォルダー名をクリップボードにコピー
@@ -425,7 +425,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_INS_DATE:				Command_INS_DATE();break;	//日付挿入
 	case F_INS_TIME:				Command_INS_TIME();break;	//時刻挿入
     case F_CTRL_CODE_DIALOG:		Command_CtrlCode_Dialog();break;	/* コントロールコードの入力(ダイアログ) */	//@@@ 2002.06.02 MIK
-    case F_CTRL_CODE:				Command_WCHAR( (wchar_t)lparam1, false );break;
+    case F_CTRL_CODE:				Command_WCHAR( (WCHAR)lparam1, false );break;
 	case F_INS_FILE_USED_RECENTLY:	Command_INS_FILE_USED_RECENTLY();break;		//最近使ったファイル挿入
 	case F_INS_FOLDER_USED_RECENTLY:Command_INS_FOLDER_USED_RECENTLY();break;	//最近使ったフォルダー挿入
 
@@ -489,7 +489,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_TAGJUMPBACK:		Command_TAGJUMPBACK();break;					/* タグジャンプバック機能 */
 	case F_TAGS_MAKE:		Command_TagsMake();break;						//タグファイルの作成	//@@@ 2003.04.13 MIK
 	case F_DIRECT_TAGJUMP:	Command_TagJumpByTagsFileMsg( true );break;				/* ダイレクトタグジャンプ機能 */	//@@@ 2003.04.15 MIK
-	case F_TAGJUMP_KEYWORD:	Command_TagJumpByTagsFileKeyword( (const wchar_t*)lparam1 );break;	/* @@ 2005.03.31 MIK キーワードを指定してダイレクトタグジャンプ機能 */
+	case F_TAGJUMP_KEYWORD:	Command_TagJumpByTagsFileKeyword( (const WCHAR*)lparam1 );break;	/* @@ 2005.03.31 MIK キーワードを指定してダイレクトタグジャンプ機能 */
 	case F_COMPARE:			Command_COMPARE();break;						/* ファイル内容比較 */
 	case F_DIFF_DIALOG:		Command_Diff_Dialog();break;					/* DIFF差分表示(ダイアログ) */	//@@@ 2002.05.25 MIK
 	case F_DIFF:			Command_Diff( (const WCHAR*)lparam1, (int)lparam2 );break;		/* DIFF差分表示 */	//@@@ 2002.05.25 MIK	// 2005.10.03 maru
@@ -633,7 +633,7 @@ BOOL CViewCommander::HandleCommand(
 	case F_MINIMIZE_ALL:	Command_MINIMIZE_ALL();break;	/* すべて最小化 */	//	Sept. 17, 2000 jepro 説明の「全て」を「すべて」に統一
 	case F_REDRAW:			Command_REDRAW();break;			/* 再描画 */
 	case F_WIN_OUTPUT:		Command_WIN_OUTPUT();break;		//アウトプットウィンドウ表示
-	case F_TRACEOUT:		Command_TRACEOUT((const wchar_t*)lparam1, (int)lparam2, (int)lparam3);break;		//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
+	case F_TRACEOUT:		Command_TRACEOUT((const WCHAR*)lparam1, (int)lparam2, (int)lparam3);break;		//マクロ用アウトプットウィンドウに表示 maru 2006.04.26
 	case F_TOPMOST:			Command_WINTOPMOST( lparam1 );break;	//常に手前に表示 Moca
 	case F_WINLIST:			Command_WINLIST( nCommandFrom );break;		/* ウィンドウ一覧ポップアップ表示処理 */	// 2006.03.23 fon // 2006.05.19 genta 引数追加
 	case F_DLGWINLIST:		Command_DLGWINLIST();break;		// ウィンドウ一覧表示
@@ -715,7 +715,7 @@ void CViewCommander::Sub_BoxSelectLock(LPARAM lParam) noexcept
 	}
 }
 
-ptrdiff_t CViewCommander::ConvertEol(const wchar_t* pszText, ptrdiff_t nTextLen, wchar_t* pszConvertedText)
+ptrdiff_t CViewCommander::ConvertEol(const WCHAR* pszText, ptrdiff_t nTextLen, WCHAR* pszConvertedText)
 {
 	// original by 2009.02.28 salarm
 	ptrdiff_t nConvertedTextLen;

@@ -67,7 +67,7 @@ private:
 public:
 	int				migemo_load_all() noexcept;
 	int				migemo_is_enable() noexcept;
-	std::wstring	migemo_query_w(std::wstring_view query) noexcept;
+	sakura::wstring	migemo_query_w(sakura::wstring_view query) noexcept;
 };
 
 #endif /* SAKURA_CMIGEMO_BEF7C3E9_DC35_4C9D_BC69_8B7F9EBB4463_H_ */

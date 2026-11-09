@@ -34,7 +34,7 @@ namespace cxx {
  * @param[in] outputString 出力する文字列
  */
 void OutputDebugStringW(
-	std::wstring_view outputString
+	sakura::wstring_view outputString
 );
 
 } // namespace cxx

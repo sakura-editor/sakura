@@ -44,14 +44,14 @@ enum EExpParamName
 
 struct SExpParamName
 {
-	const wchar_t* m_szName;
+	const WCHAR* m_szName;
 	int m_nLen;
 };
 static SExpParamName SExpParamNameTable[] = {
-	{L"profile", 7},
+	{LTEXT("profile"), 7},
 	{nullptr, 0}
 };
-wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam );
+WCHAR* ExParam_LongName( WCHAR* q, WCHAR* q_max, EExpParamName eLongParam );
 
 /*!	$xの展開
 
@@ -91,20 +91,20 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 	@date 2012.10.11 Moca 特殊文字n追加
 */
-void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen)
+void CSakuraEnvironment::ExpandParameter(const WCHAR* pszSource, WCHAR* pszBuffer, int nBufferLen)
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
 
 	// Apr. 03, 2003 genta 固定文字列をまとめる
-	const std::wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
+	const sakura::wstring	PRINT_PREVIEW_ONLY		= LS( STR_PREVIEW_ONLY );	//L"(印刷プレビューでのみ使用できます)";
 	const auto			PRINT_PREVIEW_ONLY_LEN	= int(PRINT_PREVIEW_ONLY.length());
-	const std::wstring	NO_TITLE				= LS( STR_NO_TITLE1 );	//L"(無題)";
+	const sakura::wstring	NO_TITLE				= LS( STR_NO_TITLE1 );	//L"(無題)";
 	const auto			NO_TITLE_LEN			= int(NO_TITLE.length());
-	const std::wstring	NOT_SAVED				= LS( STR_NOT_SAVED );	//L"(保存されていません)";
+	const sakura::wstring	NOT_SAVED				= LS( STR_NOT_SAVED );	//L"(保存されていません)";
 	const auto			NOT_SAVED_LEN			= int(NOT_SAVED.length());
 
-	const wchar_t *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
-	wchar_t *q, *q_max;
+	const WCHAR *p, *r;	//	p：目的のバッファ。r：作業用のポインタ。
+	WCHAR *q, *q_max;
 
 	for( p = pszSource, q = pszBuffer, q_max = pszBuffer + nBufferLen; *p != '\0' && q < q_max;){
 		if( *p != '$' ){
@@ -112,14 +112,14 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			continue;
 		}
 		switch( *(++p) ){
-		case L'$':	//	 $$ -> $
+		case LCHAR('$'):	//	 $$ -> $
 			*q++ = *p++;
 			break;
-		case L'A':	//アプリ名
+		case LCHAR('A'):	//アプリ名
 			q = wcs_pushW( q, q_max - q, GSTR_APPNAME_W, wcslen(GSTR_APPNAME_W) );
 			++p;
 			break;
-		case L'F':	//	開いているファイルの名前（フルパス）
+		case LCHAR('F'):	//	開いているファイルの名前（フルパス）
 			if ( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
@@ -130,7 +130,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'f':	//	開いているファイルの名前（ファイル名+拡張子のみ）
+		case LCHAR('f'):	//	開いているファイルの名前（ファイル名+拡張子のみ）
 			// Oct. 28, 2001 genta
 			//	ファイル名のみを渡すバージョン
 			//	ポインタを末尾に
@@ -145,7 +145,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'g':	//	開いているファイルの名前（拡張子を除くファイル名のみ）
+		case LCHAR('g'):	//	開いているファイルの名前（拡張子を除くファイル名のみ）
 			//	From Here Sep. 16, 2002 genta
 			if ( ! pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
@@ -153,7 +153,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			} 
 			else {
 				//	ポインタを末尾に
-				const wchar_t *dot_position, *end_of_path;
+				const WCHAR *dot_position, *end_of_path;
 				r = pcDoc->m_cDocFile.GetFileName(); // 2002.10.13 Moca ファイル名(パスなし)を取得。日本語対応
 				end_of_path = dot_position =
 					r + wcslen( r );
@@ -170,7 +170,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 			//	To Here Sep. 16, 2002 genta
-		case L'/':	//	開いているファイルの名前（フルパス。パスの区切りが/）
+		case LCHAR('/'):	//	開いているファイルの名前（フルパス。パスの区切りが/）
 			// Oct. 28, 2001 genta
 			if ( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
@@ -178,9 +178,9 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			} 
 			else {
 				//	パスの区切りとして'/'を使うバージョン
-				for( r = pcDoc->m_cDocFile.GetFilePath(); *r != L'\0' && q < q_max; ++r, ++q ){
-					if( *r == L'\\' )
-						*q = L'/';
+				for( r = pcDoc->m_cDocFile.GetFilePath(); *r != LCHAR('\0') && q < q_max; ++r, ++q ){
+					if( *r == LCHAR('\\') )
+						*q = LCHAR('/');
 					else
 						*q = *r;
 				}
@@ -188,7 +188,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		//	From Here 2003/06/21 Moca
-		case L'N':	//	開いているファイルの名前(簡易表示)
+		case LCHAR('N'):	//	開いているファイルの名前(簡易表示)
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 				++p;
@@ -205,7 +205,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			break;
 		//	To Here 2003/06/21 Moca
-		case L'n':
+		case LCHAR('n'):
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 				}else if( CAppMode::getInstance()->IsDebugMode() ){
@@ -213,14 +213,14 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 					WCHAR szText[10];
 					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
 					if( node && 0 < node->m_nId ){
-						_swprintf( szText, L"%d", node->m_nId );
+						_swprintf( szText, LTEXT("%d"), node->m_nId );
 						q = wcs_pushW( q, q_max - q, szText );
 					}
 				}
 			}
 			++p;
 			break;
-		case L'E':	// 開いているファイルのあるフォルダーの名前(簡易表示)	2012/12/2 Uchi
+		case LCHAR('E'):	// 開いているファイルのあるフォルダーの名前(簡易表示)	2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -232,7 +232,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				wcscpy_s( buff, _MAX_PATH, pcDoc->m_cDocFile.GetFilePath() );
 				pEnd = nullptr;
 				for ( p2 = buff; *p2 != '\0'; p2++) {
-					if (*p2 == L'\\') {
+					if (*p2 == LCHAR('\\')) {
 						pEnd = p2;
 					}
 				}
@@ -252,7 +252,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			}
 			++p;
 			break;
-		case L'e':	// 開いているファイルのあるフォルダーの名前		2012/12/2 Uchi
+		case LCHAR('e'):	// 開いているファイルのあるフォルダーの名前		2012/12/2 Uchi
 			if( !pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				q = wcs_pushW( q, q_max - q, NO_TITLE.c_str(), NO_TITLE_LEN );
 			}
@@ -263,7 +263,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				pStr = pcDoc->m_cDocFile.GetFilePath();
 				pEnd = pStr - wcslen(pStr) - 1;
 				for ( p = pStr; *p != '\0'; p++) {
-					if (*p == L'\\') {
+					if (*p == LCHAR('\\')) {
 						pEnd = p;
 					}
 				}
@@ -272,7 +272,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 			++p;
 			break;
 		//	From Here Jan. 15, 2002 hor
-		case L'B':	// タイプ別設定の名前			2013/03/28 Uchi
+		case LCHAR('B'):	// タイプ別設定の名前			2013/03/28 Uchi
 			{
 				const STypeConfig&	sTypeCongig = pcDoc->m_cDocType.GetDocumentAttribute();
 				if (sTypeCongig.m_nIdx > 0) {	// 基本は表示しない
@@ -281,23 +281,23 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'b':	// 開いているファイルの拡張子	2013/03/28 Uchi
+		case LCHAR('b'):	// 開いているファイルの拡張子	2013/03/28 Uchi
 			if ( pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				//	ポインタを末尾に
-				const wchar_t	*dot_position, *end_of_path;
+				const WCHAR	*dot_position, *end_of_path;
 				r = pcDoc->m_cDocFile.GetFileName();
 				end_of_path = dot_position = r + wcslen( r );
 				//	後ろから.を探す
-				while (--dot_position >= r && *dot_position != L'.')
+				while (--dot_position >= r && *dot_position != LCHAR('.'))
 					;
 				//	.を発見(拡張子有り)
-				if (*dot_position == L'.') {
+				if (*dot_position == LCHAR('.')) {
 					q = wcs_pushW( q, q_max - q, dot_position +1, end_of_path - dot_position -1 );
 				}
 			}
 			++p;
 			break;
-		case L'Q':	// 印刷ページ設定の名前			2013/03/28 Uchi
+		case LCHAR('Q'):	// 印刷ページ設定の名前			2013/03/28 Uchi
 			{
 				PRINTSETTING*	ps = &GetDllShareData().m_PrintSettingArr[
 					 pcDoc->m_cDocType.GetDocumentAttribute().m_nCurrentPrintSetting];
@@ -305,7 +305,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'C':	//	現在選択中のテキスト
+		case LCHAR('C'):	//	現在選択中のテキスト
 			{
 				CNativeW cmemCurText;
 				GetMainWindow()->GetActiveView().GetCurrentTextForSearch( cmemCurText );
@@ -316,24 +316,24 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		//	To Here Jan. 15, 2002 hor
 			break;
 		//	From Here 2002/12/04 Moca
-		case L'x':	//	現在の物理桁位置(先頭からのバイト数1開始)
+		case LCHAR('x'):	//	現在の物理桁位置(先頭からのバイト数1開始)
 			{
-				wchar_t szText[11];
+				WCHAR szText[11];
 				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().x + 1, szText, 10 );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			break;
-		case L'y':	//	現在の物理行位置(1開始)
+		case LCHAR('y'):	//	現在の物理行位置(1開始)
 			{
-				wchar_t szText[11];
+				WCHAR szText[11];
 				_itow( GetMainWindow()->GetActiveView().GetCaret().GetCaretLogicPos().y + 1, szText, 10 );
 				q = wcs_pushW( q, q_max - q, szText);
 				++p;
 			}
 			break;
 		//	To Here 2002/12/04 Moca
-		case L'd':	//	共通設定の日付書式
+		case LCHAR('d'):	//	共通設定の日付書式
 			{
 				WCHAR szText[1024];
 				SYSTEMTIME systime;
@@ -343,7 +343,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L't':	//	共通設定の時刻書式
+		case LCHAR('t'):	//	共通設定の時刻書式
 			{
 				WCHAR szText[1024];
 				SYSTEMTIME systime;
@@ -353,11 +353,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'p':	//	現在のページ
+		case LCHAR('p'):	//	現在のページ
 			{
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
+					WCHAR szText[1024];
 					_itow(pcEditWnd->m_pPrintPreview->GetCurPageNum() + 1, szText, 10);
 					q = wcs_pushW( q, q_max - q, szText, wcslen(szText));
 					++p;
@@ -368,11 +368,11 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}
 			}
 			break;
-		case L'P':	//	総ページ
+		case LCHAR('P'):	//	総ページ
 			{
 				CEditWnd*	pcEditWnd = GetMainWindow();	//	Sep. 10, 2002 genta
 				if (pcEditWnd->m_pPrintPreview){
-					wchar_t szText[1024];
+					WCHAR szText[1024];
 					_itow(pcEditWnd->m_pPrintPreview->GetAllPageNum(), szText, 10);
 					q = wcs_pushW( q, q_max - q, szText);
 					++p;
@@ -383,7 +383,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}
 			}
 			break;
-		case L'D':	//	タイムスタンプ
+		case LCHAR('D'):	//	タイムスタンプ
 			if (!pcDoc->m_cDocFile.IsFileTimeZero()){
 				WCHAR szText[1024];
 				CFormatManager().MyGetDateFormat(
@@ -399,7 +399,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'T':	//	タイムスタンプ
+		case LCHAR('T'):	//	タイムスタンプ
 			if (!pcDoc->m_cDocFile.IsFileTimeZero()){
 				WCHAR szText[1024];
 				CFormatManager().MyGetTimeFormat(
@@ -415,14 +415,14 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'V':	// Apr. 4, 2003 genta
+		case LCHAR('V'):	// Apr. 4, 2003 genta
 			// Version number
 			{
-				wchar_t buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
+				WCHAR buf[28]; // 6(符号含むWORDの最大長) * 4 + 4(固定部分)
 				//	2004.05.13 Moca バージョン番号は、プロセスごとに取得する
 				DWORD dwVersionMS, dwVersionLS;
 				GetAppVersionInfo( nullptr, VS_VERSION_INFO, &dwVersionMS, &dwVersionLS );
-				int len = auto_sprintf( buf, L"%d.%d.%d.%d",
+				int len = auto_sprintf( buf, LTEXT("%d.%d.%d.%d"),
 					HIWORD( dwVersionMS ),
 					LOWORD( dwVersionMS ),
 					HIWORD( dwVersionLS ),
@@ -432,7 +432,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				++p;
 			}
 			break;
-		case L'h':	//	Apr. 4, 2003 genta
+		case LCHAR('h'):	//	Apr. 4, 2003 genta
 			//	Grep Key文字列 MAX 32文字
 			//	中身はSetParentCaption()より移植
 			{
@@ -440,13 +440,13 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				// m_szGrepKey → cmemDes
 				LimitStringLengthW( CAppMode::getInstance()->m_szGrepKey, wcslen( CAppMode::getInstance()->m_szGrepKey ), (q_max - q > 32 ? 32 : q_max - q - 3), cmemDes );
 				if( (int)wcslen( CAppMode::getInstance()->m_szGrepKey ) > cmemDes.GetStringLength() ){
-					cmemDes.AppendString(L"...");
+					cmemDes.AppendString(LTEXT("..."));
 				}
 				q = wcs_pushW( q, q_max - q, cmemDes.GetStringPtr(), cmemDes.GetStringLength());
 				++p;
 			}
 			break;
-		case L'S':	//	Sep. 15, 2005 FILE
+		case LCHAR('S'):	//	Sep. 15, 2005 FILE
 			//	サクラエディタのフルパス
 			{
 				auto exePath = GetExeFileName();
@@ -496,7 +496,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 		//	条件分岐
 		//	${cond:string1$:string2$:string3$}
 		//	
-		case L'{':	// 条件分岐
+		case LCHAR('{'):	// 条件分岐
 			{
 				int cond;
 				cond = _ExParam_Evaluate( p + 1 );
@@ -507,19 +507,19 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				p = _ExParam_SkipCond( p + 1, cond );
 			}
 			break;
-		case L':':	// 条件分岐の中間
+		case LCHAR(':'):	// 条件分岐の中間
 			//	条件分岐の末尾までSKIP
 			p = _ExParam_SkipCond( p + 1, -1 );
 			break;
-		case L'}':	// 条件分岐の末尾
+		case LCHAR('}'):	// 条件分岐の末尾
 			//	特にすることはない
 			++p;
 			break;
-		case L'<':
+		case LCHAR('<'):
 			{
 				// $<LongName>
 				++p;
-				const wchar_t *pBegin = p;
+				const WCHAR *pBegin = p;
 				while( *p != '>' && *p != '\0' ){
 					++p;
 				}
@@ -563,21 +563,21 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 	@author genta
 	@date 2003.03.31 genta 作成
 */
-const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, int part)
+const WCHAR* CSakuraEnvironment::_ExParam_SkipCond(const WCHAR* pszSource, int part)
 {
 	if( part == 0 )
 		return pszSource;
 	
 	int nest = 0;	// 入れ子のレベル
 	bool next = true;	// 継続フラグ
-	const wchar_t *p;
-	for( p = pszSource; next && *p != L'\0'; ++p ) {
-		if( *p == L'$' && p[1] != L'\0' ){ // $が末尾なら無視
+	const WCHAR *p;
+	for( p = pszSource; next && *p != LCHAR('\0'); ++p ) {
+		if( *p == LCHAR('$') && p[1] != LCHAR('\0') ){ // $が末尾なら無視
 			switch( *(++p)){
-			case L'{':	// 入れ子の開始
+			case LCHAR('{'):	// 入れ子の開始
 				++nest;
 				break;
-			case L'}':
+			case LCHAR('}'):
 				if( nest == 0 ){
 					//	終了ポイントに達した
 					next = false; 
@@ -587,7 +587,7 @@ const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, i
 					--nest;
 				}
 				break;
-			case L':':
+			case LCHAR(':'):
 				if( nest == 0 && --part == 0){ // 入れ子でない場合のみ
 					//	目的のポイント
 					next = false;
@@ -614,12 +614,12 @@ const wchar_t* CSakuraEnvironment::_ExParam_SkipCond(const wchar_t* pszSource, i
 	@date 2003.03.31 genta 作成
 
 */
-int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
+int CSakuraEnvironment::_ExParam_Evaluate( const WCHAR* pCond )
 {
 	const CEditDoc* pcDoc = CEditDoc::GetInstance(0); //###
 
 	switch( *pCond ){
-	case L'R': // $R ビューモードおよび読み取り専用属性
+	case LCHAR('R'): // $R ビューモードおよび読み取り専用属性
 		if( CAppMode::getInstance()->IsViewMode() ){
 			return 0; // ビューモード
 		}
@@ -629,7 +629,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 		else{
 			return 2; // 上記以外
 		}
-	case L'w': // $w Grepモード/Output Mode
+	case LCHAR('w'): // $w Grepモード/Output Mode
 		if( CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode ){
 			return 0;
 		}else if( CAppMode::getInstance()->IsDebugMode() ){
@@ -637,27 +637,27 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 		}else {
 			return 2;
 		}
-	case L'M': // $M キーボードマクロの記録中
+	case LCHAR('M'): // $M キーボードマクロの記録中
 		if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro && GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro==CEditWnd::getInstance()->GetHwnd() ){ /* ウィンドウ */
 			return 0;
 		}else {
 			return 1;
 		}
-	case L'U': // $U 更新
+	case LCHAR('U'): // $U 更新
 		if( pcDoc->m_cDocEditor.IsModified()){
 			return 0;
 		}
 		else {
 			return 1;
 		}
-	case L'N': // $N 新規/(無題)		2012/12/2 Uchi
+	case LCHAR('N'): // $N 新規/(無題)		2012/12/2 Uchi
 		if (!pcDoc->m_cDocFile.GetFilePathClass().IsValidPath()) {
 			return 0;
 		}
 		else {
 			return 1;
 		}
-	case L'I': // $I アイコン化されているか
+	case LCHAR('I'): // $I アイコン化されているか
 		if( ::IsIconic( CEditWnd::getInstance()->GetHwnd() )){
 			return 0;
 		} else {
@@ -670,7 +670,7 @@ int CSakuraEnvironment::_ExParam_Evaluate( const wchar_t* pCond )
 }
 
 /*! 長い名前の設定 */
-wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam )
+WCHAR* ExParam_LongName( WCHAR* q, WCHAR* q_max, EExpParamName eLongParam )
 {
 	switch( eLongParam ){
 	case EExpParamName_profile:
@@ -691,7 +691,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	@param bControlProcess [in] trueのときはOPENDIALOGDIR_CUR->OPENDIALOGDIR_MRUに変更
 	@return 初期フォルダー
 */
-std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
+sakura::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 {
 	CEditDoc* pcDoc = CEditDoc::GetInstance(0); //######
 	if( pcDoc && pcDoc->m_cDocFile.GetFilePathClass().IsValidPath() ){
@@ -710,7 +710,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 			WCHAR szCurDir[_MAX_PATH];
 			int nCurDir = ::GetCurrentDirectory( int(std::size(szCurDir)), szCurDir );
 			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
-				return L"";
+				return LTEXT("");
 			}
 			else{
 				return szCurDir;
@@ -732,7 +732,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 			WCHAR szCurDir[_MAX_PATH];
 			int nCurDir = ::GetCurrentDirectory( int(std::size(szCurDir)), szCurDir );
 			if( 0 == nCurDir || _MAX_PATH < nCurDir ){
-				return L"";
+				return LTEXT("");
 			}
 			else{
 				return szCurDir;

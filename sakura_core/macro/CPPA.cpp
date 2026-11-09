@@ -81,7 +81,7 @@ bool CPPA::Execute(CEditView* pcEditView, int flags) const
 
 LPCWSTR CPPA::GetDllNameImp([[maybe_unused]] int nIndex)
 {
-	return L"PPA.DLL";
+	return LTEXT("PPA.DLL");
 }
 
 /*!
@@ -375,10 +375,10 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 		}
 	}
 	if( 0 == m_CurInstance->m_cMemDebug.GetStringLength() ){
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s", pszErr );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LTEXT("%s"), pszErr );
 	}
 	else{
-		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), L"%s\n%hs", pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
+		MYMESSAGEBOX( m_CurInstance->m_pcEditView->GetHwnd(), MB_OK, LS(STR_ERR_DLGPPA7), LTEXT("%s\n%hs"), pszErr, m_CurInstance->m_cMemDebug.GetStringPtr() );
 	}
 }
 
@@ -424,7 +424,7 @@ void __stdcall CPPA::stdProc(
 {
 	*Err_CD = 0;
 
-	auto tmpArguments = std::vector<std::wstring>();
+	auto tmpArguments = std::vector<sakura::wstring>();
 
 	//Argumentをwchar_t[]に変換 -> tmpArguments
 	auto tmpArguments2 = std::vector<LPCWSTR>(ArgSize);

@@ -185,7 +185,7 @@ void CDlgJump::SetData( void )
 	CFuncInfoArr	cFuncInfoArr;
 	int				i;
 	HWND			hwndCtrl;
-	wchar_t			szText[1024];
+	WCHAR			szText[1024];
 	int				nIndexCurSel = 0;	//	Sep. 11, 2004 genta 初期化
 	int				nIndex;
 	int				nWorkLine; //$$ 条件により、レイアウト・ロジックの単位が混在するため、ミスの原因になりやすい
@@ -197,7 +197,7 @@ void CDlgJump::SetData( void )
 //From Here Oct. 7, 2000 JEPRO 前回入力した行番号を保持するように下行を変更
 //	::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, "" );	/* 行番号 */
 	if( 0 == m_nLineNum ){
-		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, L"" );	/* 行番号 */
+		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_EDIT_LINENUM, LTEXT("") );	/* 行番号 */
 	}else{
 		::SetDlgItemInt( GetHwnd(), IDC_EDIT_LINENUM, m_nLineNum, FALSE );	/* 前回の行番号 */
 	}

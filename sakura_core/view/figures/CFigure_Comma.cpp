@@ -14,9 +14,9 @@
 //                        CFigure_Comma                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_Comma::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
+bool CFigure_Comma::Match(const WCHAR* pText, [[maybe_unused]] int nTextLen) const
 {
-	if ( pText[0] == L',' ) {
+	if ( pText[0] == LCHAR(',') ) {
 		return true;
 	}
 	return false;
@@ -47,7 +47,7 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 	CTypeSupport cTabType(pcView,COLORIDX_TAB);
 
 	// これから描画するタブ幅
-	CLayoutXInt nTabLayoutWidth = pcLayoutMgr.GetActualTsvSpace(sPos.GetDrawCol(), L',');
+	CLayoutXInt nTabLayoutWidth = pcLayoutMgr.GetActualTsvSpace(sPos.GetDrawCol(), LCHAR(','));
 	size_t nTabDispWidth = static_cast<Int>(nTabLayoutWidth) / pcLayoutMgr.GetWidthPerKeta();
 	if( pcView->m_bMiniMap ){
 		CLayoutMgr mgrTemp;
@@ -68,9 +68,9 @@ void CFigure_Comma::DispSpace(CGraphics& gr, DispPos* pDispPos, CEditView* pcVie
 
 	if( pArea->IsRectIntersected(rcClip2) ){
 		if( cTabType.IsDisp() ){	//CSVモード
-			std::wstring szViewString = L",";
+			sakura::wstring szViewString = LTEXT(",");
 			if (szViewString.length() < nTabDispWidth) {
-				szViewString.append(nTabDispWidth - szViewString.length(), L' ');
+				szViewString.append(nTabDispWidth - szViewString.length(), LCHAR(' '));
 			}
 			const INT* lpDx;
 			if( szViewString.length() > 64 ) {

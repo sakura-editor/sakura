@@ -104,7 +104,7 @@ public:
 	ECodeType GetCode() const { return m_eCodeType; }
 	LPCWSTR	Normal() const;
 	LPCWSTR	Short() const;
-	std::wstring	Bracket() const;
+	sakura::wstring	Bracket() const;
 	bool	UseBom();
 	bool	CanDefault();
 	bool	IsBomDefOn();

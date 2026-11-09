@@ -102,7 +102,7 @@ static const DWORD p_helpids[] = {	//13000
  */
 /* static */ int CDlgInput1::NoValidation(
 	HWND /* hWndDlg */,
-	std::wstring_view /* text */,
+	sakura::wstring_view /* text */,
 	size_t /* cchBuffer */
 )
 {
@@ -200,8 +200,8 @@ BOOL CDlgInput1::DoModal(
  */
 BOOL CDlgInput1::DoModal(
 	_In_opt_ HWND hWndOwner,
-	std::wstring_view title,
-	std::wstring_view message,
+	sakura::wstring_view title,
+	sakura::wstring_view message,
 	std::span<WCHAR> buffer,
 	const std::optional<SFuncType>& optFunc
 )
@@ -231,9 +231,9 @@ BOOL CDlgInput1::DoModal(
  */
 BOOL CDlgInput1::DoModal(
 	_In_opt_ HWND hWndOwner,
-	std::wstring_view title,
-	std::wstring_view message,
-	std::wstring& buffer,
+	sakura::wstring_view title,
+	sakura::wstring_view message,
+	sakura::wstring& buffer,
 	const std::optional<SFuncType>& optFunc
 )
 {
@@ -275,7 +275,7 @@ BOOL CDlgInput1::DoModal(
 	assert_warning(0 == pBuffer[cchBuffer - 1]);
 #endif
 
-	pBuffer[cchBuffer - 1] = L'\0';
+	pBuffer[cchBuffer - 1] = LCHAR('\0');
 
 	m_Title = pszTitle;
 	m_Message = pszMessage;

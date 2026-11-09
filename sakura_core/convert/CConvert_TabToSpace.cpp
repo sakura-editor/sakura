@@ -17,9 +17,9 @@
 //! TAB→空白
 bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 {
-	const std::wstring_view source(pcData->GetStringPtr(), pcData->GetStringLength());
-	const auto numOfTabs = std::count(source.cbegin(), source.cend(), L'\t');
-	std::wstring buffer;
+	const sakura::wstring_view source(pcData->GetStringPtr(), pcData->GetStringLength());
+	const auto numOfTabs = std::count(source.cbegin(), source.cend(), LCHAR('\t'));
+	sakura::wstring buffer;
 	buffer.reserve(source.length() + numOfTabs * (m_nTabWidth - 1));
 
 	int begin = 0;
@@ -27,16 +27,16 @@ bool CConvert_TabToSpace::DoConvert(CNativeW* pcData)
 		int lineLength;
 		CEol eol;
 		/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
-		const wchar_t* line = GetNextLineW(source.data(),
+		const WCHAR* line = GetNextLineW(source.data(),
 			static_cast<int>(source.length()), &lineLength, &begin, &eol, m_bExtEol);
 		if (!line)
 			break;
 		// 先頭行については開始桁位置を考慮する（さらに折り返し関連の対策が必要？）
 		int pos = (source.data() == line) ? m_nStartColumn : 0;
 		for (int i = 0; i < lineLength; ++i) {
-			if (line[i] == L'\t') {
+			if (line[i] == LCHAR('\t')) {
 				const int width = m_nTabWidth - (pos % m_nTabWidth);
-				buffer.append(width, L' ');
+				buffer.append(width, LCHAR(' '));
 				pos += width;
 			} else {
 				buffer.push_back(line[i]);

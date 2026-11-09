@@ -652,7 +652,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 	::SendMessageCmd( hwndDlg, WM_COMMAND, MAKELONG( IDC_LIST_COLORS, LBN_SELCHANGE ), (LPARAM)hwndWork );
 
 	// from here 2005.11.30 Moca 指定位置縦線の設定
-	WCHAR szVertLine[MAX_VERTLINES * 15] = L"";
+	WCHAR szVertLine[MAX_VERTLINES * 15] = LTEXT("");
 	int offset = 0;
 	for( i = 0; i < MAX_VERTLINES && m_Types.m_nVertLineIdx[i] != 0; i++ ){
 		CKetaXInt nXCol = m_Types.m_nVertLineIdx[i];
@@ -671,7 +671,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 					szVertLine[offset+1] = '\0';
 					offset += 1;
 				}
-				offset += auto_sprintf( &szVertLine[offset], L"%d(%d,%d)", nXColAdd, nXCol, nXColEnd );
+				offset += auto_sprintf( &szVertLine[offset], LTEXT("%d(%d,%d)"), nXColAdd, nXCol, nXColEnd );
 			}
 		}
 		else{
@@ -680,7 +680,7 @@ void CPropTypesColor::SetData( HWND hwndDlg )
 				szVertLine[offset+1] = '\0';
 				offset += 1;
 			}
-			offset += auto_sprintf( &szVertLine[offset], L"%d", nXCol );
+			offset += auto_sprintf( &szVertLine[offset], LTEXT("%d"), nXCol );
 		}
 	}
 	ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_VERTLINE ), MAX_VERTLINES * 15 );
@@ -698,7 +698,7 @@ void CPropTypesColor::SetDataKeyword( HWND hwndDlg )
 	HWND hwndWork = ::GetDlgItem( hwndDlg, IDC_COMBO_SET );
 	ApiWrap::Combo_ResetContent( hwndWork );  /* コンボボックスを空にする */
 	/* 一行目は空白 */
-	ApiWrap::Combo_AddString( hwndWork, L" " );
+	ApiWrap::Combo_AddString( hwndWork, LTEXT(" ") );
 	//	Mar. 31, 2003 genta KeyWordSetMgrをポインタに
 	if( 0 < m_pCKeyWordSetMgr->m_nKeyWordSetNum ){
 		const int* const set = m_nSet;
@@ -728,7 +728,7 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 	//	From Here May 12, 2001 genta
 	//	コメントの開始桁位置の取得
 	//	May 21, 2001 genta 桁位置を1から数えるように
-	wchar_t buffer[COMMENT_DELIMITER_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI LineCommentを取得するためのバッファ
+	WCHAR buffer[COMMENT_DELIMITER_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI LineCommentを取得するためのバッファ
 	int pos;
 	UINT en;
 	BOOL bTranslated;
@@ -750,8 +750,8 @@ int CPropTypesColor::GetData( HWND hwndDlg )
 		m_Types.m_cLineComment.CopyTo( i, buffer, en ? pos : ~pos );
 	}
 
-	wchar_t szFromBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
-	wchar_t szToBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
+	WCHAR szFromBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
+	WCHAR szToBuffer[BLOCKCOMMENT_BUFFERSIZE];	//@@@ 2002.09.22 YAZAKI
 
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_FROM	, szFromBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(From) */
 	ApiWrap::DlgItem_GetText( hwndDlg, IDC_EDIT_BLOCKCOMMENT_TO		, szToBuffer	, BLOCKCOMMENT_BUFFERSIZE );	/* ブロックコメントデリミタ(To) */

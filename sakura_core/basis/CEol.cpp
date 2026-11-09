@@ -41,7 +41,7 @@ const std::array g_EolDefinitions = {
 constexpr SEolDefinition::SEolDefinition(
 	EEolType eEolType,
 	int wName,
-	std::wstring_view data
+	sakura::wstring_view data
 )
 	: m_eEolType(eEolType)
 	, m_wName(static_cast<WORD>(wName))
@@ -49,7 +49,7 @@ constexpr SEolDefinition::SEolDefinition(
 {
 }
 
-const std::wstring&	SEolDefinition::GetVal() const noexcept
+const sakura::wstring&	SEolDefinition::GetVal() const noexcept
 {
 	return m_Data;
 }
@@ -62,7 +62,7 @@ std::string SEolDefinition::GetVal(ECodeType eCodeType) const
 
 bool SEolDefinition::StartsWith(LPCWSTR pData, size_t nLen) const noexcept
 {
-	const std::wstring_view text{ pData, nLen };
+	const sakura::wstring_view text{ pData, nLen };
 	return !m_Data.empty() && text.starts_with(m_Data);
 }
 
@@ -99,7 +99,7 @@ const SEolDefinition& CEol::GetData() const noexcept
 	return *std::ranges::find_if(g_EolDefinitions, [this] (const SEolDefinition& eolDef) { return m_eEolType == eolDef.m_eEolType; });
 }
 
-void CEol::SetTypeByString( const wchar_t* pszData, size_t nDataLen )
+void CEol::SetTypeByString( const WCHAR* pszData, size_t nDataLen )
 {
 	auto eEolType = EEolType::none;
 	for (const auto& eolDef : g_EolDefinitions) {

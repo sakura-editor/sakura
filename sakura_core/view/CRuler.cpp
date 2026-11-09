@@ -114,7 +114,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		lf.lfClipPrecision	= 2;
 		lf.lfQuality		= 1;
 		lf.lfPitchAndFamily	= 34;
-		wcscpy_s( lf.lfFaceName, L"Arial" );
+		wcscpy_s( lf.lfFaceName, LTEXT("Arial") );
 		m_hFont = ::CreateFontIndirect( &lf );
 		m_nRulerHeight = pCommon->m_sWindow.m_nRulerHeight;
 	}
@@ -180,7 +180,7 @@ void CRuler::DrawRulerBg(CGraphics& gr)
 		}
 		//10目盛おきの区切り(大)と数字
 		else if( 0 == keta % 10 ){
-			wchar_t szColumn[32];
+			WCHAR szColumn[32];
 			apt[idx * 2 + 1] = POINT{nX, 0};
 			_itow( ((Int)keta) / 10, szColumn, 10 );
 			::TextOutW(gr, nX + 2 + 0, -1 + 0, PSZ_ARGS(szColumn));

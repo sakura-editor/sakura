@@ -43,7 +43,7 @@ protected:
 	friend LRESULT CALLBACK CWndProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 public:
 	/* Constructors */
-	CWnd(const WCHAR* pszInheritanceAppend = L"");
+	CWnd(const WCHAR* pszInheritanceAppend = LTEXT(""));
 	CWnd(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CWnd(Me&&) noexcept = delete;

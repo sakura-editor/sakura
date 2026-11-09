@@ -52,10 +52,10 @@ void CViewCommander::Command_FILENEW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = L"";
+	sLoadInfo.cFilePath = LTEXT("");
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
-	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	sakura::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
 	return;
 }
@@ -65,10 +65,10 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 {
 	/* 新たな編集ウィンドウを起動 */
 	SLoadInfo sLoadInfo;
-	sLoadInfo.cFilePath = L"";
+	sLoadInfo.cFilePath = LTEXT("");
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
-	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
+	sakura::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
 	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		nullptr,
 		false,
@@ -89,12 +89,12 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		nCharCode = CODE_AUTODETECT;
 	}
 	//ロード情報
-	SLoadInfo sLoadInfo(filename?filename:L"", nCharCode, bViewMode);
-	std::vector<std::wstring> files;
+	SLoadInfo sLoadInfo(filename?filename:LTEXT(""), nCharCode, bViewMode);
+	std::vector<sakura::wstring> files;
 
 	//必要であれば「ファイルを開く」ダイアログ
 	if(!sLoadInfo.cFilePath.IsValidPath()){
-		std::wstring defName = (defaultName ? defaultName : L"");
+		sakura::wstring defName = (defaultName ? defaultName : LTEXT(""));
 		if( !defName.empty() ){
 			WCHAR szPath[_MAX_PATH];
 			WCHAR szDir[_MAX_DIR];
@@ -307,8 +307,8 @@ BOOL CViewCommander::Command_OPEN_HfromtoC( BOOL bCheckOnly )
 BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
-	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
-	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
+	static const WCHAR* source_ext[] = { LTEXT("c"), LTEXT("cpp"), LTEXT("cxx"), LTEXT("cc"), LTEXT("cp"), LTEXT("c++") };
+	static const WCHAR* header_ext[] = { LTEXT("h"), LTEXT("hpp"), LTEXT("hxx"), LTEXT("hh"), LTEXT("hp"), LTEXT("h++") };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, source_ext, header_ext,
 		int(std::size(source_ext)), int(std::size(header_ext)),
@@ -320,8 +320,8 @@ BOOL CViewCommander::Command_OPEN_HHPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 {
 	// 2003.06.28 Moca ヘッダー・ソースのコードを統合＆削除
-	static const WCHAR* source_ext[] = { L"c", L"cpp", L"cxx", L"cc", L"cp", L"c++" };
-	static const WCHAR* header_ext[] = { L"h", L"hpp", L"hxx", L"hh", L"hp", L"h++" };
+	static const WCHAR* source_ext[] = { LTEXT("c"), LTEXT("cpp"), LTEXT("cxx"), LTEXT("cc"), LTEXT("cp"), LTEXT("c++") };
+	static const WCHAR* header_ext[] = { LTEXT("h"), LTEXT("hpp"), LTEXT("hxx"), LTEXT("hh"), LTEXT("hp"), LTEXT("h++") };
 	return m_pCommanderView->OPEN_ExtFromtoExt(
 		bCheckOnly, bBeepWhenMiss, header_ext, source_ext,
 		int(std::size(header_ext)), int(std::size(source_ext)),
@@ -332,7 +332,7 @@ BOOL CViewCommander::Command_OPEN_CCPP( BOOL bCheckOnly, BOOL bBeepWhenMiss )
 void CViewCommander::Command_ACTIVATE_SQLPLUS( void )
 {
 	HWND		hwndSQLPLUS;
-	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
+	hwndSQLPLUS = ::FindWindow( LTEXT("SqlplusWClass"), LTEXT("Oracle SQL*Plus") );
 	if( nullptr == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_ACTV_BUT_NOT_RUN ) );	//"Oracle SQL*Plusをアクティブ表示します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -354,7 +354,7 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 	WCHAR		szPath[MAX_PATH + 2];
 	BOOL		bResult;
 
-	hwndSQLPLUS = ::FindWindow( L"SqlplusWClass", L"Oracle SQL*Plus" );
+	hwndSQLPLUS = ::FindWindow( LTEXT("SqlplusWClass"), LTEXT("Oracle SQL*Plus") );
 	if( nullptr == hwndSQLPLUS ){
 		ErrorMessage( m_pCommanderView->GetHwnd(), LS( STR_SQLERR_EXEC_BUT_NOT_RUN ) );	//"Oracle SQL*Plusで実行します。\n\n\nOracle SQL*Plusが起動されていません。\n"
 		return;
@@ -392,9 +392,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( wcschr( GetDocument()->m_cDocFile.GetFilePath(), WCODE::SPACE ) ? TRUE : FALSE ){
-			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, LTEXT("@\"%s\"\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
+			auto_sprintf( szPath, LTEXT("@%s\r\n"), GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, wcslen( szPath ), false );
@@ -482,9 +482,9 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 #ifdef _DEBUG
 	{
 		/* 全行データを返すテスト */
-		wchar_t*	pDataAll;
+		WCHAR*	pDataAll;
 		int		nDataAllLen;
-		CRunningTimer cRunningTimer( L"CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト" );
+		CRunningTimer cRunningTimer( LTEXT("CViewCommander::Command_PROPERTY_FILE 全行データを返すテスト") );
 		cRunningTimer.Reset();
 		pDataAll = CDocReader(GetDocument()->m_cDocLineMgr).GetAllData( &nDataAllLen );
 //		MYTRACE( L"全データ取得             (%dバイト) 所要時間(ミリ秒) = %d\n", nDataAllLen, cRunningTimer.Read() );
@@ -508,9 +508,9 @@ void CViewCommander::Command_PROFILEMGR( void )
 	{
 		using SOpts = StaticString<_MAX_PATH + 10>;	// サイズの根拠は不明
 		SOpts szOpt{};
-		swprintf_s(szOpt, LR"(-PROF="%s")", profMgr.m_ProfileName);
+		swprintf_s(szOpt, LTEXT(R"(-PROF="%s")"), profMgr.m_ProfileName);
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = L"";
+		sLoadInfo.cFilePath = LTEXT("");
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
@@ -530,10 +530,10 @@ void CViewCommander::Command_OPEN_FOLDER_IN_EXPLORER(void)
 
 	// Windows Explorerの引数を作る
 	CNativeW explorerCommand;
-	explorerCommand.AppendStringF(L"/select,\"%s\"", pszDocPath);
+	explorerCommand.AppendStringF(LTEXT("/select,\"%s\""), pszDocPath);
 	LPCWSTR pszExplorerCommand = explorerCommand.GetStringPtr();
 
-	auto hInstance = ::ShellExecute(GetMainWindow(), L"open", L"explorer.exe", pszExplorerCommand, nullptr, SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecute(GetMainWindow(), LTEXT("open"), LTEXT("explorer.exe"), pszExplorerCommand, nullptr, SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
@@ -557,19 +557,19 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 		return;
 	}
 
-	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	sakura::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
 	SFilePath szCmdExePathBuf;
-	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
+	if (::GetEnvironmentVariableW(LTEXT("COMSPEC"), szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
 		ErrorBeep();
 		return;
 	}
 
-	LPCWSTR pVerb = L"open";
+	LPCWSTR pVerb = LTEXT("open");
 	if (isAdmin)
 	{
-		pVerb = L"runas";
+		pVerb = LTEXT("runas");
 	}
 
 #ifndef _WIN64
@@ -605,7 +605,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		return;
 	}
 
-	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
+	sakura::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	/*
 		PowerShell でコマンドレットを実行するために -Command を使用する
@@ -615,20 +615,20 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	*/
 
 	// PowerShell の単一引用符文字列内でシングルクォートを '' にエスケープする (OS コマンドインジェクション対策)
-	std::wstring strFolderEscaped = strFolder;
-	for (size_t pos = 0; (pos = strFolderEscaped.find(L'\'', pos)) != std::wstring::npos; pos += 2)
+	sakura::wstring strFolderEscaped = strFolder;
+	for (size_t pos = 0; (pos = strFolderEscaped.find(LCHAR('\''), pos)) != sakura::wstring::npos; pos += 2)
 	{
-		strFolderEscaped.replace(pos, 1, L"''");
+		strFolderEscaped.replace(pos, 1, LTEXT("''"));
 	}
 
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolderEscaped.c_str());
+	cmdExeParam.AppendStringF(LTEXT("-NoExit -Command \"Set-Location -Path '%s'\""), strFolderEscaped.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
-	LPCWSTR pVerb = L"open";
+	LPCWSTR pVerb = LTEXT("open");
 	if (isAdmin)
 	{
-		pVerb = L"runas";
+		pVerb = LTEXT("runas");
 	}
 
 #ifndef _WIN64
@@ -641,7 +641,7 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(nullptr, pVerb, L"powershell.exe", pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
+	auto hInstance = ::ShellExecuteW(nullptr, pVerb, LTEXT("powershell.exe"), pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
 	// If the function succeeds, it returns a value greater than 32. 
 	if (hInstance <= (decltype(hInstance))32) {
 		ErrorBeep();
@@ -685,7 +685,7 @@ BOOL CViewCommander::Command_PUTFILE(
 {
 	BOOL		bResult = TRUE;
 	ECodeType	nSaveCharCode = nCharCode;
-	if(filename[0] == L'\0') {
+	if(filename[0] == LCHAR('\0')) {
 		return FALSE;
 	}
 
@@ -810,7 +810,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 	int			nOldPercent = -1;
 	BOOL		bResult = TRUE;
 
-	if(filename[0] == L'\0') {
+	if(filename[0] == LCHAR('\0')) {
 		return FALSE;
 	}
 
@@ -863,7 +863,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 		CNativeW cBuf;
 		while( RESULT_FAILURE != cfl.ReadLine( &cBuf, &cEol ) ){
 
-			const wchar_t*	pLine = cBuf.GetStringPtr();
+			const WCHAR*	pLine = cBuf.GetStringPtr();
 			int			nLineLen = cBuf.GetStringLength();
 
 			++nLineNum;

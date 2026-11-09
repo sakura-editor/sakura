@@ -14,7 +14,7 @@
 //                     CFigure_CtrlCode                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-bool CFigure_CtrlCode::Match(const wchar_t* pText, [[maybe_unused]] int nTextLen) const
+bool CFigure_CtrlCode::Match(const WCHAR* pText, [[maybe_unused]] int nTextLen) const
 {
 	//当面はASCII制御文字（C0 Controls, IsHankaku()で半角扱い）だけを制御文字表示にする
 	//そうしないと IsHankaku(0x0600)==false なのに iswcntrl(0x0600)!=0 のようなケースで表示桁がずれる
@@ -60,7 +60,7 @@ void CFigure_CtrlCode::DispSpaceEx(CGraphics& gr, DispPos* pDispPos, CEditView* 
 			gr.PushMyFont(sFont);
 		}
 		int nHeightMargin = pcView->GetTextMetrics().GetCharHeightMarginByFontNo(fontNo);
-		wchar_t wc[1] = {GetAlternateChar()};
+		WCHAR wc[1] = {GetAlternateChar()};
 		ExtTextOut(
 			gr,
 			pDispPos->GetDrawPos().x,

@@ -60,7 +60,7 @@ using namespace cxx;
  * @param[in] pExceptionParams 例外情報
  */
 /* static */ void CProcess::WriteMiniDumpIgnoringExceptions(
-	std::wstring_view file,
+	sakura::wstring_view file,
 	PEXCEPTION_POINTERS pExceptionParams
 ) noexcept
 {
@@ -134,7 +134,7 @@ int CProcess::WriteDump(
 	SFilePath szFile;
 	try {
 		const auto iniPath = ::GetIniFileName();
-		szFile = iniPath.parent_path() / (iniPath.stem().native() + L".dmp");
+		szFile = iniPath.parent_path() / (iniPath.stem().native() + LTEXT(".dmp"));
 	}
 	// エラーが発生した場合は処理を中断させる
 	catch (const std::overflow_error&) {
@@ -185,7 +185,7 @@ std::filesystem::path CProcess::GetIniFileName() const
 		const DLLSHAREDATA *pShareData = &GetDllShareData();
 		return pShareData->m_szPrivateIniFile.c_str();
 	}
-	return GetExeFileName().replace_extension(L".ini");
+	return GetExeFileName().replace_extension(LTEXT(".ini"));
 }
 
 /*!

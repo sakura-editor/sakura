@@ -637,11 +637,11 @@ void CViewSelect::PrintSelectionInfoMsg() const
 	if( ! IsTextSelected() || m_sSelect.GetFrom().y >= nLineCount ){ // 先頭行が実在しない
 		const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;
 		if( IsBoxSelecting() ){
-			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"box selecting" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( LTEXT("box selecting") );
 		}else if( m_bSelectingLock ){
-			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"selecting" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( LTEXT("selecting") );
 		}else{
-			GetEditWnd().m_cStatusBar.SendStatusMessage2( L"" );
+			GetEditWnd().m_cStatusBar.SendStatusMessage2( LTEXT("") );
 		}
 		return;
 	}
@@ -665,7 +665,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 			select_col = -select_col;
 		}
 		int select_col_keta = (Int)select_col / (Int)pView->GetTextMetrics().GetLayoutXDefault();
-		auto_sprintf( msg, L"%d col (%dpx) * %d lines selected.",
+		auto_sprintf( msg, LTEXT("%d col (%dpx) * %d lines selected."),
 			select_col_keta, int(select_col), int(select_line) );
 	}
 	else {
@@ -809,15 +809,15 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		}
 
 #ifdef _DEBUG
-		auto_sprintf( msg, L"%d %s (%d lines) selected. [%d:%d]-[%d:%d]",
+		auto_sprintf( msg, LTEXT("%d %s (%d lines) selected. [%d:%d]-[%d:%d]"),
 			select_sum,
-			( bCountByByte ? L"bytes" : L"chars" ),
+			( bCountByByte ? LTEXT("bytes") : LTEXT("chars") ),
 			int(select_line),
 			int(m_sSelect.GetFrom().x), int(m_sSelect.GetFrom().y),
 			int(m_sSelect.GetTo().x), int(m_sSelect.GetTo().y)
 		);
 #else
-		auto_sprintf( msg, L"%d %s (%d lines) selected.", select_sum, ( bCountByByte ? L"bytes" : L"chars" ), select_line );
+		auto_sprintf( msg, LTEXT("%d %s (%d lines) selected."), select_sum, ( bCountByByte ? LTEXT("bytes") : LTEXT("chars") ), select_line );
 #endif
 	}
 	const_cast<CEditView*>(pView)->GetCaret().m_bClearStatus = false;

@@ -18,7 +18,7 @@
 
 	C文字列の先頭アドレスと有効文字数を指定してCStringRefを構築する。
  */
-CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
+CStringRef::CStringRef( const WCHAR* pData, size_t nDataLen ) noexcept
 	: m_pData(pData)
 	, m_nDataLen(static_cast<decltype(m_nDataLen)>(nDataLen))
 {
@@ -31,7 +31,7 @@ CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
 	サクラエディタの内部データは拡張UTF-16LEなので、
 	取得した値が「1文字」であるとは限らないことに注意。
  */
-[[nodiscard]] wchar_t CStringRef::At( size_t nIndex ) const noexcept
+[[nodiscard]] WCHAR CStringRef::At( size_t nIndex ) const noexcept
 {
 	if( m_pData != nullptr && nIndex < m_nDataLen ){
 		return m_pData[nIndex];
@@ -43,7 +43,7 @@ CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //! nDataLenは文字単位。
-CNativeW::CNativeW( const wchar_t* pData, size_t nDataLen )
+CNativeW::CNativeW( const WCHAR* pData, size_t nDataLen )
 {
 	SetString( pData, nDataLen );
 }
@@ -53,14 +53,14 @@ CNativeW::CNativeW( const wchar_t* pData, size_t nDataLen )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // バッファの内容を置き換える
-void CNativeW::SetString( const wchar_t* pData, size_t nDataLen )
+void CNativeW::SetString( const WCHAR* pData, size_t nDataLen )
 {
-	SetRawData( pData,nDataLen * sizeof(wchar_t) );
+	SetRawData( pData,nDataLen * sizeof(WCHAR) );
 }
 
-void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
+void CNativeW::SetStringHoldBuffer( const WCHAR* pData, size_t nDataLen )
 {
-	SetRawDataHoldBuffer( pData, nDataLen * sizeof(wchar_t) );
+	SetRawDataHoldBuffer( pData, nDataLen * sizeof(WCHAR) );
 }
 
 // バッファの内容を置き換える
@@ -72,13 +72,13 @@ void CNativeW::SetNativeData( const CNativeW& cNative )
 //! (重要：nDataLenは文字単位) バッファサイズの調整。必要に応じて拡大する。
 void CNativeW::AllocStringBuffer( size_t nDataLen )
 {
-	AllocBuffer( nDataLen * sizeof(wchar_t) );
+	AllocBuffer( nDataLen * sizeof(WCHAR) );
 }
 
 //! バッファの最後にデータを追加する。nLengthは文字単位。
-void CNativeW::AppendString( const wchar_t* pszData, size_t nDataLen )
+void CNativeW::AppendString( const WCHAR* pszData, size_t nDataLen )
 {
-	AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
+	AppendRawData( pszData, nDataLen * sizeof(WCHAR) );
 }
 
 //! バッファの最後にデータを追加する
@@ -95,7 +95,7 @@ void CNativeW::AppendNativeData( const CNativeW& cmemData )
  * @return 新しい文字列バッファ
  * @throws std::bad_alloc メモリ確保に失敗した
  */
-CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
+CNativeW operator + (const CNativeW& lhs, const WCHAR* rhs) noexcept(false)
 {
 	CNativeW tmp(lhs);
 	tmp.AppendString(rhs);
@@ -110,7 +110,7 @@ CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false)
  * @return 新しい文字列バッファ
  * @throws std::bad_alloc メモリ確保に失敗した
  */
-CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
+CNativeW operator + (const WCHAR* lhs, const CNativeW& rhs) noexcept(false)
 {
 	CNativeW tmp(lhs);
 	return tmp + rhs;
@@ -121,7 +121,7 @@ CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false)
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 // GetAt()と同機能
-[[nodiscard]] wchar_t CNativeW::operator[]( size_t nIndex ) const
+[[nodiscard]] WCHAR CNativeW::operator[]( size_t nIndex ) const
 {
 	if( nIndex < static_cast<size_t>(GetStringLength()) ){
 		return GetStringPtr()[nIndex];
@@ -171,12 +171,12 @@ int CNativeW::Compare(const CNativeW& rhs) const noexcept
  * @retval > 0 自身がメモリ確保済み、かつ、比較対象がnullptr
  * @retval > 0 文字列値が比較対象より大きい
  */
-int CNativeW::Compare(const wchar_t* rhs) const noexcept
+int CNativeW::Compare(const WCHAR* rhs) const noexcept
 {
 	const int lhsIsValid = static_cast<int>(IsValid());
 	const int rhsIsValid = rhs ? 1 : 0;
 	if (!rhsIsValid || !lhsIsValid) return lhsIsValid - rhsIsValid;
-	const wchar_t* lhs = GetStringPtr();
+	const WCHAR* lhs = GetStringPtr();
 	const size_t lhsLength = GetStringLength();
 	// NUL終端考慮のために終端を拡張し、比較自体はCRTに丸投げする
 	return wcsncmp(lhs, rhs, lhsLength + 1);
@@ -190,8 +190,8 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 	const int nLen1 = cmem1.GetStringLength();
 	const int nLen2 = cmem2.GetStringLength();
 	if( nLen1 == nLen2 ){
-		const wchar_t* psz1 = cmem1.GetStringPtr();
-		const wchar_t* psz2 = cmem2.GetStringPtr();
+		const WCHAR* psz1 = cmem1.GetStringPtr();
+		const WCHAR* psz2 = cmem2.GetStringPtr();
 		if( 0 == wmemcmp( psz1, psz2, nLen1 ) ){
 			return true;
 		}
@@ -204,9 +204,9 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 文字列置換
-void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
+void CNativeW::Replace( sakura::wstring_view strFrom, sakura::wstring_view strTo )
 {
-	CNativeW	cmemWork(L"");
+	CNativeW	cmemWork(LTEXT(""));
 	size_t		nBgn = 0;
 	size_t		nBgnOld = 0;
 	while( nBgn + strFrom.length() <= static_cast<size_t>(GetStringLength()) ){
@@ -227,9 +227,9 @@ void CNativeW::Replace( std::wstring_view strFrom, std::wstring_view strTo )
 	SetRawDataHoldBuffer( cmemWork );
 }
 
-void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen )
+void CNativeW::Replace( const WCHAR* pszFrom, size_t nFromLen, const WCHAR* pszTo, size_t nToLen )
 {
-	Replace( std::wstring_view( pszFrom, nFromLen ), std::wstring_view( pszTo, nToLen ) );
+	Replace( sakura::wstring_view( pszFrom, nFromLen ), sakura::wstring_view( pszTo, nToLen ) );
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -237,7 +237,7 @@ void CNativeW::Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 指定した位置の文字がwchar_t何個分かを返す
-CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t index )
+CLogicInt CNativeW::GetSizeOfChar( const WCHAR* pData, size_t cchData, size_t index )
 {
 	const auto nDataLen = int(cchData);
 	const auto nIdx = int(index);
@@ -254,7 +254,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 	}
 
 	// IVSの異体字セレクタチェック
-	if (IsVariationSelector(std::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
+	if (IsVariationSelector(sakura::wstring_view(pData + nIdx + 1, nDataLen - (nIdx + 1)))) {
 		// 正字 + 異体字セレクタで3個分
 		return CLogicInt(3);
 	}
@@ -263,7 +263,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 }
 
 //! 指定した位置の文字が半角何個分かを返す
-CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, size_t cchData, size_t index, CCharWidthCache& cache)
+CKetaXInt CNativeW::GetKetaOfChar( const WCHAR* pData, size_t cchData, size_t index, CCharWidthCache& cache)
 {
 	const auto nDataLen = int(cchData);
 	const auto nIdx = int(index);
@@ -299,7 +299,7 @@ CKetaXInt CNativeW::GetKetaOfChar( const wchar_t* pData, size_t cchData, size_t 
 }
 
 //! 指定した位置の文字の文字幅を返す
-CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t index,
+CHabaXInt CNativeW::GetHabaOfChar( const WCHAR* pData, size_t cchData, size_t index,
 	bool bEnableExtEol, CCharWidthCache& cache )
 {
 	const auto nDataLen = int(cchData);
@@ -326,9 +326,9 @@ CHabaXInt CNativeW::GetHabaOfChar( const wchar_t* pData, size_t cchData, size_t 
 
 /* ポインタで示した文字の次にある文字の位置を返します */
 /* 次にある文字がバッファの最後の位置を越える場合は&pData[nDataLen]を返します */
-const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent )
+const WCHAR* CNativeW::GetCharNext( const WCHAR* pData, size_t nDataLen, const WCHAR* pDataCurrent )
 {
-	const wchar_t* pNext = pDataCurrent + 1;
+	const WCHAR* pNext = pDataCurrent + 1;
 
 	if( pNext >= &pData[nDataLen] ){
 		return &pData[nDataLen];
@@ -350,12 +350,12 @@ const wchar_t* CNativeW::GetCharNext( const wchar_t* pData, size_t nDataLen, con
 
 	@date 2008/07/06 Uchi サロゲートペア対応
  */
-const wchar_t* CNativeW::GetCharPrev(const wchar_t* pData, size_t nDataLen, const wchar_t* pDataCurrent)
+const WCHAR* CNativeW::GetCharPrev(const WCHAR* pData, size_t nDataLen, const WCHAR* pDataCurrent)
 {
 	if (const ptrdiff_t nDataPrev = pDataCurrent - pData - 1;
 		0 < nDataPrev)
 	{
-		std::wstring_view data(pData, nDataLen);
+		sakura::wstring_view data(pData, nDataLen);
 		if (1 < nDataPrev &&
 			IsUTF16Low(data[nDataPrev]) &&
 			IsUTF16High(data[nDataPrev - 1]))

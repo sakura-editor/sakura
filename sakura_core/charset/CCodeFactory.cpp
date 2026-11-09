@@ -64,7 +64,7 @@ SLoadFromCodeResult CCodeFactory::LoadFromCode(ECodeType eCodeType, std::string_
 	const auto result = CreateCodeBase(eCodeType)->CodeToUnicode(cmemSrc, &cDest);
 
 	// 読み込まれたデータを回収する
-	std::wstring loaded{ cDest.GetStringPtr(), size_t(cDest.GetStringLength()) };
+	sakura::wstring loaded{ cDest.GetStringPtr(), size_t(cDest.GetStringLength()) };
 
 	return SLoadFromCodeResult{ result, code, std::size(code), std::move(loaded) };
 }
@@ -75,7 +75,7 @@ SLoadFromCodeResult CCodeFactory::LoadFromCode(ECodeType eCodeType, std::string_
  * @param [in] wide 書き込み対象の文字列。
  * @returns W→A変換結果。
  */
-SConvertToCodeResult CCodeFactory::ConvertToCode(ECodeType eCodeType, std::wstring_view wide)
+SConvertToCodeResult CCodeFactory::ConvertToCode(ECodeType eCodeType, sakura::wstring_view wide)
 {
 	// 入力データを準備する
 	CNativeW cSrc{ wide.data(), wide.size() };

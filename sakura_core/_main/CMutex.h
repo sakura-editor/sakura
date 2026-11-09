@@ -37,7 +37,7 @@ private:
 
 public:
 	explicit CMutex(
-		std::wstring_view name,
+		sakura::wstring_view name,
 		LPSECURITY_ATTRIBUTES psa = nullptr,
 		bool bInitialOwner = false
 	);
@@ -72,7 +72,7 @@ public:
 	operator HANDLE() const { return m_hObj; }
 
 private:
-	std::wstring_view m_Name;
+	sakura::wstring_view m_Name;
 	LPSECURITY_ATTRIBUTES m_pSa;
 	bool m_bInitialOwner;
 

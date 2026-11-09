@@ -59,9 +59,9 @@ public:
 	void Empty();
 	void DUMP();
 
-	void SetAppendText( int info, std::wstring s, bool overwrite );
+	void SetAppendText( int info, sakura::wstring s, bool overwrite );
 
-	std::wstring GetAppendText(int info) const;
+	sakura::wstring GetAppendText(int info) const;
 
 	int AppendTextLenMax() const noexcept { return m_nAppendTextLenMax; }
 
@@ -73,7 +73,7 @@ public:
 
 private:
 	std::vector<CFuncInfo*>	m_funcInfoArr;	/*!< 配列 */
-	std::map<int, std::wstring>	m_AppendTextArr;	// 追加文字列のリスト
+	std::map<int, sakura::wstring>	m_AppendTextArr;	// 追加文字列のリスト
 	int			m_nAppendTextLenMax = 0;
 
 	DISALLOW_COPY_AND_ASSIGN(CFuncInfoArr);

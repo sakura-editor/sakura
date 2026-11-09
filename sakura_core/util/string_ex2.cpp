@@ -10,7 +10,7 @@
 #include "basis/CEol.h"
 #include "mem/CNativeW.h"
 
-wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t src_count)
+WCHAR *wcs_pushW(WCHAR *dst, size_t dst_count, const WCHAR* src, size_t src_count)
 {
 	if( src_count >= dst_count ){
 		src_count = dst_count - 1;
@@ -18,7 +18,7 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src, size_t sr
 	wmemcpy( dst, src, src_count );
 	return dst + src_count;
 }
-wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src)
+WCHAR *wcs_pushW(WCHAR *dst, size_t dst_count, const WCHAR* src)
 {
 	return wcs_pushW(dst,dst_count,src,wcslen(src));
 }
@@ -48,14 +48,14 @@ wchar_t *wcs_pushW(wchar_t *dst, size_t dst_count, const wchar_t* src)
 int cescape(const WCHAR* org, WCHAR* buf, WCHAR cesc, WCHAR cwith)
 {
 	WCHAR *out = buf;
-	for( ; *org != L'\0'; ++org, ++out ){
+	for( ; *org != LCHAR('\0'); ++org, ++out ){
 		if( *org == cesc ){
 			*out = cwith;
 			++out;
 		}
 		*out = *org;
 	}
-	*out = L'\0';
+	*out = LCHAR('\0');
 	return int(out - buf);
 }
 
@@ -78,7 +78,7 @@ int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c ){
 			return -1;
 		}
 		pszPath[0] = c;
-		pszPath[1] = L'\0';
+		pszPath[1] = LCHAR('\0');
 		return 1;
 	}
 	// 最後が\でないときも\を付加(日本語を考慮)
@@ -87,7 +87,7 @@ int AddLastChar( WCHAR* pszPath, int nMaxLen, WCHAR c ){
 			return -1;
 		}
 		pszPath[pos] = c;
-		pszPath[pos + 1] = L'\0';
+		pszPath[pos + 1] = LCHAR('\0');
 		return 1;
 	}
 	return 0;
@@ -129,8 +129,8 @@ const char* GetNextLine(
 	GetNextLineより作成
 	static メンバ関数
 */
-const wchar_t* GetNextLineW(
-	const wchar_t*	pData,		//!< [in]	検索文字列
+const WCHAR* GetNextLineW(
+	const WCHAR*	pData,		//!< [in]	検索文字列
 	int				nDataLen,	//!< [in]	検索文字列の文字数
 	int*			pnLineLen,	//!< [out]	1行の文字数を返すただしEOLは含まない
 	int*			pnBgn,		//!< [i/o]	検索文字列のオフセット位置
@@ -181,17 +181,17 @@ size_t LimitStringLengthW(
 	return n;
 }
 
-void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn )
+void GetLineColumn( const WCHAR* pLine, int* pnJumpToLine, int* pnJumpToColumn )
 {
 	int		i;
 	int		j;
 	int		nLineLen;
-	wchar_t	szNumber[32];
+	WCHAR	szNumber[32];
 	nLineLen = (int)wcslen( pLine );
 	i = 0;
 	for( ; i < nLineLen; ++i ){
-		if( pLine[i] >= L'0' &&
-			pLine[i] <= L'9' ){
+		if( pLine[i] >= LCHAR('0') &&
+			pLine[i] <= LCHAR('9') ){
 			break;
 		}
 	}
@@ -204,8 +204,8 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 			szNumber[j] = pLine[i];
 			j++;
 			++i;
-			if( pLine[i] >= L'0' &&
-				pLine[i] <= L'9' ){
+			if( pLine[i] >= LCHAR('0') &&
+				pLine[i] <= LCHAR('9') ){
 				continue;
 			}
 			break;
@@ -221,8 +221,8 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 				szNumber[j] = pLine[i];
 				j++;
 				++i;
-				if( pLine[i] >= L'0' &&
-					pLine[i] <= L'9' ){
+				if( pLine[i] >= LCHAR('0') &&
+					pLine[i] <= LCHAR('9') ){
 					continue;
 				}
 				break;
@@ -242,16 +242,16 @@ void GetLineColumn( const wchar_t* pLine, int* pnJumpToLine, int* pnJumpToColumn
 		//結果: a[0]=1, a[1]=23, a[2]=4 となる。
 */
 int scan_ints(
-	const wchar_t*	pszData,	//!< [in]
-	const wchar_t*	pszFormat,	//!< [in]
+	const WCHAR*	pszData,	//!< [in]
+	const WCHAR*	pszFormat,	//!< [in]
 	int*			anBuf		//!< [out]
 )
 {
 	//要素数
 	int num = 0;
-	const wchar_t* p = pszFormat;
+	const WCHAR* p = pszFormat;
 	while(*p){
-		if(*p==L'%')num++;
+		if(*p==LCHAR('%'))num++;
 		p++;
 	}
 

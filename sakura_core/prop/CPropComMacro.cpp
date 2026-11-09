@@ -185,7 +185,7 @@ INT_PTR CPropMacro::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
 				{
 					WCHAR szDir[_MAX_PATH];
 					ApiWrap::DlgItem_GetText( hwndDlg, IDC_MACRODIR, szDir, _MAX_PATH );
-					if( 1 == AddLastChar( szDir, _MAX_PATH, L'\\' ) ){
+					if( 1 == AddLastChar( szDir, _MAX_PATH, LCHAR('\\') ) ){
 						ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, szDir );
 					}
 				}
@@ -255,18 +255,18 @@ void CPropMacro::SetData( HWND hwndDlg )
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
 		sItem.iSubItem = 3;
-		sItem.pszText = const_cast<WCHAR*>(m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? L"on" : L"off");
+		sItem.pszText = const_cast<WCHAR*>(m_pShareData->m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute ? LTEXT("on") : LTEXT("off"));
 		ListView_SetItem( hListView, &sItem );
 
 		// 自動実行マクロ	// 2006.09.01 ryoji
 		WCHAR szText[8];
-		szText[0] = L'\0';
+		szText[0] = LCHAR('\0');
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnOpened )
-			::wcsncat_s(szText, L"O", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("O"), _TRUNCATE);
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnTypeChanged )
-			::wcsncat_s(szText, L"T", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("T"), _TRUNCATE);
 		if( index == m_pShareData->m_Common.m_sMacro.m_nMacroOnSave )
-			::wcsncat_s(szText, L"S", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("S"), _TRUNCATE);
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = index;
 		sItem.mask = LVIF_TEXT;
@@ -344,7 +344,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 		sItem.pszText = buf;
 		sItem.cchTextMax = MAX_PATH;
 		ListView_GetItem( hListView, &sItem );
-		if ( wcscmp(buf, L"on") == 0){
+		if ( wcscmp(buf, LTEXT("on")) == 0){
 			m_Common.m_sMacro.m_MacroTable[index].m_bReloadWhenExecute = true;
 		}
 		else {
@@ -365,11 +365,11 @@ int CPropMacro::GetData( HWND hwndDlg )
 		nLen = ::lstrlen(szText);
 		for( i = 0; i < nLen; i++)
 		{
-			if( szText[i] == L'O' )
+			if( szText[i] == LCHAR('O') )
 				m_Common.m_sMacro.m_nMacroOnOpened = index;
-			if( szText[i] == L'T' )
+			if( szText[i] == LCHAR('T') )
 				m_Common.m_sMacro.m_nMacroOnTypeChanged = index;
-			if( szText[i] == L'S' )
+			if( szText[i] == LCHAR('S') )
 				m_Common.m_sMacro.m_nMacroOnSave = index;
 		}
 	}
@@ -380,7 +380,7 @@ int CPropMacro::GetData( HWND hwndDlg )
 	//	Pythonディレクトリ
 	ApiWrap::DlgItem_GetText(hwndDlg, IDC_PYTHONDIR, m_Common.m_sMacro.m_szPythonDirectory, _MAX_PATH);
 	// 2003.06.23 Moca マクロフォルダーの最後の\がなければ付ける
-	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, L'\\' );
+	AddLastChar( m_Common.m_sMacro.m_szMACROFOLDER, _MAX_PATH, LCHAR('\\') );
 	
 	//	マクロ停止ダイアログ表示待ち時間
 	WCHAR szCancelTimer[16] = {0};
@@ -408,7 +408,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	//	ListViewの初期化
 	HWND hListView = ::GetDlgItem( hwndDlg, IDC_MACROLIST );
 	if( hListView == nullptr ){
-		PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::NoListView" );
+		PleaseReportToAuthor( hwndDlg, LTEXT("PropComMacro::InitDlg::NoListView") );
 		return;	//	よくわからんけど失敗した	
 	}
 
@@ -428,7 +428,7 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 		sColumn.fmt = LVCFMT_LEFT;
 		
 		if( ListView_InsertColumn( hListView, pos, &sColumn ) < 0 ){
-			PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::ColumnRegistrationFail" );
+			PleaseReportToAuthor( hwndDlg, LTEXT("PropComMacro::InitDlg::ColumnRegistrationFail") );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -454,15 +454,15 @@ void CPropMacro::InitDialog( HWND hwndDlg )
 	// 登録先指定 ComboBoxの初期化
 	HWND hNumCombo = ::GetDlgItem( hwndDlg, IDC_COMBO_MACROID );
 	for( pos = 0; pos < MAX_CUSTMACRO ; ++pos ){
-		wchar_t buf[10];
-		auto_sprintf( buf, L"%d", pos );
+		WCHAR buf[10];
+		auto_sprintf( buf, LTEXT("%d"), pos );
 		int result = ApiWrap::Combo_AddString( hNumCombo, buf );
 		if( result == CB_ERR ){
-			PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::AddMacroId" );
+			PleaseReportToAuthor( hwndDlg, LTEXT("PropComMacro::InitDlg::AddMacroId") );
 			return;	//	よくわからんけど失敗した
 		}
 		else if( result == CB_ERRSPACE ){
-			PleaseReportToAuthor( hwndDlg, L"PropComMacro::InitDlg::AddMacroId/InsufficientSpace" );
+			PleaseReportToAuthor( hwndDlg, LTEXT("PropComMacro::InitDlg::AddMacroId/InsufficientSpace") );
 			return;	//	よくわからんけど失敗した
 		}
 	}
@@ -480,7 +480,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	//	設定先取得
 	index = ApiWrap::Combo_GetCurSel( hNum );
 	if( index == CB_ERR ){
-		PleaseReportToAuthor( hwndDlg, L"PropComMacro::SetMacro2List::GetCurSel" );
+		PleaseReportToAuthor( hwndDlg, LTEXT("PropComMacro::SetMacro2List::GetCurSel") );
 		return;	//	よくわからんけど失敗した
 	}
 
@@ -510,7 +510,7 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	sItem.iItem = index;
 	sItem.mask = LVIF_TEXT;
 	sItem.iSubItem = 3;
-	sItem.pszText = const_cast<WCHAR*>(::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? L"on" : L"off");
+	sItem.pszText = const_cast<WCHAR*>(::IsDlgButtonChecked( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE ) ? LTEXT("on") : LTEXT("off"));
 	ListView_SetItem( hListView, &sItem );
 
 	// 自動実行マクロ	// 2006.09.01 ryoji
@@ -532,11 +532,11 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 		nLen = ::lstrlen(szText);
 		for( i = 0; i < nLen; i++)
 		{
-			if( szText[i] == L'O' )
+			if( szText[i] == LCHAR('O') )
 				nMacroOnOpened = iItem;
-			if( szText[i] == L'T' )
+			if( szText[i] == LCHAR('T') )
 				nMacroOnTypeChanged = iItem;
-			if( szText[i] == L'S' )
+			if( szText[i] == LCHAR('S') )
 				nMacroOnSave = iItem;
 		}
 	}
@@ -553,13 +553,13 @@ void CPropMacro::SetMacro2List_Macro( HWND hwndDlg )
 	else if( nMacroOnSave == index )
 		nMacroOnSave = -1;
 	for( iItem = 0; iItem < MAX_CUSTMACRO; iItem++){
-		szText[0] = L'\0';
+		szText[0] = LCHAR('\0');
 		if( iItem == nMacroOnOpened )
-			::wcsncat_s(szText, L"O", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("O"), _TRUNCATE);
 		if( iItem == nMacroOnTypeChanged )
-			::wcsncat_s(szText, L"T", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("T"), _TRUNCATE);
 		if( iItem == nMacroOnSave )
-			::wcsncat_s(szText, L"S", _TRUNCATE);
+			::wcsncat_s(szText, LTEXT("S"), _TRUNCATE);
 		memset_raw( &sItem, 0, sizeof( sItem ));
 		sItem.iItem = iItem;
 		sItem.mask = LVIF_TEXT;
@@ -591,7 +591,7 @@ void CPropMacro::SelectBaseDir_Macro( HWND hwndDlg )
 
 	if( SelectDir( hwndDlg, LS(STR_PROPCOMMACR_SEL_DIR), szDir, szDir ) ){
 		//	末尾に\\マークを追加する．
-		AddLastChar( szDir, int(std::size(szDir)), L'\\' );
+		AddLastChar( szDir, int(std::size(szDir)), LCHAR('\\') );
 		ApiWrap::DlgItem_SetText( hwndDlg, IDC_MACRODIR, GetRelPath(szDir) ); // 2015.03.03 可能なら相対パスにする
 	}
 }
@@ -607,7 +607,7 @@ void CPropMacro::SelectDir_Python(HWND hwndDlg)
 	}
 	if (SelectDir(hwndDlg, LS(STR_PROPCOMMACR_SEL_PYTHONDIR), szDir, szDir)) {
 		// 末尾に\\マークを追加する．
-		AddLastChar(szDir, int(std::size(szDir)), L'\\');
+		AddLastChar(szDir, int(std::size(szDir)), LCHAR('\\'));
 		ApiWrap::DlgItem_SetText(hwndDlg, IDC_PYTHONDIR, GetRelPath(szDir)); // 可能なら相対パスにする
 	}
 }
@@ -633,7 +633,7 @@ void CPropMacro::OnFileDropdown_Macro( HWND hwndDlg )
 		wcscpy( folder, path );
 		GetInidirOrExedir( path, folder );
 	}
-	wcscat( path, L"*.*" );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
+	wcscat( path, LTEXT("*.*") );	//	2002/05/01 YAZAKI どんなファイルもどんと来い。
 
 	//	候補の初期化
 	ApiWrap::Combo_ResetContent( hCombo );
@@ -706,7 +706,7 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	sItem.pszText = buf;
 	sItem.cchTextMax = MAX_PATH;
 	ListView_GetItem( hListView, &sItem );
-	if ( wcscmp(buf, L"on") == 0){
+	if ( wcscmp(buf, LTEXT("on")) == 0){
 		::CheckDlgButton( hwndDlg, IDC_CHECK_RELOADWHENEXECUTE, true );
 	}
 	else {
@@ -730,11 +730,11 @@ void CPropMacro::CheckListPosition_Macro( HWND hwndDlg )
 	::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, false );
 	for( i = 0; i < nLen; i++)
 	{
-		if( szText[i] == L'O' )
+		if( szText[i] == LCHAR('O') )
 			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnOpened, true );
-		if( szText[i] == L'T' )
+		if( szText[i] == LCHAR('T') )
 			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnTypeChanged, true );
-		if( szText[i] == L'S' )
+		if( szText[i] == LCHAR('S') )
 			::CheckDlgButton( hwndDlg, IDC_CHECK_MacroOnSave, true );
 	}
 }

@@ -273,7 +273,7 @@ void CEditView::ISearchExit()
 	OnMOUSEMOVE(0,point1.x,point1.y);
 
 	//ステータス表示エリアをクリア
-	SendStatusMessage(L"");
+	SendStatusMessage(LTEXT(""));
 }
 
 /*!
@@ -285,8 +285,8 @@ void CEditView::ISearchExec(DWORD wChar)
 {
 	//特殊文字は処理しない
 	switch ( wChar){
-		case L'\r':
-		case L'\n':
+		case LCHAR('\r'):
+		case LCHAR('\n'):
 			ISearchExit();
 			return;
 		//case '\t':
@@ -324,7 +324,7 @@ void CEditView::ISearchExec(LPCWSTR pszText)
 	DWORD c;
 	p = pszText;
 	
-	while(*p!=L'\0'){
+	while(*p!=LCHAR('\0')){
 		if( IsUtf16SurrogHi(*p) && IsUtf16SurrogLow(*(p+1)) ){
 			c = ( ((WORD)*p)<<16 ) | ( (WORD)*(p+1) );
 			p++;
@@ -469,7 +469,7 @@ void CEditView::ISearchBack(void) {
 		size_t l = m_strCurSearchKey.size();
 		if (l > 0 ){
 			//最後の文字の一つ前
-			wchar_t* p = (wchar_t*)CNativeW::GetCharPrev( m_strCurSearchKey.c_str(), l, &m_strCurSearchKey.c_str()[l] );
+			WCHAR* p = (WCHAR*)CNativeW::GetCharPrev( m_strCurSearchKey.c_str(), l, &m_strCurSearchKey.c_str()[l] );
 			size_t new_len = p - m_strCurSearchKey.c_str();
 			m_strCurSearchKey.resize( new_len );
 			//m_szCurSrchKey[l-1] = '\0';
@@ -517,10 +517,10 @@ void CEditView::ISearchWordMake(void)
 	case SEARCH_MIGEMO: // MIGEMOインクリメンタルサーチ
 		{
 			//migemoで捜す
-			std::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_strCurSearchKey.c_str());
+			sakura::wstring strMigemoWord = m_pcmigemo->migemo_query_w(m_strCurSearchKey.c_str());
 			
 			/* 検索パターンのコンパイル */
-			const wchar_t* p = strMigemoWord.c_str();
+			const WCHAR* p = strMigemoWord.c_str();
 			m_sSearchPattern.SetPattern(this->GetHwnd(), p, (int)strMigemoWord.size(), m_sCurSearchOption, &m_CurRegexp);
 		}
 		break;
@@ -544,23 +544,23 @@ void CEditView::ISearchSetStatusMsg(CNativeW* msg) const
 {
 	switch ( m_nISearchMode){
 	case SEARCH_NORMAL:
-		msg->SetString(L"I-Search" );
+		msg->SetString(LTEXT("I-Search") );
 		break;
 	case SEARCH_REGEXP:
-		msg->SetString(L"[RegExp] I-Search" );
+		msg->SetString(LTEXT("[RegExp] I-Search") );
 		break;
 	case SEARCH_MIGEMO:
-		msg->SetString(L"[Migemo] I-Search" );
+		msg->SetString(LTEXT("[Migemo] I-Search") );
 		break;
 	default:
-		msg->SetString(L"");
+		msg->SetString(LTEXT(""));
 		return;
 	}
 	if (m_nISearchDirection == SEARCH_BACKWARD){
-		msg->AppendString(L" Backward: ");
+		msg->AppendString(LTEXT(" Backward: "));
 	}
 	else{
-		msg->AppendString(L": ");
+		msg->AppendString(LTEXT(": "));
 	}
 
 	if(m_nISearchHistoryCount > 0)

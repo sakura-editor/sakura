@@ -62,7 +62,7 @@ public:
 	void DUMP( void );
 
 	// m_ptLogicPos.xで補正したあとの文字列を得る
-	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
+	const WCHAR* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
 	CLogicInt GetLengthWithEOL() const    { return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
 	CLogicInt GetLengthWithoutEOL() const { return m_nLength - (m_cEol.GetLen() ? 1 : 0);	}
 	//CLogicInt GetLength() const {	return m_nLength;	}	//	CMemoryIterator用（EOL含む）

@@ -185,7 +185,7 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	  || m_nLines - nLine < nPrevToLineNumDiff
 	){
 		if( m_pCodePrevRefer == nullptr ){
-			MY_RUNNINGTIMER( cRunningTimer, L"CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL" );
+			MY_RUNNINGTIMER( cRunningTimer, LTEXT("CDocLineMgr::GetLine() 	m_pCodePrevRefer == NULL") );
 		}
 
 		if( nLine < (m_nLines / 2) ){
@@ -358,7 +358,7 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 void CDocLineMgr::DUMP()
 {
 #ifdef _DEBUG
-	MYTRACE( L"------------------------\n" );
+	MYTRACE( LTEXT("------------------------\n") );
 
 	CDocLine* pDocLine;
 	CDocLine* pDocLineNext;
@@ -370,10 +370,10 @@ void CDocLineMgr::DUMP()
 	bool bIncludePrevRefer = false;
 	CLogicInt nNum = CLogicInt(0);
 	if( m_pDocLineTop->m_pPrev != nullptr ){
-		MYTRACE( L"error: m_pDocLineTop->m_pPrev != NULL\n");
+		MYTRACE( LTEXT("error: m_pDocLineTop->m_pPrev != NULL\n"));
 	}
 	if( m_pDocLineBot->m_pNext != nullptr ){
-		MYTRACE( L"error: m_pDocLineBot->m_pNext != NULL\n" );
+		MYTRACE( LTEXT("error: m_pDocLineBot->m_pNext != NULL\n") );
 	}
 	while( nullptr != pDocLine ){
 		if( m_pDocLineCurrent == pDocLine ){
@@ -384,11 +384,11 @@ void CDocLineMgr::DUMP()
 		}
 		if( nullptr != pDocLine->GetNextLine() ){
 			if( pDocLine->m_pNext == pDocLine ){
-				MYTRACE( L"error: pDocLine->m_pPrev Invalid value.\n" );
+				MYTRACE( LTEXT("error: pDocLine->m_pPrev Invalid value.\n") );
 				break;
 			}
 			if( pDocLine->m_pNext->m_pPrev != pDocLine ){
-				MYTRACE( L"error: pDocLine->m_pNext->m_pPrev != pDocLine.\n" );
+				MYTRACE( LTEXT("error: pDocLine->m_pNext->m_pPrev != pDocLine.\n") );
 				break;
 			}
 		}else{
@@ -399,41 +399,41 @@ void CDocLineMgr::DUMP()
 	}
 	
 	if( pDocLineEnd != m_pDocLineBot ){
-		MYTRACE( L"error: pDocLineEnd != m_pDocLineBot" );
+		MYTRACE( LTEXT("error: pDocLineEnd != m_pDocLineBot") );
 	}
 	
 	if( nNum != m_nLines ){
-		MYTRACE( L"error: nNum(%d) != m_nLines(%d)\n", nNum, m_nLines );
+		MYTRACE( LTEXT("error: nNum(%d) != m_nLines(%d)\n"), nNum, m_nLines );
 	}
 	if( false == bIncludeCurrent && m_pDocLineCurrent != nullptr ){
-		MYTRACE( L"error: m_pDocLineCurrent=%08lxh Invalid value.\n", m_pDocLineCurrent );
+		MYTRACE( LTEXT("error: m_pDocLineCurrent=%08lxh Invalid value.\n"), m_pDocLineCurrent );
 	}
 	if( false == bIncludePrevRefer && m_pCodePrevRefer != nullptr ){
-		MYTRACE( L"error: m_pCodePrevRefer =%08lxh Invalid value.\n", m_pCodePrevRefer );
+		MYTRACE( LTEXT("error: m_pCodePrevRefer =%08lxh Invalid value.\n"), m_pCodePrevRefer );
 	}
 
 	// DUMP
-	MYTRACE( L"m_nLines=%d\n", m_nLines );
-	MYTRACE( L"m_pDocLineTop=%08lxh\n", m_pDocLineTop );
-	MYTRACE( L"m_pDocLineBot=%08lxh\n", m_pDocLineBot );
+	MYTRACE( LTEXT("m_nLines=%d\n"), m_nLines );
+	MYTRACE( LTEXT("m_pDocLineTop=%08lxh\n"), m_pDocLineTop );
+	MYTRACE( LTEXT("m_pDocLineBot=%08lxh\n"), m_pDocLineBot );
 	pDocLine = m_pDocLineTop;
 	while( nullptr != pDocLine ){
 		pDocLineNext = pDocLine->GetNextLine();
-		MYTRACE( L"\t-------\n" );
-		MYTRACE( L"\tthis=%08lxh\n", pDocLine );
-		MYTRACE( L"\tpPrev; =%08lxh\n", pDocLine->GetPrevLine() );
-		MYTRACE( L"\tpNext; =%08lxh\n", pDocLine->GetNextLine() );
+		MYTRACE( LTEXT("\t-------\n") );
+		MYTRACE( LTEXT("\tthis=%08lxh\n"), pDocLine );
+		MYTRACE( LTEXT("\tpPrev; =%08lxh\n"), pDocLine->GetPrevLine() );
+		MYTRACE( LTEXT("\tpNext; =%08lxh\n"), pDocLine->GetNextLine() );
 
-		MYTRACE( L"\tm_enumEOLType =%ls\n", pDocLine->GetEol().GetName() );
-		MYTRACE( L"\tm_nEOLLen =%d\n", pDocLine->GetEol().GetLen() );
+		MYTRACE( LTEXT("\tm_enumEOLType =%ls\n"), pDocLine->GetEol().GetName() );
+		MYTRACE( LTEXT("\tm_nEOLLen =%d\n"), pDocLine->GetEol().GetLen() );
 
 //		MYTRACE( L"\t[%ls]\n", *(pDocLine->m_pLine) );
-		MYTRACE( L"\tpDocLine->m_cLine.GetLength()=[%d]\n", pDocLine->GetLengthWithEOL() );
-		MYTRACE( L"\t[%ls]\n", pDocLine->GetPtr() );
+		MYTRACE( LTEXT("\tpDocLine->m_cLine.GetLength()=[%d]\n"), pDocLine->GetLengthWithEOL() );
+		MYTRACE( LTEXT("\t[%ls]\n"), pDocLine->GetPtr() );
 
 		pDocLine = pDocLineNext;
 	}
-	MYTRACE( L"------------------------\n" );
+	MYTRACE( LTEXT("------------------------\n") );
 #endif // _DEBUG
 	return;
 }

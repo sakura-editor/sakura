@@ -72,7 +72,7 @@ void CViewCommander::Command_GREP( void )
 	){
 		// 2011.01.23 Grepタイプ別適用
 		if( !GetDocument()->m_cDocEditor.IsModified() && GetDocument()->m_cDocLineMgr.GetLineCount() == 0 ){
-			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( L"grepout" );
+			CTypeConfig cTypeGrep = CDocTypeManager().GetDocumentTypeOfExt( LTEXT("grepout") );
 			const STypeConfigMini* pConfig = nullptr;
 			if( !CDocTypeManager().GetTypeConfigMini( cTypeGrep, &pConfig ) ){
 				return;
@@ -154,15 +154,15 @@ void CViewCommander::Command_GREP_REPLACE( void )
 	else{
 		// 編集ウィンドウの上限チェック
 		if( GetDllShareData().m_sNodes.m_nEditArrNum >= MAX_EDITWINDOWS ){	//最大値修正	//@@@ 2003.05.31 MIK
-			OkMessage( m_pCommanderView->GetHwnd(), L"編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。", MAX_EDITWINDOWS );
+			OkMessage( m_pCommanderView->GetHwnd(), LTEXT("編集ウィンドウ数の上限は%dです。\nこれ以上は同時に開けません。"), MAX_EDITWINDOWS );
 			return;
 		}
 		/*======= Grepの実行 =============*/
 		/* Grep結果ウィンドウの表示 */
-		const std::wstring cmdLine = gi.MakeCommandLine();
+		const sakura::wstring cmdLine = gi.MakeCommandLine();
 
 		SLoadInfo sLoadInfo;
-		sLoadInfo.cFilePath = L"";
+		sLoadInfo.cFilePath = LTEXT("");
 		sLoadInfo.eCharCode = CODE_NONE;
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, cmdLine.c_str(),

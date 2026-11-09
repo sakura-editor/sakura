@@ -28,47 +28,47 @@
 // 2006.08.14 Moca 用紙名一覧の重複削除・情報の統合
 const PAPER_INFO CPrint::m_paperInfoArr[] = {
 	// 	用紙ID, 幅
-	{DMPAPER_A4,                  2100,  2970, L"A4 (210 x 297 mm)"},
-	{DMPAPER_A3,                  2970,  4200, L"A3 (297 x 420 mm)"},
-	{DMPAPER_A4SMALL,             2100,  2970, L"A4 small(210 x 297 mm)"},
-	{DMPAPER_A5,                  1480,  2100, L"A5 (148 x 210 mm)"},
-	{DMPAPER_B4,                  2500,  3540, L"B4 (250 x 354 mm)"},
-	{DMPAPER_B5,                  1820,  2570, L"B5 (182 x 257 mm)"},
-	{DMPAPER_QUARTO,              2150,  2750, L"Quarto(215 x 275 mm)"},
-	{DMPAPER_ENV_DL,              1100,  2200, L"DL Envelope(110 x 220 mm)"},
-	{DMPAPER_ENV_C5,              1620,  2290, L"C5 Envelope(162 x 229 mm)"},
-	{DMPAPER_ENV_C3,              3240,  4580, L"C3 Envelope(324 x 458 mm)"},
-	{DMPAPER_ENV_C4,              2290,  3240, L"C4 Envelope(229 x 324 mm)"},
-	{DMPAPER_ENV_C6,              1140,  1620, L"C6 Envelope(114 x 162 mm)"},
-	{DMPAPER_ENV_C65,             1140,  2290, L"C65 Envelope(114 x 229 mm)"},
-	{DMPAPER_ENV_B4,              2500,  3530, L"B4 Envelope(250 x 353 mm)"},
-	{DMPAPER_ENV_B5,              1760,  2500, L"B5 Envelope(176 x 250 mm)"},
-	{DMPAPER_ENV_B6,              1760,  1250, L"B6 Envelope(176 x 125 mm)"},
-	{DMPAPER_ENV_ITALY,           1100,  2300, L"Italy Envelope(110 x 230 mm)"},
-	{DMPAPER_LETTER,              2159,  2794, L"Letter (8 1/2 x 11 inch)"},
-	{DMPAPER_LEGAL,               2159,  3556, L"Legal  (8 1/2 x 14 inch)"},
-	{DMPAPER_CSHEET,              4318,  5588, L"C sheet (17 x 22 inch)"},
-	{DMPAPER_DSHEET,              5588,  8634, L"D sheet (22 x 34 inch)"},
-	{DMPAPER_ESHEET,              8634, 11176, L"E sheet (34 x 44 inch)"},
-	{DMPAPER_LETTERSMALL,         2159,  2794, L"Letter Small (8 1/2 x 11 inch)"},
-	{DMPAPER_TABLOID,             2794,  4318, L"Tabloid (11 x 17 inch)"},
-	{DMPAPER_LEDGER,              4318,  2794, L"Ledger  (17 x 11 inch)"},
-	{DMPAPER_STATEMENT,           1397,  2159, L"Statement (5 1/2 x 8 1/2 inch)"},
-	{DMPAPER_EXECUTIVE,           1841,  2667, L"Executive (7 1/4 x 10 1/2 inch)"},
-	{DMPAPER_FOLIO,               2159,  3302, L"Folio (8 1/2 x 13 inch)"},
-	{DMPAPER_10X14,               2540,  3556, L"10x14 inch sheet"},
-	{DMPAPER_11X17,               2794,  4318, L"11x17 inch sheet"},
-	{DMPAPER_NOTE,                2159,  2794, L"Note (8 1/2 x 11 inch)"},
-	{DMPAPER_ENV_9,                984,  2254, L"#9 Envelope  (3 7/8 x 8 7/8 inch)"},
-	{DMPAPER_ENV_10,              1047,  2413, L"#10 Envelope (4 1/8 x 9 1/2 inch)"},
-	{DMPAPER_ENV_11,              1143,  2635, L"#11 Envelope (4 1/2 x 10 3/8 inch)"},
-	{DMPAPER_ENV_12,              1206,  2794, L"#12 Envelope (4 3/4 x 11 inch)"},
-	{DMPAPER_ENV_14,              1270,  2921, L"#14 Envelope (5 x 11 1/2 inch)"},
-	{DMPAPER_ENV_MONARCH,          984,  1905, L"Monarch Envelope (3 7/8 x 7 1/2 inch)"},
-	{DMPAPER_ENV_PERSONAL,         920,  1651, L"6 3/4 Envelope (3 5/8 x 6 1/2 inch)"},
-	{DMPAPER_FANFOLD_US,          3778,  2794, L"US Std Fanfold (14 7/8 x 11 inch)"},
-	{DMPAPER_FANFOLD_STD_GERMAN,  2159,  3048, L"German Std Fanfold   (8 1/2 x 12 inch)"},
-	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, L"German Legal Fanfold (8 1/2 x 13 inch)"},
+	{DMPAPER_A4,                  2100,  2970, LTEXT("A4 (210 x 297 mm)")},
+	{DMPAPER_A3,                  2970,  4200, LTEXT("A3 (297 x 420 mm)")},
+	{DMPAPER_A4SMALL,             2100,  2970, LTEXT("A4 small(210 x 297 mm)")},
+	{DMPAPER_A5,                  1480,  2100, LTEXT("A5 (148 x 210 mm)")},
+	{DMPAPER_B4,                  2500,  3540, LTEXT("B4 (250 x 354 mm)")},
+	{DMPAPER_B5,                  1820,  2570, LTEXT("B5 (182 x 257 mm)")},
+	{DMPAPER_QUARTO,              2150,  2750, LTEXT("Quarto(215 x 275 mm)")},
+	{DMPAPER_ENV_DL,              1100,  2200, LTEXT("DL Envelope(110 x 220 mm)")},
+	{DMPAPER_ENV_C5,              1620,  2290, LTEXT("C5 Envelope(162 x 229 mm)")},
+	{DMPAPER_ENV_C3,              3240,  4580, LTEXT("C3 Envelope(324 x 458 mm)")},
+	{DMPAPER_ENV_C4,              2290,  3240, LTEXT("C4 Envelope(229 x 324 mm)")},
+	{DMPAPER_ENV_C6,              1140,  1620, LTEXT("C6 Envelope(114 x 162 mm)")},
+	{DMPAPER_ENV_C65,             1140,  2290, LTEXT("C65 Envelope(114 x 229 mm)")},
+	{DMPAPER_ENV_B4,              2500,  3530, LTEXT("B4 Envelope(250 x 353 mm)")},
+	{DMPAPER_ENV_B5,              1760,  2500, LTEXT("B5 Envelope(176 x 250 mm)")},
+	{DMPAPER_ENV_B6,              1760,  1250, LTEXT("B6 Envelope(176 x 125 mm)")},
+	{DMPAPER_ENV_ITALY,           1100,  2300, LTEXT("Italy Envelope(110 x 230 mm)")},
+	{DMPAPER_LETTER,              2159,  2794, LTEXT("Letter (8 1/2 x 11 inch)")},
+	{DMPAPER_LEGAL,               2159,  3556, LTEXT("Legal  (8 1/2 x 14 inch)")},
+	{DMPAPER_CSHEET,              4318,  5588, LTEXT("C sheet (17 x 22 inch)")},
+	{DMPAPER_DSHEET,              5588,  8634, LTEXT("D sheet (22 x 34 inch)")},
+	{DMPAPER_ESHEET,              8634, 11176, LTEXT("E sheet (34 x 44 inch)")},
+	{DMPAPER_LETTERSMALL,         2159,  2794, LTEXT("Letter Small (8 1/2 x 11 inch)")},
+	{DMPAPER_TABLOID,             2794,  4318, LTEXT("Tabloid (11 x 17 inch)")},
+	{DMPAPER_LEDGER,              4318,  2794, LTEXT("Ledger  (17 x 11 inch)")},
+	{DMPAPER_STATEMENT,           1397,  2159, LTEXT("Statement (5 1/2 x 8 1/2 inch)")},
+	{DMPAPER_EXECUTIVE,           1841,  2667, LTEXT("Executive (7 1/4 x 10 1/2 inch)")},
+	{DMPAPER_FOLIO,               2159,  3302, LTEXT("Folio (8 1/2 x 13 inch)")},
+	{DMPAPER_10X14,               2540,  3556, LTEXT("10x14 inch sheet")},
+	{DMPAPER_11X17,               2794,  4318, LTEXT("11x17 inch sheet")},
+	{DMPAPER_NOTE,                2159,  2794, LTEXT("Note (8 1/2 x 11 inch)")},
+	{DMPAPER_ENV_9,                984,  2254, LTEXT("#9 Envelope  (3 7/8 x 8 7/8 inch)")},
+	{DMPAPER_ENV_10,              1047,  2413, LTEXT("#10 Envelope (4 1/8 x 9 1/2 inch)")},
+	{DMPAPER_ENV_11,              1143,  2635, LTEXT("#11 Envelope (4 1/2 x 10 3/8 inch)")},
+	{DMPAPER_ENV_12,              1206,  2794, LTEXT("#12 Envelope (4 3/4 x 11 inch)")},
+	{DMPAPER_ENV_14,              1270,  2921, LTEXT("#14 Envelope (5 x 11 1/2 inch)")},
+	{DMPAPER_ENV_MONARCH,          984,  1905, LTEXT("Monarch Envelope (3 7/8 x 7 1/2 inch)")},
+	{DMPAPER_ENV_PERSONAL,         920,  1651, LTEXT("6 3/4 Envelope (3 5/8 x 6 1/2 inch)")},
+	{DMPAPER_FANFOLD_US,          3778,  2794, LTEXT("US Std Fanfold (14 7/8 x 11 inch)")},
+	{DMPAPER_FANFOLD_STD_GERMAN,  2159,  3048, LTEXT("German Std Fanfold   (8 1/2 x 12 inch)")},
+	{DMPAPER_FANFOLD_LGL_GERMAN,  2159,  3302, LTEXT("German Legal Fanfold (8 1/2 x 13 inch)")},
 };
 
 const int CPrint::m_nPaperInfoArrNum = int(std::size(m_paperInfoArr));
@@ -169,10 +169,10 @@ BOOL CPrint::PrintDlg( PRINTDLG *pPD, MYDEVMODE *pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-	DEBUG_TRACE( L" (入力/出力) デバイス ドライバー=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	DEBUG_TRACE( L" (入力/出力) デバイス名=[%s]\n",        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	DEBUG_TRACE( L"物理出力メディア (出力ポート) =[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	DEBUG_TRACE( L"デフォルトのプリンターか=[%d]\n",          pDEVNAMES->wDefault );
+	DEBUG_TRACE( LTEXT(" (入力/出力) デバイス ドライバー=[%s]\n"), (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( LTEXT(" (入力/出力) デバイス名=[%s]\n"),        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	DEBUG_TRACE( LTEXT("物理出力メディア (出力ポート) =[%s]\n"), (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	DEBUG_TRACE( LTEXT("デフォルトのプリンターか=[%d]\n"),          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
@@ -250,10 +250,10 @@ BOOL CPrint::GetDefaultPrinter( MYDEVMODE* pMYDEVMODE )
 	pMYDEVMODE->dmPaperLength		= pDEVMODE->dmPaperLength;
 	pMYDEVMODE->dmPaperWidth		= pDEVMODE->dmPaperWidth;
 
-	DEBUG_TRACE( L" (入力/出力) デバイス ドライバー=[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
-	DEBUG_TRACE( L" (入力/出力) デバイス名=[%s]\n",        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
-	DEBUG_TRACE( L"物理出力メディア (出力ポート) =[%s]\n", (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
-	DEBUG_TRACE( L"デフォルトのプリンターか=[%d]\n",          pDEVNAMES->wDefault );
+	DEBUG_TRACE( LTEXT(" (入力/出力) デバイス ドライバー=[%s]\n"), (WCHAR*)pDEVNAMES + pDEVNAMES->wDriverOffset );
+	DEBUG_TRACE( LTEXT(" (入力/出力) デバイス名=[%s]\n"),        (WCHAR*)pDEVNAMES + pDEVNAMES->wDeviceOffset );
+	DEBUG_TRACE( LTEXT("物理出力メディア (出力ポート) =[%s]\n"), (WCHAR*)pDEVNAMES + pDEVNAMES->wOutputOffset );
+	DEBUG_TRACE( LTEXT("デフォルトのプリンターか=[%d]\n"),          pDEVNAMES->wDefault );
 
 	::GlobalUnlock( m_hDevMode );
 	::GlobalUnlock( m_hDevNames );
@@ -545,8 +545,8 @@ const PAPER_INFO* CPrint::FindPaperInfo( int id )
 void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settingName )
 {
 	wcscpy( pPrintSetting.m_szPrintSettingName, settingName );			/* 印刷設定の名前 */
-	wcscpy( pPrintSetting.m_szPrintFontFaceHan, L"ＭＳ 明朝" );		/* 印刷フォント */
-	wcscpy( pPrintSetting.m_szPrintFontFaceZen, L"ＭＳ 明朝" );		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintFontFaceHan, LTEXT("ＭＳ 明朝") );		/* 印刷フォント */
+	wcscpy( pPrintSetting.m_szPrintFontFaceZen, LTEXT("ＭＳ 明朝") );		/* 印刷フォント */
 	pPrintSetting.m_bColorPrint = false;		// カラー印刷			// 2013/4/26 Uchi
 	pPrintSetting.m_nPrintFontWidth = 12;		// 印刷フォント幅(1/10mm単位)
 	pPrintSetting.m_nPrintFontHeight = pPrintSetting.m_nPrintFontWidth * 2;	/* 印刷フォント高さ(1/10mm単位単位) */
@@ -571,15 +571,15 @@ void CPrint::SettingInitialize( PRINTSETTING& pPrintSetting, const WCHAR* settin
 	pPrintSetting.m_bHeaderUse[0] = TRUE;
 	pPrintSetting.m_bHeaderUse[1] = FALSE;
 	pPrintSetting.m_bHeaderUse[2] = FALSE;
-	wcscpy( pPrintSetting.m_szHeaderForm[0], L"$f" );
-	pPrintSetting.m_szHeaderForm[1][0] = L'\0';
-	pPrintSetting.m_szHeaderForm[2][0] = L'\0';
+	wcscpy( pPrintSetting.m_szHeaderForm[0], LTEXT("$f") );
+	pPrintSetting.m_szHeaderForm[1][0] = LCHAR('\0');
+	pPrintSetting.m_szHeaderForm[2][0] = LCHAR('\0');
 	pPrintSetting.m_bFooterUse[0] = TRUE;
 	pPrintSetting.m_bFooterUse[1] = FALSE;
 	pPrintSetting.m_bFooterUse[2] = FALSE;
-	pPrintSetting.m_szFooterForm[0][0] = L'\0';
-	wcscpy( pPrintSetting.m_szFooterForm[1], L"- $p -" );
-	pPrintSetting.m_szFooterForm[2][0] = L'\0';
+	pPrintSetting.m_szFooterForm[0][0] = LCHAR('\0');
+	wcscpy( pPrintSetting.m_szFooterForm[1], LTEXT("- $p -") );
+	pPrintSetting.m_szFooterForm[2][0] = LCHAR('\0');
 }
 
 /*!
@@ -625,15 +625,15 @@ int CPrint::CalculatePrintableLines( PRINTSETTING *pPS, int nPaperAllHeight )
 */
 int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
 {
-	if (pPS->m_szHeaderForm[0][0] == L'\0'
-	 && pPS->m_szHeaderForm[1][0] == L'\0'
-	 && pPS->m_szHeaderForm[2][0] == L'\0') {
+	if (pPS->m_szHeaderForm[0][0] == LCHAR('\0')
+	 && pPS->m_szHeaderForm[1][0] == LCHAR('\0')
+	 && pPS->m_szHeaderForm[2][0] == LCHAR('\0')) {
 		// 使ってなければ 0
 		return 0;
 	}
 
 	int		nHeight;
-	if (pPS->m_lfHeader.lfFaceName[0] == L'\0') {
+	if (pPS->m_lfHeader.lfFaceName[0] == LCHAR('\0')) {
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
 	}
@@ -650,15 +650,15 @@ int CPrint::CalcHeaderHeight( PRINTSETTING* pPS )
 */
 int CPrint::CalcFooterHeight( PRINTSETTING* pPS )
 {
-	if (pPS->m_szFooterForm[0][0] == L'\0'
-	 && pPS->m_szFooterForm[1][0] == L'\0'
-	 && pPS->m_szFooterForm[2][0] == L'\0') {
+	if (pPS->m_szFooterForm[0][0] == LCHAR('\0')
+	 && pPS->m_szFooterForm[1][0] == LCHAR('\0')
+	 && pPS->m_szFooterForm[2][0] == LCHAR('\0')) {
 		// 使ってなければ 0
 		 return 0;
 	}
 
 	int		nHeight;
-	if (pPS->m_lfFooter.lfFaceName[0] == L'\0') {
+	if (pPS->m_lfFooter.lfFaceName[0] == LCHAR('\0')) {
 		// フォント指定無し
 		nHeight = pPS->m_nPrintFontHeight;
 	}

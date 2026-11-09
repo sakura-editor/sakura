@@ -27,11 +27,11 @@
 		それは実行してみれば明らかにわかることなので
 		そこまで厳密にチェックしない
 */
-inline bool Python_IsWordChar( wchar_t c ){
-	return ( L'_' == c ||
-			(L'a' <= c && c <= L'z' )||
-			(L'A' <= c && c <= L'Z' )||
-			(L'0' <= c && c <= L'9' )
+inline bool Python_IsWordChar( WCHAR c ){
+	return ( LCHAR('_') == c ||
+			(LCHAR('a') <= c && c <= LCHAR('z') )||
+			(LCHAR('A') <= c && c <= LCHAR('Z') )||
+			(LCHAR('0') <= c && c <= LCHAR('9') )
 		);
 }
 
@@ -68,7 +68,7 @@ struct COutlinePython {
 		STATE_CONTINUE,	//!< 継続行 : 前の行からの続きなので行頭とはみなされない
 	} m_state = STATE_NORMAL;
 	
-	wchar_t m_quote_char = L'\0';	//!< 引用符記号
+	WCHAR m_quote_char = LCHAR('\0');	//!< 引用符記号
 	bool m_raw_string = false;		//!< エスケープ記号無視ならtrue
 	bool m_long_string = false;		//!< 長い文字列中ならtrue
 
@@ -77,10 +77,10 @@ struct COutlinePython {
 		ある状態から別の状態に移るところまでを扱う．
 		別の状態に移る判定がややこしいばあいは，Enter*として関数にする．
 	*/	
-	int ScanNormal( const wchar_t* data, int linelen, int start_offset );
-	int ScanString( const wchar_t* data, int linelen, int start_offset );
-	int EnterString( const wchar_t* data, int linelen, int start_offset );
-	void DoScanLine( const wchar_t* data, int linelen, int start_offset );
+	int ScanNormal( const WCHAR* data, int linelen, int start_offset );
+	int ScanString( const WCHAR* data, int linelen, int start_offset );
+	int EnterString( const WCHAR* data, int linelen, int start_offset );
+	void DoScanLine( const WCHAR* data, int linelen, int start_offset );
 	
 	bool IsLogicalLineTop(void) const { return STATE_NORMAL == m_state; }
 };
@@ -88,11 +88,11 @@ struct COutlinePython {
 void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	wcscpy( pType->m_szTypeName, L"Python" );
-	wcscpy( pType->m_szTypeExts, L"py" );
+	wcscpy( pType->m_szTypeName, LTEXT("Python") );
+	wcscpy( pType->m_szTypeExts, LTEXT("py") );
 
 	//設定
-	pType->m_cLineComment.CopyTo( 0, L"#", -1 );					/* 行コメントデリミタ */
+	pType->m_cLineComment.CopyTo( 0, LTEXT("#"), -1 );					/* 行コメントデリミタ */
 	pType->m_eDefaultOutline = OUTLINE_PYTHON;						/* アウトライン解析方法 */
 	pType->m_nKeyWordSetIdx[0] = 16;								/* キーワードセット */
 	pType->m_ColorInfoArr[COLORIDX_DIGIT].m_bDisp = true;			/* 半角数値を色分け表示 */
@@ -122,7 +122,7 @@ void CType_Python::InitTypeConfigImp(STypeConfig* pType)
 	@note 引用符の位置で呼びだせば，抜けた後は必ずSTATE_STRINGになっているはず．
 		引用符以外の位置で呼びだした場合は何もしないで抜ける．
 */
-int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_offset )
+int COutlinePython::EnterString( const WCHAR* data, int linelen, int start_offset )
 {
 	assert( m_state != STATE_STRING );
 
@@ -176,7 +176,7 @@ int COutlinePython::EnterString( const wchar_t* data, int linelen, int start_off
 	
 	@return 調査後の位置
 */
-int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offset )
+int COutlinePython::ScanNormal( const WCHAR* data, int linelen, int start_offset )
 {
 	assert( m_state == STATE_NORMAL || m_state == STATE_CONTINUE );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -241,7 +241,7 @@ int COutlinePython::ScanNormal( const wchar_t* data, int linelen, int start_offs
 	@date 2007.03.23 genta 文字列の継続行の処理を追加
 
 */
-int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offset )
+int COutlinePython::ScanString( const WCHAR* data, int linelen, int start_offset )
 {
 	assert( m_state == STATE_STRING );
 	bool bExtEol = GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol;
@@ -256,11 +256,11 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 		//	rawモード以外ではエスケープをチェック
 		//	rawモードでも継続行はチェック
 		if( data[ col ] == '\\' && col + 1 < linelen ){
-			wchar_t key = data[ col + 1 ];
+			WCHAR key = data[ col + 1 ];
 			if( ! m_raw_string ){
-				if( key == L'\\' ||
-					key == L'\"' ||
-					key == L'\'' ){
+				if( key == LCHAR('\\') ||
+					key == LCHAR('\"') ||
+					key == LCHAR('\'') ){
 					++col;
 					//	ignore
 					continue;
@@ -323,7 +323,7 @@ int COutlinePython::ScanString( const wchar_t* data, int linelen, int start_offs
 	@param[in] start_offset 調査開始位置
 
 */
-void COutlinePython::DoScanLine( const wchar_t* data, int linelen, int start_offset )
+void COutlinePython::DoScanLine( const WCHAR* data, int linelen, int start_offset )
 {
 	int col = start_offset;
 	while( col < linelen ){
@@ -382,7 +382,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 	int depth_index = 0;
 
 	for( nLineCount = CLogicInt(0); nLineCount <  m_pcDocRef->m_cDocLineMgr.GetLineCount(); ++nLineCount ){
-		const wchar_t*	pLine;
+		const WCHAR*	pLine;
 		int depth;	//	indent depth
 		CLogicInt col = CLogicInt(0);	//	current working column position
 
@@ -394,10 +394,10 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			//	文字列比較がおかしくなる
 			for( depth = 0, col = CLogicInt(0); col < nLineLen; ++col ){
 				//	calculate indent level
-				if( pLine[col] == L' ' ){
+				if( pLine[col] == LCHAR(' ') ){
 					++depth;
 				}
-				else if( pLine[col] == L'\t' ){
+				else if( pLine[col] == LCHAR('\t') ){
 					depth = ( depth + 8 ) & ~7;
 				}
 				else {
@@ -405,19 +405,19 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 				}
 			}
 			if( WCODE::IsLineDelimiter(pLine[col], bExtEol) ||
-				pLine[col] == L'\0' ||
-				pLine[col] == L'#' ){
+				pLine[col] == LCHAR('\0') ||
+				pLine[col] == LCHAR('#') ){
 				//	blank line or comment line are ignored
 				continue;
 			}
 			
 			int nItemFuncId = 0;	// topic type
-			if( nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal( pLine + col, L"def" ) == 0 ){
+			if( nLineLen - col > CLogicInt(3 + 1) && wcsncmp_literal( pLine + col, LTEXT("def") ) == 0 ){
 				//	"def"
 				nItemFuncId = 1;
 				col += CLogicInt(3); // strlen( def )
 			}
-			else if( nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal( pLine + col, L"class" ) == 0 ){
+			else if( nLineLen - col > CLogicInt(5 + 1) && wcsncmp_literal( pLine + col, LTEXT("class") ) == 0 ){
 				// class
 				nItemFuncId = 4;
 				col += CLogicInt(5); // strlen( class )
@@ -433,7 +433,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			//	本当は継続行として次の行に関数名を書くことも文法上は可能だが
 			//	複雑になるので対応しない．
 			int c = pLine[col];
-			if(  c != L' ' && c != L'\t' ){
+			if(  c != LCHAR(' ') && c != LCHAR('\t') ){
 				python_analyze_state.DoScanLine( pLine, nLineLen, col );
 				continue;
 			}
@@ -477,7 +477,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 			
 			//	このあたりは暫定
 
-			wchar_t szWord[512];	// 適当に大きな数(pythonでは名前の長さの上限があるのか？)
+			WCHAR szWord[512];	// 適当に大きな数(pythonでは名前の長さの上限があるのか？)
 			int len = w_end - col;
 			
 			if( len > 0 ){
@@ -485,7 +485,7 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 					len = int(std::size(szWord)) - 1;
 				}
 				wcsncpy( szWord, pLine + col, len );
-				szWord[ len ] = L'\0';
+				szWord[ len ] = LCHAR('\0');
 			}
 			else {
 				wcscpy( szWord, LS(STR_OUTLINE_PYTHON_UNDEFINED) );
@@ -524,44 +524,44 @@ void CDocOutline::MakeFuncList_python( CFuncInfoArr* pcFuncInfoArr )
 	}
 }
 
-const wchar_t* g_ppszKeywordsPython[] = {
-	L"and",
-	L"as",
-	L"assert",
-	L"async",
-	L"await",
-	L"break",
-	L"case",
-	L"class",
-	L"continue",
-	L"def",
-	L"del",
-	L"elif",
-	L"else",
-	L"except",
-	L"False",
-	L"finally",
-	L"for",
-	L"from",
-	L"global",
-	L"if",
-	L"import",
-	L"in",
-	L"is",
-	L"lambda",
-	L"match",
-	L"None",
-	L"nonlocal",
-	L"not",
-	L"or",
-	L"pass",
-	L"raise",
-	L"return",
-	L"True",
-	L"try",
-	L"while",
-	L"with",
-	L"yield",
-	L"self",
+const WCHAR* g_ppszKeywordsPython[] = {
+	LTEXT("and"),
+	LTEXT("as"),
+	LTEXT("assert"),
+	LTEXT("async"),
+	LTEXT("await"),
+	LTEXT("break"),
+	LTEXT("case"),
+	LTEXT("class"),
+	LTEXT("continue"),
+	LTEXT("def"),
+	LTEXT("del"),
+	LTEXT("elif"),
+	LTEXT("else"),
+	LTEXT("except"),
+	LTEXT("False"),
+	LTEXT("finally"),
+	LTEXT("for"),
+	LTEXT("from"),
+	LTEXT("global"),
+	LTEXT("if"),
+	LTEXT("import"),
+	LTEXT("in"),
+	LTEXT("is"),
+	LTEXT("lambda"),
+	LTEXT("match"),
+	LTEXT("None"),
+	LTEXT("nonlocal"),
+	LTEXT("not"),
+	LTEXT("or"),
+	LTEXT("pass"),
+	LTEXT("raise"),
+	LTEXT("return"),
+	LTEXT("True"),
+	LTEXT("try"),
+	LTEXT("while"),
+	LTEXT("with"),
+	LTEXT("yield"),
+	LTEXT("self"),
 };
 int g_nKeywordsPython = int(std::size(g_ppszKeywordsPython));

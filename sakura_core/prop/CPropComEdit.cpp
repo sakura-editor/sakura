@@ -122,7 +122,7 @@ INT_PTR CPropEdit::DispatchEvent(
 					CFileNameManager::ExpandMetaToFolder( szMetaPath, szPath, int(std::size(szPath)) );
 					if( SelectDir( hwndDlg, LS(STR_PROPEDIT_SELECT_DIR), szPath, szPath ) ){
 						CNativeW cmem(szPath);
-						cmem.Replace(L"%", L"%%");
+						cmem.Replace(LTEXT("%"), LTEXT("%%"));
 						ApiWrap::DlgItem_SetText( hwndDlg, IDC_EDIT_FILEOPENDIR, cmem.GetStringPtr() );
 					}
 				}
@@ -143,7 +143,7 @@ INT_PTR CPropEdit::DispatchEvent(
 			OnHelp( hwndDlg, IDD_PROP_EDIT );
 			return TRUE;
 		case PSN_KILLACTIVE:
-			DEBUG_TRACE( L"Edit PSN_KILLACTIVE\n" );
+			DEBUG_TRACE( LTEXT("Edit PSN_KILLACTIVE\n") );
 
 			/* ダイアログデータの取得 Edit */
 			GetData( hwndDlg );

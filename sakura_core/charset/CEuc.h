@@ -19,7 +19,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return EUCToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToEUC(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -31,9 +31,9 @@ public:
 	// 2008.11.10 変換ロジックを書き直す
 	inline static int _EucjpToUni_char( const unsigned char* pSrc, unsigned short* pDst, const ECharSet eCharset, bool* pbError, bool* pbHex );
 protected:
-	static int EucjpToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
+	static int EucjpToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError );
 	inline static int _UniToEucjp_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToEucjp( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError );
+	static int UniToEucjp( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool* pbError );
 };
 
 /*!

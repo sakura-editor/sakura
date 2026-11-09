@@ -702,14 +702,14 @@ void CViewCommander::Command_WIN_OUTPUT( void )
 /*!	@brief マクロ用アウトプットウインドウに表示
 	@date 2006.04.26 maru 新規作成
 */
-void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nLen, int nFlgOpt )
+void CViewCommander::Command_TRACEOUT( const WCHAR* outputstr, int nLen, int nFlgOpt )
 {
 	if( outputstr == nullptr )
 		return;
 
 	// 0x01 ExpandParameterによる文字列展開有無
 	if (nFlgOpt & 0x01) {
-		wchar_t Buffer[2048];
+		WCHAR Buffer[2048];
 		CSakuraEnvironment::ExpandParameter(outputstr, Buffer, 2047);
 		CShareData::getInstance()->TraceOutString( Buffer );
 	} else {
@@ -717,5 +717,5 @@ void CViewCommander::Command_TRACEOUT( const wchar_t* outputstr, int nLen, int n
 	}
 
 	// 0x02 改行コードの有無
-	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOutString( L"\r\n" );
+	if ((nFlgOpt & 0x02) == 0) CShareData::getInstance()->TraceOutString( LTEXT("\r\n") );
 }

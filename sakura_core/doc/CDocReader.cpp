@@ -15,7 +15,7 @@
 	@retval 全行データ。freeで解放しなければならない。
 	@note   Debug版のテストにのみ使用している。
 */
-wchar_t* CDocReader::GetAllData(int* pnDataLen)
+WCHAR* CDocReader::GetAllData(int* pnDataLen)
 {
 	int			nDataLen;
 	int			nLineLen;
@@ -29,7 +29,7 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 		pDocLine = pDocLine->GetNextLine();
 	}
 
-	wchar_t* pData = (wchar_t*)malloc( (nDataLen + 1) * sizeof(wchar_t) );
+	WCHAR* pData = (WCHAR*)malloc( (nDataLen + 1) * sizeof(WCHAR) );
 	if( nullptr == pData ){
 		TopErrorMessage( nullptr, LS(STR_ERR_DLGDOCLM6), nDataLen + 1 );
 		return nullptr;
@@ -44,16 +44,16 @@ wchar_t* CDocReader::GetAllData(int* pnDataLen)
 			wmemcpy( &pData[nDataLen], pDocLine->GetPtr(), nLineLen );
 			nDataLen += nLineLen;
 		}
-		pData[nDataLen++] = L'\r';
-		pData[nDataLen++] = L'\n';
+		pData[nDataLen++] = LCHAR('\r');
+		pData[nDataLen++] = LCHAR('\n');
 		pDocLine = pDocLine->GetNextLine();
 	}
-	pData[nDataLen] = L'\0';
+	pData[nDataLen] = LCHAR('\0');
 	*pnDataLen = nDataLen;
 	return pData;
 }
 
-const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
+const WCHAR* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 {
 	const CDocLine* pDocLine;
 	pDocLine = m_pcDocLineMgr->GetLine( nLine );
@@ -71,7 +71,7 @@ const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
 	@author Moca
 	@date 2003.06.22
 */
-const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen )
+const WCHAR* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen )
 {
 	const CDocLine* pDocLine = m_pcDocLineMgr->GetLine( nLine );
 	if( nullptr == pDocLine ){
@@ -89,9 +89,9 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 	データが1行もないときは、長さ0、ポインタNULLが返る。
 
 */
-const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
+const WCHAR* CDocReader::GetFirstLinrStr( int* pnLineLen )
 {
-	const wchar_t* pszLine;
+	const WCHAR* pszLine;
 	if( CLogicInt(0) == m_pcDocLineMgr->GetLineCount() ){
 		pszLine = nullptr;
 		*pnLineLen = 0;
@@ -111,9 +111,9 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 	GetFirstLinrStr()が呼び出されていないとNULLが返る
 
 */
-const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
+const WCHAR* CDocReader::GetNextLinrStr( int* pnLineLen )
 {
-	const wchar_t* pszLine;
+	const WCHAR* pszLine;
 	if( nullptr == m_pcDocLineMgr->m_pDocLineCurrent ){
 		pszLine = nullptr;
 		*pnLineLen = 0;

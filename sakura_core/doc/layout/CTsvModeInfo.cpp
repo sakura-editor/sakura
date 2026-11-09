@@ -21,7 +21,7 @@ void CTsvModeInfo::CalcTabLength(CDocLineMgr* cDocLineMgr)
 
 	CLogicInt nLine;
 	CLogicInt nLineNum = cDocLineMgr->GetLineCount();
-	wchar_t delimiter = m_nTsvMode == TSV_MODE_TSV ? L'\t' : L',';
+	WCHAR delimiter = m_nTsvMode == TSV_MODE_TSV ? LCHAR('\t') : LCHAR(',');
 
 	for (nLine = CLogicInt(0); nLine < nLineNum; nLine++) {
 		CDocLine* cDocLine = cDocLineMgr->GetLine(nLine);

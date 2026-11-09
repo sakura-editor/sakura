@@ -30,7 +30,7 @@
 #include "apiwrap/CommonControl.h"
 
 /* wchar_t1個分の文字を入力 */
-void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
+void CViewCommander::Command_WCHAR( WCHAR wcChar, bool bConvertEOL )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
 		ErrorBeep();
@@ -62,7 +62,7 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 		}
 		if( m_pCommanderView->m_pTypeData->m_bAutoIndent ){	/* オートインデント */
 			const CLayout* pCLayout;
-			const wchar_t*	pLine;
+			const WCHAR*	pLine;
 			CLogicInt		nLineLen;
 			pLine = GetDocument()->m_cLayoutMgr.GetLineStr( GetCaret().GetCaretLayoutPos().GetY2(), &nLineLen, &pCLayout );
 			if( nullptr != pCLayout ){
@@ -89,12 +89,12 @@ void CViewCommander::Command_WCHAR( wchar_t wcChar, bool bConvertEOL )
 
 						/* その他のインデント文字 */
 						if( 0 < nCharChars
-						 && pLine[nPos] != L'\0'	// その他のインデント文字に L'\0' は含まれない	// 2009.02.04 ryoji L'\0'がインデントされてしまう問題修正
-						 && m_pCommanderView->m_pTypeData->m_szIndentChars[0] != L'\0'
+						 && pLine[nPos] != LCHAR('\0')	// その他のインデント文字に L'\0' は含まれない	// 2009.02.04 ryoji L'\0'がインデントされてしまう問題修正
+						 && m_pCommanderView->m_pTypeData->m_szIndentChars[0] != LCHAR('\0')
 						){
-							wchar_t szCurrent[10];
+							WCHAR szCurrent[10];
 							wmemcpy( szCurrent, &pLine[nPos], nCharChars );
-							szCurrent[nCharChars] = L'\0';
+							szCurrent[nCharChars] = LCHAR('\0');
 							/* その他のインデント対象文字 */
 							if( nullptr != wcsstr(
 								m_pCommanderView->m_pTypeData->m_szIndentChars,
@@ -241,7 +241,7 @@ void CViewCommander::Command_IME_CHAR( WORD wChar )
 
 	// Oct. 6 ,2002 genta バッファに格納する
 	// Aug. 15, 2007 kobake WCHARバッファに変換する
-	wchar_t szWord[2]={wChar,0};
+	WCHAR szWord[2]={wChar,0};
 	CLogicInt nWord=CLogicInt(1);
 
 	/* テキストが選択されているか */
@@ -297,7 +297,7 @@ void CViewCommander::Command_UNDO( void )
 		return;
 	}
 
-	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_UNDO()" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CViewCommander::Command_UNDO()") );
 
 	COpe*		pcOpe = nullptr;
 
@@ -557,7 +557,7 @@ void CViewCommander::Command_REDO( void )
 	if( !GetDocument()->m_cDocEditor.IsEnableRedo() ){	/* Redo(やり直し)可能な状態か？ */
 		return;
 	}
-	MY_RUNNINGTIMER( cRunningTimer, L"CViewCommander::Command_REDO()" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CViewCommander::Command_REDO()") );
 
 	COpe*		pcOpe = nullptr;
 	COpeBlk*	pcOpeBlk;
@@ -799,7 +799,7 @@ void CViewCommander::Command_DELETE( void )
 				nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 				if( nLineLen != 0 ){	// 折り返しや改行コードより右の場合には nLineLen に行全体の表示桁数が入る
 					if( pcLayout->GetLayoutEol().IsValid() ){	// 行終端は改行コードか?
-						Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+						Command_INSTEXT( true, LTEXT(""), CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
 					}else{	// 行終端が折り返し
 						// 折り返し行末ではスペース挿入後、次の文字を削除する	// 2009.02.19 ryoji
 
@@ -807,7 +807,7 @@ void CViewCommander::Command_DELETE( void )
 						// 非フリーカーソル時（ちょうどカーソルが折り返し位置にある）には次の行の先頭文字を削除したい
 
 						if( nLineLen < GetCaret().GetCaretLayoutPos().GetX2() ){	// 折り返し行末とカーソルの間に隙間がある
-							Command_INSTEXT( true, L"", CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
+							Command_INSTEXT( true, LTEXT(""), CLogicInt(0), FALSE );	// カーソル位置まで半角スペース挿入
 							pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( GetCaret().GetCaretLayoutPos().GetY2() );
 							nIndex = m_pCommanderView->LineColumnToIndex2( pcLayout, GetCaret().GetCaretLayoutPos().GetX2(), &nLineLen );
 						}
@@ -875,7 +875,7 @@ void CViewCommander::Command_DELETE_BACK( void )
 }
 
 /* 	上書き用の一文字削除	2009.04.11 ryoji */
-void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
+void CViewCommander::DelCharForOverwrite( const WCHAR* pszInput, int nLen )
 {
 	bool bEol = false;
 	BOOL bDelete = TRUE;
@@ -906,7 +906,7 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 					nPos += CNativeW::GetSizeOfChar(line.GetPtr(), line.GetLength(), nPos);
 					nDelLen = 1;
 					if( nKetaDiff < 0 && nPos < line.GetLength() ){
-						wchar_t c = line[nPos];
+						WCHAR c = line[nPos];
 						if( c != WCODE::TAB && !WCODE::IsLineDelimiter(c,
 								GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol) ){
 							nDelLen = 2;
@@ -934,10 +934,10 @@ void CViewCommander::DelCharForOverwrite( const wchar_t* pszInput, int nLen )
 		}
 		CNativeW tmp;
 		for(CKetaXInt i = CKetaXInt(0); i < nKetaDiff; i++){
-			tmp.AppendString(L" ");
+			tmp.AppendString(LTEXT(" "));
 		}
 		for(CKetaXInt i = CKetaXInt(0); i < nKetaAfterIns; i++){
-			tmp.AppendString(L" ");
+			tmp.AppendString(LTEXT(" "));
 		}
 		if( 0 < tmp.GetStringLength() ){
 			Command_INSTEXT( false, tmp.GetStringPtr(), tmp.GetStringLength(), false, false);

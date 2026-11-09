@@ -23,19 +23,19 @@
 #include "util/window.h"
 
 // ダミー文字列
-static constexpr WCHAR szDummy[] = { L" " };
+static constexpr WCHAR szDummy[] = { LTEXT(" ") };
 
 /* Tipの内容データを設定するためにエスケープ解除を行う */
 const WCHAR* UnEscapeInfoText( CNativeW& cInfo )
 {
-	cInfo.Replace( L"\\n", L"\n" );
-	cInfo.Replace( L"\\x5C", L"\\" );
+	cInfo.Replace( LTEXT("\\n"), LTEXT("\n") );
+	cInfo.Replace( LTEXT("\\x5C"), LTEXT("\\") );
 	return cInfo.GetStringPtr();
 }
 
 /* CTipWndクラス デストラクタ */
 CTipWnd::CTipWnd()
-: CWnd(L"::CTipWnd")
+: CWnd(LTEXT("::CTipWnd"))
 {
 	return;
 }
@@ -53,7 +53,7 @@ CTipWnd::~CTipWnd()
 /* 初期化 */
 void CTipWnd::Create( HINSTANCE hInstance, HWND hwndParent )
 {
-	LPCWSTR pszClassName = L"CTipWnd";
+	LPCWSTR pszClassName = LTEXT("CTipWnd");
 
 	/* ウィンドウクラス作成 */
 	RegisterWC(

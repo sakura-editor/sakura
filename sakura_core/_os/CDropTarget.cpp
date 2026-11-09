@@ -108,7 +108,7 @@ CDropTarget::~CDropTarget()
 
 STDMETHODIMP CDropTarget::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
+	DEBUG_TRACE( LTEXT("CDropTarget::DragEnter()\n") );
 	if( m_pcEditWnd ){	// 2008.06.20 ryoji
 		return m_pcEditWnd->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 	}
@@ -187,30 +187,30 @@ void CDataObject::SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect
 
 		i = 0;
 		m_pData[0].cfFormat = CF_UNICODETEXT;
-		m_pData[0].size = (nTextLen + 1) * sizeof(wchar_t);
+		m_pData[0].size = (nTextLen + 1) * sizeof(WCHAR);
 		m_pData[0].data = new BYTE[m_pData[0].size];
-		memcpy_raw( m_pData[0].data, lpszText, nTextLen * sizeof(wchar_t) );
-		*((wchar_t*)m_pData[0].data + nTextLen) = L'\0';
+		memcpy_raw( m_pData[0].data, lpszText, nTextLen * sizeof(WCHAR) );
+		*((WCHAR*)m_pData[0].data + nTextLen) = LCHAR('\0');
 
 		i++;
 		m_pData[i].cfFormat = CF_TEXT;
-		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), nullptr, 0, nullptr, nullptr );
+		m_pData[i].size = ::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(WCHAR)), nullptr, 0, nullptr, nullptr );
 		m_pData[i].data = new BYTE[m_pData[i].size];
-		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(wchar_t)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
+		::WideCharToMultiByte( CP_ACP, 0, (LPCWSTR)m_pData[0].data, int(m_pData[0].size / sizeof(WCHAR)), (LPSTR)m_pData[i].data, int(m_pData[i].size), nullptr, nullptr );
 
 		if( bSakuraFormat ){
 			using LengthField = CClipboard::SAKURAClipW_LengthFieldType;
 			i++;
 			m_pData[i].cfFormat = CClipboard::GetSakuraFormat();
-			m_pData[i].size = sizeof(LengthField) + nTextLen * sizeof( wchar_t );
+			m_pData[i].size = sizeof(LengthField) + nTextLen * sizeof( WCHAR );
 			m_pData[i].data = new BYTE[m_pData[i].size];
 			*(LengthField*)m_pData[i].data = (LengthField)nTextLen;
-			memcpy_raw( m_pData[i].data + sizeof(LengthField), lpszText, nTextLen * sizeof( wchar_t ) );
+			memcpy_raw( m_pData[i].data + sizeof(LengthField), lpszText, nTextLen * sizeof( WCHAR ) );
 		}
 
 		if( bColumnSelect ){
 			i++;
-			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
+			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( LTEXT("MSDEVColumnSelect") );
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];
 			m_pData[i].data[0] = '\0';

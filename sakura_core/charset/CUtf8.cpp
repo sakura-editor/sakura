@@ -17,7 +17,7 @@
 
 	@param[in] bCESU8Mode CESU-8 を処理する場合 true
 */
-int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool bCESU8Mode )
+int CUtf8::Utf8ToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool bCESU8Mode )
 {
 	const unsigned char *pr, *pr_end;
 	unsigned short *pw;
@@ -74,7 +74,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	if( &cSrc == pDstMem->_GetMemory() )
 	{
 		// 必要なバッファサイズを調べて確保する
-		wchar_t* pDst = new (std::nothrow) wchar_t[nSrcLen];
+		WCHAR* pDst = new (std::nothrow) WCHAR[nSrcLen];
 		if( pDst == nullptr ){
 			return RESULT_FAILURE;
 		}
@@ -83,7 +83,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 		int nDstLen = Utf8ToUni( pSrc, nSrcLen, pDst, bCESU8Mode );
 
 		// pDstMem を更新
-		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(wchar_t) );
+		pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen*sizeof(WCHAR) );
 
 		// 後始末
 		delete [] pDst;
@@ -92,7 +92,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 	{
 		// 変換先バッファサイズを設定してメモリ領域確保
 		pDstMem->AllocStringBuffer( nSrcLen + 1 );
-		wchar_t* pDst = pDstMem->GetStringPtr();
+		WCHAR* pDst = pDstMem->GetStringPtr();
 
 		// 変換
 		size_t nDstLen = Utf8ToUni(pSrc, nSrcLen, pDst, bCESU8Mode);
@@ -113,7 +113,7 @@ EConvertResult CUtf8::_UTF8ToUnicode( const CMemory& cSrc, CNativeW* pDstMem, bo
 
 	@param[in] bCESU8Mode CESU-8 を処理する場合 true
 */
-int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode )
+int CUtf8::UniToUtf8( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool* pbError, bool bCESU8Mode )
 {
 	const unsigned short* pr = reinterpret_cast<const unsigned short*>(pSrc);
 	const unsigned short* pr_end = reinterpret_cast<const unsigned short*>(pSrc+nSrcLen);
@@ -122,7 +122,7 @@ int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 	bool berror=false;
 	ECharSet echarset;
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const WCHAR*>(pr), pr_end-pr, &echarset, 0)) > 0 ){
 		// 保護コード
 		switch( echarset ){
 		case CHARSET_UNI_NORMAL:
@@ -139,7 +139,7 @@ int CUtf8::UniToUtf8( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* 
 			pw += _UniToUtf8_char( pr, nclen, pw, bCESU8Mode );
 			pr += nclen;
 		}else{
-			if(  nclen == 1 && IsBinaryOnSurrogate(static_cast<wchar_t>(*pr)) ){
+			if(  nclen == 1 && IsBinaryOnSurrogate(static_cast<WCHAR>(*pr)) ){
 				*pw = static_cast<unsigned char>( TextToBin(*pr) & 0x000000ff );
 				++pw;
 			}else{
@@ -165,7 +165,7 @@ EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bo
 	bool bError = false;
 
 	// ソースを取得
-	const wchar_t* pSrc = cSrc.GetStringPtr();
+	const WCHAR* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファサイズを調べてメモリを確保
@@ -191,7 +191,7 @@ EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bo
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
-EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
+EConvertResult CUtf8::_UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
 {
 	CNativeW		cBuff;
 	EConvertResult	res;
@@ -210,7 +210,7 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR*
 		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 4);
 	}
 	else if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
-		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, sizeof(wchar_t) * 3);
+		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, sizeof(WCHAR) * 3);
 	}
 	else {
 		cBuff._GetMemory()->SetRawDataHoldBuffer(cSrc, 2);
@@ -235,10 +235,10 @@ EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR*
 	pd = pDst;
 	if( bbinary == false ){
 		for (i = cBuff._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
-			auto_sprintf( pd, L"%02X", *ps);
+			auto_sprintf( pd, LTEXT("%02X"), *ps);
 		}
 	}else{
-		auto_sprintf( pd, L"?%02X", *ps );
+		auto_sprintf( pd, LTEXT("?%02X"), *ps );
 	}
 
 	return RESULT_COMPLETE;

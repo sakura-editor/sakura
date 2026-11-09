@@ -144,16 +144,16 @@ void CMacro::AddLParam( const LPARAM* lParams, const CEditView* pcEditView )
 	case F_FILEOPEN:
 	case F_EXECEXTMACRO:
 		{
-			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
+			AddStringParam( (const WCHAR*)lParam );	//	lParamを追加。
 		}
 		break;
 
 	case F_EXECMD:
 		{
-			AddStringParam( (const wchar_t*)lParam );	//	lParamを追加。
+			AddStringParam( (const WCHAR*)lParam );	//	lParamを追加。
 			AddIntParam( (int)lParams[1] );
 			if( lParams[2] != 0 ){
-				AddStringParam( (const wchar_t*)lParams[2] );
+				AddStringParam( (const WCHAR*)lParams[2] );
 			}
 		}
 		break;
@@ -316,7 +316,7 @@ void CMacroParam::SetStringParam( const WCHAR* szParam, int nLength )
 	}
 	m_pData = new WCHAR[nLen + 1];
 	wmemcpy( m_pData, szParam, nLen );
-	m_pData[nLen] = L'\0';
+	m_pData[nLen] = LCHAR('\0');
 	m_nDataLen = nLen;
 	m_eType = EMacroParamTypeStr;
 }
@@ -455,11 +455,11 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 	/* 2002.2.2 YAZAKI CSMacroMgrに頼む */
 	if (CSMacroMgr::GetFuncInfoByID( hInstance, nFuncID, szFuncName, szFuncNameJapanese)){
 		// 2014.01.24 Moca マクロ書き出しをm_eTypeを追加して統合
-		out.WriteF( L"%ls(", szFuncName ); // 2014.12.25 Moca "S_"を削除
+		out.WriteF( LTEXT("%ls("), szFuncName ); // 2014.12.25 Moca "S_"を削除
 		CMacroParam* pParam = m_pParamTop;
 		while( pParam ){
 			if( pParam != m_pParamTop ){
-				out.WriteString( L", " );
+				out.WriteString( LTEXT(", ") );
 			}
 			switch( pParam->m_eType ){
 			case EMacroParamTypeInt:
@@ -469,41 +469,41 @@ void CMacro::Save( HINSTANCE hInstance, CTextOutputStream& out ) const
 				pText = pParam->m_pData;
 				nTextLen = pParam->m_nDataLen;
 				cmemWork.SetString( pText, nTextLen );
-				cmemWork.Replace( L"\\", L"\\\\" );
-				cmemWork.Replace( L"\'", L"\\\'" );
-				cmemWork.Replace( L"\r", L"\\r" );
-				cmemWork.Replace( L"\n", L"\\n" );
-				cmemWork.Replace( L"\t", L"\\t" );
-				cmemWork.Replace( L"\0", 1, L"\\u0000", 6 );
-				cmemWork.Replace( L"\u0085", L"\\u0085" );
-				cmemWork.Replace( L"\u2028", L"\\u2028" );
-				cmemWork.Replace( L"\u2029", L"\\u2029" );
+				cmemWork.Replace( LTEXT("\\"), LTEXT("\\\\") );
+				cmemWork.Replace( LTEXT("\'"), LTEXT("\\\'") );
+				cmemWork.Replace( LTEXT("\r"), LTEXT("\\r") );
+				cmemWork.Replace( LTEXT("\n"), LTEXT("\\n") );
+				cmemWork.Replace( LTEXT("\t"), LTEXT("\\t") );
+				cmemWork.Replace( LTEXT("\0"), 1, LTEXT("\\u0000"), 6 );
+				cmemWork.Replace( LTEXT("\u0085"), LTEXT("\\u0085") );
+				cmemWork.Replace( LTEXT("\u2028"), LTEXT("\\u2028") );
+				cmemWork.Replace( LTEXT("\u2029"), LTEXT("\\u2029") );
 				for( int c = 1; c < 0x20; c++ ){
 					int nLen = cmemWork.GetStringLength();
-					const wchar_t* p = cmemWork.GetStringPtr();
+					const WCHAR* p = cmemWork.GetStringPtr();
 					for( int i = 0; i < nLen; i++ ){
 						if( p[i] == c ){
-							wchar_t from[2];
-							wchar_t to[7];
-							from[0] = wchar_t(c);
-							from[1] = L'\0';
-							auto_sprintf( to, L"\\u%04x", c );
+							WCHAR from[2];
+							WCHAR to[7];
+							from[0] = WCHAR(c);
+							from[1] = LCHAR('\0');
+							auto_sprintf( to, LTEXT("\\u%04x"), c );
 							cmemWork.Replace( from, to );
 							break;
 						}
 					}
 				}
-				cmemWork.Replace( L"\u007f", L"\\u007f" );
-				out.WriteString( L"'" );
+				cmemWork.Replace( LTEXT("\u007f"), LTEXT("\\u007f") );
+				out.WriteString( LTEXT("'") );
 				out.WriteString( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );
-				out.WriteString( L"'" );
+				out.WriteString( LTEXT("'") );
 				break;
 			default:
 				break;
 			}
 			pParam = pParam->m_pNext;
 		}
-		out.WriteF( L");\t// %ls\r\n", szFuncNameJapanese );
+		out.WriteF( LTEXT(");\t// %ls\r\n"), szFuncNameJapanese );
 		return;
 	}
 	out.WriteF( LS(STR_ERR_DLGMACRO01) );
@@ -566,7 +566,7 @@ bool CMacro::HandleCommand(
 	const int			ArgSize
 )
 {
-	std::wstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
+	sakura::wstring EXEC_ERROR_TITLE_string = LS(STR_ERR_DLGMACRO02);
 	const WCHAR* EXEC_ERROR_TITLE = EXEC_ERROR_TITLE_string.c_str();
 	int nOptions = 0;
 
@@ -776,7 +776,7 @@ bool CMacro::HandleCommand(
 			bool bBackupFlag = (0 != (lFlag & 0x1000));
 			CommonSetting_Search backupFlags;
 			SSearchOption backupLocalFlags;
-			std::wstring backupStr;
+			sakura::wstring backupStr;
 			bool backupKeyMark = false;
 			int nBackupSearchKeySequence = 0;
 			if( bBackupFlag ){
@@ -787,7 +787,7 @@ bool CMacro::HandleCommand(
 				nBackupSearchKeySequence = pcEditView->m_nCurSearchKeySequence;
 				bAddHistory = false;
 			}
-			const WCHAR* pszSearchKey = wtow_def(Argument[0], L"");
+			const WCHAR* pszSearchKey = wtow_def(Argument[0], LTEXT(""));
 			auto nLen = int(wcslen(pszSearchKey));
 			if( 0 < nLen ){
 				/* 正規表現 */
@@ -863,7 +863,7 @@ bool CMacro::HandleCommand(
 		}
 		{
 			int nOpt = wtoi_def(Argument[1], 0);
-			const wchar_t* pDir = wtow_def(Argument[2], nullptr);
+			const WCHAR* pDir = wtow_def(Argument[2], nullptr);
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], nOpt, (LPARAM)pDir, 0 );
 		}
 		break;
@@ -942,7 +942,7 @@ bool CMacro::HandleCommand(
 		//		0x400	「すべて置換」は置換の繰返し（ON:連続置換, OFF:一括置換）
 		//		0x800	(マクロ専用)検索キーを履歴に登録しない
 		//		0x1000	(マクロ専用)検索オプションを元に戻す
-		if( Argument[0] == nullptr || Argument[0][0] == L'\0' ){
+		if( Argument[0] == nullptr || Argument[0][0] == LCHAR('\0') ){
 			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO09));
 			return false;
@@ -963,8 +963,8 @@ bool CMacro::HandleCommand(
 			bool bBackupFlag = (0 != (lFlag & 0x1000));
 			CommonSetting_Search backupFlags;
 			SSearchOption backupLocalFlags;
-			std::wstring backupStr;
-			std::wstring backupStrRep;
+			sakura::wstring backupStr;
+			sakura::wstring backupStrRep;
 			int nBackupSearchKeySequence = 0;
 			bool backupKeyMark = 0;
 			if( bBackupFlag ){
@@ -1120,11 +1120,11 @@ bool CMacro::HandleCommand(
 			}
 
 			const GrepInfo gi = MakeGrepInfo( Argument[0], bGrepReplace ? Argument[1] : nullptr, Argument[ArgIndex+1], Argument[ArgIndex+2], lFlag, nCharSet );
-			const std::wstring cmdLine = gi.MakeCommandLine();
+			const sakura::wstring cmdLine = gi.MakeCommandLine();
 
 			/* 新規編集ウィンドウの追加 ver 0 */
 			SLoadInfo sLoadInfo;
-			sLoadInfo.cFilePath = L"";
+			sLoadInfo.cFilePath = LTEXT("");
 			sLoadInfo.eCharCode = CODE_NONE;
 			sLoadInfo.bViewMode = false;
 			CControlTray::OpenNewEditor(
@@ -1147,14 +1147,14 @@ bool CMacro::HandleCommand(
 		{
 			int  nCharCode = wtoi_def( Argument[1], CODE_AUTODETECT );
 			BOOL nViewMode = wtoi_def( Argument[2], FALSE );
-			const WCHAR* pDefFileName = wtow_def( Argument[3], L"" );
+			const WCHAR* pDefFileName = wtow_def( Argument[3], LTEXT("") );
 			pcEditView->GetCommander().HandleCommand( Index, true, (LPARAM)Argument[0], (LPARAM)nCharCode, (LPARAM)nViewMode, (LPARAM)pDefFileName );
 		}
 		break;
 	case F_FILESAVEAS_DIALOG:
 	case F_FILESAVEAS:
 		//	Argument[0]を別名で保存。
-		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == nullptr ||  L'\0' == Argument[0][0]) ){
+		if( LOWORD(Index) == F_FILESAVEAS && (Argument[0] == nullptr ||  LCHAR('\0') == Argument[0][0]) ){
 			// F_FILESAVEAS_DIALOGの場合は空文字列を許容
 			::MYMESSAGEBOX( nullptr, MB_OK | MB_ICONSTOP | MB_TOPMOST, EXEC_ERROR_TITLE,
 				LS(STR_ERR_DLGMACRO15));
@@ -1299,7 +1299,7 @@ bool CMacro::HandleCommand(
 					LS(STR_ERR_DLGMACRO07) );
 				return false;
 			}
-			std::wstring val0 = Argument[0];
+			sakura::wstring val0 = Argument[0];
 			int val1 = Argument[1] != nullptr ? _wtoi(Argument[1]) : 0;
 			if( (val1 & 0x03) == 0 ){
 				pcEditView->SendStatusMessage( val0.c_str() );
@@ -1307,7 +1307,7 @@ bool CMacro::HandleCommand(
 				if( nullptr != GetEditWnd().m_cStatusBar.GetStatusHwnd() ){
 					pcEditView->SendStatusMessage( val0.c_str() );
 				}else{
-					InfoMessage( pcEditView->GetHwnd(), L"%s", val0.c_str() );
+					InfoMessage( pcEditView->GetHwnd(), LTEXT("%s"), val0.c_str() );
 				}
 			}else if( (val1 & 0x03) == 2 ){
 				GetEditWnd().m_cStatusBar.SendStatusMessage2( val0.c_str() );
@@ -1483,7 +1483,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			else
 			{
 				Result.vt = VT_BSTR;
-				Result.bstrVal = SysAllocString(L"");
+				Result.bstrVal = SysAllocString(LTEXT(""));
 			}
 		}
 		return true;
@@ -1494,10 +1494,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			//void ExpandParameter(const char* pszSource, char* pszBuffer, int nBufferLen);
 			//pszSourceを展開して、pszBufferにコピー
-			wchar_t *Source;
+			WCHAR *Source;
 			int SourceLength;
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			wchar_t Buffer[2048];
+			WCHAR Buffer[2048];
 			CSakuraEnvironment::ExpandParameter(Source, Buffer, 2047);
 			delete[] Source;
 			SysString S(Buffer, wcslen(Buffer));
@@ -1510,7 +1510,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( ArgSize != 1 ) return false;
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_I4) != S_OK) return false;	// VT_I4として解釈
 			if( -1 < varCopy.Data.lVal ){
-				const wchar_t *Buffer;
+				const WCHAR *Buffer;
 				CLogicInt nLength;
 				CLogicInt nLine;
 				if( 0 == varCopy.Data.lVal ){
@@ -1524,7 +1524,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 					Wrap( &Result )->Receive( S );
 				}else{
 					Result.vt = VT_BSTR;
-					Result.bstrVal = SysAllocString(L"");
+					Result.bstrVal = SysAllocString(LTEXT(""));
 				}
 			}else{
 				return false;
@@ -1716,10 +1716,10 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::wstring sMessage = Source;	// 表示メッセージ
+			sakura::wstring sMessage = Source;	// 表示メッセージ
 			delete[] Source;
 
-			std::wstring sDefaultValue = L"";
+			sakura::wstring sDefaultValue = LTEXT("");
 			if( ArgSize >= 2 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 				Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
@@ -1739,14 +1739,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			WCHAR *Buffer = new WCHAR[ nMaxLen+1 ];
 			size_t nLen = t_min( sDefaultValue.length(), (size_t)nMaxLen);
 			wmemcpy( Buffer, sDefaultValue.c_str(), nLen );
-			Buffer[nLen] = L'\0';
+			Buffer[nLen] = LCHAR('\0');
 			auto& cDlgInput1 = *CDlgInput1::getInstance();
-			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), L"sakura macro", sMessage.c_str(), nMaxLen, Buffer ) ) {
+			if( cDlgInput1.DoModal( G_AppInstance(), View->GetHwnd(), LTEXT("sakura macro"), sMessage.c_str(), nMaxLen, Buffer ) ) {
 				SysString S( Buffer, wcslen(Buffer) );
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
-				Result.bstrVal = SysAllocString(L"");
+				Result.bstrVal = SysAllocString(LTEXT(""));
 			}
 			delete[] Buffer;
 		}
@@ -1765,7 +1765,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::wstring sMessage = Source;	// 表示文字列
+			sakura::wstring sMessage = Source;	// 表示文字列
 			delete[] Source;
 
 			UINT uType = 0;		// メッセージボックス種別
@@ -1796,7 +1796,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			default:
 				break;
 			}
-			int ret = ::MessageBox( View->GetHwnd(), sMessage.c_str(), L"sakura macro", uType );
+			int ret = ::MessageBox( View->GetHwnd(), sMessage.c_str(), LTEXT("sakura macro"), uType );
 			Wrap( &Result )->Receive( ret );
 		}
 		return true;
@@ -1809,12 +1809,12 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::wstring sVerA = Source;	// バージョンA
+			sakura::wstring sVerA = Source;	// バージョンA
 			delete[] Source;
 
 			if(VariantChangeType(&varCopy.Data, &(Arguments[1]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
 			Wrap(&varCopy.Data.bstrVal)->GetW(&Source, &SourceLength);
-			std::wstring sVerB = Source;	// バージョンB
+			sakura::wstring sVerB = Source;	// バージョンB
 			delete[] Source;
 
 			Wrap( &Result )->Receive( CompareVersion( sVerA.c_str(), sVerB.c_str() ) );
@@ -1837,8 +1837,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 		{
 			WCHAR *Source;
 			int SourceLength;
-			std::wstring sDefault;
-			std::wstring sFilter;
+			sakura::wstring sDefault;
+			sakura::wstring sFilter;
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
@@ -1877,7 +1877,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
-				Result.bstrVal = SysAllocString(L"");
+				Result.bstrVal = SysAllocString(LTEXT(""));
 			}
 		}
 		return true;
@@ -1886,8 +1886,8 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 		{
 			WCHAR *Source;
 			int SourceLength;
-			std::wstring sMessage;
-			std::wstring sDefault;
+			sakura::wstring sMessage;
+			sakura::wstring sDefault;
 
 			if( ArgSize >= 1 ){
 				if(VariantChangeType(&varCopy.Data, &(Arguments[0]), 0, VT_BSTR) != S_OK) return false;	// VT_BSTRとして解釈
@@ -1914,7 +1914,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
-				Result.bstrVal = SysAllocString(L"");
+				Result.bstrVal = SysAllocString(LTEXT(""));
 			}
 		}
 		return true;
@@ -1937,14 +1937,14 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				Wrap( &Result )->Receive( S );
 			}else{
 				Result.vt = VT_BSTR;
-				Result.bstrVal = SysAllocString(L"");
+				Result.bstrVal = SysAllocString(LTEXT(""));
 			}
 		}
 		return true;
 	case F_SETCLIPBOARD:
 		//	2011.03.18 syat クリップボードに文字列を設定
 		{
-			std::wstring sValue;
+			sakura::wstring sValue;
 			int nOpt = 0;
 
 			if( ArgSize >= 1 ){
@@ -2137,7 +2137,7 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 				}else{
 					varCopy2.Data.lVal = 1;
 				}
-				const wchar_t* pLine = varCopy.Data.bstrVal;
+				const WCHAR* pLine = varCopy.Data.bstrVal;
 				int nLen = ::SysStringLen(varCopy.Data.bstrVal);
 				if( 2 <= nLen ){
 					if( pLine[nLen-2] == WCODE::CR && pLine[nLen-1] == WCODE::LF ){
@@ -2321,49 +2321,49 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 			if( 2 <= ArgSize ){
 				if( !VariantToI4(varCopy, Arguments[0]) ) return false;
 				if( !VariantToBStr(varCopy2, Arguments[1]) ) return false;
-				std::vector<wchar_t> vStrMenu;
+				std::vector<WCHAR> vStrMenu;
 				int nLen = (int)wcslen(varCopy2.Data.bstrVal);
-				vStrMenu.assign( nLen + 1, L'\0' );
+				vStrMenu.assign( nLen + 1, LCHAR('\0') );
 				wcscpy(&vStrMenu[0], varCopy2.Data.bstrVal);
 				HMENU hMenu = ::CreatePopupMenu();
 				std::vector<HMENU> vHmenu;
 				vHmenu.push_back( hMenu );
 				HMENU hMenuCurrent = hMenu;
 				int nPos = 0;
-				wchar_t* p;
+				WCHAR* p;
 				int i = 1;
-				while ((p = my_strtok(&vStrMenu[0], nLen, &nPos, L","))) {
-					wchar_t* r = p;
+				while ((p = my_strtok(&vStrMenu[0], nLen, &nPos, LTEXT(",")))) {
+					WCHAR* r = p;
 					int nFlags = MF_STRING;
 					int nFlagBreak = 0;
 					bool bSpecial = false;
 					bool bRadio = false;
 					bool bSubMenu = false;
 					int nBreakNum = 0;
-					if( p[0] == L'[' ){
+					if( p[0] == LCHAR('[') ){
 						r++;
-						while( *r != L']' && *r != L'\0' ){
+						while( *r != LCHAR(']') && *r != LCHAR('\0') ){
 							switch( *r ){
-							case L'S':
+							case LCHAR('S'):
 								if( !bSubMenu ){
 									HMENU hMenuSub = ::CreatePopupMenu();
 									vHmenu.push_back( hMenuSub );
 									bSubMenu = true;
 								}
 								break;
-							case L'E':
+							case LCHAR('E'):
 								nBreakNum++;
 								break;
-							case L'C':
+							case LCHAR('C'):
 								nFlags |= MF_CHECKED;
 								break;
-							case L'D':
+							case LCHAR('D'):
 								nFlags |= MF_GRAYED;
 								break;
-							case L'R':
+							case LCHAR('R'):
 								bRadio = true;
 								break;
-							case L'B':
+							case LCHAR('B'):
 								nFlagBreak |= MF_MENUBARBREAK;
 								break;
 							default:
@@ -2371,11 +2371,11 @@ bool CMacro::HandleFunction(CEditView *View, EFunctionCode ID, VARIANT *Argument
 							}
 							r++;
 						}
-						if( *r == L']' ){
+						if( *r == LCHAR(']') ){
 							r++;
 						}
 					}
-					if( p[0] == L'-' && p[1] == L'\0' ){
+					if( p[0] == LCHAR('-') && p[1] == LCHAR('\0') ){
 						nFlags |= MF_SEPARATOR;
 						r++;
 						bSpecial = true;

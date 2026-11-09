@@ -31,7 +31,7 @@ class CFileLoad
 public:
 	static bool IsLoadableSize(ULONGLONG size, bool ignoreLimit = false);
 	static ULONGLONG GetLimitSize();
-	static std::wstring GetSizeStringForHuman(ULONGLONG size); //!< 人にとって見やすいサイズ文字列を作る (例: "2 GB", "10 GB", "400 MB", "32 KB")
+	static sakura::wstring GetSizeStringForHuman(ULONGLONG size); //!< 人にとって見やすいサイズ文字列を作る (例: "2 GB", "10 GB", "400 MB", "32 KB")
 
 public:
 	CFileLoad() : CFileLoad( SEncodingConfig{} ) {};

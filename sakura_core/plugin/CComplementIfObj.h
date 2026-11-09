@@ -28,8 +28,8 @@ class CComplementIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	CComplementIfObj( std::wstring& curWord, CHokanMgr* pMgr, int option )
-		: CWSHIfObj( L"Complement", false )
+	CComplementIfObj( sakura::wstring& curWord, CHokanMgr* pMgr, int option )
+		: CWSHIfObj( LTEXT("Complement"), false )
 		, m_sCurrentWord( curWord )
 		, m_pHokanMgr( pMgr )
 		, m_nOption( option )
@@ -68,12 +68,12 @@ public:
 
 		case F_CM_ADDLIST:		//候補に追加する
 			{
-				std::wstring keyword;
+				sakura::wstring keyword;
 				if( variant_to_wstr( Arguments[0], keyword ) != true) return false;
-				const wchar_t* word = keyword.c_str();
+				const WCHAR* word = keyword.c_str();
 				const auto nWordLen = keyword.length();
 				if( nWordLen <= 0 ) return false;
-				std::wstring strWord(word, nWordLen);
+				sakura::wstring strWord(word, nWordLen);
 				if( CHokanMgr::AddKouhoUnique( m_pHokanMgr->m_vKouho, strWord ) ){
 					Wrap( &Result )->Receive( (int)m_pHokanMgr->m_vKouho.size() );
 				}else{
@@ -90,7 +90,7 @@ public:
 
 	// メンバ変数
 private:
-	std::wstring m_sCurrentWord;
+	sakura::wstring m_sCurrentWord;
 	CHokanMgr* m_pHokanMgr;
 	int m_nOption; // 0x01 == IgnoreCase
 
@@ -111,9 +111,9 @@ MacroFuncInfo CComplementIfObj::m_MacroFuncInfoCommandArr[] =
 MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] = 
 {
 	//ID								関数名				引数										戻り値の型	m_pszData
-	{EFunctionCode(F_CM_GETCURRENTWORD),L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //補完対象の文字列を取得
-	{EFunctionCode(F_CM_GETOPTION),		L"GetOption",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //補完対象の文字列を取得
-	{EFunctionCode(F_CM_ADDLIST),		L"AddList",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //候補に追加する
+	{EFunctionCode(F_CM_GETCURRENTWORD),LTEXT("GetCurrentWord"),	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //補完対象の文字列を取得
+	{EFunctionCode(F_CM_GETOPTION),		LTEXT("GetOption"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //補完対象の文字列を取得
+	{EFunctionCode(F_CM_ADDLIST),		LTEXT("AddList"),			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //候補に追加する
 	//	終端
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 };

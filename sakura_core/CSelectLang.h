@@ -50,15 +50,15 @@ public:
 		SFilePath			m_Path{};				//!< メッセージリソースDLLのファイル名
 		ResourceDllHolder	m_Module = nullptr;	//!< 読み込んだリソースのインスタンスハンドル
 		WORD				m_LangId = 0;		//!< 言語ID
-		std::wstring		m_LangName;			//!< 言語名
+		sakura::wstring		m_LangName;			//!< 言語名
 
 		SSelLangInfo(
 			int langId,
-			std::wstring_view langName
+			sakura::wstring_view langName
 		);
 
 		SSelLangInfo(
-			std::wstring_view path,
+			sakura::wstring_view path,
 			WORD langId
 		);
 
@@ -102,7 +102,7 @@ public:
 	static const SSelLangInfo& GetLangInfo(size_t index) noexcept { return gm_Langs[index]; }
 
 	static void ChangeLang(
-		std::wstring_view dllName
+		sakura::wstring_view dllName
 	);
 
 	/*!
@@ -112,7 +112,7 @@ public:
 	 * @param[in] dllName 言語リソースDLLのファイルパス
 	 */
 	template <basis::NullTerminatedStringConstructible<WCHAR> A>
-		requires (!std::is_same_v<A, std::wstring_view>)
+		requires (!std::is_same_v<A, sakura::wstring_view>)
 	static void ChangeLang(
 		const A& dllName
 	)
@@ -125,7 +125,7 @@ public:
 	}
 
 	static void TryEmplaceLangInfo(
-		std::wstring_view path,
+		sakura::wstring_view path,
 		WORD langId
 	);
 
@@ -157,7 +157,7 @@ public:
 	 * @returns 読み込んだ文字列。
 	 * @throw std::system_error リソースが見つからなかった場合
 	 */
-	static std::wstring_view LoadStringW(UINT id);
+	static sakura::wstring_view LoadStringW(UINT id);
 };
 
 /*!
@@ -187,8 +187,8 @@ private:
 		size_t	LoadStringW(UINT uid);								// 文字列リソースを読み込む（読み込み実行部）
 
 	private:
-		std::wstring_view	m_ResString;	//!< リソース文字列ビュー
-		std::wstring		m_String;		//!< リソース文字列格納用バッファ
+		sakura::wstring_view	m_ResString;	//!< リソース文字列ビュー
+		sakura::wstring		m_String;		//!< リソース文字列格納用バッファ
 	};
 
 	// 並列Grepのワーカーからも呼ばれるため、バッファはスレッドごとに持つ

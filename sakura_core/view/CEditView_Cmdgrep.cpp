@@ -48,7 +48,7 @@ void CEditView::TranslateCommand_grep(
 
 	if( nCommand == F_WCHAR ){
 		//	Jan. 23, 2005 genta 文字判定忘れ
-		if( WCODE::IsLineDelimiter((wchar_t)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
+		if( WCODE::IsLineDelimiter((WCHAR)lparam1, GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol)
 				&& GetDllShareData().m_Common.m_sSearch.m_bGTJW_RETURN ){
 			nCommand = F_TAGJUMP;
 			lparam1 = ApiWrap::GetKeyState_Control()?1:0;

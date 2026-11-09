@@ -25,8 +25,8 @@
 typedef char ACHAR;
 
 //EDIT_CHAR
-typedef wchar_t WChar;      //エディタで用いるテキスト管理データ型
-typedef wchar_t EDIT_CHAR;
+typedef WCHAR WChar;      //エディタで用いるテキスト管理データ型
+typedef WCHAR EDIT_CHAR;
 #define _EDITL(A) LTEXT(A)
 
 //文字コード別、文字型

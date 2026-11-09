@@ -37,7 +37,7 @@ struct SProfileSettings
 {
 	SFilePath m_szDllLanguage{};
 	int	m_nDefaultIndex = -1;
-	std::vector<std::wstring> m_vProfList{};
+	std::vector<sakura::wstring> m_vProfList{};
 	bool m_bDefaultSelect = false;
 };
 
@@ -90,8 +90,8 @@ public:
 };
 
 std::filesystem::path GetProfileMgrFileName();
-std::filesystem::path GetProfileDirectory(std::wstring_view name);
+std::filesystem::path GetProfileDirectory(sakura::wstring_view name);
 
-[[nodiscard]] std::wstring GetProfileMgrFileName(std::wstring_view name);
+[[nodiscard]] sakura::wstring GetProfileMgrFileName(sakura::wstring_view name);
 
 #endif /* SAKURA_CDLGPROFILEMGR_E77A329C_4D06_436A_84E3_01B4D8F34A9A_H_ */

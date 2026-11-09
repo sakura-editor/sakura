@@ -105,14 +105,14 @@ INT_PTR CPropHelper::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHELP1), L"*.hlp;*.chm;*.col", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHELP1), LTEXT("*.hlp;*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENEXTHTMLHELP:	/* 外部HTMLヘルプの「参照...」ボタン */
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHTMLHELP), L"*.chm;*.col", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_EXTHTMLHELP), LTEXT("*.chm;*.col"), true, EFITER_NONE);
 				}
 				return TRUE;
 			// ai 02/05/21 Add S
@@ -138,7 +138,7 @@ INT_PTR CPropHelper::DispatchEvent(
 				{
 					// 2003.06.23 Moca 相対パスは実行ファイルからのパス
 					// 2007.05.21 ryoji 相対パスは設定ファイルからのパスを優先
-					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_MIGEMO_DLL), L"*.dll", true, EFITER_NONE);
+					CDlgOpenFile::SelectFile(hwndDlg, GetDlgItem(hwndDlg, IDC_EDIT_MIGEMO_DLL), LTEXT("*.dll"), true, EFITER_NONE);
 				}
 				return TRUE;
 			case IDC_BUTTON_OPENMDICT:	/* MigemoDict場所指定「参照...」ボタン */

@@ -33,13 +33,13 @@
 #include "apiwrap/StdControl.h"
 
 // Compile時、行頭置換(len=0)の時にダミー文字列(１つに統一) by かろと
-const wchar_t CBregexp::m_tmpBuf[2] = L"\0";
+const WCHAR CBregexp::m_tmpBuf[2] = LTEXT("\0");
 
 CBregexp::CBregexp()
 : m_pRegExp( nullptr )
 , m_ePatType( PAT_NORMAL )	//	Jul, 25, 2002 genta
 {
-	m_szMsg[0] = L'\0';
+	m_szMsg[0] = LCHAR('\0');
 }
 
 CBregexp::~CBregexp()
@@ -56,17 +56,17 @@ CBregexp::~CBregexp()
 ** 
 ** @date 2005.03.20 かろと 関数に切り出し
 */
-int CBregexp::CheckPattern(const wchar_t* szPattern)
+int CBregexp::CheckPattern(const WCHAR* szPattern)
 {
-	static const wchar_t TOP_MATCH[] = L"/^\\(*\\^/k";							//!< 行頭パターンのチェック用パターン
-	static const wchar_t DOL_MATCH[] = L"/\\\\\\$$/k";							//!< \$(行末パターンでない)チェック用パターン
-	static const wchar_t BOT_MATCH[] = L"/\\$\\)*$/k";							//!< 行末パターンのチェック用パターン
-	static const wchar_t TAB_MATCH[] = L"/^\\(*\\^\\$\\)*$/k";					//!< "^$"パターンかをチェック用パターン
-	static const wchar_t LOOKAHEAD[] = L"/\\(\\?[=]/k";							//!< "(?=" 先読み の存在チェックパターン
+	static const WCHAR TOP_MATCH[] = LTEXT("/^\\(*\\^/k");							//!< 行頭パターンのチェック用パターン
+	static const WCHAR DOL_MATCH[] = LTEXT("/\\\\\\$$/k");							//!< \$(行末パターンでない)チェック用パターン
+	static const WCHAR BOT_MATCH[] = LTEXT("/\\$\\)*$/k");							//!< 行末パターンのチェック用パターン
+	static const WCHAR TAB_MATCH[] = LTEXT("/^\\(*\\^\\$\\)*$/k");					//!< "^$"パターンかをチェック用パターン
+	static const WCHAR LOOKAHEAD[] = LTEXT("/\\(\\?[=]/k");							//!< "(?=" 先読み の存在チェックパターン
 	BREGEXP_W*	sReg = nullptr;					//!< コンパイル構造体
-	wchar_t szMsg[80] = L"";					//!< エラーメッセージ
+	WCHAR szMsg[80] = LTEXT("");					//!< エラーメッセージ
 	int nLen;									//!< 検索パターンの長さ
-	const wchar_t *szPatternEnd;				//!< 検索パターンの終端
+	const WCHAR *szPatternEnd;				//!< 検索パターンの終端
 
 	m_ePatType = PAT_NORMAL;	//!<　ノーマルは確定
 	nLen = (int)wcslen( szPattern );
@@ -119,73 +119,73 @@ int CBregexp::CheckPattern(const wchar_t* szPattern)
 ** 
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-wchar_t* CBregexp::MakePatternSub(
-	const wchar_t*	szPattern,	//!< 検索パターン
-	const wchar_t*	szPattern2,	//!< 置換パターン(NULLなら検索)
-	const wchar_t*	szAdd2,		//!< 置換パターンの後ろに付け加えるパターン($1など) 
+WCHAR* CBregexp::MakePatternSub(
+	const WCHAR*	szPattern,	//!< 検索パターン
+	const WCHAR*	szPattern2,	//!< 置換パターン(NULLなら検索)
+	const WCHAR*	szAdd2,		//!< 置換パターンの後ろに付け加えるパターン($1など) 
 	int				nOption		//!< 検索オプション
 ) 
 {
-	static const wchar_t DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< デリミタ
+	static const WCHAR DELIMITER = WCODE::BREGEXP_DELIMITER;	//!< デリミタ
 	int nLen;									//!< szPatternの長さ
 	int nLen2;									//!< szPattern2 + szAdd2 の長さ
 
 	// 検索パターン作成
-	wchar_t *szNPattern;		//!< ライブラリ渡し用の検索パターン文字列
-	wchar_t *pPat;				//!< パターン文字列操作用のポインタ
+	WCHAR *szNPattern;		//!< ライブラリ渡し用の検索パターン文字列
+	WCHAR *pPat;				//!< パターン文字列操作用のポインタ
 
 	nLen = (int)wcslen(szPattern);
 	if (szPattern2 == nullptr) {
 		// 検索(BMatch)時
-		szNPattern = new wchar_t[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
+		szNPattern = new WCHAR[ nLen + 15 ];	//	15：「s///option」が余裕ではいるように。
 		pPat = szNPattern;
-		*pPat++ = L'm';
+		*pPat++ = LCHAR('m');
 	}
 	else {
 		// 置換(BSubst)時
 		nLen2 = int(wcslen(szPattern2) + wcslen(szAdd2));
-		szNPattern = new wchar_t[ nLen + nLen2 + 15 ];
+		szNPattern = new WCHAR[ nLen + nLen2 + 15 ];
 		pPat = szNPattern;
-		*pPat++ = L's';
+		*pPat++ = LCHAR('s');
 	}
 	*pPat++ = DELIMITER;
-	while (*szPattern != L'\0') { *pPat++ = *szPattern++; }
+	while (*szPattern != LCHAR('\0')) { *pPat++ = *szPattern++; }
 	*pPat++ = DELIMITER;
 	if (szPattern2 != nullptr) {
-		while (*szPattern2 != L'\0') { *pPat++ = *szPattern2++; }
-		while (*szAdd2 != L'\0') { *pPat++ = *szAdd2++; }
+		while (*szPattern2 != LCHAR('\0')) { *pPat++ = *szPattern2++; }
+		while (*szAdd2 != LCHAR('\0')) { *pPat++ = *szAdd2++; }
 		*pPat++ = DELIMITER;
 	}
-	*pPat++ = L'k';			// 漢字対応
-	*pPat++ = L'm';			// 複数行対応(但し、呼び出し側が複数行対応でない)
+	*pPat++ = LCHAR('k');			// 漢字対応
+	*pPat++ = LCHAR('m');			// 複数行対応(但し、呼び出し側が複数行対応でない)
 	// 2006.01.22 かろと 論理逆なので bIgnoreCase -> optCaseSensitiveに変更
 	if( !(nOption & optCaseSensitive) ) {		// 2002/2/1 hor IgnoreCase オプション追加 マージ：aroka
-		*pPat++ = L'i';		// 大文字小文字を同一視(無視)する
+		*pPat++ = LCHAR('i');		// 大文字小文字を同一視(無視)する
 	}
 	// 2006.01.22 かろと 行単位置換のために、全域オプション追加
 	if( (nOption & optGlobal) ) {
-		*pPat++ = L'g';			// 全域(global)オプション、行単位の置換をする時に使用する
+		*pPat++ = LCHAR('g');			// 全域(global)オプション、行単位の置換をする時に使用する
 	}
 	if( (nOption & optExtend) ) {
-		*pPat++ = L'x';
+		*pPat++ = LCHAR('x');
 	}
 	if( (nOption & optASCII ) ){
-		*pPat++ = L'a';
+		*pPat++ = LCHAR('a');
 	}
 	if( (nOption & optUnicode ) ){
-		*pPat++ = L'u';
+		*pPat++ = LCHAR('u');
 	}
 	if( (nOption & optDefault ) ){
-		*pPat++ = L'd';
+		*pPat++ = LCHAR('d');
 	}
 	if( (nOption & optLocale ) ){
-		*pPat++ = L'l';
+		*pPat++ = LCHAR('l');
 	}
 	if( (nOption & optR ) ){
-		*pPat++ = L'R';
+		*pPat++ = LCHAR('R');
 	}
 
-	*pPat = L'\0';
+	*pPat = LCHAR('\0');
 	return szNPattern;
 }
 
@@ -208,22 +208,22 @@ wchar_t* CBregexp::MakePatternSub(
 **
 ** @date 2003.05.03 かろと 関数に切り出し
 */
-wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPattern2, int nOption ) 
+WCHAR* CBregexp::MakePattern( const WCHAR* szPattern, const WCHAR* szPattern2, int nOption ) 
 {
 	using namespace WCODE;
-	static const wchar_t* szCRLF = CRLF;		//!< 復帰・改行
-	static const wchar_t szCR[] = {CR,0};		//!< 復帰
-	static const wchar_t szLF[] = {LF,0};		//!< 改行
-	static const wchar_t BOT_SUBST[] = L"s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k";	//!< 行末パターンの置換用パターン
+	static const WCHAR* szCRLF = CRLF;		//!< 復帰・改行
+	static const WCHAR szCR[] = {CR,0};		//!< 復帰
+	static const WCHAR szLF[] = {LF,0};		//!< 改行
+	static const WCHAR BOT_SUBST[] = LTEXT("s/\\$(\\)*)$/([\\\\r\\\\n]+)\\$$1/k");	//!< 行末パターンの置換用パターン
 	int nLen;									//!< szPatternの長さ
 	BREGEXP_W*	sReg = nullptr;					//!< コンパイル構造体
-	wchar_t szAdd2[5] = {};						//!< 行末あり置換の $数字 格納用
+	WCHAR szAdd2[5] = {};						//!< 行末あり置換の $数字 格納用
 	int nParens = 0;							//!< 検索パターン(szPattern)中の括弧の数(行末時に使用)
-	wchar_t *szNPattern;						//!< 検索パターン
+	WCHAR *szNPattern;						//!< 検索パターン
 
 	nLen = CheckPattern( szPattern );
 	if( (m_ePatType & PAT_BOTTOM) != 0 ) {
-		wchar_t szMsg[80] = {};				//!< エラーメッセージ
+		WCHAR szMsg[80] = {};				//!< エラーメッセージ
 		bool bJustDollar = false;			// 行末指定の$のみであるフラグ($の前に \r\nが指定されていない)
 		szNPattern = MakePatternSub(szPattern, nullptr, nullptr, nOption);
 		int matched = BMatch( szNPattern, szCRLF, szCRLF+wcslen(szCRLF), &sReg, szMsg );
@@ -259,7 +259,7 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 				szPattern = sReg->outp;
 				if( szPattern2 != nullptr ) {
 					// 置換パターンもあるので、置換パターンの最後に $(nParens+1)を追加
-					auto_sprintf( szAdd2, L"$%d", nParens + 1 );
+					auto_sprintf( szAdd2, LTEXT("$%d"), nParens + 1 );
 				}
 			}
 			// sReg->outp のポインタを参照しているので、sRegを解放するのは最後に
@@ -282,19 +282,19 @@ wchar_t* CBregexp::MakePattern( const wchar_t* szPattern, const wchar_t* szPatte
 	正規表現DLLに与えられる文字列の末尾は文書末とはいえず、$ がマッチする必要はないだろう。
 	$ が行文字列末尾にマッチしないことは、一括置換での期待しない置換を防ぐために必要である。
 */
-wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wchar_t* const szReplace, int nOption )
+WCHAR* CBregexp::MakePatternAlternate( const WCHAR* const szSearch, const WCHAR* const szReplace, int nOption )
 {
 	this->CheckPattern( szSearch );
 
-	static const wchar_t szDotAlternative[] = L"[^\\r\\n]";
-	static const wchar_t szDollarAlternative[] = L"(?<![\\r\\n])(?=\\r|$)";
+	static const WCHAR szDotAlternative[] = LTEXT("[^\\r\\n]");
+	static const WCHAR szDollarAlternative[] = LTEXT("(?<![\\r\\n])(?=\\r|$)");
 
 	// すべての . を [^\r\n] へ、すべての $ を (?<![\r\n])(?=\r|$) へ置換すると仮定して、strModifiedSearchの最大長を決定する。
-	std::wstring::size_type modifiedSearchSize = 0;
-	for( const wchar_t* p = szSearch; *p; ++p ) {
-		if( *p == L'.') {
+	sakura::wstring::size_type modifiedSearchSize = 0;
+	for( const WCHAR* p = szSearch; *p; ++p ) {
+		if( *p == LCHAR('.')) {
 			modifiedSearchSize += (sizeof szDotAlternative) / (sizeof szDotAlternative[0]) - 1;
-		} else if( *p == L'$' ) {
+		} else if( *p == LCHAR('$') ) {
 			modifiedSearchSize += (sizeof szDollarAlternative) / (sizeof szDollarAlternative[0]) - 1;
 		} else {
 			modifiedSearchSize += 1;
@@ -302,7 +302,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	}
 	++modifiedSearchSize; // '\0'
 
-	std::wstring strModifiedSearch;
+	sakura::wstring strModifiedSearch;
 	strModifiedSearch.reserve( modifiedSearchSize );
 
 	// szSearchを strModifiedSearchへ、ところどころ置換しながら順次コピーしていく。
@@ -346,18 +346,18 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	};
 	State state = DEF;
 	int charsetLevel = 0; // ブラケットの深さ。POSIXブラケット表現など、エスケープされていない [] が入れ子になることがある。
-	const wchar_t *left = szSearch, *right = szSearch;
+	const WCHAR *left = szSearch, *right = szSearch;
 	for( ; *right; ++right ) { // CNativeW::GetSizeOfChar()は使わなくてもいいかな？
-		const wchar_t ch = *right;
+		const WCHAR ch = *right;
 		const CharClass charClass =
-			ch == L'.'  ? DOT:
-			ch == L'$'  ? DOLLAR:
-			ch == L'c'  ? SMALLC:
-			ch == L'Q'  ? LARGEQ:
-			ch == L'E'  ? LARGEE:
-			ch == L'['  ? LBRCKT:
-			ch == L']'  ? RBRCKT:
-			ch == L'\\' ? ESCAPE:
+			ch == LCHAR('.')  ? DOT:
+			ch == LCHAR('$')  ? DOLLAR:
+			ch == LCHAR('c')  ? SMALLC:
+			ch == LCHAR('Q')  ? LARGEQ:
+			ch == LCHAR('E')  ? LARGEE:
+			ch == LCHAR('[')  ? LBRCKT:
+			ch == LCHAR(']')  ? RBRCKT:
+			ch == LCHAR('\\') ? ESCAPE:
 			OTHER;
 		const State nextState = state_transition_table[state][charClass];
 		if(0 <= nextState) {
@@ -387,7 +387,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	}
 	strModifiedSearch.append( left, right + 1 ); // right + 1 は '\0' の次を指す(明示的に '\0' をコピー)。
 
-	return this->MakePatternSub( strModifiedSearch.data(), szReplace, L"", nOption );
+	return this->MakePatternSub( strModifiedSearch.data(), szReplace, LTEXT(""), nOption );
 }
 
 /*!
@@ -401,7 +401,7 @@ wchar_t* CBregexp::MakePatternAlternate( const wchar_t* const szSearch, const wc
 	@retval true 成功
 	@retval false 失敗
 */
-bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, int nOption, bool bKakomi )
+bool CBregexp::Compile( const WCHAR *szPattern0, const WCHAR *szPattern1, int nOption, bool bKakomi )
 {
 	//	DLLが利用可能でないときはエラー終了
 	if( !IsAvailable() )
@@ -412,15 +412,15 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 
 	// ライブラリに渡す検索パターンを作成
 	// 別関数で共通処理に変更 2003.05.03 by かろと
-	wchar_t *szNPattern = nullptr;
-	const wchar_t *pszNPattern = nullptr;
+	WCHAR *szNPattern = nullptr;
+	const WCHAR *pszNPattern = nullptr;
 	if( bKakomi ){
 		pszNPattern = szPattern0;
 	}else{
 		szNPattern = MakePatternAlternate( szPattern0, szPattern1, nOption );
 		pszNPattern = szNPattern;
 	}
-	m_szMsg[0] = L'\0';		//!< エラー解除
+	m_szMsg[0] = LCHAR('\0');		//!< エラー解除
 	if (szPattern1 == nullptr) {
 		// 検索実行
 		BMatch( pszNPattern, m_tmpBuf, m_tmpBuf+1, &m_pRegExp, m_szMsg );
@@ -454,7 +454,7 @@ bool CBregexp::Compile( const wchar_t *szPattern0, const wchar_t *szPattern1, in
 	@retval false No Match または エラー。エラーは GetLastMessage()により判定可能。
 
 */
-bool CBregexp::Match( const wchar_t* target, int len, int nStart )
+bool CBregexp::Match( const WCHAR* target, int len, int nStart )
 {
 	int matched;		//!< 検索一致したか? >0:Match, 0:NoMatch, <0:Error
 
@@ -508,7 +508,7 @@ bool CBregexp::Match( const wchar_t* target, int len, int nStart )
 
 	@date	2007.01.16 ryoji 戻り値を置換個数に変更
 */
-int CBregexp::Replace(const wchar_t *szTarget, int nLen, int nStart)
+int CBregexp::Replace(const WCHAR *szTarget, int nLen, int nStart)
 {
 	int result;
 	//	DLLが利用可能でないとき、または構造体が未設定の時はエラー終了
@@ -582,7 +582,7 @@ bool InitRegexp(
 	EDllResult eDllResult = rRegexp.InitDll(RegexpDll);
 	if( DLL_SUCCESS != eDllResult ){
 		if( bShowMessage ){
-			LPCWSTR pszMsg = L"";
+			LPCWSTR pszMsg = LTEXT("");
 			if(eDllResult==DLL_LOADFAILURE){
 				pszMsg = LS(STR_BREGONIG_LOAD);
 			}
@@ -617,7 +617,7 @@ bool CheckRegexpVersion(
 
 	if( !InitRegexp( hWnd, cRegexp, bShowMessage ) ){
 		if( hWnd != nullptr ){
-			ApiWrap::DlgItem_SetText( hWnd, nCmpId, L" ");
+			ApiWrap::DlgItem_SetText( hWnd, nCmpId, LTEXT(" "));
 		}
 		return false;
 	}
@@ -639,7 +639,7 @@ bool CheckRegexpVersion(
 	@retval false 文法に誤りがある。または、ライブラリが使用できない。
 */
 bool CheckRegexpSyntax(
-	const wchar_t*	szPattern,
+	const WCHAR*	szPattern,
 	HWND			hWnd,
 	bool			bShowMessage,
 	int				nOption,
@@ -656,7 +656,7 @@ bool CheckRegexpSyntax(
 	}
 	if( !cRegexp.Compile( szPattern, nullptr, nOption, bKakomi ) ){	// 2002/2/1 hor追加
 		if( bShowMessage ){
-			std::wstring message(LS(STR_REGEX_COMPILE_ERR_PREAMBLE));
+			sakura::wstring message(LS(STR_REGEX_COMPILE_ERR_PREAMBLE));
 			message += cRegexp.GetLastMessage();
 			::MessageBox( hWnd, message.c_str(),
 				LS(STR_BREGONIG_TITLE), MB_OK | MB_ICONEXCLAMATION );

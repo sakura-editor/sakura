@@ -48,7 +48,7 @@ public:
 	);
 
 	CProcessHolder CreateInstance(
-		std::wstring_view commandLine
+		sakura::wstring_view commandLine
 	) const;
 
 private:

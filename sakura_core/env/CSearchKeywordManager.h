@@ -29,8 +29,8 @@ struct SShare_SearchKeywords{
 class CSearchKeywordManager : private env::ShareDataClient {
 public:
 	//@@@ 2002.2.2 YAZAKI
-	void		AddToSearchKeyArr( const wchar_t* pszSearchKey );	//	m_aSearchKeysにpszSearchKeyを追加する
-	void		AddToReplaceKeyArr( const wchar_t* pszReplaceKey );	//	m_aReplaceKeysにpszReplaceKeyを追加する
+	void		AddToSearchKeyArr( const WCHAR* pszSearchKey );	//	m_aSearchKeysにpszSearchKeyを追加する
+	void		AddToReplaceKeyArr( const WCHAR* pszReplaceKey );	//	m_aReplaceKeysにpszReplaceKeyを追加する
 	void		AddToGrepFileArr( const WCHAR* pszGrepFile );		//	m_aGrepFilesにpszGrepFileを追加する
 	void		AddToGrepFolderArr( const WCHAR* pszGrepFolder );	//	m_aGrepFolders にpszGrepFolder を追加する
 	void		AddToExcludeFileArr( const WCHAR* pszExcludeFile );		//	m_aExcludeFiles に pszExcludeFile を追加する

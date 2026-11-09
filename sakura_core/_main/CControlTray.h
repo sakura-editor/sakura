@@ -57,7 +57,7 @@ private:
 	 *
 	 * @date 2001/04/24 genta
 	 */
-	static inline const UINT gm_uMsgTaskbarCreated = ::RegisterWindowMessageW(L"TaskbarCreated");
+	static inline const UINT gm_uMsgTaskbarCreated = ::RegisterWindowMessageW(LTEXT("TaskbarCreated"));
 
 public:
 	/*

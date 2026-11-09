@@ -48,7 +48,7 @@ LPWSTR CFileNameManager::GetTransformFileNameFast( LPCWSTR pszSrc, LPWSTR pszDes
 			cchMaxWidth = m_pShareData->m_Common.m_sFileName.m_nTransformShortMaxWidth;
 		}
 		CTextWidthCalc calc(hDC);
-		nPxWidth = calc.GetTextWidth(L"x") * cchMaxWidth;
+		nPxWidth = calc.GetTextWidth(LTEXT("x")) * cchMaxWidth;
 	}
 
 	if( 0 < m_nTransformFileNameCount ){
@@ -85,7 +85,7 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	int i;
 	int nCount = 0;
 	for( i = 0; i < m_pShareData->m_Common.m_sFileName.m_nTransformFileNameArrNum; i++ ){
-		if( L'\0' != m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ){
+		if( LCHAR('\0') != m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i][0] ){
 			if( ExpandMetaToFolder( m_pShareData->m_Common.m_sFileName.m_szTransformFileNameFrom[i],
 			 m_szTransformFileNameFromExp[nCount], _MAX_PATH ) ){
 				// m_szTransformFileNameToとm_szTransformFileNameFromExpの番号がずれることがあるので記録しておく
@@ -102,11 +102,11 @@ int CFileNameManager::TransformFileName_MakeCache( void ){
 	@date 2002.11.27 Moca 新規作成
 	@note 大小文字を区別しない。nDestLenに達したときは後ろを切り捨てられる
 */
-LPCWSTR CFileNameManager::GetFilePathFormat( std::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, std::wstring_view strFrom, std::wstring_view strTo )
+LPCWSTR CFileNameManager::GetFilePathFormat( sakura::wstring_view strSrc, LPWSTR pszDest, size_t nDestLen, sakura::wstring_view strFrom, sakura::wstring_view strTo )
 {
 	auto it = strSrc.cbegin();
-	wchar_t* pDest = pszDest;
-	const wchar_t* pEnd = pszDest + nDestLen;
+	WCHAR* pDest = pszDest;
+	const WCHAR* pEnd = pszDest + nDestLen;
 	while( it < strSrc.cend() && pDest + 1 < pEnd ){
 		if( strFrom.length() <= static_cast<size_t>(strSrc.cend() - it) && 0 == ::_wcsnicmp( &*it, strFrom.data(), strFrom.length() ) ){
 			if( strTo.length() < static_cast<size_t>(pEnd - pDest) ){
@@ -148,43 +148,43 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 		LPCWSTR szOrig;
 	};
 	static const MetaAlias AliasList[] = {
-		{  L"COMDESKTOP", 10, L"Common Desktop" },
-		{  L"COMMUSIC", 8, L"CommonMusic" },
-		{  L"COMVIDEO", 8, L"CommonVideo" },
-		{  L"MYMUSIC",  7, L"My Music" },
-		{  L"MYVIDEO",  7, L"Video" },
-		{  L"COMPICT",  7, L"CommonPictures" },
-		{  L"MYPICT",   6, L"My Pictures" },
-		{  L"COMDOC",   6, L"Common Documents" },
-		{  L"MYDOC",    5, L"Personal" },
+		{  LTEXT("COMDESKTOP"), 10, LTEXT("Common Desktop") },
+		{  LTEXT("COMMUSIC"), 8, LTEXT("CommonMusic") },
+		{  LTEXT("COMVIDEO"), 8, LTEXT("CommonVideo") },
+		{  LTEXT("MYMUSIC"),  7, LTEXT("My Music") },
+		{  LTEXT("MYVIDEO"),  7, LTEXT("Video") },
+		{  LTEXT("COMPICT"),  7, LTEXT("CommonPictures") },
+		{  LTEXT("MYPICT"),   6, LTEXT("My Pictures") },
+		{  LTEXT("COMDOC"),   6, LTEXT("Common Documents") },
+		{  LTEXT("MYDOC"),    5, LTEXT("Personal") },
 		{ nullptr, 0 , nullptr }
 	};
 #endif
 
 	pd_end = pszDes + ( nDesLen - 1 );
-	for( ps = pszSrc, pd = pszDes; L'\0' != *ps; ps++ ){
+	for( ps = pszSrc, pd = pszDes; LCHAR('\0') != *ps; ps++ ){
 		if( pd_end <= pd ){
 			if( pd_end == pd ){
-				*pd = L'\0';
+				*pd = LCHAR('\0');
 			}
 			return false;
 		}
 
-		if( L'%' != *ps ){
+		if( LCHAR('%') != *ps ){
 			*pd = *ps;
 			pd++;
 			continue;
 		}
 
 		// %% は %
-		if( L'%' == ps[1] ){
-			*pd = L'%';
+		if( LCHAR('%') == ps[1] ){
+			*pd = LCHAR('%');
 			pd++;
 			ps++;
 			continue;
 		}
 
-		if( L'\0' != ps[1] ){
+		if( LCHAR('\0') != ps[1] ){
 			WCHAR szMeta[_MAX_PATH];
 			WCHAR szPath[_MAX_PATH + 1];
 			int   nMetaLen;
@@ -193,26 +193,26 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			LPCWSTR  pStr;
 			ps++;
 			// %SAKURA%
-			if( 0 == wmemicmp( L"SAKURA%", ps, 7 ) ){
+			if( 0 == wmemicmp( LTEXT("SAKURA%"), ps, 7 ) ){
 				// exeのあるフォルダー
 				GetExedir( szPath );
 				nMetaLen = 6;
 			}
 			// %SAKURADATA%	// 2007.06.06 ryoji
-			else if( 0 == wmemicmp( L"SAKURADATA%", ps, 11 ) ){
+			else if( 0 == wmemicmp( LTEXT("SAKURADATA%"), ps, 11 ) ){
 				// iniのあるフォルダー
 				GetInidir( szPath );
 				nMetaLen = 10;
 			}
 			// メタ文字列っぽい
-			else if( nullptr != (pStr = wcschr( ps, L'%' ) )){
+			else if( nullptr != (pStr = wcschr( ps, LCHAR('%') ) )){
 				nMetaLen = int(pStr - ps);
 				if( nMetaLen < _MAX_PATH ){
 					wmemcpy( szMeta, ps, nMetaLen );
-					szMeta[nMetaLen] = L'\0';
+					szMeta[nMetaLen] = LCHAR('\0');
 				}
 				else{
-					*pd = L'\0';
+					*pd = LCHAR('\0');
 					return false;
 				}
 #ifdef _USE_META_ALIAS
@@ -228,16 +228,16 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				}
 #endif
 				// 直接レジストリで調べる
-				szPath[0] = L'\0';
+				szPath[0] = LCHAR('\0');
 				bFolderPath = ReadRegistry( HKEY_CURRENT_USER,
-					L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+					LTEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
 					szMeta, szPath, int(std::size(szPath)) );
-				if( false == bFolderPath || L'\0' == szPath[0] ){
+				if( false == bFolderPath || LCHAR('\0') == szPath[0] ){
 					bFolderPath = ReadRegistry( HKEY_LOCAL_MACHINE,
-						L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+						LTEXT("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
 						szMeta, szPath, int(std::size(szPath)) );
 				}
-				if( false == bFolderPath || L'\0' == szPath[0] ){
+				if( false == bFolderPath || LCHAR('\0') == szPath[0] ){
 					pStr = _wgetenv( szMeta );
 					// 環境変数
 					if( nullptr != pStr ){
@@ -245,26 +245,26 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 						if( nPathLen < _MAX_PATH ){
 							wcscpy( szPath, pStr );
 						}else{
-							*pd = L'\0';
+							*pd = LCHAR('\0');
 							return false;
 						}
 					}
 					// 未定義のメタ文字列は 入力された%...%を，そのまま文字として処理する
 					else if(  pd + ( nMetaLen + 2 ) < pd_end ){
-						*pd = L'%';
+						*pd = LCHAR('%');
 						wmemcpy( &pd[1], ps, nMetaLen );
-						pd[nMetaLen + 1] = L'%';
+						pd[nMetaLen + 1] = LCHAR('%');
 						pd += nMetaLen + 2;
 						ps += nMetaLen;
 						continue;
 					}else{
-						*pd = L'\0';
+						*pd = LCHAR('\0');
 						return false;
 					}
 				}
 			}else{
 				// %...%の終わりの%がない とりあえず，%をコピー
-				*pd = L'%';
+				*pd = LCHAR('%');
 				pd++;
 				ps--; // 先にps++してしまったので戻す
 				continue;
@@ -281,9 +281,9 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 
 			// 最後のフォルダー区切り記号を削除する
 			// [A:\]などのルートであっても削除
-			for(nPathLen = 0; pStr2[nPathLen] != L'\0'; nPathLen++ ){
-				if( L'\\' == pStr2[nPathLen] && L'\0' == pStr2[nPathLen + 1] ){
-					pStr2[nPathLen] = L'\0';
+			for(nPathLen = 0; pStr2[nPathLen] != LCHAR('\0'); nPathLen++ ){
+				if( LCHAR('\\') == pStr2[nPathLen] && LCHAR('\0') == pStr2[nPathLen + 1] ){
+					pStr2[nPathLen] = LCHAR('\0');
 					break;
 				}
 			}
@@ -293,7 +293,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 				pd += nPathLen;
 				ps += nMetaLen;
 			}else{
-				*pd = L'\0';
+				*pd = LCHAR('\0');
 				return false;
 			}
 		}else{
@@ -302,7 +302,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 			pd++;
 		}
 	}
-	*pd = L'\0';
+	*pd = LCHAR('\0');
 	return true;
 }
 
@@ -310,7 +310,7 @@ bool CFileNameManager::ExpandMetaToFolder( LPCWSTR pszSrc, LPWSTR pszDes, int nD
 {
 	if( index < 0 ) return 0;
 	int accKeyIndex = ((bZeroOrigin? index: index+1) % 36);
-	WCHAR c = (WCHAR)((accKeyIndex < 10) ? (L'0' + accKeyIndex) : (L'A' + accKeyIndex - 10));
+	WCHAR c = (WCHAR)((accKeyIndex < 10) ? (LCHAR('0') + accKeyIndex) : (LCHAR('A') + accKeyIndex - 10));
 	return c;
 }
 
@@ -319,17 +319,17 @@ static void GetAccessKeyLabelByIndex(WCHAR* pszLabel, bool bEspaceAmp, int index
 	WCHAR c = CFileNameManager::GetAccessKeyByIndex(index, bZeroOrigin);
 	if( c ){
 		if( bEspaceAmp ){
-			pszLabel[0] = L'&';
+			pszLabel[0] = LCHAR('&');
 			pszLabel[1] = c;
-			pszLabel[2] = L' ';
-			pszLabel[3] = L'\0';
+			pszLabel[2] = LCHAR(' ');
+			pszLabel[3] = LCHAR('\0');
 		}else{
 			pszLabel[0] = c;
-			pszLabel[1] = L' ';
-			pszLabel[2] = L'\0';
+			pszLabel[1] = LCHAR(' ');
+			pszLabel[2] = LCHAR('\0');
 		}
 	}else{
-		pszLabel[0] = L'\0';
+		pszLabel[0] = LCHAR('\0');
 	}
 }
 
@@ -379,7 +379,7 @@ bool CFileNameManager::GetMenuFullLabel(
 		//	20100729 ExpandParameterにあわせて、・・・を...に変更
 		ret = auto_sprintf_s( buffer, LS(STR_MENU_GREP),
 			szAccKey, pszKey,
-			( nGrepKeyLen > cmemDes.GetStringLength() ) ? L"...":L""
+			( nGrepKeyLen > cmemDes.GetStringLength() ) ? LTEXT("..."):LTEXT("")
 		);
 	}else if( pfi->m_bIsDebug ){
 		GetAccessKeyLabelByIndex( szAccKey, bEspaceAmp, index, bAccKeyZeroOrigin );
@@ -420,11 +420,11 @@ bool CFileNameManager::GetMenuFullLabel(
 		if( nId == -1 ){
 			::swprintf_s(szFileName, LS(STR_NO_TITLE1));
 		}else{
-			::swprintf_s(szFileName, L"%s%d", LS(STR_NO_TITLE1), nId);
+			::swprintf_s(szFileName, LTEXT("%s%d"), LS(STR_NO_TITLE1), nId);
 		}
 		pszName = szFileName;
 	}
-	const WCHAR* pszCharset = L"";
+	const WCHAR* pszCharset = LTEXT("");
 	WCHAR szCodePageName[100];
 	if( IsValidCodeTypeExceptSJIS(nCharCode)){
 		wcscpy_s( szCodePageName, CCodeTypeName(nCharCode).Bracket() );
@@ -434,9 +434,9 @@ bool CFileNameManager::GetMenuFullLabel(
 		pszCharset = szCodePageName;
 	}
 	
-	int ret = auto_sprintf_s( buffer, L"%s%s%s%s%s",
-		szAccKey, (bFavorite ? L"★ " : L""), pszName,
-		(bModified ? L" *":L""), pszCharset
+	int ret = auto_sprintf_s( buffer, LTEXT("%s%s%s%s%s"),
+		szAccKey, (bFavorite ? LTEXT("★ ") : LTEXT("")), pszName,
+		(bModified ? LTEXT(" *"):LTEXT("")), pszCharset
 	);
 	return 0 < ret;
 }

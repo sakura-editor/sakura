@@ -27,8 +27,8 @@ class CSmartIndentIfObj final : public CWSHIfObj
 
 	// コンストラクタ
 public:
-	explicit CSmartIndentIfObj(wchar_t ch)
-		: CWSHIfObj( L"Indent", false )
+	explicit CSmartIndentIfObj(WCHAR ch)
+		: CWSHIfObj( LTEXT("Indent"), false )
 		, m_wcChar(ch)
 	{
 	}
@@ -49,7 +49,7 @@ public:
 	MacroFuncInfoArray GetMacroFuncInfo() const override{
 		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
 			//ID									関数名							引数										戻り値の型	m_pszData
-			{EFunctionCode(F_SI_GETCHAR),			L"GetChar",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //押下したキーを取得する
+			{EFunctionCode(F_SI_GETCHAR),			LTEXT("GetChar"),				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //押下したキーを取得する
 			//	終端
 			{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 		};
@@ -62,7 +62,7 @@ public:
 		{
 		case F_SI_GETCHAR:						//押下したキーを取得する
 			{
-				std::wstring sValue;
+				sakura::wstring sValue;
 				sValue += m_wcChar;
 				SysString S(sValue.c_str(), sValue.size());
 				Wrap(&Result)->Receive(S);
@@ -75,7 +75,7 @@ public:
 	}
 
 	// メンバ変数
-	wchar_t m_wcChar;
+	WCHAR m_wcChar;
 };
 
 #endif /* SAKURA_CSMARTINDENTIFOBJ_7F0A25BE_E50A_45C4_B20E_C9683FD04BB8_H_ */

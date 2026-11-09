@@ -83,7 +83,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 				pw[0] = *pr;
 			}else{
 				berror = true;
-				pw[0] = L'?';
+				pw[0] = LCHAR('?');
 			}
 			++pw;
 		}
@@ -101,7 +101,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 				pw += nret;
 			}else{
 				berror = true;
-				pw[0] = L'?';
+				pw[0] = LCHAR('?');
 				++pw;
 			}
 		}
@@ -120,19 +120,19 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 					if( nret < 1 ){
 						// SJIS → Unicode 変換に失敗
 	  					berror = true;
-						pw[0] = L'?';
+						pw[0] = LCHAR('?');
 						nret = 1;
 					}
 					pw += nret;
 				}else{
 				// 変換に失敗。
 					berror = true;
-					pw[0] = L'?';
+					pw[0] = LCHAR('?');
 					++pw;
 				}
 			}else{
 				berror = true;
-				pw[0] = L'?';
+				pw[0] = LCHAR('?');
 				++pw;
 			}
 		}
@@ -143,7 +143,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 			if( IsJis(static_cast<const char>(*pr)) ){
 				pw[0] = *pr;
 			}else{
-				pw[0] = L'?';
+				pw[0] = LCHAR('?');
 			}
 			++pw;
 		}
@@ -152,7 +152,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 		// 致命的エラー回避コード
 		berror = true;
 		for( ; pr < pSrc+nSrcLen; ++pr ){
-			pw[0] = L'?';
+			pw[0] = LCHAR('?');
 			++pw;
 		}
 	}
@@ -167,7 +167,7 @@ int CJis::_JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigne
 /*
 	JIS → Unicode 変換
 */
-int CJis::JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError )
+int CJis::JisToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError )
 {
 	const unsigned char *pr, *pr_end;
 	const unsigned char *pr_next;
@@ -265,7 +265,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	}
 
 	// 変換先バッファを取得
-	wchar_t* pDst = new (std::nothrow) wchar_t[nsrclen * 3 + 1];
+	WCHAR* pDst = new (std::nothrow) WCHAR[nsrclen * 3 + 1];
 	if( pDst == nullptr ){
 		return RESULT_FAILURE;
 	}
@@ -274,7 +274,7 @@ EConvertResult CJis::JISToUnicode(const CMemory& cSrc, CNativeW* pDstMem, bool b
 	int nDstLen = JisToUni( psrc, nsrclen, pDst, &berror );
 
 	// pDstMem にセット
-	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen * sizeof(wchar_t) );
+	pDstMem->_GetMemory()->SetRawDataHoldBuffer( pDst, nDstLen * sizeof(WCHAR) );
 
 	delete [] pDst;
 
@@ -336,7 +336,7 @@ int CJis::_SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, EChar
 	return nret;
 }
 
-int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError )
+int CJis::UniToJis( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool* pbError )
 {
 	const unsigned short *pr, *pr_end;
 	unsigned char* pw;
@@ -357,7 +357,7 @@ int CJis::UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pb
 	pw = reinterpret_cast<unsigned char*>(pDst);
 	echarset_cur = CHARSET_ASCII7;
 
-	while( (nclen = CheckUtf16leChar(reinterpret_cast<const wchar_t*>(pr), pr_end-pr, &echarset_tmp, 0)) > 0 ){
+	while( (nclen = CheckUtf16leChar(reinterpret_cast<const WCHAR*>(pr), pr_end-pr, &echarset_tmp, 0)) > 0 ){
 		// Unicode -> SJIS
 		nlen = MyWideCharToMultiByte_JP( pr, nclen, &cbuf[0] );
 		if( nlen < 1 ){
@@ -447,7 +447,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 	bool berror=false;
 
 	// ソースを取得
-	const wchar_t* pSrc = cSrc.GetStringPtr();
+	const WCHAR* pSrc = cSrc.GetStringPtr();
 	int nSrcLen = cSrc.GetStringLength();
 
 	// 必要なバッファ容量を確認してバッファを確保
@@ -472,7 +472,7 @@ EConvertResult CJis::UnicodeToJIS(const CNativeW& cSrc, CMemory* pDstMem)
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CJis::UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
 	CNativeW		cCharBuffer;
 	EConvertResult	res;
@@ -509,7 +509,7 @@ EConvertResult CJis::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* p
 			}
 		}
 		else {
-			auto_sprintf( pd, L"%02X", *ps);
+			auto_sprintf( pd, LTEXT("%02X"), *ps);
 			pd += 2;
 		}
 	}

@@ -84,12 +84,12 @@ bool CNormalProcess::InitializeProcess(
 	int nCmdShow
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::Init" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("NormalProcess::Init") );
 
-	MY_RUNNINGTIMER( cRunningTimer, L"NormalProcess::_GetInitializeMutex" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("NormalProcess::_GetInitializeMutex") );
 
 	// エディタ初期化中ミューテックスを用意する（エディタの初期化は排他制御する）
-	std::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
+	sakura::wstring strMutexInitName = GSTR_MUTEX_SAKURA_INIT;
 	strMutexInitName += GetProfileName();
 	CMutex hMutex{ strMutexInitName, nullptr, true };
 
@@ -158,7 +158,7 @@ bool CNormalProcess::InitializeProcess(
 	/* コマンドラインで受け取ったファイルが開かれている場合は */
 	/* その編集ウィンドウをアクティブにする */
 	CCommandLine::getInstance()->GetEditInfo(&fi); // 2002/2/8 aroka ここに移動
-	if( fi.m_szPath[0] != L'\0' ){
+	if( fi.m_szPath[0] != LCHAR('\0') ){
 		//	Oct. 27, 2000 genta
 		//	MRUからカーソル位置を復元する操作はCEditDoc::FileLoadで
 		//	行われるのでここでは必要なし．
@@ -195,15 +195,15 @@ bool CNormalProcess::InitializeProcess(
 	}
 
 	// プラグイン読み込み
-	MY_TRACETIME( cRunningTimer, L"Before Init Jack" );
+	MY_TRACETIME( cRunningTimer, LTEXT("Before Init Jack") );
 	/* ジャック初期化 */
 	CJackManager::getInstance();
-	MY_TRACETIME( cRunningTimer, L"After Init Jack" );
+	MY_TRACETIME( cRunningTimer, LTEXT("After Init Jack") );
 
-	MY_TRACETIME( cRunningTimer, L"Before Load Plugins" );
+	MY_TRACETIME( cRunningTimer, LTEXT("Before Load Plugins") );
 	/* プラグイン読み込み */
 	CPluginManager::getInstance()->LoadAllPlugin();
-	MY_TRACETIME( cRunningTimer, L"After Load Plugins" );
+	MY_TRACETIME( cRunningTimer, LTEXT("After Load Plugins") );
 
 	// エディタアプリケーションを作成。2007.10.23 kobake
 	// CEditAppを作成
@@ -224,7 +224,7 @@ bool CNormalProcess::InitializeProcess(
 	bGrepMode  = CCommandLine::getInstance()->IsGrepMode();
 	bGrepDlg   = CCommandLine::getInstance()->IsGrepDlg();
 
-	MY_TRACETIME( cRunningTimer, L"CheckFile" );
+	MY_TRACETIME( cRunningTimer, LTEXT("CheckFile") );
 
 	// -1: SetDocumentTypeWhenCreate での強制指定なし
 	const CTypeConfig nType = (fi.m_szDocType[0] == '\0' ? CTypeConfig(-1) : CDocTypeManager().GetDocumentTypeOfExt(fi.m_szDocType));
@@ -314,10 +314,10 @@ bool CNormalProcess::InitializeProcess(
 			pEditWnd->m_cDlgGrep.m_bSetText = true;
 			int nSize = std::size(pEditWnd->m_cDlgGrep.m_szFile);
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFile, gi.cmGrepFile.GetStringPtr(), nSize );	/* 検索ファイル */
-			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = L'\0';
+			pEditWnd->m_cDlgGrep.m_szFile[nSize-1] = LCHAR('\0');
 			nSize = std::size(pEditWnd->m_cDlgGrep.m_szFolder);
 			wcsncpy( pEditWnd->m_cDlgGrep.m_szFolder, cmemGrepFolder.GetStringPtr(), nSize );	/* 検索フォルダー */
-			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = L'\0';
+			pEditWnd->m_cDlgGrep.m_szFolder[nSize-1] = LCHAR('\0');
 
 			// Feb. 23, 2003 Moca Owner windowが正しく指定されていなかった
 			if (pEditWnd->m_cDlgGrep.DoModal(GetProcessInstance(), hEditWnd,  LPCWSTR(nullptr))) {
@@ -346,7 +346,7 @@ bool CNormalProcess::InitializeProcess(
 		// 2004.05.13 Moca さらにif分の中から前に移動
 		// ファイル名が与えられなくてもReadOnly指定を有効にするため．
 		bViewMode = CCommandLine::getInstance()->IsViewMode(); // 2002/2/8 aroka ここに移動
-		if( fi.m_szPath[0] != L'\0' ){
+		if( fi.m_szPath[0] != LCHAR('\0') ){
 			//	Mar. 9, 2002 genta 文書タイプ指定
 			pEditWnd->OpenDocumentWhenStart(
 				SLoadInfo(
@@ -454,10 +454,10 @@ bool CNormalProcess::InitializeProcess(
 
 	// 起動時マクロオプション
 	if (const auto pszMacro = CCommandLine::getInstance()->GetMacro();
-		pszMacro && pszMacro[0] != L'\0')
+		pszMacro && pszMacro[0] != LCHAR('\0'))
 	{
 		LPCWSTR pszMacroType = CCommandLine::getInstance()->GetMacroType();
-		if( pszMacroType == nullptr || pszMacroType[0] == L'\0' || _wcsicmp(pszMacroType, L"file") == 0 ){
+		if( pszMacroType == nullptr || pszMacroType[0] == LCHAR('\0') || _wcsicmp(pszMacroType, LTEXT("file")) == 0 ){
 			pszMacroType = nullptr;
 		}
 		CEditView& view = pEditWnd->GetActiveView();

@@ -41,7 +41,7 @@ bool CZipFile::SetZip(const std::filesystem::path& zipPath)
 }
 
 // ZIP File 内 フォルダー名取得と定義ファイル検査(Plugin用)
-bool CZipFile::ChkPluginDef(std::wstring_view sDefFile, std::wstring& sFolderName)
+bool CZipFile::ChkPluginDef(sakura::wstring_view sDefFile, sakura::wstring& sFolderName)
 {
 	sFolderName.clear();
 

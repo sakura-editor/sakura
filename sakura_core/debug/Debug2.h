@@ -28,7 +28,7 @@
 	#define assert(exp) \
 		if(!(exp)){ \
 			TRACE( "!assert: " #exp, nullptr ); \
-			ErrorMessage( nullptr, L"!assert\n%hs(%d):\n%hs", __FILE__, __LINE__, #exp ); \
+			ErrorMessage( nullptr, LTEXT("!assert\n%hs(%d):\n%hs"), __FILE__, __LINE__, #exp ); \
 			debug_exit(); \
 		} \
 		((void)0)

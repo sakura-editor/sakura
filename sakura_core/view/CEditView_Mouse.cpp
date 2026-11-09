@@ -76,7 +76,7 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 		return;
 	}
 
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 
 	CLayoutRange sRange;
@@ -1125,7 +1125,7 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 					// GetCommander().Command_GOLINETOP( true, 0x09 );		// 改行単位の行頭へ移動
 					CLogicInt nLineLen;
 					const CLayout*	pcLayout;
-					const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
+					const WCHAR*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptNewCursor.GetY2(), &nLineLen, &pcLayout );
 					ptNewCursor.x = CLayoutInt(0);
 					if( pLine ){
 						while( pcLayout->GetLogicOffset() ){
@@ -1323,7 +1323,7 @@ LRESULT CEditView::OnMOUSEWHEEL2( WPARAM wParam, [[maybe_unused]] LPARAM lParam,
 				}
 			}
 			if( !bGetParam ){
-				if( ReadRegistry( HKEY_CURRENT_USER, L"Control Panel\\desktop", L"WheelScrollLines", szValStr, uDataLen ) ){
+				if( ReadRegistry( HKEY_CURRENT_USER, LTEXT("Control Panel\\desktop"), LTEXT("WheelScrollLines"), szValStr, uDataLen ) ){
 					nRollLineNum = ::_wtoi( szValStr );
 					if( nRollLineNum != -1 && m_bMiniMap ){
 						nRollLineNum *= 10;
@@ -1507,7 +1507,7 @@ void CEditView::OnLBUTTONUP( [[maybe_unused]] WPARAM fwKeys, [[maybe_unused]] in
 static unsigned __stdcall ShellExecuteProc( LPVOID lpParameter )
 {
 	LPWSTR pszFile = (LPWSTR)lpParameter;
-	::ShellExecute( nullptr, L"open", pszFile, nullptr, nullptr, SW_SHOW );
+	::ShellExecute( nullptr, LTEXT("open"), pszFile, nullptr, nullptr, SW_SHOW );
 	free( pszFile );
 	return 0;
 }
@@ -1519,8 +1519,8 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 	CMyPoint ptMouse(_xPos,_yPos);
 
 	CLogicRange		cUrlRange;	// URL範囲
-	std::wstring	strURL;
-	const wchar_t*	pszMailTo = L"mailto:";
+	sakura::wstring	strURL;
+	const WCHAR*	pszMailTo = LTEXT("mailto:");
 
 	// 2007.10.06 nasukoji	クアドラプルクリック時はチェックしない
 	if(! m_dwTripleClickCheck){
@@ -1532,7 +1532,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				&strURL				// URL受け取り先
 			)
 		){
-			std::wstring strOPEN;
+			sakura::wstring strOPEN;
 
 			// URLを開く
 		 	// 現在位置がメールアドレスならば、NULL以外と、その長さを返す
@@ -1540,11 +1540,11 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 				strOPEN = pszMailTo + strURL;
 			}
 			else{
-				if( wcsnicmp_literal( strURL.c_str(), L"ttp://" ) == 0 ){	//抑止URL
-					strOPEN = L"h" + strURL;
+				if( wcsnicmp_literal( strURL.c_str(), LTEXT("ttp://") ) == 0 ){	//抑止URL
+					strOPEN = LTEXT("h") + strURL;
 				}
-				else if( wcsnicmp_literal( strURL.c_str(), L"tp://" ) == 0 ){	//抑止URL
-					strOPEN = L"ht" + strURL;
+				else if( wcsnicmp_literal( strURL.c_str(), LTEXT("tp://") ) == 0 ){	//抑止URL
+					strOPEN = LTEXT("ht") + strURL;
 				}
 				else{
 					strOPEN = std::move(strURL);
@@ -1664,7 +1664,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 
 STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( L"CEditView::DragEnter()\n" );
+	DEBUG_TRACE( LTEXT("CEditView::DragEnter()\n") );
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
@@ -1691,7 +1691,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" ) );
+	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( LTEXT("MSDEVColumnSelect") ) );
 
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( TRUE );
@@ -1702,7 +1702,7 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 
 STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( L"CEditView::DragOver()\n" );
+	DEBUG_TRACE( LTEXT("CEditView::DragOver()\n") );
 
 	/* マウス移動のメッセージ処理 */
 	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
@@ -1728,7 +1728,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 
 STDMETHODIMP CEditView::DragLeave( void )
 {
-	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
+	DEBUG_TRACE( LTEXT("CEditView::DragLeave()\n") );
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( FALSE );
 
@@ -1747,7 +1747,7 @@ STDMETHODIMP CEditView::DragLeave( void )
 
 STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
 {
-	DEBUG_TRACE( L"CEditView::Drop()\n" );
+	DEBUG_TRACE( LTEXT("CEditView::Drop()\n") );
 	BOOL		bBoxData;
 	BOOL		bMove;
 	BOOL		bMoveToPrev = FALSE;
@@ -1810,12 +1810,12 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 		using LengthField = CClipboard::SAKURAClipW_LengthFieldType;
 		if( nSize > sizeof(LengthField) ){
 			const auto nStoredLength = *(LengthField*)pData;
-			const SIZE_T nMaxLength = (nSize - sizeof(LengthField)) / sizeof(wchar_t);
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(LengthField));
+			const SIZE_T nMaxLength = (nSize - sizeof(LengthField)) / sizeof(WCHAR);
+			WCHAR* pszData = (WCHAR*)((BYTE*)pData + sizeof(LengthField));
 			cmemBuf.SetString( pszData, (nStoredLength <= 0)? 0: t_min( (SIZE_T)nStoredLength, nMaxLength ) );	// 途中のNUL文字も含める
 		}
 	}else if( cf == CF_UNICODETEXT ){
-		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
+		cmemBuf.SetString( (WCHAR*)pData, wcsnlen( (WCHAR*)pData, nSize / sizeof(WCHAR) ) );
 	}else{
 		CNativeA binary;
 		binary.SetString((char*)pData, nSize / sizeof(char));
@@ -2068,7 +2068,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
+	HWND hwnd = ::CreateWindow(WC_STATIC, LTEXT(""), 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
 	::SetFocus(hwnd);
 
 	// メニューを作成する

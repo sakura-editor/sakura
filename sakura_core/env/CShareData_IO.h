@@ -65,25 +65,25 @@ public:
 	static void IO_MainMenu( CDataProfile& c, CommonSetting_MainMenu& s, bool b ){		// 2010/5/15 Uchi
 		IO_MainMenu(c, nullptr, s, b);
 	}
-	static void IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstring>* pData,
+	static void IO_MainMenu( CDataProfile& cProfile, std::vector<sakura::wstring>* pData,
 		CommonSetting_MainMenu& mainmenu, bool bOutCmdName);
 };
 
 void ShareData_IO_BlockComments(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	BlockComments			tEntryValues	//!< [in,out] エントリ値
 );
 
 void ShareData_IO_ColorSet(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	std::span<ColorInfo>	tEntryValues	//!< [in,out] エントリ値
 );
 
 void ShareData_IO_FileTree(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	SFileTree&				fileTree
 );
 
@@ -100,32 +100,32 @@ void ShareData_IO_KeyBind(
 
 void ShareData_IO_KeyHelp(
 	CDataProfile&		cProfile,
-	std::wstring_view	sectionName,	//!< [in] セクション名
+	sakura::wstring_view	sectionName,	//!< [in] セクション名
 	STypeConfig&		type
 );
 
 template <typename T>
 void ShareData_IO_KeyHelpArr(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	T&						KeyHelpArr,
 	int&					nKeyHelpNum
 );
 
 void ShareData_IO_LineComments(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	CLineComment&			cLineComment
 );
 
 bool ShareData_IO_LogFont(
 	CDataProfile&						cProfile,
-	std::wstring_view					pszSecName,
-	std::wstring_view					pszKeyLf,
+	sakura::wstring_view					pszSecName,
+	sakura::wstring_view					pszKeyLf,
 	LOGFONT&							lf,
 	INT&								nPointSize,
-	const std::optional<std::wstring>&	optPointSizeKey = std::nullopt,
-	const std::optional<std::wstring>&	optFaceNameKey = std::nullopt
+	const std::optional<sakura::wstring>&	optPointSizeKey = std::nullopt,
+	const std::optional<sakura::wstring>&	optFaceNameKey = std::nullopt
 );
 
 void ShareData_IO_Macro(
@@ -136,8 +136,8 @@ void ShareData_IO_Macro(
 template <typename T>
 void ShareData_IO_OutlineDockRect(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		entryKey,		//!< [in] エントリ名
 	T&						tEntryValue		//!< [in,out] エントリ値
 );
 
@@ -148,8 +148,8 @@ void ShareData_IO_Print(
 
 bool ShareData_IO_PrintInts(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
-	std::wstring_view		entryKey,		//!< [in] エントリ名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		entryKey,		//!< [in] エントリ名
 	PRINTSETTING&			printSetting	//!< [in,out] エントリ値
 );
 
@@ -161,26 +161,26 @@ void ShareData_IO_Plugin(
 
 void ShareData_IO_RegexKeyword(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	STypeConfig&			type			//!< [in,out] エントリ値
 );
 
 void ShareData_IO_TypeConfig(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	STypeConfig&			tEntryValue		//!< [in,out] エントリ値
 );
 
 void ShareData_IO_TypeInts(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	STypeConfig&			type			//!< [in,out] エントリ値
 );
 
 template <typename T>
 void ShareData_IO_VertLineIdx(
 	CDataProfile&			cProfile,
-	std::wstring_view		sectionName,	//!< [in] セクション名
+	sakura::wstring_view		sectionName,	//!< [in] セクション名
 	T&						nVertLineIdx
 );
 

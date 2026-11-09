@@ -24,7 +24,7 @@
 namespace cxx {
 
 HMODULE LoadLibraryExW(
-	std::wstring_view fileName,
+	sakura::wstring_view fileName,
 	_Reserved_ HANDLE hFile,
 	_In_ DWORD dwFlags
 );
@@ -43,7 +43,7 @@ void CheckLangId(
 )
 {
 	// 言語IDを取得 "0x" + 4桁
-	std::wstring langIdStr{ cxx::load_string(wId, hModule) };
+	sakura::wstring langIdStr{ cxx::load_string(wId, hModule) };
 
 	WORD langId = 0;
 	try {
@@ -73,17 +73,17 @@ void CheckLangId(
 }
 
 bool ParseLangIdFromFileName(
-	std::wstring_view fileName,
+	sakura::wstring_view fileName,
 	LCID& lcid
 )
 {
 	// 言語タグを取得
 	bool result = false;
-	if (std::match_results<std::wstring_view::const_iterator> m;
-		std::regex_match(fileName.begin(), fileName.end(), m, std::wregex(LR"(^sakura_lang_([a-z]{2,3})[_\-]([A-Z]{2})\.dll$)", std::regex_constants::icase)))
+	if (std::match_results<sakura::wstring_view::const_iterator> m;
+		std::regex_match(fileName.begin(), fileName.end(), m, std::wregex(LTEXT(R"(^sakura_lang_([a-z]{2,3})[_\-]([A-Z]{2})\.dll$)"), std::regex_constants::icase)))
 	{
 		// ロケール名を抽出して LCID を得る
-		const auto localeName = std::wstring(m[1]) + L'-' + std::wstring(m[2]);
+		const auto localeName = sakura::wstring(m[1]) + LCHAR('-') + sakura::wstring(m[2]);
 		lcid = LocaleNameToLCID(localeName.c_str(), 0);
 
 		result = true;
@@ -97,7 +97,7 @@ bool ParseLangIdFromFileName(
 //! 本体リソース用コンストラクタ
 CSelectLang::SSelLangInfo::SSelLangInfo(
 	int langId,
-	std::wstring_view langName
+	sakura::wstring_view langName
 )
 	: m_LangId(static_cast<WORD>(langId))
 	, m_LangName(langName)
@@ -106,7 +106,7 @@ CSelectLang::SSelLangInfo::SSelLangInfo(
 
 //! メッセージリソース用コンストラクタ
 CSelectLang::SSelLangInfo::SSelLangInfo(
-	std::wstring_view path,
+	sakura::wstring_view path,
 	WORD langId
 )
 	: m_Path(path)
@@ -216,7 +216,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 	std::lock_guard lock{ gm_Mutex };
 
 	// 言語DLLの検索パターンを生成する
-	const auto searchPattern = GetExeFileName().replace_filename(L"sakura_lang_*.dll");
+	const auto searchPattern = GetExeFileName().replace_filename(LTEXT("sakura_lang_*.dll"));
 
 	try {
 		// 言語DLLの検索を開始する
@@ -268,7 +268,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
 
 //! 言語を変更する
 /* static */ void CSelectLang::ChangeLang(
-	std::wstring_view dllName
+	sakura::wstring_view dllName
 )
 {
 	std::lock_guard lock{ gm_Mutex };
@@ -340,7 +340,7 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
  * @param[in] langId 言語ID
  */
 /* static */ void CSelectLang::TryEmplaceLangInfo(
-	std::wstring_view path,
+	sakura::wstring_view path,
 	WORD langId
 )
 {
@@ -370,11 +370,11 @@ void CSelectLang::SSelLangInfo::Unload() noexcept
  * @returns 読み込んだ文字列。
  * @throw std::system_error リソースが見つからなかった場合
  */
-/* static */ std::wstring_view CSelectLang::LoadStringW(UINT id)
+/* static */ sakura::wstring_view CSelectLang::LoadStringW(UINT id)
 {
 	std::lock_guard lock{ gm_Mutex };
 
-	auto ret = std::wstring_view{};
+	auto ret = sakura::wstring_view{};
 
 	// 選択されたリソースDLLからの取得を試みる
 	try {
@@ -480,7 +480,7 @@ size_t CLoadString::CLoadStrBuffer::LoadStringW(UINT uid)
 	// バッファをクリア
 	if (!m_String.empty()) {
 		m_String.clear();
-		m_ResString = L"";
+		m_ResString = LTEXT("");
 	}
 
 	// 選択されたリソースDLLからの取得を試みる
@@ -489,7 +489,7 @@ size_t CLoadString::CLoadStrBuffer::LoadStringW(UINT uid)
 	}
 	// 本体にも存在しない場合
 	catch (const std::system_error&) {
-		m_ResString = L"";	// エラーを握りつぶす
+		m_ResString = LTEXT("");	// エラーを握りつぶす
 	}
 
 	m_String = m_ResString;

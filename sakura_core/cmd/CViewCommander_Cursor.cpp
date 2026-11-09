@@ -514,8 +514,8 @@ try_again:;
 		return;
 	}
 	if( bTryAgain ){
-		const wchar_t*	pLine = pcLayout->GetPtr();
-		if( pLine[0] != L' ' && pLine[0] != WCODE::TAB ){
+		const WCHAR*	pLine = pcLayout->GetPtr();
+		if( pLine[0] != LCHAR(' ') && pLine[0] != WCODE::TAB ){
 			return;
 		}
 	}
@@ -619,7 +619,7 @@ void CViewCommander::Command_GOLINETOP(
 		CLogicInt		nLineLen;
 		do {
 			++nPosY_Layout;
-			const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( nPosY_Layout, &nLineLen, &pcLayout );
+			const WCHAR*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr( nPosY_Layout, &nLineLen, &pcLayout );
 			if( !pLine ){
 				return;
 			}
@@ -903,7 +903,7 @@ void CViewCommander::Command_JUMPHIST_PREV( void )
 
 	if( m_pCommanderView->m_cHistory->CheckPrev() ){
 		if( ! m_pCommanderView->m_cHistory->PrevValid() ){
-			::MessageBox( nullptr, L"Inconsistent Implementation", L"PrevValid", MB_OK );
+			::MessageBox( nullptr, LTEXT("Inconsistent Implementation"), LTEXT("PrevValid"), MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(
@@ -920,7 +920,7 @@ void CViewCommander::Command_JUMPHIST_NEXT( void )
 {
 	if( m_pCommanderView->m_cHistory->CheckNext() ){
 		if( ! m_pCommanderView->m_cHistory->NextValid() ){
-			::MessageBox( nullptr, L"Inconsistent Implementation", L"NextValid", MB_OK );
+			::MessageBox( nullptr, LTEXT("Inconsistent Implementation"), LTEXT("NextValid"), MB_OK );
 		}
 		CLayoutPoint pt;
 		GetDocument()->m_cLayoutMgr.LogicToLayout(

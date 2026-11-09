@@ -85,7 +85,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 )
 {
 	// 見つからないときのメッセージをリソースから指定できるようにローカルコピーしておく
-	const std::wstring copyOfNotFoundMessage(pszNotFoundMessage ? pszNotFoundMessage : L"");
+	const sakura::wstring copyOfNotFoundMessage(pszNotFoundMessage ? pszNotFoundMessage : LTEXT(""));
 	pszNotFoundMessage = pszNotFoundMessage ? copyOfNotFoundMessage.data() : nullptr;
 
 	bool		bSelecting;
@@ -170,7 +170,7 @@ void CViewCommander::Command_SEARCH_NEXT(
 		nLineNum = GetCaret().GetCaretLayoutPos().GetY2();
 		CLogicInt nLineLen = CLogicInt(0); // 2004.03.17 Moca NULL == pLineのとき、nLineLenが未設定になり落ちるバグ対策
 		const CLayout*	pcLayout;
-		const wchar_t*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
+		const WCHAR*	pLine = GetDocument()->m_cLayoutMgr.GetLineStr(nLineNum, &nLineLen, &pcLayout);
 
 		/* 指定された桁に対応する行のデータ内の位置を調べる */
 // 2002.02.08 hor EOFのみの行からも次検索しても再検索可能に (2/2)
@@ -314,7 +314,7 @@ end_of_func:;
 			LimitStringLengthW(m_pCommanderView->m_strCurSearchKey.c_str(), m_pCommanderView->m_strCurSearchKey.size(),
 				_MAX_PATH, KeyName);
 			if( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ){
-				KeyName.AppendString( L"..." );
+				KeyName.AppendString( LTEXT("...") );
 			}
 			AlertNotFound(
 				hwndParent,
@@ -324,7 +324,7 @@ end_of_func:;
 			);
 		}
 		else{
-			AlertNotFound(hwndParent, bReplaceAll, L"%ls", pszNotFoundMessage);
+			AlertNotFound(hwndParent, bReplaceAll, LTEXT("%ls"), pszNotFoundMessage);
 		}
 	}
 }
@@ -471,7 +471,7 @@ end_of_func:;
 		LimitStringLengthW(m_pCommanderView->m_strCurSearchKey.c_str(), m_pCommanderView->m_strCurSearchKey.size(),
 			_MAX_PATH, KeyName);
 		if( (size_t)KeyName.GetStringLength() < m_pCommanderView->m_strCurSearchKey.size() ){
-			KeyName.AppendString( L"..." );
+			KeyName.AppendString( LTEXT("...") );
 		}
 		AlertNotFound(
 			hwndParent,
@@ -630,7 +630,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			Command_PASTE(0);
 		} else if( nReplaceTarget == 3 ){
 			// 行削除
-			Command_INSTEXT( false, L"", CLogicInt(0), TRUE );
+			Command_INSTEXT( false, LTEXT(""), CLogicInt(0), TRUE );
 		} else if ( bRegularExp ) { /* 検索／置換  1==正規表現 */
 			// 先読みに対応するために物理行末までを使うように変更 2005/03/27 かろと
 			// 2002/01/19 novice 正規表現による文字列置換
@@ -642,7 +642,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CLayout* pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY(GetSelect().GetFrom().GetY2());
-			const wchar_t* pLine = pcLayout->GetDocLineRef()->GetPtr();
+			const WCHAR* pLine = pcLayout->GetDocLineRef()->GetPtr();
 			CLogicInt nIdx = m_pCommanderView->LineColumnToIndex( pcLayout, GetSelect().GetFrom().GetX2() ) + pcLayout->GetLogicOffset();
 			CLogicInt nLen = pcLayout->GetDocLineRef()->GetLengthWithEOL();
 			// 正規表現で選択始点・終点への挿入を記述
@@ -650,7 +650,7 @@ void CViewCommander::Command_REPLACE( HWND hwndParent )
 			// →これでは「検索の後ろの文字が改行だったら次の行頭へ移動」が処理できない
 			// → Oct. 30, 「検索の後ろの文字が改行だったら・・」の処理をやめる（誰もしらないみたいなので）
 			// Nov. 9, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更(再)
-			CNativeW cMemMatchStr; cMemMatchStr.SetString(L"$&");
+			CNativeW cMemMatchStr; cMemMatchStr.SetString(LTEXT("$&"));
 			CNativeW cMemRepKey2;
 			if (nReplaceTarget == 1) {	//選択始点へ挿入
 				cMemRepKey2 = cMemRepKey;
@@ -913,7 +913,7 @@ void CViewCommander::Command_REPLACE_ALL()
 	}
 
 	ptrdiff_t nREPLACEKEY = cmemClip.GetStringLength();
-	const wchar_t* szREPLACEKEY = cmemClip.GetStringPtr();
+	const WCHAR* szREPLACEKEY = cmemClip.GetStringPtr();
 
 	// 行コピー（MSDEVLineSelect形式）のテキストで末尾が改行になっていなければ改行を追加する
 	// ※レイアウト折り返しの行コピーだった場合は末尾が改行になっていない
@@ -927,7 +927,7 @@ void CViewCommander::Command_REPLACE_ALL()
 
 	if( GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste ){
 		auto nConvertedTextLen = ConvertEol(szREPLACEKEY, nREPLACEKEY, nullptr);
-		wchar_t	*pszConvertedText = new wchar_t[nConvertedTextLen];
+		WCHAR	*pszConvertedText = new WCHAR[nConvertedTextLen];
 		ConvertEol(szREPLACEKEY, nREPLACEKEY, pszConvertedText);
 		cmemClip.SetString(pszConvertedText, nConvertedTextLen);
 		nREPLACEKEY = cmemClip.GetStringLength();
@@ -960,7 +960,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		// Nov. 9, 2005 かろと 正規表現で選択始点・終点への挿入方法を変更(再)
 		CNativeW cMemRepKey2;
 		CNativeW cMemMatchStr;
-		cMemMatchStr.SetString(L"$&");
+		cMemMatchStr.SetString(LTEXT("$&"));
 		if (nReplaceTarget == 1 ) {	//選択始点へ挿入
 			cMemRepKey2 = cmemClip;
 			cMemRepKey2 += cMemMatchStr;
@@ -1242,7 +1242,7 @@ void CViewCommander::Command_REPLACE_ALL()
 			++nReplaceNum;
 		}
 		else if( nReplaceTarget == 3 ){
-			Command_INSTEXT( false, L"", CLogicInt(0), true, false, bFastMode, bFastMode ? &cSelectLogic : nullptr );
+			Command_INSTEXT( false, LTEXT(""), CLogicInt(0), true, false, bFastMode, bFastMode ? &cSelectLogic : nullptr );
 			++nReplaceNum;
 		}
 		// 2002/01/19 novice 正規表現による文字列置換
@@ -1250,7 +1250,7 @@ void CViewCommander::Command_REPLACE_ALL()
 		{
 			// 物理行、物理行長、物理行での検索マッチ位置
 			const CDocLine* pcDocLine;
-			const wchar_t* pLine;
+			const WCHAR* pLine;
 			CLogicInt nLogicLineNum;
 			CLogicInt nIdx;
 			CLogicInt nLen;

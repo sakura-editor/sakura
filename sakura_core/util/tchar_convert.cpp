@@ -23,7 +23,7 @@ namespace cxx {
  * @param [in] source 変換元のワイド文字列
  * @param [out] bUsedDefaultChar 変換に失敗した文字があったかどうかを受け取るフラグ
  */
-int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefaultChar) {
+int CountAsMultiByte(UINT codePage, sakura::wstring_view source, BOOL& bUsedDefaultChar) {
 	// 変換に必要な出力バッファサイズを求める
 	return ::WideCharToMultiByte(
 		codePage,
@@ -44,7 +44,7 @@ int CountAsMultiByte(UINT codePage, std::wstring_view source, BOOL& bUsedDefault
  * @param [in] source 変換元のワイド文字列
  * @param [out] buffer 変換後のナロー文字列を受け取るバッファ
  */
-int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR> buffer)
+int WideCharToMultiByte(UINT codePage, sakura::wstring_view source, std::span<CHAR> buffer)
 {
 	// 変換を実行する
 	const auto converted = ::WideCharToMultiByte(
@@ -72,7 +72,7 @@ int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::span<CHAR>
  * @param [in] source 変換元のワイド文字列
  * @param [out] buffer 変換後のナロー文字列を受け取るバッファ
  */
-int WideCharToMultiByte(UINT codePage, std::wstring_view source, std::string& buffer)
+int WideCharToMultiByte(UINT codePage, sakura::wstring_view source, std::string& buffer)
 {
 	// 変換元が空文字列なら早期リターンする
 	if (source.empty()) {
@@ -142,7 +142,7 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
 	);
 
 	if (0 <= converted && converted < std::ssize(buffer)) {
-		buffer[converted] = L'\0'; // 終端NULを付加する
+		buffer[converted] = LCHAR('\0'); // 終端NULを付加する
 	}
 
 	return converted;
@@ -155,7 +155,7 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::span<WCHAR>
  * @param [in] source 変換元のナロー文字列
  * @param [in, out] buffer 変換後のワイド文字列を受け取るバッファ
  */
-int MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& buffer)
+int MultiByteToWideChar(UINT codePage, std::string_view source, sakura::wstring& buffer)
 {
 	// 変換元が空文字列なら早期リターンする
 	if (source.empty()) {
@@ -189,7 +189,7 @@ int MultiByteToWideChar(UINT codePage, std::string_view source, std::wstring& bu
 const WCHAR* to_wchar(const ACHAR* src)
 {
 	if (!src) {
-		return L"";
+		return LTEXT("");
 	}
 
 	return to_wchar(std::string_view(src));
@@ -203,7 +203,7 @@ const WCHAR* to_wchar(const ACHAR* pSrc, size_t nSrcLength)
 const WCHAR* to_wchar(std::string_view source)
 {
 	if (source.empty()) {
-		return L"";
+		return LTEXT("");
 	}
 
 	//必要なサイズを計算
@@ -234,15 +234,15 @@ const ACHAR* to_achar(const WCHAR* src)
 		return "";
 	}
 
-	return to_achar(std::wstring_view(src));
+	return to_achar(sakura::wstring_view(src));
 }
 
 const ACHAR* to_achar(const WCHAR* pSrc, size_t nSrcLength)
 {
-	return to_achar(std::wstring_view(pSrc, nSrcLength));
+	return to_achar(sakura::wstring_view(pSrc, nSrcLength));
 }
 
-const ACHAR* to_achar(std::wstring_view source)
+const ACHAR* to_achar(sakura::wstring_view source)
 {
 	if (source.empty()) {
 		return "";
@@ -278,7 +278,7 @@ namespace cxx {
  * @param [in] source 変換元のワイド文字列
  * @param [in, opt] codePage 変換に使用するコードページ。
  */
-std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
+std::string to_string(sakura::wstring_view source, _In_opt_ UINT codePage) {
 	if (source.empty()) {
 		return "";
 	}
@@ -287,7 +287,7 @@ std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
 		const auto langId = ::GetThreadUILanguage();
 		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
 
-		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+		sakura::wstring localeName{ LOCALE_NAME_MAX_LENGTH, LCHAR('\0') };
 		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
 
 		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
@@ -310,16 +310,16 @@ std::string to_string(std::wstring_view source, _In_opt_ UINT codePage) {
  * @param [in] source 変換元のナロー文字列
  * @param [in, opt] codePage 変換に使用するコードページ。
  */
-std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
+sakura::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 	if (source.empty()) {
-		return L"";
+		return LTEXT("");
 	}
 
 	if (CP_ACP == codePage) {
 		const auto langId = ::GetThreadUILanguage();
 		const auto lcid = MAKELCID(langId, SORT_DEFAULT);
 
-		std::wstring localeName{ LOCALE_NAME_MAX_LENGTH, L'\0' };
+		sakura::wstring localeName{ LOCALE_NAME_MAX_LENGTH, LCHAR('\0') };
 		LCIDToLocaleName(lcid, std::data(localeName), LOCALE_NAME_MAX_LENGTH, 0);
 
 		if (2 != ::GetLocaleInfoEx(localeName.c_str(), LOCALE_IDEFAULTANSICODEPAGE | LOCALE_RETURN_NUMBER, LPWSTR(&codePage), 2)) {
@@ -328,7 +328,7 @@ std::wstring to_wstring(std::string_view source, _In_opt_ UINT codePage) {
 	}
 
 	// 変換に必要な出力バッファを確保する
-	std::wstring buffer;
+	sakura::wstring buffer;
 
 	// 変換を実行する
 	cxx::MultiByteToWideChar(codePage, source, buffer);

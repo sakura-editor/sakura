@@ -106,14 +106,14 @@ HMODULE PythonApi::LoadModule(const A& arg)
 	const auto szPythonDir = cxx::NullTerminatedString<WCHAR>{ arg };
 
 	// 入力元を文字列として扱う
-	std::wstring_view pythonDir{ szPythonDir };
+	sakura::wstring_view pythonDir{ szPythonDir };
 
 	// python3.dllの名前は環境別で固定
 	constexpr auto& dllName =
 #ifdef __MINGW32__
-		L"libpython3.dll"
+		LTEXT("libpython3.dll")
 #else
-		L"python3.dll"
+		LTEXT("python3.dll")
 #endif
 	;
 
@@ -153,7 +153,7 @@ HMODULE PythonApi::LoadModule(const A& arg)
 			0,
 			nullptr
 		);
-		std::wstring str = std::regex_replace(pMsg, std::wregex(L"%1"), dllPath.native());
+		sakura::wstring str = std::regex_replace(pMsg, std::wregex(LTEXT("%1")), dllPath.native());
 		::LocalFree(HLOCAL(pMsg));
 		throw std::domain_error(cxx::to_string(str, CP_UTF8));
 	}
@@ -247,7 +247,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 	const MacroFuncInfo* info = &CSMacroMgr::GetCommandInfo()[idx];
 
 	size_t nArgs = PyTuple_Size(args);
-	std::vector<std::wstring> strArguments(nArgs);
+	std::vector<sakura::wstring> strArguments(nArgs);
 	for (size_t i=0; i<nArgs; ++i) {
 		PyObject* arg = PyTuple_GetItem(args, i);
 		if (!arg) {
@@ -263,7 +263,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 
 		if (varType == VT_BSTR) {
 			Py_ssize_t sz = 0;
-			wchar_t* str = PyUnicode_AsWideCharString(arg, &sz);
+			WCHAR* str = PyUnicode_AsWideCharString(arg, &sz);
 			strArguments[i].assign(str, sz);
 			PyMem_Free(str);
 		}else if (varType == VT_I4) {
@@ -274,7 +274,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		}
 	}
 
-	const wchar_t* arguments[8]{};
+	const WCHAR* arguments[8]{};
 	int argLengths[8]{};
 	for (size_t i=0; i<nArgs; ++i) {
 		arguments[i] = strArguments[i].c_str();
@@ -285,7 +285,7 @@ PyObject* handleCommand(PyObject* self, PyObject* args)
 		&GetEditWnd().GetActiveView(),
 		(EFunctionCode)info->m_nFuncID, arguments, argLengths, (int)nArgs);
 	if (!ret) {
-		DEBUG_TRACE(L"CMacro::HandleCommand failed, EFunctionCode: %d\n", info->m_nFuncID);
+		DEBUG_TRACE(LTEXT("CMacro::HandleCommand failed, EFunctionCode: %d\n"), info->m_nFuncID);
 	}
 	return Py_GetConstant(Py_CONSTANT_NONE);
 }
@@ -326,7 +326,7 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 		::VariantInit(&vtArgs[i]);
 		if (varType == VT_BSTR) {
 			Py_ssize_t sz = 0;
-			wchar_t* str = PyUnicode_AsWideCharString(arg, &sz);
+			WCHAR* str = PyUnicode_AsWideCharString(arg, &sz);
 			assert(str);
 			SysString S(str, (int)sz);
 			Wrap(&vtArgs[i])->Receive(S);
@@ -347,9 +347,9 @@ PyObject* handleFunction(PyObject* self, PyObject* args)
 			&GetEditWnd().GetActiveView(),
 			(EFunctionCode)info->m_nFuncID, vtArgs, (int)nArgs, vtResult);
 		if (!ret) {
-			DEBUG_TRACE(L"CMacro::HandleFunction failed, EFunctionCode: %d\n", info->m_nFuncID);
+			DEBUG_TRACE(LTEXT("CMacro::HandleFunction failed, EFunctionCode: %d\n"), info->m_nFuncID);
 		}
-		std::wstring str;
+		sakura::wstring str;
 		switch (vtResult.vt) {
 		case VT_I4:
 			retObj = PyLong_FromLong(vtResult.lVal);
@@ -406,7 +406,7 @@ CPythonMacroManager::CPythonMacroManager()
 }
 
 static
-void ShowError(HWND hWndMessageOwner, std::wstring_view caption)
+void ShowError(HWND hWndMessageOwner, sakura::wstring_view caption)
 {
 	USE_PYTHON_API(PyErr_Fetch);
 	USE_PYTHON_API(PyErr_NormalizeException);
@@ -440,7 +440,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 	try {
 		SFilePath dir = GetDllShareData().m_Common.m_sMacro.m_szPythonDirectory;
 
-		if (!s_hModule || std::wstring_view(dir) != std::wstring_view(prev_dir)) {
+		if (!s_hModule || sakura::wstring_view(dir) != sakura::wstring_view(prev_dir)) {
 			prev_dir = dir;
 			if (s_hModule) {
 				::FreeLibrary(s_hModule);
@@ -452,7 +452,7 @@ bool CPythonMacroManager::ExecKeyMacro(CEditView *EditView, int flags [[maybe_un
 		}
 	}
 	catch (const std::domain_error& e) {
-		ErrorMessage(nullptr, L"%ls", cxx::to_wstring(e.what(), CP_UTF8).c_str());
+		ErrorMessage(nullptr, LTEXT("%ls"), cxx::to_wstring(e.what(), CP_UTF8).c_str());
 		PythonApi::resetInstance();
 		return false;
 	}
@@ -551,7 +551,7 @@ BOOL CPythonMacroManager::LoadKeyMacro(
 {
 	// CTextInputStream は UTF-8 BOM がないファイルを SJIS とみなしてしまうので使わない
 	FILE* f = nullptr;
-	if (::_wfopen_s(&f, pszPath, L"rb")) {
+	if (::_wfopen_s(&f, pszPath, LTEXT("rb"))) {
 		ResetReady();
 		return FALSE;
 	}
@@ -591,7 +591,7 @@ BOOL CPythonMacroManager::LoadKeyMacroStr(
 // static
 CMacroManagerBase* CPythonMacroManager::Creator(const WCHAR* FileExt)
 {
-	if (_wcsicmp( FileExt, L"py" ) == 0) {
+	if (_wcsicmp( FileExt, LTEXT("py") ) == 0) {
 		return new CPythonMacroManager;
 	}
 	return nullptr;

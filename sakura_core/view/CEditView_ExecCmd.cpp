@@ -191,9 +191,9 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 	HANDLE hStdIn = nullptr;
 	if(bSendStdin){	/* 現在編集中のファイルを子プロセスの標準入力へ */
 		SFilePath szTempFileName;
-		szTempFileName = GetTempFilePath(L"skr");
+		szTempFileName = GetTempFilePath(LTEXT("skr"));
 
-		DEBUG_TRACE(L"CEditView::ExecCmd() TempFilename=[%s]\n", szTempFileName.c_str());
+		DEBUG_TRACE(LTEXT("CEditView::ExecCmd() TempFilename=[%s]\n"), szTempFileName.c_str());
 
 		nFlgOpt = bBeforeTextSelected ? 0x01 : 0x00;		/* 選択範囲を出力 */
 
@@ -250,11 +250,11 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 		//コマンドライン文字列作成
 		auto_sprintf_s(
 			cmdline, std::size(cmdline),
-			L"\"%s\\%s\" %s%s%s",
+			LTEXT("\"%s\\%s\" %s%s%s"),
 			szCmdDir,
-			L"cmd.exe",
-			( outputEncoding == CODE_UNICODE ? L"/U" : L"" ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
-			( bGetStdout ? L"/C " : L"/K " ),
+			LTEXT("cmd.exe"),
+			( outputEncoding == CODE_UNICODE ? LTEXT("/U") : LTEXT("") ),		// Unicdeモードでコマンド実行	2008/6/17 Uchi
+			( bGetStdout ? LTEXT("/C ") : LTEXT("/K ") ),
 			pszCmd
 		);
 		if( CreateProcess( nullptr, cmdline, nullptr, nullptr, TRUE,
@@ -318,20 +318,20 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 			CFormatManager().MyGetDateFormat( systime, szTextDate, int(std::size(szTextDate)) - 1 );
 			CFormatManager().MyGetTimeFormat( systime, szTextTime, int(std::size(szTextTime)) - 1 );
 			WCHAR szOutTemp[1024*2+100];
-			oa.OutputW( L"\r\n" );
-			oa.OutputW( L"#============================================================\r\n" );
+			oa.OutputW( LTEXT("\r\n") );
+			oa.OutputW( LTEXT("#============================================================\r\n") );
 			int len = auto_snprintf_s(szOutTemp, std::size(szOutTemp),
-				L"#DateTime : %s %s\r\n", szTextDate, szTextTime );
+				LTEXT("#DateTime : %s %s\r\n"), szTextDate, szTextTime );
 			oa.OutputW( szOutTemp, len );
 			len = auto_snprintf_s(szOutTemp, std::size(szOutTemp),
-				L"#CmdLine  : %s\r\n", pszCmd );
+				LTEXT("#CmdLine  : %s\r\n"), pszCmd );
 			oa.OutputW( szOutTemp, len );
-			oa.OutputW( L"#============================================================\r\n" );
+			oa.OutputW( LTEXT("#============================================================\r\n") );
 		}
 		
 		//charで読む
 		typedef char PIPE_CHAR;
-		const int WORK_NULL_TERMS = sizeof(wchar_t); // 出力用\0の分
+		const int WORK_NULL_TERMS = sizeof(WCHAR); // 出力用\0の分
 		const int MAX_BUFIDX = 10; // bufidxの分
 		const DWORD MAX_WORK_READ = 1024*5; // 5KiB ReadFileで読み込む限界値
 		// 2010.04.13 Moca バッファサイズの調整 1022 Byte 読み取りを 5KiBに変更
@@ -391,37 +391,37 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 					}
 					// Unicode で データを受け取る start 2008/6/8 Uchi
 					if( outputEncoding == CODE_UNICODE ){
-						wchar_t*	workw;
+						WCHAR*	workw;
 						int			read_cntw;
 						bool		bCarry;
 						char		byteCarry = 0;
-						workw = (wchar_t*)work;
-						read_cntw = (int)read_cnt/sizeof(wchar_t);
-						if( read_cnt % (int)sizeof(wchar_t) ){
+						workw = (WCHAR*)work;
+						read_cntw = (int)read_cnt/sizeof(WCHAR);
+						if( read_cnt % (int)sizeof(WCHAR) ){
 							byteCarry = work[read_cnt-1];
 						}
 						if(read_cntw){
-							workw[read_cntw] = L'\0';
+							workw[read_cntw] = LCHAR('\0');
 							bCarry = false;
 							//読み出した文字列をチェックする
-							if (workw[read_cntw-1] == L'\r') {
+							if (workw[read_cntw-1] == LCHAR('\r')) {
 								bCarry = true;
 								read_cntw -= 1; // 2010.04.12 1文字余分に消されてた
-								workw[read_cntw] = L'\0';
+								workw[read_cntw] = LCHAR('\0');
 							}
 							if( !oa.OutputW( workw, read_cntw ) ){
 								goto finish;
 							}
 							bufidx = 0;
 							if (bCarry) {
-								workw[0] = L'\r'; // 2010.04.12 'r' -> '\r'
-								bufidx = sizeof(wchar_t);
-								DEBUG_TRACE( L"ExecCmd: Carry last character [CR]\n" );
+								workw[0] = LCHAR('\r'); // 2010.04.12 'r' -> '\r'
+								bufidx = sizeof(WCHAR);
+								DEBUG_TRACE( LTEXT("ExecCmd: Carry last character [CR]\n") );
 							}
 						}
-						if( read_cnt % (int)sizeof(wchar_t) ){
+						if( read_cnt % (int)sizeof(WCHAR) ){
 							// 高確率で0だと思うが1だと困る
-							DEBUG_TRACE( L"ExecCmd: Carry Unicode 1byte [%x]\n", byteCarry );
+							DEBUG_TRACE( LTEXT("ExecCmd: Carry Unicode 1byte [%x]\n"), byteCarry );
 							work[bufidx] = byteCarry;
 							bufidx += 1;
 						}
@@ -474,7 +474,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 							}
 							work[0] = tmp;
 							bufidx = 1;
-							DEBUG_TRACE( L"ExecCmd: Carry last character [%x]\n", tmp );
+							DEBUG_TRACE( LTEXT("ExecCmd: Carry last character [%x]\n"), tmp );
 						}
 					}
 					else if (outputEncoding == CODE_UTF8) {
@@ -502,7 +502,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 							bufidx = 0;
 						}
 						else {
-							DEBUG_TRACE(L"read_cnt %d j %d\n", read_cnt, j);
+							DEBUG_TRACE(LTEXT("read_cnt %d j %d\n"), read_cnt, j);
 							char tmp[5];
 							int len = read_cnt - j;
 							memcpy(tmp, &work[j], len);
@@ -513,7 +513,7 @@ bool CEditView::ExecCmd( const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDi
 							}
 							memcpy(work, tmp, len);
 							bufidx = len;
-							DEBUG_TRACE(L"ExecCmd: Carry last character [%x]\n", tmp[0]);
+							DEBUG_TRACE(LTEXT("ExecCmd: Carry last character [%x]\n"), tmp[0]);
 						}
 					}
 					// Jan. 23, 2004 genta
@@ -551,15 +551,15 @@ user_cancel:
 		// 最後の文字の出力(たいていCR)
 		if( 0 < bufidx ){
 			if( outputEncoding == CODE_UNICODE ){
-				if( bufidx % (int)sizeof(wchar_t) ){
-					DEBUG_TRACE( L"ExecCmd: Carry last Unicode byte [%x]\n", work[bufidx-1] );
+				if( bufidx % (int)sizeof(WCHAR) ){
+					DEBUG_TRACE( LTEXT("ExecCmd: Carry last Unicode byte [%x]\n"), work[bufidx-1] );
 					// UTF-16なのに奇数バイトだった
 					work[bufidx] = 0x00; // 上位バイトを0にしてごまかす
 					bufidx += 1;
 				}
-				wchar_t* workw = (wchar_t*)work;
-				int bufidxw = bufidx / (int)sizeof(wchar_t);
-				workw[bufidxw] = L'\0';
+				WCHAR* workw = (WCHAR*)work;
+				int bufidxw = bufidx / (int)sizeof(WCHAR);
+				workw[bufidxw] = LCHAR('\0');
 				oa.OutputW( workw, bufidxw );
 			}else if( outputEncoding == CODE_SJIS ) {
 				work[bufidx] = '\0';
@@ -574,7 +574,7 @@ user_cancel:
 			//	2006.12.03 maru アウトプットウィンドウにのみ出力
 			//最後にテキストを追加
 			// L"\r\n中断しました。\r\n"
-			std::wstring msg( LS(STR_EDITVIEW_EXECCMD_STOP) );
+			sakura::wstring msg( LS(STR_EDITVIEW_EXECCMD_STOP) );
 			oa.OutputW( msg.c_str(), (int)msg.length() );
 		}
 		

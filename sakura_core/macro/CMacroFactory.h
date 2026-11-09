@@ -53,7 +53,7 @@ public:
 	CMacroManagerBase* Create(const WCHAR* ext);
 
 private:
-	std::wstring Ext2Key(const WCHAR *ext);
+	sakura::wstring Ext2Key(const WCHAR *ext);
 
 	// Jan. 31, 2004 genta
 	// バイナリサイズ削減のため拡張子保持用mapを削除

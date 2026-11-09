@@ -66,7 +66,7 @@ bool CDocFileOperation::OpenFileDialog(
 	HWND				hwndParent,		//!< [in]
 	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダーを指定できる
 	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
-	std::vector<std::wstring>&	files
+	std::vector<sakura::wstring>&	files
 ) const
 {
 	/* アクティブにする */
@@ -77,7 +77,7 @@ bool CDocFileOperation::OpenFileDialog(
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		hwndParent,
-		L"*.*",
+		LTEXT("*.*"),
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),															// MRUリストのファイルのリスト
 		CMRUFolder().GetPathList()														// OPENFOLDERリストのファイルのリスト
@@ -208,7 +208,7 @@ bool CDocFileOperation::SaveFileDialog(
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
 	// 2008/6/14 大きく改造 Uchi
-	std::wstring strDefaultWildCard;	// ユーザー指定拡張子
+	sakura::wstring strDefaultWildCard;	// ユーザー指定拡張子
 	
 	{
 		LPCWSTR	szExt;
@@ -216,20 +216,20 @@ bool CDocFileOperation::SaveFileDialog(
 		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
-			szExt = L"";
+			szExt = LTEXT("");
 		}
 		else {
 			szExt = this->m_pcDocRef->m_cDocFile.GetFilePathClass().GetExt();
 		}
 		if (type.m_nIdx == 0) {
 			// 基本
-			if (szExt[0] == L'\0') { 
+			if (szExt[0] == LCHAR('\0')) { 
 				// ファイルパスが無いまたは拡張子なし
-				strDefaultWildCard = L"*.txt";
+				strDefaultWildCard = LTEXT("*.txt");
 			}
 			else {
 				// 拡張子あり
-				strDefaultWildCard = L"*";
+				strDefaultWildCard = LTEXT("*");
 				strDefaultWildCard += szExt;
 			}
 		}
@@ -240,23 +240,23 @@ bool CDocFileOperation::SaveFileDialog(
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			//「新規から保存時は全ファイル表示」オプション	// 2008/6/15 バグフィックス Uchi
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveNew )
-				strDefaultWildCard += L";*.*";	// 全ファイル表示
+				strDefaultWildCard += LTEXT(";*.*");	// 全ファイル表示
 		}
 		else {
 			//「新規以外から保存時は全ファイル表示」オプション
 			if( GetDllShareData().m_Common.m_sFile.m_bNoFilterSaveFile )
-				strDefaultWildCard += L";*.*";	// 全ファイル表示
+				strDefaultWildCard += LTEXT(";*.*");	// 全ファイル表示
 		}
 	}
 
 	// 無題の時は日時を付ける
-	if( pSaveInfo->cFilePath[0] == L'\0' ){
+	if( pSaveInfo->cFilePath[0] == LCHAR('\0') ){
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
-		auto dateTimeString = GetDateTimeFormat( L"_%Y%m%d_%H%M%S", localTime );
+		auto dateTimeString = GetDateTimeFormat( LTEXT("_%Y%m%d_%H%M%S"), localTime );
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWnd().GetHwnd() );
 		const int nId = (node != nullptr && 0 < node->m_nId) ? node->m_nId : 0;
-		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), L"%s%.0d%s", LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
+		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), LTEXT("%s%.0d%s"), LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
 	}
 
 	// ダイアログを表示
@@ -401,7 +401,7 @@ bool CDocFileOperation::FileSaveAs( const WCHAR* filename,ECodeType eCodeType, E
 	}
 	if( bDialog ){
 		if(!filename && CAppMode::getInstance()->IsViewMode()){
-			sSaveInfo.cFilePath = L""; //※読み込み専用モードのときはファイル名を指定しない
+			sSaveInfo.cFilePath = LTEXT(""); //※読み込み専用モードのときはファイル名を指定しない
 		}
 
 		//ダイアログ表示
@@ -484,7 +484,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	//ファイル名指定が無い場合はダイアログで入力させる
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
-		std::vector<std::wstring> files;
+		std::vector<sakura::wstring> files;
 		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}

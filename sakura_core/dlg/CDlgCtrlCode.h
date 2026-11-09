@@ -35,7 +35,7 @@ public:
 	*/
 	int DoModal(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);	/* モーダルダイアログの表示 */
 
-	wchar_t GetCharCode() const{ return m_nCode; } //!< 選択された文字コードを取得
+	WCHAR GetCharCode() const{ return m_nCode; } //!< 選択された文字コードを取得
 
 private:
 	/*
@@ -53,6 +53,6 @@ private:
 	/*
 	|| メンバ変数
 	*/
-	wchar_t		m_nCode;	// コード
+	WCHAR		m_nCode;	// コード
 };
 #endif /* SAKURA_CDLGCTRLCODE_84B2AD70_76BB_4CE3_9B09_4D1AF49BF5EE_H_ */

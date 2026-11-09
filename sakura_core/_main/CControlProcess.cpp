@@ -43,13 +43,13 @@ std::filesystem::path CControlProcess::GetIniFileName() const
 	}
 
 	// exe基準のiniファイルパスを得る
-	auto iniPath = GetExeFileName().replace_extension(L".ini");
+	auto iniPath = GetExeFileName().replace_extension(LTEXT(".ini"));
 
 	// マルチユーザー用のiniファイルパス
 	//		exeと同じフォルダーに置かれたマルチユーザー構成設定ファイル（sakura.exe.ini）の内容
 	//		に従ってマルチユーザー用のiniファイルパスを決める
-	auto exeIniPath = GetExeFileName().concat(L".ini");
-	if (bool isMultiUserSeggings = ::GetPrivateProfileInt(L"Settings", L"MultiUser", 0, exeIniPath.c_str()); isMultiUserSeggings) {
+	auto exeIniPath = GetExeFileName().concat(LTEXT(".ini"));
+	if (bool isMultiUserSeggings = ::GetPrivateProfileInt(LTEXT("Settings"), LTEXT("MultiUser"), 0, exeIniPath.c_str()); isMultiUserSeggings) {
 		return GetPrivateIniFileName(exeIniPath, iniPath.filename());
 	}
 
@@ -66,9 +66,9 @@ std::filesystem::path CControlProcess::GetIniFileName() const
 /*!
 	@brief マルチユーザー用のiniファイルパスを取得する
  */
-std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring& exeIniPath, const std::wstring& filename) const
+std::filesystem::path CControlProcess::GetPrivateIniFileName(const sakura::wstring& exeIniPath, const sakura::wstring& filename) const
 {
-	const auto nFolder = ::GetPrivateProfileInt(L"Settings", L"UserRootFolder", 0, exeIniPath.c_str());
+	const auto nFolder = ::GetPrivateProfileInt(LTEXT("Settings"), LTEXT("UserRootFolder"), 0, exeIniPath.c_str());
 	KNOWNFOLDERID refFolderId;
 	switch (nFolder) {
 	case 1:
@@ -89,12 +89,12 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	std::filesystem::path privateIniPath(pFolderPath);
 	::CoTaskMemFree(pFolderPath);
 
-	std::wstring subFolder(_MAX_DIR, L'\0');
-	::GetPrivateProfileString(L"Settings", L"UserSubFolder", L"sakura", subFolder.data(), (DWORD)subFolder.capacity(), exeIniPath.c_str());
+	sakura::wstring subFolder(_MAX_DIR, LCHAR('\0'));
+	::GetPrivateProfileString(LTEXT("Settings"), LTEXT("UserSubFolder"), LTEXT("sakura"), subFolder.data(), (DWORD)subFolder.capacity(), exeIniPath.c_str());
 	subFolder.assign(subFolder.data());
 	if (subFolder.empty())
 	{
-		subFolder = L"sakura";
+		subFolder = LTEXT("sakura");
 	}
 	if (nFolder == 3) {
 		privateIniPath.append("Desktop");
@@ -124,7 +124,7 @@ bool CControlProcess::InitializeProcess(
 	int nCmdShow [[maybe_unused]] // 指定を無視して非表示で起動する
 )
 {
-	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CControlProcess::InitializeProcess") );
 
 	// アプリケーション実行検出用(インストーラで使用)
 	try
@@ -145,7 +145,7 @@ bool CControlProcess::InitializeProcess(
 	const auto pszProfileName = GetProfileName();
 
 	// 初期化完了イベントの名前を組み立てる
-	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
+	sakura::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
 
 	// 起動元が作成した初期化完了イベントを開く。
@@ -153,7 +153,7 @@ bool CControlProcess::InitializeProcess(
 	HandleHolder hEvent{ ::OpenEventW(EVENT_MODIFY_STATE, FALSE, std::data(strInitEvent)) };
 
 	/* コントロールプロセスの目印 */
-	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
+	sakura::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
 	try
 	{
@@ -173,7 +173,7 @@ bool CControlProcess::InitializeProcess(
 	if (ERROR_ALREADY_EXISTS == ::GetLastError())
 	{
 		throw basis::make_initialization_error(
-			L"",
+			LTEXT(""),
 			static_cast<int>(EAppExitCode::Exited)
 		);
 	}
@@ -203,12 +203,12 @@ bool CControlProcess::InitializeProcess(
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
 	RefreshString();
 
-	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
+	MY_TRACETIME( cRunningTimer, LTEXT("Before new CControlTray") );
 
 	/* タスクトレイにアイコン作成 */
 	m_pcTray = std::make_unique<CControlTray>();
 
-	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
+	MY_TRACETIME( cRunningTimer, LTEXT("After new CControlTray") );
 
 	HWND hwnd = m_pcTray->Create( GetProcessInstance() );
 	if( !hwnd ){

@@ -19,7 +19,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return JISToUnicode(cSrc, pDst, m_base64decode); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToJIS(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -29,9 +29,9 @@ public:
 protected:
 	// 2008.11.10  変換ロジックを書き直す
 	static int _JisToUni_block( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, const EMyJisEscseq eMyJisesc, bool* pbError );
-	static int JisToUni( const char* pSrc, const int nSrcLen, wchar_t* pDst, bool* pbError );
+	static int JisToUni( const char* pSrc, const int nSrcLen, WCHAR* pDst, bool* pbError );
 	static int _SjisToJis_char( const unsigned char* pSrc, unsigned char* pDst, ECharSet eCharset, bool* pbError );
-	static int UniToJis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool* pbError );
+	static int UniToJis( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool* pbError );
 
 private:
 	//変換方針

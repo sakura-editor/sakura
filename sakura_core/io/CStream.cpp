@@ -49,7 +49,7 @@ public:
 		m_dwAttribute = 0;
 	}
 private:
-	std::wstring	m_strPath;
+	sakura::wstring	m_strPath;
 	bool			m_bAttributeChanged = false;
 	DWORD			m_dwAttribute = 0;
 };

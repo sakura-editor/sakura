@@ -49,18 +49,18 @@ public:
 
 	//データ取得
 	CLogicInt		GetLengthWithoutEOL() const			{ return m_cLine.GetStringLength() - m_cEol.GetLen(); } //!< 戻り値は文字単位。
-	const wchar_t*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
+	const WCHAR*	GetPtr() const						{ return m_cLine.GetStringPtr(); }
 	CLogicInt		GetLengthWithEOL() const			{ return m_cLine.GetStringLength(); }	//	CMemoryIterator用
 #ifdef USE_STRICT_INT
-	const wchar_t*	GetDocLineStrWithEOL(int* pnLen) const //###仮の名前、仮の対処
+	const WCHAR*	GetDocLineStrWithEOL(int* pnLen) const //###仮の名前、仮の対処
 	{
 		CLogicInt n;
-		const wchar_t* p = GetDocLineStrWithEOL(&n);
+		const WCHAR* p = GetDocLineStrWithEOL(&n);
 		*pnLen = n;
 		return p;
 	}
 #endif
-	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
+	const WCHAR*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
 	{
 		if(this){ // TODO: Remove "this" check
 			*pnLen = GetLengthWithEOL(); return GetPtr();
@@ -69,7 +69,7 @@ public:
 			*pnLen = 0; return nullptr;
 		}
 	}
-	static const wchar_t* GetDocLineStrWithEOL_Safe(const CDocLine* docline, CLogicInt* pnLen) //###仮の名前、仮の対処
+	static const WCHAR* GetDocLineStrWithEOL_Safe(const CDocLine* docline, CLogicInt* pnLen) //###仮の名前、仮の対処
 	{
 		if(docline){
 			return docline->GetDocLineStrWithEOL(pnLen);
@@ -104,7 +104,7 @@ public:
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
-	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
+	void SetDocLineString(const WCHAR* pData, int nLength, bool bEnableExtEol);
 	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
 	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 

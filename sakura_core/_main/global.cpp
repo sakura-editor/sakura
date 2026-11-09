@@ -58,7 +58,7 @@ HINSTANCE G_AppInstance()
 LPCWSTR GetProfileName() noexcept
 {
 	const auto cmdline = CCommandLine::getInstance();
-	return cmdline ? cmdline->GetProfileName() : L"";
+	return cmdline ? cmdline->GetProfileName() : LTEXT("");
 }
 
 /*!

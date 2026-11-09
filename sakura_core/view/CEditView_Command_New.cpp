@@ -36,7 +36,7 @@
 #include "dlg/CDlgFavorite.h"	//履歴の管理	//@@@ 2003.04.08 MIK
 #include "debug/CRunningTimer.h"
 
-static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpeLineData& lineData, int opeSeq)
+static void StringToOpeLineData(const WCHAR* pLineData, int nLineDataLen, COpeLineData& lineData, int opeSeq)
 {
 	int nBegin = 0;
 	int i;
@@ -65,14 +65,14 @@ static void StringToOpeLineData(const wchar_t* pLineData, int nLineDataLen, COpe
 */
 void CEditView::InsertData_CEditView(
 	CLayoutPoint	ptInsertPos,	// [in] 挿入位置
-	const wchar_t*	pData,			// [in] 挿入テキスト
+	const WCHAR*	pData,			// [in] 挿入テキスト
 	int				nDataLen,		// [in] 挿入テキスト長。文字単位。
 	CLayoutPoint*	pptNewPos,		// [out] 挿入された部分の次の位置のレイアウト位置
 	bool			bRedraw
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::InsertData_CEditView" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditView::InsertData_CEditView") );
 #endif
 
 	//2007.10.18 kobake COpe処理をここにまとめる
@@ -104,7 +104,7 @@ void CEditView::InsertData_CEditView(
 	bool			bHintPrev = false;	// 更新が前行からになる可能性があることを示唆する
 	bool			bHintNext = false;	// 更新が次行からになる可能性があることを示唆する
 	bool			bKinsoku;			// 禁則の有無
-	const wchar_t*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
+	const WCHAR*	pLine = m_pcEditDoc->m_cLayoutMgr.GetLineStr( ptInsertPos.GetY2(), &nLineLen, &pcLayout );
 
 	//禁則がある場合は1行前から再描画を行う	@@@ 2002.04.19 MIK
 	bKinsoku = ( m_pTypeData->m_bWordWrap
@@ -115,7 +115,7 @@ void CEditView::InsertData_CEditView(
 
 	CLayoutInt	nLineAllColLen;
 	CLayoutInt	nColumnFrom = ptInsertPos.GetX2();
-	CNativeW	cMem(L"");
+	CNativeW	cMem(LTEXT(""));
 	COpeLineData insData;
 	if( pLine ){
 		CLogicInt	nIdxFrom = CLogicInt(0);
@@ -133,14 +133,14 @@ void CEditView::InsertData_CEditView(
 
 		// 行終端より右に挿入しようとした
 		if( nLineAllColLen > 0 ){
-			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
+			int nSpWidth = GetTextMetrics().CalcTextWidth3(LTEXT(" "), 1);
 			// 終端直前から挿入位置まで空白を埋める為の処理
 			// 行終端が何らかの改行コードか?
 			if( pcLayout->GetLayoutEol().IsValid() ){
 				nIdxFrom = nLineLen - CLogicInt(1);
 				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen + 1)/ nSpWidth + nDataLen );
 				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen + 1; i += nSpWidth ){
-					cMem += L' ';
+					cMem += LCHAR(' ');
 				}
 				cMem.AppendString( pData, nDataLen );
 			}
@@ -148,7 +148,7 @@ void CEditView::InsertData_CEditView(
 				nIdxFrom = nLineLen;
 				cMem.AllocStringBuffer( (Int)(ptInsertPos.GetX2() - nLineAllColLen) / nSpWidth + nDataLen );
 				for( int i = 0; i < ptInsertPos.GetX2() - nLineAllColLen; i += nSpWidth ){
-					cMem += L' ';
+					cMem += LCHAR(' ');
 				}
 				cMem.AppendString( pData, nDataLen );
 				// 1行多く更新する必要がある可能性がある
@@ -169,10 +169,10 @@ void CEditView::InsertData_CEditView(
 			bHintPrev = true;	// 更新が前行からになる可能性がある
 		}
 		if( 0 < ptInsertPos.GetX2() ){
-			int nSpWidth = GetTextMetrics().CalcTextWidth3(L" ", 1);
+			int nSpWidth = GetTextMetrics().CalcTextWidth3(LTEXT(" "), 1);
 			cMem.AllocStringBuffer( (Int)ptInsertPos.GetX2() / nSpWidth + nDataLen );
 			for( CLayoutInt i = CLayoutInt(0); i < ptInsertPos.GetX2(); i+=nSpWidth ){
-				cMem += L' ';
+				cMem += LCHAR(' ');
 			}
 			cMem.AppendString( pData, nDataLen );
 			StringToOpeLineData( cMem.GetStringPtr(), cMem.GetStringLength(), insData, opeSeq );
@@ -208,7 +208,7 @@ void CEditView::InsertData_CEditView(
 	}
 
 	// 指定された行のデータ内の位置に対応する桁の位置を調べる
-	const wchar_t*	pLine2;
+	const WCHAR*	pLine2;
 	CLogicInt		nLineLen2;
 	pLine2 = m_pcEditDoc->m_cLayoutMgr.GetLineStr( pptNewPos->GetY2(), &nLineLen2, &pcLayout );
 	if( pLine2 ){
@@ -357,9 +357,9 @@ void CEditView::DeleteData2(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(1)" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditView::DeleteData(1)") );
 #endif
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nIdxFrom;
 
@@ -412,7 +412,7 @@ void CEditView::DeleteData2(
 		for(int i = 0; i < size; i++){
 			bufSize += memDeleted[i].cmemLine.GetStringLength();
 		}
-		pcMem->SetString(L"");
+		pcMem->SetString(LTEXT(""));
 		pcMem->AllocStringBuffer( bufSize );
 		for(int i = 0; i < size; i++){
 			pcMem->AppendNativeData(memDeleted[i].cmemLine);
@@ -440,9 +440,9 @@ void CEditView::DeleteData(
 )
 {
 #ifdef _DEBUG
-	MY_RUNNINGTIMER( cRunningTimer, L"CEditView::DeleteData(2)" );
+	MY_RUNNINGTIMER( cRunningTimer, LTEXT("CEditView::DeleteData(2)") );
 #endif
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLayoutInt	nLineNum;
 	CLogicInt	nCurIdx;
@@ -577,7 +577,7 @@ void CEditView::DeleteData(
 			/* データ置換 削除&挿入にも使える */
 			ReplaceData_CEditView(
 				GetSelectionInfo().m_sSelect,
-				L"",					/* 挿入するデータ */
+				LTEXT(""),					/* 挿入するデータ */
 				CLogicInt(0),			/* 挿入するデータの長さ */
 				bRedraw,
 				m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk()
@@ -625,7 +625,7 @@ void CEditView::DeleteData(
 		sDelRangeLogic.SetTo(CLogicPoint(nNxtIdx + pcLayout->GetLogicOffset(), GetCaret().GetCaretLogicPos().GetY()));
 		ReplaceData_CEditView(
 			sDelRange,
-			L"",				/* 挿入するデータ */
+			LTEXT(""),				/* 挿入するデータ */
 			CLogicInt(0),		/* 挿入するデータの長さ */
 			bRedraw,
 			m_bDoing_UndoRedo?nullptr:m_cCommander.GetOpeBlk(),
@@ -659,7 +659,7 @@ end_of_func:;
 
 void CEditView::ReplaceData_CEditView(
 	const CLayoutRange&	sDelRange,			//!< [in]  削除範囲レイアウト単位
-	const wchar_t*		pInsData,			//!< [in]  挿入するデータ
+	const WCHAR*		pInsData,			//!< [in]  挿入するデータ
 	CLogicInt			nInsDataLen,		//!< [in]  挿入するデータの長さ
 	bool				bRedraw,
 	COpeBlk*			pcOpeBlk,
@@ -684,7 +684,7 @@ void CEditView::ReplaceData_CEditView(
 
 void CEditView::ReplaceData_CEditView2(
 	const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
-	const wchar_t*		pInsData,			// 挿入するデータ
+	const WCHAR*		pInsData,			// 挿入するデータ
 	CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 	bool				bRedraw,
 	COpeBlk*			pcOpeBlk,
@@ -727,7 +727,7 @@ bool CEditView::ReplaceData_CEditView3(
 			//	先頭
 			const CLayout*	pcLayout;
 			CLogicInt		len;
-			const wchar_t*	line = nullptr;
+			const WCHAR*	line = nullptr;
 			line = m_pcEditDoc->m_cLayoutMgr.GetLineStr( sDelRange.GetFrom().GetY2(), &len, &pcLayout );
 			if( line ){
 				CLogicInt pos = LineColumnToIndex( pcLayout, sDelRange.GetFrom().GetX2() );
@@ -963,7 +963,7 @@ void CEditView::RTrimPrevLine( void )
 
 	if( GetCaret().GetCaretLogicPos().y > 0 ){
 		int				nLineLen;
-		const wchar_t*	pLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( GetCaret().GetCaretLogicPos().GetY2() - CLogicInt(1), &nLineLen );
+		const WCHAR*	pLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( GetCaret().GetCaretLogicPos().GetY2() - CLogicInt(1), &nLineLen );
 		if( nullptr != pLine && nLineLen > 0 ){
 			int i=0;
 			int j=0;

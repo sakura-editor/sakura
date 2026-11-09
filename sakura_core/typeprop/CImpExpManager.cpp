@@ -29,62 +29,62 @@
 /*-----------------------------------------------------------------------
 定数
 -----------------------------------------------------------------------*/
-static const wchar_t	szSecInfo[]				= L"Info";
+static const WCHAR	szSecInfo[]				= LTEXT("Info");
 
 // タイプ別設定
-static const wchar_t	WSTR_TYPE_HEAD[]		= L" タイプ別設定 Ver1";
+static const WCHAR	WSTR_TYPE_HEAD[]		= LTEXT(" タイプ別設定 Ver1");
 
-static const wchar_t	szSecTypeEx[]			= L"TypeEx";
-static const wchar_t	szSecTypes[]			= L"Types";
+static const WCHAR	szSecTypeEx[]			= LTEXT("TypeEx");
+static const WCHAR	szSecTypes[]			= LTEXT("Types");
 
-static const wchar_t	szKeyKeywordTemp[]				= L"szKeyword[%d]";
-static const wchar_t	szKeyKeywordFileTemp[]			= L"szKeywordFile[%d]";
-static const wchar_t	szKeyKeywordCaseTemp[]			= L"szKeywordCase[%d]";
-static const wchar_t	szKeyPluginOutlineName[]		= L"szPluginOutlineName";
-static const wchar_t	szKeyPluginOutlineId[]			= L"szPluginOutlineId";
-static const wchar_t	szKeyPluginSmartIndentName[]	= L"szPluginSmartIndentName";
-static const wchar_t	szKeyPluginSmartIndentId[]		= L"szPluginSmartIndentId";
-static const wchar_t	szKeyVersion[]					= L"szVersion";
-static const wchar_t	szKeyStructureVersion[]			= L"vStructureVersion";
+static const WCHAR	szKeyKeywordTemp[]				= LTEXT("szKeyword[%d]");
+static const WCHAR	szKeyKeywordFileTemp[]			= LTEXT("szKeywordFile[%d]");
+static const WCHAR	szKeyKeywordCaseTemp[]			= LTEXT("szKeywordCase[%d]");
+static const WCHAR	szKeyPluginOutlineName[]		= LTEXT("szPluginOutlineName");
+static const WCHAR	szKeyPluginOutlineId[]			= LTEXT("szPluginOutlineId");
+static const WCHAR	szKeyPluginSmartIndentName[]	= LTEXT("szPluginSmartIndentName");
+static const WCHAR	szKeyPluginSmartIndentId[]		= LTEXT("szPluginSmartIndentId");
+static const WCHAR	szKeyVersion[]					= LTEXT("szVersion");
+static const WCHAR	szKeyStructureVersion[]			= LTEXT("vStructureVersion");
 
 // カラー（ CPropTypes.hからコピー改変 ）
 //static const wchar_t	WSTR_COLORDATA_HEAD2[]	=  L" テキストエディタ色設定 Ver2";
 //static const wchar_t	WSTR_COLORDATA_HEAD21[]	=  L" テキストエディタ色設定 Ver2.1";	//Nov. 2, 2000 JEPRO 変更 [注]. 0.3.9.0:ur3β10以降、設定項目の番号を入れ替えたため
-static const wchar_t	WSTR_COLORDATA_HEAD3[]	=  L" テキストエディタ色設定 Ver3";		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
+static const WCHAR	WSTR_COLORDATA_HEAD3[]	=  LTEXT(" テキストエディタ色設定 Ver3");		//Jan. 15, 2001 Stonee  色設定Ver3ドラフト(設定ファイルのキーを連番→文字列に)	//Feb. 11, 2001 JEPRO 有効にした
 //static const wchar_t	WSTR_COLORDATA_HEAD4[]	=  L" テキストエディタ色設定 Ver4";		//2007.10.02 kobake UNICODE化に際してカラーファイル仕様も変更
-static const wchar_t	szSecColor[]			=  L"SakuraColor";
+static const WCHAR	szSecColor[]			=  LTEXT("SakuraColor");
 
 // 正規表現キーワード
-static const wchar_t	WSTR_REGEXKW_HEAD[]		= L"// 正規表現キーワード Ver1\n";
+static const WCHAR	WSTR_REGEXKW_HEAD[]		= LTEXT("// 正規表現キーワード Ver1\n");
 
 // キーワードヘルプ
-static const wchar_t	WSTR_KEYHELP_HEAD[]		= L"// キーワード辞書設定 Ver1\n";
+static const WCHAR	WSTR_KEYHELP_HEAD[]		= LTEXT("// キーワード辞書設定 Ver1\n");
 
 // キー割り当て
-static const wchar_t	WSTR_KEYBIND_HEAD4[]		= L"SakuraKeyBind_Ver4";	//2013.12.05 syat 多言語対応
-static const wchar_t	WSTR_KEYBIND_HEAD3[]	= L"SakuraKeyBind_Ver3";	//2007.10.05 kobake ファイル形式をini形式に変更
-static const wchar_t	WSTR_KEYBIND_HEAD2[]	= L"// テキストエディタキー設定 Ver2";	// (旧バージョン(ANSI版)） 読み込みのみ対応 2008/5/3 by Uchi
+static const WCHAR	WSTR_KEYBIND_HEAD4[]		= LTEXT("SakuraKeyBind_Ver4");	//2013.12.05 syat 多言語対応
+static const WCHAR	WSTR_KEYBIND_HEAD3[]	= LTEXT("SakuraKeyBind_Ver3");	//2007.10.05 kobake ファイル形式をini形式に変更
+static const WCHAR	WSTR_KEYBIND_HEAD2[]	= LTEXT("// テキストエディタキー設定 Ver2");	// (旧バージョン(ANSI版)） 読み込みのみ対応 2008/5/3 by Uchi
 
 // カスタムメニューファイル
 // 2007.10.02 kobake UNICODE化に際して、カスタムメニューファイルの仕様を変更
-static       wchar_t	WSTR_CUSTMENU_HEAD_V2[]	= L"SakuraEditorMenu_Ver2";
+static       WCHAR	WSTR_CUSTMENU_HEAD_V2[]	= LTEXT("SakuraEditorMenu_Ver2");
 
 // キーワード定義ファイル
-static const wchar_t	WSTR_KEYWORD_HEAD[]		= L" キーワード定義ファイル\n";
-static const wchar_t	WSTR_KEYWORD_CASE[]		= L"// CASE=";
-static const wchar_t	WSTR_CASE_TRUE[]		= L"// CASE=True";
-static const wchar_t	WSTR_CASE_FALSE[]		= L"// CASE=False";
+static const WCHAR	WSTR_KEYWORD_HEAD[]		= LTEXT(" キーワード定義ファイル\n");
+static const WCHAR	WSTR_KEYWORD_CASE[]		= LTEXT("// CASE=");
+static const WCHAR	WSTR_CASE_TRUE[]		= LTEXT("// CASE=True");
+static const WCHAR	WSTR_CASE_FALSE[]		= LTEXT("// CASE=False");
 
 // メインメニューファイル
-static       wchar_t	WSTR_MAINMENU_HEAD_V1[]	= L"SakuraEditorMainMenu Ver1";
+static       WCHAR	WSTR_MAINMENU_HEAD_V1[]	= LTEXT("SakuraEditorMainMenu Ver1");
 
-static       wchar_t	WSTR_FILETREE_HEAD_V1[]	= L"SakuraEditorFileTree_Ver1";
+static       WCHAR	WSTR_FILETREE_HEAD_V1[]	= LTEXT("SakuraEditorFileTree_Ver1");
 
 // Exportファイル名の作成
 //	  タイプ名などファイルとして扱うことを考えていない文字列を扱う
 //		2010/4/12 Uchi
 template <basis::WritableBuffer<WCHAR> A>
-static wchar_t* MakeExportFileName(A& dst, const wchar_t* trg, const wchar_t* ext)
+static WCHAR* MakeExportFileName(A& dst, const WCHAR* trg, const WCHAR* ext)
 {
 	assert(trg);
 	assert(ext);
@@ -100,19 +100,19 @@ static wchar_t* MakeExportFileName(A& dst, const wchar_t* trg, const wchar_t* ex
 
 	// 作業バッファの先頭を得る
 	auto p = conv;
-	while ( (p = wcspbrk( p, L"\t\\:*?\"<>|" )) != nullptr ) {
+	while ( (p = wcspbrk( p, LTEXT("\t\\:*?\"<>|") )) != nullptr ) {
 		// ファイル名に使えない文字を _ に置き換える
-		*p++ = L'_';
+		*p++ = LCHAR('_');
 	}
 
 	// 作業バッファの先頭を得る
 	p = conv;
-	while ( (p = wcspbrk( p, L"/" )) != nullptr ) {
+	while ( (p = wcspbrk( p, LTEXT("/") )) != nullptr ) {
 		// ファイル名に使えない文字を ／ に置き換える
-		*p++ = L'／';
+		*p++ = LCHAR('／');
 	}
 
-	auto_sprintf_s(dst, L"%ls.%ls", conv, ext);
+	auto_sprintf_s(dst, LTEXT("%ls.%ls"), conv, ext);
 
 	return res;
 }
@@ -129,7 +129,7 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダー
 	);
 	WCHAR	szPath[_MAX_PATH + 1];
-	szPath[0] = L'\0';
+	szPath[0] = LCHAR('\0');
 	if( !GetFileName().empty() ){
 		wcscpy( szPath, GetFullPath().c_str());
 	}
@@ -137,13 +137,13 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 		return false;
 	}
 
-	const std::wstring sPath = szPath;
-	std::wstring	sErrMsg;
+	const sakura::wstring sPath = szPath;
+	sakura::wstring	sErrMsg;
 
 	// 確認
 	if (!ImportAscertain( hInstance, hwndParent, sPath, sErrMsg )) {
 		if (sErrMsg.length() > 0) {
-			ErrorMessage( hwndParent, L"%ls", sErrMsg.c_str() );
+			ErrorMessage( hwndParent, LTEXT("%ls"), sErrMsg.c_str() );
 		}
 		return false;
 	}
@@ -153,12 +153,12 @@ bool CImpExpManager::ImportUI( HINSTANCE hInstance, HWND hwndParent )
 
 	// Import
 	if (!Import( sPath, sErrMsg )) {
-		ErrorMessage( hwndParent, L"%ls", sErrMsg.c_str() );
+		ErrorMessage( hwndParent, LTEXT("%ls"), sErrMsg.c_str() );
 		return false;
 	}
 
 	if (sErrMsg.length() > 0) {
-		InfoMessage( hwndParent, L"%ls", sErrMsg.c_str() );
+		InfoMessage( hwndParent, LTEXT("%ls"), sErrMsg.c_str() );
 	}
 
 	return true;
@@ -176,7 +176,7 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 		GetDllShareData().m_sHistory.m_szIMPORTFOLDER // インポート用フォルダー
 	);
 	WCHAR			szPath[_MAX_PATH + 1];
-	szPath[0] = L'\0';
+	szPath[0] = LCHAR('\0');
 	if( !GetFileName().empty() ){
 		wcscpy( szPath, GetFullPath().c_str());
 	}
@@ -188,24 +188,24 @@ bool CImpExpManager::ExportUI( HINSTANCE hInstance, HWND hwndParent )
 	SetImportFolder( szPath );
 
 	// Export
-	const std::wstring sPath = szPath;
-	std::wstring	sErrMsg;
+	const sakura::wstring sPath = szPath;
+	sakura::wstring	sErrMsg;
 
 	if (!Export( sPath, sErrMsg )) {
-		ErrorMessage( hwndParent, L"%ls", sErrMsg.c_str() );
+		ErrorMessage( hwndParent, LTEXT("%ls"), sErrMsg.c_str() );
 		return false;
 	}
 
 	if (sErrMsg.length() == 0) {
 		sErrMsg = LS(STR_IMPEXP_OK_EXPORT) + sPath;
 	}
-	InfoMessage( hwndParent, L"%ls", sErrMsg.c_str() );
+	InfoMessage( hwndParent, LTEXT("%ls"), sErrMsg.c_str() );
 
 	return true;
 }
 
 // インポート確認
-bool CImpExpManager::ImportAscertain( [[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HWND hwndParent, [[maybe_unused]] const std::wstring& sFileName, [[maybe_unused]] std::wstring& sErrMsg )
+bool CImpExpManager::ImportAscertain( [[maybe_unused]] HINSTANCE hInstance, [[maybe_unused]] HWND hwndParent, [[maybe_unused]] const sakura::wstring& sFileName, [[maybe_unused]] sakura::wstring& sErrMsg )
 {
 	return true;
 }
@@ -213,17 +213,17 @@ bool CImpExpManager::ImportAscertain( [[maybe_unused]] HINSTANCE hInstance, [[ma
 // デフォルト拡張子の取得
 const WCHAR* CImpExpManager::GetDefaultExtension()
 {
-	return L"";
+	return LTEXT("");
 }
-const wchar_t* CImpExpManager::GetOriginExtension()
+const WCHAR* CImpExpManager::GetOriginExtension()
 {
-	return L"";
+	return LTEXT("");
 }
 
 // ファイル名の初期値を設定
-void CImpExpManager::SetBaseName(const std::wstring& sBase)
+void CImpExpManager::SetBaseName(const sakura::wstring& sBase)
 {
-	wchar_t		wbuff[_MAX_PATH + 1];
+	WCHAR		wbuff[_MAX_PATH + 1];
 
 	m_sBase = sBase;
 	m_sOriginName = MakeExportFileName( wbuff, sBase.c_str(), GetOriginExtension() );
@@ -233,7 +233,7 @@ void CImpExpManager::SetBaseName(const std::wstring& sBase)
 //                          タイプ別設定                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート確認
-bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& sPath = sFileName;
 
@@ -253,7 +253,7 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const s
 		return false;
 	}
 	if ((unsigned int)nStructureVersion != m_pShareData->m_vStructureVersion) {
-		std::wstring	strKeyVerValue = L"?";
+		sakura::wstring	strKeyVerValue = LTEXT("?");
 		m_cProfile.IOProfileData(szSecInfo, szKeyVersion, strKeyVerValue);
 		int nRet = ConfirmMessage( hwndParent,
 			LS(STR_IMPEXP_VER), 
@@ -266,15 +266,15 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const s
 	// 確認＆色指定
 	CDlgTypeAscertain::SAscertainInfo	sAscertainInfo;
 	CDlgTypeAscertain	cDlgTypeAscertain;
-	wchar_t szLabel[1024];
+	WCHAR szLabel[1024];
 	STypeConfig TmpType;
 
 	// パラメータの設定
 	sAscertainInfo.sImportFile = sPath;
 	ApiWrap::List_GetText( m_hwndList, m_nIdx, szLabel );
 	sAscertainInfo.sTypeNameTo = szLabel;
-	szLabel[0] = L'\0';
-	m_cProfile.IOProfileData(szSecTypes, L"szTypeName", StringBufferW(szLabel));
+	szLabel[0] = LCHAR('\0');
+	m_cProfile.IOProfileData(szSecTypes, LTEXT("szTypeName"), StringBufferW(szLabel));
 	sAscertainInfo.sTypeNameFile = szLabel;
 
 	// 確認
@@ -290,10 +290,10 @@ bool CImpExpType::ImportAscertain( HINSTANCE hInstance, HWND hwndParent, const s
 }
 
 // インポート
-bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpType::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
-	std::wstring	files = L"";
-	std::wstring TmpMsg;
+	sakura::wstring	files = LTEXT("");
+	sakura::wstring TmpMsg;
 	decltype(m_Types.m_ColorInfoArr)	colorInfoArr{};				// 色設定配列(バックアップ)
 	int		i;
 
@@ -302,12 +302,12 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 		// 色設定インポート
 		CImpExpColors	cImpExpColors( colorInfoArr );
 		if (cImpExpColors.Import( cImpExpColors.MakeFullPath( m_sColorFile ), TmpMsg)) {
-			files += std::wstring(L"\n") + m_sColorFile;
+			files += sakura::wstring(LTEXT("\n")) + m_sColorFile;
 		}
 		else {
 			// 失敗したら基本をコピー(メッセージは出さない)
 			memcpy( &colorInfoArr, GetDllShareData().m_TypeBasis.m_ColorInfoArr, sizeof(colorInfoArr) );
-			files += std::wstring(L"\n× ") + m_sColorFile;	// 失敗
+			files += sakura::wstring(LTEXT("\n× ")) + m_sColorFile;	// 失敗
 		}
 	}
 	else if (m_nColorType >= 0 ) {
@@ -324,7 +324,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	if (m_nIdx == 0) {
 		// 基本の場合の名前と拡張子を初期化
 		wcscpy( m_Types.m_szTypeName, LS(STR_TYPE_NAME_BASIS) );
-		m_Types.m_szTypeExts[0] = L'\0';
+		m_Types.m_szTypeExts[0] = LCHAR('\0');
 		m_Types.m_id = 0;
 	}else{
 		// 基本じゃなかった場合、id番号をランダムに仮採番(あとで振りなおす)
@@ -342,13 +342,13 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	}
 
 	// 共通設定との連結部
-	wchar_t	szKeyName[64];
-	wchar_t	szKeyData[1024];
+	WCHAR	szKeyName[64];
+	WCHAR	szKeyData[1024];
 	int		nIdx;
 	int		nPlug = 0;
 	int		nDataLen;
-	wchar_t* pSlashPos;
-	wchar_t	szFileName[_MAX_PATH+1];
+	WCHAR* pSlashPos;
+	WCHAR	szFileName[_MAX_PATH+1];
 	bool	bCase;
 	CommonSetting& common = m_pShareData->m_Common;
 
@@ -373,12 +373,12 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 				CImpExpKeyWord	cImpExpKeyWord( common, nIdx, bCase );
 
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
-				szFileName[0] = L'\0';
+				szFileName[0] = LCHAR('\0');
 				if (m_cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
 					if( cImpExpKeyWord.Import( cImpExpKeyWord.MakeFullPath( szFileName ), TmpMsg )) {
-						files += std::wstring(L"\n") + szFileName;
+						files += sakura::wstring(LTEXT("\n")) + szFileName;
 					} else {
-						files += std::wstring(L"\n× ") + szFileName;	// 失敗
+						files += sakura::wstring(LTEXT("\n× ")) + szFileName;	// 失敗
 					}
 				}
 			}
@@ -391,7 +391,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szKeyData))) {
 		nDataLen = (int)wcsnlen( szKeyData, _countof(szKeyData) );
-		pSlashPos = wcschr( szKeyData, L'/' );
+		pSlashPos = wcschr( szKeyData, LCHAR('/') );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
 			if (wcsncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
@@ -412,7 +412,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 	//  スマートインデント
 	if (m_cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szKeyData))) {
 		nDataLen = (int)wcsnlen( szKeyData, _countof(szKeyData) );
-		pSlashPos = wcschr( szKeyData, L'/' );
+		pSlashPos = wcschr( szKeyData, LCHAR('/') );
 		nIdx = -1;
 		for (i = 0; i < MAX_PLUGIN; i++) {
 			if (wcsncmp(szKeyData, plugin.m_PluginTable[i].m_szId, pSlashPos ? pSlashPos-szKeyData : nDataLen) == 0) {
@@ -438,7 +438,7 @@ bool CImpExpType::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
 }
 
 // エクスポート
-bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpType::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	CDataProfile	cProfile;
 
@@ -448,12 +448,12 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 
 	// 共通設定との連結部
 	int		i;
-	wchar_t	szKeyName[64];
-	wchar_t buff[MAX_SETNAMELEN+1];
-	wchar_t	szFileName[_MAX_PATH+1];
+	WCHAR	szKeyName[64];
+	WCHAR buff[MAX_SETNAMELEN+1];
+	WCHAR	szFileName[_MAX_PATH+1];
 	bool	bCase;
-	std::wstring	files = L"";
-	std::wstring	sTmpMsg;
+	sakura::wstring	files = LTEXT("");
+	sakura::wstring	sTmpMsg;
 	int		nIdx;
 	CommonSetting& common  = m_pShareData->m_Common;
 
@@ -477,7 +477,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 				wcscpy( szFileName, cImpExpKeyWord.GetFileName().c_str());
 				auto_sprintf( szKeyName, szKeyKeywordFileTemp, i+1 );
 				if (cProfile.IOProfileData(szSecTypeEx, szKeyName, StringBufferW(szFileName))) {
-					files += std::wstring( L"\n" ) + cImpExpKeyWord.GetFileName();
+					files += sakura::wstring( LTEXT("\n") ) + cImpExpKeyWord.GetFileName();
 				}
 			}
 
@@ -491,13 +491,13 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	CommonSetting_Plugin& plugin = common.m_sPlugin;
 	int		nPIdx;
 	int		nPlug;
-	wchar_t szId[ MAX_PLUGIN_ID + 1 + 2 ];
+	WCHAR szId[ MAX_PLUGIN_ID + 1 + 2 ];
 	if ((nPIdx = CPlug::GetPluginId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) >= 0) {
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineName, StringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eDefaultOutline ))) != 0 ){
-			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			WCHAR szPlug[8];
+			_swprintf( szPlug, LTEXT("/%d"), nPlug );
 			wcscat( szId, szPlug );
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginOutlineId, StringBufferW(szId));
@@ -507,8 +507,8 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentName, StringBufferW(plugin.m_PluginTable[nPIdx].m_szName));
 		::wcsncpy_s(szId, plugin.m_PluginTable[nPIdx].m_szId, _TRUNCATE);
 		if( (nPlug = CPlug::GetPlugId( static_cast<EFunctionCode>( m_Types.m_eSmartIndent ))) != 0 ){
-			wchar_t szPlug[8];
-			_swprintf( szPlug, L"/%d", nPlug );
+			WCHAR szPlug[8];
+			_swprintf( szPlug, LTEXT("/%d"), nPlug );
 			wcscat( szId, szPlug );
 		}
 		cProfile.IOProfileData(szSecTypeEx, szKeyPluginSmartIndentId, StringBufferW(szId));
@@ -517,8 +517,8 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 	// Version
 	DLLSHAREDATA* pShare = &GetDllShareData();
 	int		nStructureVersion;
-	wchar_t	wbuff[_MAX_PATH + 1];
-	auto_sprintf( wbuff, L"%d.%d.%d.%d", 
+	WCHAR	wbuff[_MAX_PATH + 1];
+	auto_sprintf( wbuff, LTEXT("%d.%d.%d.%d"), 
 				HIWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				LOWORD( pShare->m_sVersion.m_dwProductVersionMS ),
 				HIWORD( pShare->m_sVersion.m_dwProductVersionLS ),
@@ -545,7 +545,7 @@ bool CImpExpType::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
 //                          カラー                             //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート
-bool CImpExpColors::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpColors::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -559,10 +559,10 @@ bool CImpExpColors::Import( const std::wstring& sFileName, std::wstring& sErrMsg
 
 	/* ファイル先頭 */
 	//ヘッダー読取
-	std::wstring szHeader = in.ReadLineW();
+	sakura::wstring szHeader = in.ReadLineW();
 	if(szHeader.length()>=2) {
 		//コメントを抜く
-		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == L';' ? 1 : 2];
+		szHeader = &szHeader.c_str()[ szHeader.c_str()[0] == LCHAR(';') ? 1 : 2];
 	}
 	//比較
 	if (szHeader != WSTR_COLORDATA_HEAD3) {
@@ -588,7 +588,7 @@ bool CImpExpColors::Import( const std::wstring& sFileName, std::wstring& sErrMsg
 }
 
 // エクスポート
-bool CImpExpColors::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpColors::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	/* 色設定 I/O */
 	CDataProfile	cProfile;
@@ -607,7 +607,7 @@ bool CImpExpColors::Export( const std::wstring& sFileName, std::wstring& sErrMsg
 //                    正規表現キーワード                       //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート
-bool CImpExpRegex::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpRegex::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	CTextInputStream in( sFileName.c_str() );
 	if( !in ){
@@ -618,21 +618,21 @@ bool CImpExpRegex::Import( const std::wstring& sFileName, std::wstring& sErrMsg 
 	}
 	auto& regexKeyArr = m_Types.m_RegexKeywordArr;
 	auto& szKeyWordList = m_Types.m_RegexKeywordList;
-	wchar_t* pKeyword = &szKeyWordList[0];
+	WCHAR* pKeyword = &szKeyWordList[0];
 	size_t keywordPos = 0;
 	size_t count = 0;
 	while( in ){
 		//1行読み込み
-		std::wstring line = in.ReadLineW();
+		sakura::wstring line = in.ReadLineW();
 		//RxKey[999]=ColorName,RegexKeyword
 		if( line.length() < 12 ) continue;
-		if( wmemcmp(&line[0], L"RxKey[", 6) != 0 ) continue;
-		if( wmemcmp(&line[9], L"]=", 2) != 0 ) continue;
-		auto sepPos = line.find_first_of(L',', 11); // ColorName と RegexKeyword の間の区切り文字の存在を確認する
+		if( wmemcmp(&line[0], LTEXT("RxKey["), 6) != 0 ) continue;
+		if( wmemcmp(&line[9], LTEXT("]="), 2) != 0 ) continue;
+		auto sepPos = line.find_first_of(LCHAR(','), 11); // ColorName と RegexKeyword の間の区切り文字の存在を確認する
 		if( sepPos == decltype(line)::npos ) continue;
-		line[sepPos] = L'\0'; // 区切り文字をNULL終端に置き換える事で標準Cライブラリの関数で ColorName を読み取りやすくする
-		const wchar_t* pColorNameInLine = &line[11];
-		const wchar_t* pRegexKeywordInLine = &line[sepPos + 1]; // 区切り文字の後には RegexKeyword
+		line[sepPos] = LCHAR('\0'); // 区切り文字をNULL終端に置き換える事で標準Cライブラリの関数で ColorName を読み取りやすくする
+		const WCHAR* pColorNameInLine = &line[11];
+		const WCHAR* pRegexKeywordInLine = &line[sepPos + 1]; // 区切り文字の後には RegexKeyword
 		if( !*pRegexKeywordInLine || !CRegexKeyword::RegexKeyCheckSyntax(pRegexKeywordInLine) ){
 			// L"不正なキーワードを無視しました。"
 			sErrMsg = LS(STR_IMPEXP_REGEX3);
@@ -677,13 +677,13 @@ bool CImpExpRegex::Import( const std::wstring& sFileName, std::wstring& sErrMsg 
 		count++;
 		keywordPos += regKeyLen + 1;
 	}
-	pKeyword[keywordPos] = L'\0';	// 最後のNUL終端を書き込む
+	pKeyword[keywordPos] = LCHAR('\0');	// 最後のNUL終端を書き込む
 	in.Close();
 	return true;
 }
 
 // エクスポート
-bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpRegex::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	CTextOutputStream out( sFileName.c_str() );
 	if(!out){
@@ -694,13 +694,13 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 
 	out.WriteF( WSTR_REGEXKW_HEAD );
 
-	const wchar_t* regex = m_Types.m_RegexKeywordList;
+	const WCHAR* regex = m_Types.m_RegexKeywordList;
 	for (int i = 0; i < MAX_REGEX_KEYWORD; i++)
 	{
-		if( regex[0] == L'\0' ) break;
+		if( regex[0] == LCHAR('\0') ) break;
 		
 		const WCHAR* name  = GetColorNameByIndex(m_Types.m_RegexKeywordArr[i].m_nColorIndex);
-		out.WriteF( L"RxKey[%03d]=%s,%ls\n", i, name, regex);
+		out.WriteF( LTEXT("RxKey[%03d]=%s,%ls\n"), i, name, regex);
 
 		for(; *regex != '\0'; regex++ ){}
 		regex++;
@@ -717,9 +717,9 @@ bool CImpExpRegex::Export( const std::wstring& sFileName, std::wstring& sErrMsg 
 /*! インポート
 	@date 2010.07.14 Moca ListViewへの設定からm_Typesへの設定に変更
 */
-bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeyHelp::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
-	wchar_t			msgBuff[_MAX_PATH + 1];
+	WCHAR			msgBuff[_MAX_PATH + 1];
 
 	CTextInputStream in( sFileName.c_str());
 	if (!in) {
@@ -732,23 +732,23 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	int invalid_record = 0; // 不正な行
 	int i=0;
 	while (in && i<MAX_KEYHELP_FILE) {
-		std::wstring buff=in.ReadLineW();
+		sakura::wstring buff=in.ReadLineW();
 
 		// 2007.02.03 genta コメントみたいな行は黙ってスキップ
 		// 2007.10.08 kobake 空行もスキップ
-		if( buff[0] == L'\0' ||
-			buff[0] == L'\n' ||
-			buff[0] == L'#' ||
-			buff[0] == L';' ||
-			( buff[0] == L'/' && buff[1] == L'/' )){
+		if( buff[0] == LCHAR('\0') ||
+			buff[0] == LCHAR('\n') ||
+			buff[0] == LCHAR('#') ||
+			buff[0] == LCHAR(';') ||
+			( buff[0] == LCHAR('/') && buff[1] == LCHAR('/') )){
 				//	2007.02.03 genta 処理を継続
 				continue;
 		}
 
 		//KDct[99]=ON/OFF,DictAbout,KeyHelpPath
 		if( buff.length() < 10 ||
-			wmemcmp(buff.c_str(), L"KDct[", 5) != 0 ||
-			wmemcmp(&buff[7], L"]=", 2) != 0
+			wmemcmp(buff.c_str(), LTEXT("KDct["), 5) != 0 ||
+			wmemcmp(&buff[7], LTEXT("]="), 2) != 0
 			){
 			//	2007.02.03 genta 処理を継続
 			++invalid_record;
@@ -756,13 +756,13 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		}
 
 		auto p1 = &buff[9];
-		auto p2 = wcschr(p1, L',');
+		auto p2 = wcschr(p1, LCHAR(','));
 		auto p3 = p1;					//結果確認用に初期化
 		if (p2) {
-			*p2 = L'\0';
+			*p2 = LCHAR('\0');
 			p2 += 1;				//カンマの次が、次の要素
-			if( nullptr != (p3=wcschr(p2,L',')) ){
-				*p3 = L'\0';
+			if( nullptr != (p3=wcschr(p2,LCHAR(','))) ){
+				*p3 = LCHAR('\0');
 				p3 += 1;			//カンマの次が、次の要素
 			}
 		}/* 結果の確認 */
@@ -785,7 +785,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		//Path
 		FILE* fp2;
 		const WCHAR* p4 = p2;
-		if( (fp2=_wfopen_absini(p3,L"r")) == nullptr ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
+		if( (fp2=_wfopen_absini(p3,LTEXT("r"))) == nullptr ){	// 2007.02.03 genta 相対パスはsakura.exe基準で開く	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 			// 2007.02.03 genta 辞書が見つからない場合の措置．警告を出すが取り込む
 			p4 = LS(STR_IMPEXP_DIC_NOTFOUND);
 			b_enable_flag = 0;
@@ -832,8 +832,8 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	// 空きがあるなら番兵を設定
 	if( i < int(std::size(m_Types.m_KeyHelpArr)) ){
 		m_Types.m_KeyHelpArr[i].m_bUse = false;
-		m_Types.m_KeyHelpArr[i].m_szAbout[0] = L'\0';
-		m_Types.m_KeyHelpArr[i].m_szPath[0]  = L'\0';
+		m_Types.m_KeyHelpArr[i].m_szAbout[0] = LCHAR('\0');
+		m_Types.m_KeyHelpArr[i].m_szPath[0]  = LCHAR('\0');
 	}
 	m_Types.m_nKeyHelpNum = i;
 
@@ -849,7 +849,7 @@ bool CImpExpKeyHelp::Import( const std::wstring& sFileName, std::wstring& sErrMs
 /*! エクスポート
 	@date 2010.07.14 Moca ListViewからm_Typesからのエクスポートに変更
 */
-bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeyHelp::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	CTextOutputStream out( sFileName.c_str() );
 	if (!out) {
@@ -862,7 +862,7 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 
 	for (int i = 0; i < m_Types.m_nKeyHelpNum; i++) {
 		out.WriteF(
-			L"KDct[%02d]=%d,%s,%s\n",
+			LTEXT("KDct[%02d]=%d,%s,%s\n"),
 			i,
 			m_Types.m_KeyHelpArr[i].m_bUse?1:0,
 			m_Types.m_KeyHelpArr[i].m_szAbout.c_str(),
@@ -878,7 +878,7 @@ bool CImpExpKeyHelp::Export( const std::wstring& sFileName, std::wstring& sErrMs
 //                     キー割り当て                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート
-bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeybind::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	constexpr auto KEYNAME_SIZE = _countof(m_Common.m_sKeyBind.m_pKeyNameArr) - 1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
 
@@ -902,14 +902,14 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 	bVer4 = false;
 	bVer3 = false;
 	bVer2 = false;
-	in.IOProfileData(szSecInfo, L"KEYBIND_VERSION", StringBufferW(szHeader));
+	in.IOProfileData(szSecInfo, LTEXT("KEYBIND_VERSION"), StringBufferW(szHeader));
 	if(wcscmp(szHeader,WSTR_KEYBIND_HEAD4)==0)	bVer4=true;
 	else if(wcscmp(szHeader,WSTR_KEYBIND_HEAD3)==0)	bVer3=true;
 
 	//int	nKeyNameArrNum;			// キー割り当て表の有効データ数
 	if ( bVer3 || bVer4 ) {
 		//Count取得 -> nKeyNameArrNum
-		in.IOProfileData(szSecInfo, L"KEYBIND_COUNT", sKeyBind.m_nKeyNameArrNum);
+		in.IOProfileData(szSecInfo, LTEXT("KEYBIND_COUNT"), sKeyBind.m_nKeyNameArrNum);
 		if (sKeyBind.m_nKeyNameArrNum < 0 || sKeyBind.m_nKeyNameArrNum > KEYNAME_SIZE){	bVer3=false; bVer4=false; } //範囲チェック
 
 		ShareData_IO_KeyBind(in, sKeyBind, true);	// 2008/5/25 Uchi
@@ -924,7 +924,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			return false;
 		}
 		// ヘッダーチェック
-		std::wstring	szLine = in2.ReadLineW();
+		sakura::wstring	szLine = in2.ReadLineW();
 		bVer2 = true;
 		if ( wcscmp(szLine.c_str(), WSTR_KEYBIND_HEAD2) != 0)	bVer2 = false;
 		// カウントチェック
@@ -932,7 +932,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		if ( bVer2 ) {
 			int	an;
 			szLine = in2.ReadLineW();
-			cnt = swscanf(szLine.c_str(), L"Count=%d", &an);
+			cnt = swscanf(szLine.c_str(), LTEXT("Count=%d"), &an);
 			if ( cnt != 1 || an < 0 || an > KEYNAME_SIZE ) {
 				bVer2 = false;
 			}
@@ -945,24 +945,24 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 			for(i = 0; i < KEYNAME_SIZE; i++) {
 				int n, kc, nc;
 				//値 -> szData
-				wchar_t szData[1024];
+				WCHAR szData[1024];
 				wcsncpy(szData, in2.ReadLineW().c_str(), int(std::size(szData)) - 1);
-				szData[std::size(szData) - 1] = L'\0';
+				szData[std::size(szData) - 1] = LCHAR('\0');
 
 				//解析開始
-				cnt = swscanf(szData, L"KeyBind[%03d]=%04x,%n",
+				cnt = swscanf(szData, LTEXT("KeyBind[%03d]=%04x,%n"),
 												&n,   &kc, &nc);
 				if( cnt !=2 && cnt !=3 )	{ bVer2= false; break;}
 				if( i != n ) break;
 				sKeyBind.m_pKeyNameArr[i].m_nKeyCode = (short)kc;
-				wchar_t* p = szData + nc;
+				WCHAR* p = szData + nc;
 
 				//後に続くトークン
 				for(int j=0;j<8;j++)
 				{
-					wchar_t* q=wcschr(p,L',');
+					WCHAR* q=wcschr(p,LCHAR(','));
 					if(!q)	{ bVer2= false; break;}
-					*q=L'\0';
+					*q=LCHAR('\0');
 
 					//機能名を数値に置き換える。(数値の機能名もあるかも)
 					//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -988,7 +988,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		}
 	}
 	if (!bVer4 && !bVer3 && !bVer2) {
-		sErrMsg = std::wstring(LS(STR_IMPEXP_KEY_FORMAT)) + sFileName;
+		sErrMsg = sakura::wstring(LS(STR_IMPEXP_KEY_FORMAT)) + sFileName;
 		return false;
 	}
 
@@ -1028,7 +1028,7 @@ bool CImpExpKeybind::Import( const std::wstring& sFileName, std::wstring& sErrMs
 }
 
 // エクスポート
-bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeybind::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1049,8 +1049,8 @@ bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMs
 
 	// ヘッダー
 	StaticString<256> szKeydataHead{ WSTR_KEYBIND_HEAD4 };
-	cProfile.IOProfileData( szSecInfo, L"KEYBIND_VERSION", szKeydataHead );
-	cProfile.IOProfileData(szSecInfo, L"KEYBIND_COUNT", m_Common.m_sKeyBind.m_nKeyNameArrNum );
+	cProfile.IOProfileData( szSecInfo, LTEXT("KEYBIND_VERSION"), szKeydataHead );
+	cProfile.IOProfileData(szSecInfo, LTEXT("KEYBIND_COUNT"), m_Common.m_sKeyBind.m_nKeyNameArrNum );
 
 	//内容
 	ShareData_IO_KeyBind(cProfile, m_Common.m_sKeyBind, true);
@@ -1069,7 +1069,7 @@ bool CImpExpKeybind::Export( const std::wstring& sFileName, std::wstring& sErrMs
 //                     カスタムメニュー                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート
-bool CImpExpCustMenu::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpCustMenu::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1087,9 +1087,9 @@ bool CImpExpCustMenu::Import( const std::wstring& sFileName, std::wstring& sErrM
 
 	//バージョン確認
 	WCHAR szHeader[256];
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(szHeader));
+	cProfile.IOProfileData(szSecInfo, LTEXT("MENU_VERSION"), StringBufferW(szHeader));
 	if(wcscmp(szHeader, WSTR_CUSTMENU_HEAD_V2)!=0) {
-		sErrMsg = std::wstring(LS(STR_IMPEXP_CUSTMENU_FORMAT)) + sFileName;
+		sErrMsg = sakura::wstring(LS(STR_IMPEXP_CUSTMENU_FORMAT)) + sFileName;
 		return false;
 	}
 
@@ -1099,7 +1099,7 @@ bool CImpExpCustMenu::Import( const std::wstring& sFileName, std::wstring& sErrM
 }
 
 // エクスポート
-bool CImpExpCustMenu::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpCustMenu::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1122,9 +1122,9 @@ bool CImpExpCustMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 	cProfile.SetWritingMode();
 
 	//ヘッダー
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(WSTR_CUSTMENU_HEAD_V2));
+	cProfile.IOProfileData(szSecInfo, LTEXT("MENU_VERSION"), StringBufferW(WSTR_CUSTMENU_HEAD_V2));
 	int iWork = MAX_CUSTOM_MENU;
-	cProfile.IOProfileData(szSecInfo, L"MAX_CUSTOM_MENU", iWork );
+	cProfile.IOProfileData(szSecInfo, LTEXT("MAX_CUSTOM_MENU"), iWork );
 	
 	//内容
 	CShareData_IO::IO_CustMenu(cProfile, *menu, true);
@@ -1143,7 +1143,7 @@ bool CImpExpCustMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 //                     強調キーワード                          //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 // インポート
-bool CImpExpKeyWord::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeyWord::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	bool			bAddError = false;
 
@@ -1154,13 +1154,13 @@ bool CImpExpKeyWord::Import( const std::wstring& sFileName, std::wstring& sErrMs
 		return false;
 	}
 	while( in ){
-		std::wstring szLine = in.ReadLineW();
+		sakura::wstring szLine = in.ReadLineW();
 
 		// コメント無視
 		if (szLine.length() == 0) {
 			continue;
 		}
-		if (2 <= szLine.length() && 0 == wmemcmp( szLine.c_str(), L"//", 2 )) {
+		if (2 <= szLine.length() && 0 == wmemcmp( szLine.c_str(), LTEXT("//"), 2 )) {
 			if (szLine == WSTR_CASE_TRUE) {
 				m_bCase = true;
 			}
@@ -1193,7 +1193,7 @@ bool CImpExpKeyWord::Import( const std::wstring& sFileName, std::wstring& sErrMs
 }
 
 // エクスポート
-bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpKeyWord::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	int 		nKeyWordNum;
 	int 		i;
@@ -1204,14 +1204,14 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		sErrMsg += sFileName;
 		return false;
 	}
-	out.WriteF( L"// " );
+	out.WriteF( LTEXT("// ") );
 	// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 	out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_nIdx ) );
 	out.WriteF( WSTR_KEYWORD_HEAD );
 
 	out.WriteF( WSTR_KEYWORD_CASE );
-	out.WriteF( m_bCase ? L"True" : L"False" );
-	out.WriteF( L"\n\n" );
+	out.WriteF( m_bCase ? LTEXT("True") : LTEXT("False") );
+	out.WriteF( LTEXT("\n\n") );
 
 	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SortKeyWord(m_nIdx);	//MIK 2000.12.01 sort keyword
 
@@ -1221,7 +1221,7 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 		/* ｎ番目のセットのｍ番目のキーワードを返す */
 		// 2012.03.10 syat キーワードに「%」を含む場合にエクスポート結果が不正
 		out.WriteString( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_nIdx, i ) );
-		out.WriteF( L"\n" );
+		out.WriteF( LTEXT("\n") );
 	}
 	out.Close();
 
@@ -1233,7 +1233,7 @@ bool CImpExpKeyWord::Export( const std::wstring& sFileName, std::wstring& sErrMs
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2010/5/23 Uchi
 // インポート
-bool CImpExpMainMenu::Import( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpMainMenu::Import( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1251,9 +1251,9 @@ bool CImpExpMainMenu::Import( const std::wstring& sFileName, std::wstring& sErrM
 
 	//バージョン確認
 	WCHAR szHeader[256];
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(szHeader));
+	cProfile.IOProfileData(szSecInfo, LTEXT("MENU_VERSION"), StringBufferW(szHeader));
 	if(wcscmp(szHeader, WSTR_MAINMENU_HEAD_V1)!=0) {
-		sErrMsg = std::wstring(LS(STR_IMPEXP_MEINMENU)) + sFileName;
+		sErrMsg = sakura::wstring(LS(STR_IMPEXP_MEINMENU)) + sFileName;
 		return false;
 	}
 
@@ -1263,7 +1263,7 @@ bool CImpExpMainMenu::Import( const std::wstring& sFileName, std::wstring& sErrM
 }
 
 // エクスポート
-bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpMainMenu::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1285,7 +1285,7 @@ bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 	cProfile.SetWritingMode();
 
 	//ヘッダー
-	cProfile.IOProfileData(szSecInfo, L"MENU_VERSION", StringBufferW(WSTR_MAINMENU_HEAD_V1));
+	cProfile.IOProfileData(szSecInfo, LTEXT("MENU_VERSION"), StringBufferW(WSTR_MAINMENU_HEAD_V1));
 	
 	//内容
 	CShareData_IO::IO_MainMenu(cProfile, *menu, true);
@@ -1305,7 +1305,7 @@ bool CImpExpMainMenu::Export( const std::wstring& sFileName, std::wstring& sErrM
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	2014.06.07 Moca
 // インポート
-bool CImpExpFileTree::Import( [[maybe_unused]] const std::wstring& sFileName, [[maybe_unused]] std::wstring& sErrMsg )
+bool CImpExpFileTree::Import( [[maybe_unused]] const sakura::wstring& sFileName, [[maybe_unused]] sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1319,7 +1319,7 @@ bool CImpExpFileTree::Import( [[maybe_unused]] const std::wstring& sFileName, [[
 }
 
 // エクスポート
-bool CImpExpFileTree::Export( const std::wstring& sFileName, std::wstring& sErrMsg )
+bool CImpExpFileTree::Export( const sakura::wstring& sFileName, sakura::wstring& sErrMsg )
 {
 	const auto& strPath = sFileName;
 
@@ -1342,10 +1342,10 @@ bool CImpExpFileTree::Export( const std::wstring& sFileName, std::wstring& sErrM
 
 void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileTreeItem>& data )
 {
-	const WCHAR* pszSecName = L"FileTree";
+	const WCHAR* pszSecName = LTEXT("FileTree");
 
 	int nItemCount = (int)data.size();
-	cProfile.IOProfileData( pszSecName, L"nFileTreeItemCount", nItemCount );
+	cProfile.IOProfileData( pszSecName, LTEXT("nFileTreeItemCount"), nItemCount );
 	if( nItemCount < 0 ){
 		nItemCount = 0;
 	}
@@ -1355,6 +1355,6 @@ void CImpExpFileTree::IO_FileTreeIni( CDataProfile& cProfile, std::vector<SFileT
 	}
 
 	for (int i = 0; i < nItemCount; ++i) {
-		cProfile.IOProfileData(pszSecName, std::format(L"FileTree({})", i), data[i]);
+		cProfile.IOProfileData(pszSecName, std::format(LTEXT("FileTree({})"), i), data[i]);
 	}
 }

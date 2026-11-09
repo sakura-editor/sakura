@@ -275,7 +275,7 @@ public:
 	//! 矩形塗り潰し
 	void FillMyRectTextBackColor(const RECT& rc)
 	{
-		::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, L"", 0, nullptr);
+		::ExtTextOut(m_hdc, rc.left, rc.top, ETO_OPAQUE|ETO_CLIPPED, &rc, LTEXT(""), 0, nullptr);
 	}
 
 	static void DrawDropRect(LPCRECT lpRectNew, SIZE sizeNew, LPCRECT lpRectLast, SIZE sizeLast);	// ドロップ先の矩形を描画する

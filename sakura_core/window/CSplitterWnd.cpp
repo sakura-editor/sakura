@@ -32,7 +32,7 @@ constexpr auto SPLITTER_MARGIN = 2;
 
 //	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 CSplitterWnd::CSplitterWnd()
-: CWnd(L"::CSplitterWnd")
+: CWnd(LTEXT("::CSplitterWnd"))
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -50,7 +50,7 @@ CSplitterWnd::~CSplitterWnd()
 /* 初期化 */
 HWND CSplitterWnd::Create( HWND hwndParent )
 {
-	LPCWSTR pszClassName = L"SplitterWndClass";
+	LPCWSTR pszClassName = LTEXT("SplitterWndClass");
 
 	/* 初期化 */
 	/* ウィンドウクラス作成 */

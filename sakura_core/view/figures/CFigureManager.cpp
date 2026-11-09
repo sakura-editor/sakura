@@ -40,7 +40,7 @@ CFigureManager::~CFigureManager()
 }
 
 //$$ 高速化可能
-CFigure& CFigureManager::GetFigure(const wchar_t* pText, int nTextLen)
+CFigure& CFigureManager::GetFigure(const WCHAR* pText, int nTextLen)
 {
 	int size = (int)m_vFiguresDisp.size();
 	for(int i = 0; i < size; i++){

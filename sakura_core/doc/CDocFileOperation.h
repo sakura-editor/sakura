@@ -28,7 +28,7 @@ public:
 		HWND				hwndParent,
 		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダーを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
-		std::vector<std::wstring>&	files
+		std::vector<sakura::wstring>&	files
 	) const;
 
 	//ロードフロー
@@ -57,7 +57,7 @@ public:
 
 	//その他
 	void FileCloseOpen(				//!< 閉じて開く	// 2006.12.30 ryoji
-		const SLoadInfo& sLoadInfo = SLoadInfo(L"", CODE_AUTODETECT, false)
+		const SLoadInfo& sLoadInfo = SLoadInfo(LTEXT(""), CODE_AUTODETECT, false)
 	);
 
 private:

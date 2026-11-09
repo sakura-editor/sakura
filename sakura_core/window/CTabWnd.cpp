@@ -803,7 +803,7 @@ LRESULT CTabWnd::ExecTabCommand( int nId, POINTS pts )
 }
 
 CTabWnd::CTabWnd()
-: CWnd(L"::CTabWnd")
+: CWnd(LTEXT("::CTabWnd"))
 {
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
@@ -821,7 +821,7 @@ CTabWnd::~CTabWnd()
 /* ウィンドウ オープン */
 HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 {
-	LPCWSTR pszClassName = L"CTabWnd";
+	LPCWSTR pszClassName = LTEXT("CTabWnd");
 
 	/* 初期化 */
 	m_hwndTab    = nullptr;
@@ -871,7 +871,7 @@ HWND CTabWnd::Open( HINSTANCE hInstance, HWND hwndParent )
 	//タブウインドウを作成する。
 	m_hwndTab = ::CreateWindow(
 		WC_TABCONTROL,
-		L"",
+		LTEXT(""),
 		//	2004.05.22 MIK 消えるTAB対策でWS_CLIPSIBLINGS追加
 		// 2007.12.06 ryoji TCS_TOOLTIPS追加（タブ用のツールチップはタブに作らせる）
 		WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | TCS_TOOLTIPS,
@@ -1342,7 +1342,7 @@ LRESULT CTabWnd::OnDrawItem( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT u
 		}else{
 			int iPartId = TABP_TABITEM;
 			int iStateId = TIS_NORMAL;
-			HTHEME hTheme = ::OpenThemeData( m_hwndTab, L"TAB" );
+			HTHEME hTheme = ::OpenThemeData( m_hwndTab, LTEXT("TAB") );
 			if( hTheme ) {
 				if( !bSelected ){
 					::InflateRect( &rcFullItem, DpiScaleX(2), DpiScaleY(2) );
@@ -1955,7 +1955,7 @@ void CTabWnd::Refresh( BOOL bEnsureVisible/* = TRUE*/, BOOL bRebuild/* = FALSE*/
 
 		// タブが無ければ１つ作成して選択状態にする（自ウィンドウのタブ用）
 		WCHAR		szName[2048];
-		szName[0] = L'\0';
+		szName[0] = LCHAR('\0');
 		tcitem.mask    = TCIF_TEXT | TCIF_PARAM;
 		tcitem.pszText = szName;
 		tcitem.lParam  = (LPARAM)GetParentHwnd();
@@ -2389,7 +2389,7 @@ HIMAGELIST CTabWnd::InitImageList( void )
 		// 2016.08.06 ".0" の場合に Win10で同じインデックスが返ってくるので、"C:\\"に変更
 
 		hImlSys = (HIMAGELIST)::SHGetFileInfo(
-			L"C:\\",
+			LTEXT("C:\\"),
 			FILE_ATTRIBUTE_DIRECTORY,
 			&sfi,
 			sizeof(sfi),
@@ -2400,7 +2400,7 @@ HIMAGELIST CTabWnd::InitImageList( void )
 		m_iIconApp = sfi.iIcon;
 
 		hImlSys = (HIMAGELIST)::SHGetFileInfo(
-			L".1",
+			LTEXT(".1"),
 			FILE_ATTRIBUTE_DIRECTORY,
 			&sfi,
 			sizeof(sfi),

@@ -29,7 +29,7 @@
 
 namespace basis {
 
-std::wstring GetBugReportCaption();
+sakura::wstring GetBugReportCaption();
 
 } // namespace basis
 
@@ -52,10 +52,10 @@ int Wrap_MessageBox(HWND hWnd, LPCWSTR lpText, LPCWSTR lpCaption, UINT uType);
  * @returns メッセージボックスがどのボタンで閉じられたかを示す値。IDYESなど。
  */
 int MessageBoxS(
-	const std::wstring& text,
+	const sakura::wstring& text,
 	UINT uType = MB_OK,
 	_In_opt_ HWND hWndOwner = nullptr,
-	const std::optional<std::wstring>& optCaption = std::nullopt
+	const std::optional<sakura::wstring>& optCaption = std::nullopt
 );
 
 //テキスト整形機能付きMessageBox

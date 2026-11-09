@@ -58,7 +58,7 @@ public:
 		POINT*			ppoWin,
 		int				nWinHeight,
 		int				nColumnWidth,
-		const wchar_t*	pszCurWord,
+		const WCHAR*	pszCurWord,
 		const WCHAR*	pszHokanFile,
 		bool			bHokanLoHiCase,			// 入力補完機能：英大文字小文字を同一視する 2001/06/19 asa-o
 		bool			bHokanByFile,			// 編集中データから候補を探す。 2003.06.23 Moca
@@ -67,9 +67,9 @@ public:
 		CNativeW*		pcmemHokanWord = nullptr	// 補完候補が１つのときこれに格納 2001/06/19 asa-o
 	);
 	void HokanSearchByKeyword(
-		const wchar_t*	pszCurWord,
+		const WCHAR*	pszCurWord,
 		bool 			bHokanLoHiCase,
-		vector_ex<std::wstring>& 	vKouho
+		vector_ex<sakura::wstring>& 	vKouho
 	);
 
 	BOOL DoHokan(int nVKey);
@@ -87,15 +87,15 @@ public:
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
-	static bool AddKouhoUnique(vector_ex<std::wstring>&, const std::wstring&);
+	static bool AddKouhoUnique(vector_ex<sakura::wstring>&, const sakura::wstring&);
 
 	/*
 	||  実装ヘルパ関数
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
 
-	CNativeW		m_cmemCurWord{ L"" };
-	vector_ex<std::wstring>	m_vKouho;
+	CNativeW		m_cmemCurWord{ LTEXT("") };
+	vector_ex<sakura::wstring>	m_vKouho;
 
 	int				m_nCurKouhoIdx = -1;
 

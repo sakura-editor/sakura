@@ -161,12 +161,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 
 	//	Jun. 16, 2002 genta
 	SetReady();	//	エラーがあればfalseになる
-	std::wstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
+	sakura::wstring MACRO_ERROR_TITLE_string = LS(STR_ERR_DLGKEYMACMGR2);
 	const WCHAR* MACRO_ERROR_TITLE = MACRO_ERROR_TITLE_string.c_str();
 
 	int line = 1;	//	エラー時に行番号を通知するため．1始まり．
 	for( ; in.Good() ; ++line ){
-		std::wstring strLine = in.ReadLineW();
+		sakura::wstring strLine = in.ReadLineW();
 		const WCHAR* szLine = strLine.c_str(); // '\0'終端文字列を取得
 		using namespace WCODE;
 
@@ -179,12 +179,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 		}
 		nBgn = i;
 		//	Jun. 16, 2002 genta 空行を無視する
-		if( nBgn == nLineLen || szLine[nBgn] == L'\0' ){
+		if( nBgn == nLineLen || szLine[nBgn] == LCHAR('\0') ){
 			continue;
 		}
 		// コメント行の検出
 		//# パフォーマンス：'/'のときだけ２文字目をテスト
-		if( szLine[nBgn] == L'/' && nBgn + 1 < nLineLen && szLine[nBgn + 1] == L'/' ){
+		if( szLine[nBgn] == LCHAR('/') && nBgn + 1 < nLineLen && szLine[nBgn + 1] == LCHAR('/') ){
 			continue;
 		}
 
@@ -192,9 +192,9 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 		szFuncName[0]='\0';// 初期化
 		for( ; i < nLineLen; ++i ){
 			//# バッファオーバーランチェック
-			if( szLine[i] == L'(' && (i - nBgn)< int(std::size(szFuncName)) ){
+			if( szLine[i] == LCHAR('(') && (i - nBgn)< int(std::size(szFuncName)) ){
 				wmemcpy( szFuncName, &szLine[nBgn], i - nBgn );
-				szFuncName[i - nBgn] = L'\0';
+				szFuncName[i - nBgn] = LCHAR('\0');
 				++i;
 				nBgn = i;
 				break;
@@ -227,12 +227,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 				const VARTYPE type = mInfo->m_varArguments[nArgs];
 
 				//	Skip Space
-				while( szLine[i] == L' ' || szLine[i] == L'\t' )
+				while( szLine[i] == LCHAR(' ') || szLine[i] == LCHAR('\t') )
 					i++;
 
 				//@@@ 2002.2.2 YAZAKI PPA.DLLマクロにあわせて仕様変更。文字列は''で囲む。
 				//	Jun. 16, 2002 genta double quotationも許容する
-				if( L'\'' == szLine[i] || L'\"' == szLine[i]  ){	//	'で始まったら文字列だよきっと。
+				if( LCHAR('\'') == szLine[i] || LCHAR('\"') == szLine[i]  ){	//	'で始まったら文字列だよきっと。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( type != VT_BSTR && 
@@ -256,7 +256,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 					//	Jun. 16, 2002 genta
 					//	行末の検出のため，ループ回数を1増やした
 					for( ; i <= nLineLen; ++i ){		//	最後の文字+1までスキャン
-						if( szLine[i] == L'\\' ){	// エスケープのスキップ
+						if( szLine[i] == LCHAR('\\') ){	// エスケープのスキップ
 							++i;
 							continue;
 						}
@@ -288,36 +288,36 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 					CNativeW cmemWork;
 					cmemWork.SetString( strLine.c_str() + nBgn, nEnd - nBgn );
 					// 2014.01.28 「"\\'"」のような場合の不具合を修正
-					cmemWork.Replace( L"\\\\", L"\\\1" ); // 一時置換(最初に必要)
-					cmemWork.Replace( L"\\\'", L"\'" );
+					cmemWork.Replace( LTEXT("\\\\"), LTEXT("\\\1") ); // 一時置換(最初に必要)
+					cmemWork.Replace( LTEXT("\\\'"), LTEXT("\'") );
 
 					//	Jun. 16, 2002 genta double quotationもエスケープ解除
-					cmemWork.Replace( L"\\\"", L"\"" );
-					cmemWork.Replace( L"\\r", L"\r" );
-					cmemWork.Replace( L"\\n", L"\n" );
-					cmemWork.Replace( L"\\t", L"\t" );
+					cmemWork.Replace( LTEXT("\\\""), LTEXT("\"") );
+					cmemWork.Replace( LTEXT("\\r"), LTEXT("\r") );
+					cmemWork.Replace( LTEXT("\\n"), LTEXT("\n") );
+					cmemWork.Replace( LTEXT("\\t"), LTEXT("\t") );
 					{
 						// \uXXXX 置換
 						size_t nLen = cmemWork.GetStringLength();
 						size_t nBegin = 0;
-						const wchar_t* p = cmemWork.GetStringPtr();
+						const WCHAR* p = cmemWork.GetStringPtr();
 						CNativeW cmemTemp;
 						for( size_t n = 0; n < nLen; n++ ){
-							if( n + 1 < nLen && p[n] == L'\\' && p[n+1] == L'u' ){
+							if( n + 1 < nLen && p[n] == LCHAR('\\') && p[n+1] == LCHAR('u') ){
 								size_t k;
 								for( k = n + 2; k < nLen && k < n + 2 + 4
 									&& (WCODE::Is09(p[k])
-										|| (L'a' <= p[k] && p[k] <= L'f')
-										|| (L'A' <= p[k] && p[k] <= L'F')); k++ ){
+										|| (LCHAR('a') <= p[k] && p[k] <= LCHAR('f'))
+										|| (LCHAR('A') <= p[k] && p[k] <= LCHAR('F'))); k++ ){
 								}
 								cmemTemp.AppendString( p + nBegin, n - nBegin );
 								nBegin = k;
 								if( 0 < k - n - 2 ){
-									wchar_t hex[5];
+									WCHAR hex[5];
 									wcsncpy( hex, &p[n+2], k - n - 2 );
-									hex[k - n - 2] = L'\0';
-									wchar_t* pEnd = nullptr;
-									wchar_t c = static_cast<wchar_t>(wcstol(hex, &pEnd, 16));
+									hex[k - n - 2] = LCHAR('\0');
+									WCHAR* pEnd = nullptr;
+									WCHAR c = static_cast<WCHAR>(wcstol(hex, &pEnd, 16));
 									cmemTemp.AppendString( &c, 1 );
 								}
 								n = k - 1;
@@ -330,10 +330,10 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 							cmemWork.swap( cmemTemp );
 						}
 					}
-					cmemWork.Replace( L"\\\1", L"\\" ); // 一時置換を\に戻す(最後でないといけない)
+					cmemWork.Replace( LTEXT("\\\1"), LTEXT("\\") ); // 一時置換を\に戻す(最後でないといけない)
 					macro->AddStringParam( cmemWork.GetStringPtr(), cmemWork.GetStringLength() );	//	引数を文字列として追加
 				}
- 				else if ( Is09(szLine[i]) || szLine[i] == L'-' ){	//	数字で始まったら数字列だ(-記号も含む)。
+ 				else if ( Is09(szLine[i]) || szLine[i] == LCHAR('-') ){	//	数字で始まったら数字列だ(-記号も含む)。
 					// Jun. 16, 2002 genta プロトタイプチェック
 					// Jun. 27, 2002 genta 余分な引数を無視するよう，VT_EMPTYを許容する．
 					if( type != VT_I4 &&
@@ -374,7 +374,7 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 					macro->AddIntParam( _wtoi(cmemWork.GetStringPtr()) );	//	引数を数字として追加
 				}
 				//	Jun. 16, 2002 genta
-				else if( szLine[i] == L')' ){
+				else if( szLine[i] == LCHAR(')') ){
 					//	引数無し
 					break;
 				}
@@ -389,12 +389,12 @@ BOOL CKeyMacroMgr::LoadKeyMacro(
 				}
 
 				for( ; i < nLineLen; ++i ){		//	最後の文字までスキャン
-					if( szLine[i] == L')' || szLine[i] == L',' ){	//	,もしくは)を読み飛ばす
+					if( szLine[i] == LCHAR(')') || szLine[i] == LCHAR(',') ){	//	,もしくは)を読み飛ばす
 						i++;
 						break;
 					}
 				}
-				if (szLine[i-1] == L')'){
+				if (szLine[i-1] == LCHAR(')')){
 					break;
 				}
 			}
@@ -430,7 +430,7 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr(
 {
 	// 一時ファイル名を作成
 	SFilePath szTempFile;
-	szTempFile = GetTempFilePath(L"mac");
+	szTempFile = GetTempFilePath(LTEXT("mac"));
 
 	// 一時ファイルに書き込む
 	CTextOutputStream out = CTextOutputStream( szTempFile );
@@ -456,7 +456,7 @@ BOOL CKeyMacroMgr::LoadKeyMacroStr(
 */
 CMacroManagerBase* CKeyMacroMgr::Creator(const WCHAR* ext)
 {
-	if( wcscmp( ext, L"mac" ) == 0 ){
+	if( wcscmp( ext, LTEXT("mac") ) == 0 ){
 		return new CKeyMacroMgr;
 	}
 	return nullptr;

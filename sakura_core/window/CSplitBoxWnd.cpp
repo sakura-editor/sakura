@@ -21,7 +21,7 @@
 #include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
-: CWnd(L"::CSplitBoxWnd")
+: CWnd(LTEXT("::CSplitBoxWnd"))
 {
 	m_bVertical = TRUE;	/* 垂直分割ボックスか */
 	return;
@@ -41,11 +41,11 @@ HWND CSplitBoxWnd::Create( HINSTANCE hInstance, HWND hwndParent, int bVertical )
 
 	/* ウィンドウクラス作成 */
 	if( bVertical ){
-		pszClassName = L"VSplitBoxWnd";
+		pszClassName = LTEXT("VSplitBoxWnd");
 		hCursor = ::LoadCursor( nullptr, IDC_SIZENS );
 	}
 	else{
-		pszClassName = L"HSplitBoxWnd";
+		pszClassName = LTEXT("HSplitBoxWnd");
 		hCursor = ::LoadCursor( nullptr, IDC_SIZEWE );
 	}
 	RegisterWC(

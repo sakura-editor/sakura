@@ -81,7 +81,7 @@ next:
 CWnd::CWnd(const WCHAR* pszInheritanceAppend)
 {
 #ifdef _DEBUG
-	wcsncpy_s(m_szClassInheritances, std::size(m_szClassInheritances), L"CWnd", _TRUNCATE );
+	wcsncpy_s(m_szClassInheritances, std::size(m_szClassInheritances), LTEXT("CWnd"), _TRUNCATE );
 	wcsncat_s(m_szClassInheritances, std::size(m_szClassInheritances), pszInheritanceAppend, _TRUNCATE );
 #endif
 }
@@ -173,7 +173,7 @@ HWND CWnd::Create(
 	CWindowCreationHook::Unuse();
 
 	if( nullptr == m_hWnd ){
-		::MessageBox( m_hwndParent, L"CWnd::Create()\n\n::CreateWindowEx failed.", L"error", MB_OK );
+		::MessageBox( m_hwndParent, LTEXT("CWnd::Create()\n\n::CreateWindowEx failed."), LTEXT("error"), MB_OK );
 		return nullptr;
 	}
 

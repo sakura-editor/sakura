@@ -40,7 +40,7 @@ public:
 
 private:
 	std::string m_strPath;
-	std::wstring m_wstrPath;
+	sakura::wstring m_wstrPath;
 	std::string m_strMacro;
 	static inline SFilePath prev_dir{};
 };

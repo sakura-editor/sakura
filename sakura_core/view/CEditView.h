@@ -175,14 +175,14 @@ public:
 public:
 	//取得
 	bool MyGetClipboardData( CNativeW& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = nullptr );			/* クリップボードからデータを取得 */
-	bool MyGetClipboardData( std::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = nullptr);			/* クリップボードからデータを取得 */
+	bool MyGetClipboardData( sakura::wstring& cmemBuf, bool* pbColumnSelect, bool* pbLineSelect = nullptr);			/* クリップボードからデータを取得 */
 
 	//設定
 	bool MySetClipboardData( const WCHAR* pszText, size_t nTextLen, bool bColumnSelect, bool bLineSelect = false );	/* クリップボードにデータを設定 */
 
 	//利用
 	void CopyCurLine( bool bAddCRLFWhenCopy, EEolType neweol, bool bEnableLineModePaste );	/* カーソル行をクリップボードにコピーする */	// 2007.10.08 ryoji
-	void CopySelectedAllLines( const wchar_t* pszQuote, BOOL bWithLineNumber );			/* 選択範囲内の全行をクリップボードにコピーする */
+	void CopySelectedAllLines( const WCHAR* pszQuote, BOOL bWithLineNumber );			/* 選択範囲内の全行をクリップボードにコピーする */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
@@ -327,9 +327,9 @@ public:
 	// 2002/01/19 novice public属性に変更
 	bool GetSelectedDataSimple( CNativeW& cmemBuf );// 選択範囲のデータを取得
 	bool GetSelectedDataOne( CNativeW& cmemBuf, int nMaxLen );
-	bool GetSelectedData( IWBuffer* buffer, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
-	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
-	bool GetSelectedData( std::wstring* wstr, BOOL bLineOnly, const wchar_t* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( IWBuffer* buffer, BOOL bLineOnly, const WCHAR* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( CNativeW* cmemBuf, BOOL bLineOnly, const WCHAR* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
+	bool GetSelectedData( sakura::wstring* wstr, BOOL bLineOnly, const WCHAR* pszQuote, BOOL bWithLineNumber, bool bAddCRLFWhenCopy, EEolType neweol = EEolType::none);/* 選択範囲のデータを取得 */
 	int IsCurrentPositionSelected( CLayoutPoint ptCaretPos );					/* 指定カーソル位置が選択エリア内にあるか */
 	int IsCurrentPositionSelectedTEST( const CLayoutPoint& ptCaretPos, const CLayoutRange& sSelect ) const;/* 指定カーソル位置が選択エリア内にあるか */
 	// 2006.07.09 genta 行桁指定によるカーソル移動(選択領域を考慮)
@@ -342,7 +342,7 @@ public:
 	//                         各種判定                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, std::wstring* pstrURL );/* カーソル位置にURLが有る場合のその範囲を調べる */
+	bool IsCurrentPositionURL( const CLayoutPoint& ptCaretPos, CLogicRange* pUrlRange, sakura::wstring* pstrURL );/* カーソル位置にURLが有る場合のその範囲を調べる */
 	BOOL CheckTripleClick( CMyPoint ptMouse );							/* トリプルクリックをチェックする */	// 2007.10.02 nasukoji
 
 	bool ExecCmd(const WCHAR* pszCmd, int nFlgOpt, const WCHAR* pszCurDir, COutputAdapter* customOa = nullptr ) ;							// 子プロセスの標準出力をリダイレクトする
@@ -389,7 +389,7 @@ public:
 	/* 現在位置にデータを挿入 */
 	void InsertData_CEditView(
 		CLayoutPoint	ptInsertPos,
-		const wchar_t*	pData,
+		const WCHAR*	pData,
 		int				nDataLen,
 		CLayoutPoint*	pptNewPos,	//挿入された部分の次の位置のデータ位置
 		bool			bRedraw
@@ -398,7 +398,7 @@ public:
 	/* データ置換 削除&挿入にも使える */
 	void ReplaceData_CEditView(
 		const CLayoutRange&	sDelRange,			// 削除範囲。レイアウト単位。
-		const wchar_t*		pInsData,			// 挿入するデータ
+		const WCHAR*		pInsData,			// 挿入するデータ
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
 		COpeBlk*			pcOpeBlk,
@@ -407,7 +407,7 @@ public:
 	);
 	void ReplaceData_CEditView2(
 		const CLogicRange&	sDelRange,			// 削除範囲。ロジック単位。
-		const wchar_t*		pInsData,			// 挿入するデータ
+		const WCHAR*		pInsData,			// 挿入するデータ
 		CLogicInt			nInsDataLen,		// 挿入するデータの長さ
 		bool				bRedraw,
 		COpeBlk*			pcOpeBlk,
@@ -459,7 +459,7 @@ public:
 	BOOL KeyWordHelpSearchDict( LID_SKH nID, POINT* po, RECT* rc );	// 2006.04.10 fon
 
 	int IsSearchString(
-		std::wstring_view line,
+		sakura::wstring_view line,
 		int nPos,
 		CLogicInt* pnSearchStart,
 		CLogicInt* pnSearchEnd
@@ -487,11 +487,11 @@ public:
 	//	Jun. 16, 2000 genta
 	bool  SearchBracket( const CLayoutPoint& ptPos, CLayoutPoint* pptLayoutNew, int* mode );	// 対括弧の検索		// modeの追加 02/09/18 ai
 	bool  SearchBracketForward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-						const wchar_t* upChar, const wchar_t* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
+						const WCHAR* upChar, const WCHAR* dnChar, int* mode );	//	対括弧の前方検索	// modeの追加 02/09/19 ai
 	bool  SearchBracketBackward( CLogicPoint ptPos, CLayoutPoint* pptLayoutNew,
-						const wchar_t* dnChar, const wchar_t* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
+						const WCHAR* dnChar, const WCHAR* upChar, int* mode );	//	対括弧の後方検索	// modeの追加 02/09/19 ai
 	void DrawBracketPair(bool bDraw);								/* 対括弧の強調表示 02/09/18 ai */
-	bool IsBracket(const wchar_t *pLine, CLogicInt x, CLogicInt size);					/* 括弧判定 03/01/09 ai */
+	bool IsBracket(const WCHAR *pLine, CLogicInt x, CLogicInt size);					/* 括弧判定 03/01/09 ai */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           補完                              //
@@ -505,7 +505,7 @@ public:
 	// 補完ウィンドウを表示する。Ctrl+Spaceや、文字の入力/削除時に呼び出されます。 YAZAKI 2002/03/11
 	void ShowHokanMgr( CNativeW& cmemData, BOOL bAutoDecided );
 
-	size_t HokanSearchByFile(const wchar_t* pszKey, bool bHokanLoHiCase, vector_ex<std::wstring>& vKouho, size_t nMaxKouho ); // 2003.06.25 Moca
+	size_t HokanSearchByFile(const WCHAR* pszKey, bool bHokanLoHiCase, vector_ex<sakura::wstring>& vKouho, size_t nMaxKouho ); // 2003.06.25 Moca
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         ジャンプ                            //
@@ -555,7 +555,7 @@ public:
 		TGWRAP_PROP,
 	};
 	TOGGLE_WRAP_ACTION GetWrapMode( CKetaXInt* newKetas );
-	void SmartIndent_CPP(wchar_t wcChar);	/* C/C++スマートインデント処理 */
+	void SmartIndent_CPP(WCHAR wcChar);	/* C/C++スマートインデント処理 */
 	/* コマンド操作 */
 	void	SetFont(HWND hWnd = nullptr, bool bReDraw = true);	/* フォントの変更 */
 	void SplitBoxOnOff(BOOL bVert, BOOL bHorz, BOOL bSizeBox);						/* 縦・横の分割ボックス・サイズボックスのＯＮ／ＯＦＦ */
@@ -720,7 +720,7 @@ public:
 	bool				m_bCurSrchKeyMark = false;			/* 検索文字列のマーク */
 	bool				m_bCurSearchUpdate = false;			//!< コンパイルデータ更新要求
 	int					m_nCurSearchKeySequence = -1;	//!< 検索キーシーケンス
-	std::wstring		m_strCurSearchKey;			//!< 検索文字列
+	sakura::wstring		m_strCurSearchKey;			//!< 検索文字列
 	SSearchOption		m_sCurSearchOption;			// 検索／置換  オプション
 	CLogicPoint			m_ptSrchStartPos_PHY;		// 検索/置換開始時のカーソル位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
 	BOOL				m_bSearch = FALSE;					/* 検索/置換開始位置を登録するか */											// 02/06/26 ai

@@ -38,10 +38,10 @@
 	@date 2007.11.29 kobake 名前変更: oneRule→SOneRule
 */
 struct SOneRule {
-	wchar_t szMatch[256];
+	WCHAR szMatch[256];
 	int		nLength;
-	wchar_t szText[256]; // RegexReplace時の置換後文字列
-	wchar_t szGroupName[256];
+	WCHAR szText[256]; // RegexReplace時の置換後文字列
+	WCHAR szGroupName[256];
 	int		nLv;
 	int		nRegexOption;
 	int		nRegexMode; // 0 ==「Mode=Regex」, 1 == 「Mode=RegexReplace」
@@ -54,7 +54,7 @@ struct SOneRule {
 	@date 2013.06.02 _wfopen_absini,fgetwsをCTextInputStream_AbsIniに変更。UTF-8対応。Regex対応
 	@date 2014.06.20 RegexReplace 正規表現置換モード追加
 */
-int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, std::wstring& title )
+int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, int nMaxCount, bool& bRegex, sakura::wstring& title )
 {
 	// 2003.06.23 Moca 相対パスは実行ファイルからのパスとして開く
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
@@ -62,13 +62,13 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 	if( !file.Good() ){
 		return 0;
 	}
-	std::wstring	strLine;
-	wchar_t			szLine[LINEREADBUFSIZE];
-	wchar_t			szText[256];
-	const wchar_t*	pszDelimit = L" /// ";
-	const wchar_t*	pszKeySeps = L",\0";
-	const wchar_t*	pszWork;
-	wchar_t	cComment = L';';
+	sakura::wstring	strLine;
+	WCHAR			szLine[LINEREADBUFSIZE];
+	WCHAR			szText[256];
+	const WCHAR*	pszDelimit = LTEXT(" /// ");
+	const WCHAR*	pszKeySeps = LTEXT(",\0");
+	const WCHAR*	pszWork;
+	WCHAR	cComment = LCHAR(';');
 	auto nDelimitLen = int(wcslen(pszDelimit));
 	int nCount = 0;
 	bRegex = false;
@@ -90,7 +90,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			if( nLen < LINEREADBUFSIZE ){
 				// szLine == 「key1,key2」
 				wmemcpy(szLine, strLine.c_str(), nLen);
-				szLine[nLen] = L'\0';
+				szLine[nLen] = LCHAR('\0');
 			}else{
 				// この行は長すぎる
 				continue;
@@ -98,15 +98,15 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			pszWork += nDelimitLen;
 
 			/* 最初のトークンを取得します。 */
-			const wchar_t* pszTextReplace = L"";
-			wchar_t* pszToken;
-			wchar_t* context{ nullptr };
+			const WCHAR* pszTextReplace = LTEXT("");
+			WCHAR* pszToken;
+			WCHAR* context{ nullptr };
 			bool bTopDummy = false;
 			bool bRegexRep2 = false;
 			if( bRegex ){
 				// regexのときは,区切りにしない
 				pszToken = szLine;
-				if( szLine[0] == L'\0' ){
+				if( szLine[0] == LCHAR('\0') ){
 					if( 0 < nCount ){
 						// 空のKey は無視
 						pszToken = nullptr;
@@ -116,8 +116,8 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 					}
 				}
 				if( bRegexReplace && pszToken ){
-					const wchar_t* pszGroupDel = wcsstr( pszWork, pszDelimit );
-					if( nullptr != pszGroupDel && 0 < pszWork[0] != L'\0' ){
+					const WCHAR* pszGroupDel = wcsstr( pszWork, pszDelimit );
+					if( nullptr != pszGroupDel && 0 < pszWork[0] != LCHAR('\0') ){
 						// pszWork = 「titleRep /// group」
 						// pszGroupDel = 「 /// group」
 						int nTitleLen = int(pszGroupDel - pszWork); // Len == 0 OK
@@ -138,7 +138,7 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 					bTopDummy = true;
 				}
 			}
-			const WCHAR* p = wcsstr( pszWork, L",Lv=" );
+			const WCHAR* p = wcsstr( pszWork, LTEXT(",Lv=") );
 			int nLv = 0;
 			if( p ){
 				nLv = _wtoi( p + 4 );
@@ -147,8 +147,8 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 				wcsncpy( pcOneRule[nCount].szMatch, pszToken, 255 );
 				wcsncpy_s( pcOneRule[nCount].szText, _countof(pcOneRule[0].szText), pszTextReplace, _TRUNCATE );
 				wcsncpy( pcOneRule[nCount].szGroupName, pszWork, 255 );
-				pcOneRule[nCount].szMatch[255] = L'\0';
-				pcOneRule[nCount].szGroupName[255] = L'\0';
+				pcOneRule[nCount].szMatch[255] = LCHAR('\0');
+				pcOneRule[nCount].szGroupName[255] = LCHAR('\0');
 				pcOneRule[nCount].nLv = nLv;
 				pcOneRule[nCount].nLength = (int)wcslen(pcOneRule[nCount].szMatch);
 				pcOneRule[nCount].nRegexOption = regexOption;
@@ -162,39 +162,39 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 			}
 		}else{
 			if( 0 < strLine.length() && strLine[0] == cComment ){
-				if( 13 <= strLine.length() && strLine.length() <= 14 && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"CommentChar=" ) ){
+				if( 13 <= strLine.length() && strLine.length() <= 14 && 0 == wcsnicmp_literal( strLine.c_str() + 1, LTEXT("CommentChar=") ) ){
 					if( 13 == strLine.length() ){
-						cComment = L'\0';
+						cComment = LCHAR('\0');
 					}else{
 						cComment = strLine[13];
 					}
-				}else if( 11 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=Regex" ) ){
+				}else if( 11 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, LTEXT("Mode=Regex") ) ){
 					bRegex = true;
 					bRegexReplace = false;
-				}else if( 18 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, L"Mode=RegexReplace" ) ){
+				}else if( 18 == strLine.length() && 0 == _wcsicmp( strLine.c_str() + 1, LTEXT("Mode=RegexReplace") ) ){
 					bRegex = true;
 					bRegexReplace = true;
-				}else if( 7 <= strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"Title=" ) ){
+				}else if( 7 <= strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, LTEXT("Title=") ) ){
 					title = strLine.c_str() + 7;
-				}else if( 13 < strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, L"RegexOption=" ) ){
+				}else if( 13 < strLine.length() && 0 == wcsnicmp_literal( strLine.c_str() + 1, LTEXT("RegexOption=") ) ){
 					int nCaseFlag = CBregexp::optCaseSensitive;
 					regexOption = 0;
 					for( int i = 13; i < (int)strLine.length(); i++ ){
-						if( strLine[i] == L'i' ){
+						if( strLine[i] == LCHAR('i') ){
 							nCaseFlag = 0;
-						}else if( strLine[i] == L'g' ){
+						}else if( strLine[i] == LCHAR('g') ){
 							regexOption |= CBregexp::optGlobal;
-						}else if( strLine[i] == L'x' ){
+						}else if( strLine[i] == LCHAR('x') ){
 							regexOption |= CBregexp::optExtend;
-						}else if( strLine[i] == L'a' ){
+						}else if( strLine[i] == LCHAR('a') ){
 							regexOption |= CBregexp::optASCII;
-						}else if( strLine[i] == L'u' ){
+						}else if( strLine[i] == LCHAR('u') ){
 							regexOption |= CBregexp::optUnicode;
-						}else if( strLine[i] == L'd' ){
+						}else if( strLine[i] == LCHAR('d') ){
 							regexOption |= CBregexp::optDefault;
-						}else if( strLine[i] == L'l' ){
+						}else if( strLine[i] == LCHAR('l') ){
 							regexOption |= CBregexp::optLocale;
-						}else if( strLine[i] == L'R' ){
+						}else if( strLine[i] == LCHAR('R') ){
 							regexOption |= CBregexp::optR;
 						}
 					}
@@ -214,12 +214,12 @@ int CDocOutline::ReadRuleFile( const WCHAR* pszFilename, SOneRule* pcOneRule, in
 		最大値以上は追加せずに無視する
 	@date 2007.11.29 kobake SOneRule test[1024] でスタックが溢れていたのを修正
 */
-void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstring& sTitleOverride )
+void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, sakura::wstring& sTitleOverride )
 {
 	/* ルールファイルの内容をバッファに読み込む */
 	auto test = std::make_unique<SOneRule[]>(1024);	// 1024個許可。 2007.11.29 kobake スタック使いすぎなので、ヒープに確保するように修正。
 	bool bRegex;
-	std::wstring title;
+	sakura::wstring title;
 	int nCount = ReadRuleFile(m_pcDocRef->m_cDocType.GetDocumentAttribute().m_szOutlineRuleFilename, test.get(), 1024, bRegex, title );
 	if ( nCount < 1 ){
 		return;
@@ -233,9 +233,9 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	*/
 	const int	nMaxStack = 32;	//	ネストの最深
 	int			nDepth = 0;				//	いまのアイテムの深さを表す数値。
-	wchar_t		pszStack[nMaxStack][256];
-	wchar_t		nLvStack[nMaxStack];
-	wchar_t		szTitle[256];			//	一時領域
+	WCHAR		pszStack[nMaxStack][256];
+	WCHAR		nLvStack[nMaxStack];
+	WCHAR		szTitle[256];			//	一時領域
 	CBregexp*	pRegex = nullptr;
 	if( bRegex ){
 		pRegex = new CBregexp[nCount];
@@ -249,8 +249,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 			}
 			if( test[i].nRegexMode == 1 ){
 				if( !pRegex[i].Compile(test[i].szMatch, test[i].szText, test[i].nRegexOption) ){
-					std::wstring str = test[i].szMatch;
-					str += L"\n";
+					sakura::wstring str = test[i].szMatch;
+					str += LTEXT("\n");
 					str += test[i].szText;
 					ErrorMessage( nullptr, LS(STR_DOCOUTLINE_REGEX),
 						str.c_str(),
@@ -272,10 +272,10 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	// 1つめが空行だった場合は、ルート要素とする
 	// 項目名はグループ名
 	if( test[0].nLength == 0 ){
-		const wchar_t* g = test[0].szGroupName;
+		const WCHAR* g = test[0].szGroupName;
 		wcscpy(pszStack[0], g);
-		nLvStack[0] = wchar_t(test[0].nLv);
-		const wchar_t *p = wcschr(g, L',');
+		nLvStack[0] = WCHAR(test[0].nLv);
+		const WCHAR *p = wcschr(g, LCHAR(','));
 		int len;
 		if( p != nullptr ){
 			len = int(p - g);
@@ -291,7 +291,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 	{
 		//行取得
 		CLogicInt		nLineLen;
-		const wchar_t*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
+		const WCHAR*	pLine = m_pcDocRef->m_cDocLineMgr.GetLine(nLineCount)->GetDocLineStrWithEOL(&nLineLen);
 		if( nullptr == pLine ){
 			break;
 		}
@@ -300,7 +300,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		int		i = 0;
 		if( !bRegex ){
 			for( i = 0; i < nLineLen; ++i ){
-				if( pLine[i] == L' ' || pLine[i] == L'\t' || pLine[i] == L'　'){
+				if( pLine[i] == LCHAR(' ') || pLine[i] == LCHAR('\t') || pLine[i] == LCHAR('　')){
 					continue;
 				}
 				break;
@@ -311,8 +311,8 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		}
 
 		//先頭文字が見出し記号のいずれかであれば、次へ進む
-		const wchar_t*		pszText = nullptr;
-		std::wstring strText;
+		const WCHAR*		pszText = nullptr;
+		sakura::wstring strText;
 		int		j;
 		for( j = 0; j < nCount; j++ ){
 			if( bRegex ){
@@ -347,7 +347,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 		if( j >= nCount ){
 			continue;
 		}
-		if( 0 == wcscmp( szTitle, L"Except" ) ){
+		if( 0 == wcscmp( szTitle, LTEXT("Except") ) ){
 			continue;
 		}
 
@@ -408,7 +408,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 				k = 0;
 			}
 			wcscpy(pszStack[k], szTitle);
-			nLvStack[k] = wchar_t(test[j].nLv);
+			nLvStack[k] = WCHAR(test[j].nLv);
 			nDepth = k;
 		}else{
 			// 2002.11.03 Moca 最大値を超えるとバッファオーバーランするから規制する
@@ -434,7 +434,7 @@ void CDocOutline::MakeFuncList_RuleFile( CFuncInfoArr* pcFuncInfoArr, std::wstri
 */
 void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 {
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	CLogicInt		nLineLen;
 	CLogicInt		nLineCount;
 	int		leftspace, pos_wo_space, k;
@@ -478,13 +478,13 @@ void CDocOutline::MakeFuncList_BookMark( CFuncInfoArr* pcFuncInfoArr )
 						pLine[k] == WCODE::SPACE ||
 						pLine[k] == WCODE::TAB ||
 						WCODE::IsZenkakuSpace(pLine[k]) ||
-						pLine[k] == L'\0') )
+						pLine[k] == LCHAR('\0')) )
 					pos_wo_space = k + nCharChars;
 			}
 			k += nCharChars;
 		}
 		//	Nov. 3, 2005 genta 文字列長計算式の修正
-		std::wstring strText( &pLine[leftspace], pos_wo_space - leftspace );
+		sakura::wstring strText( &pLine[leftspace], pos_wo_space - leftspace );
 
 		CLayoutPoint ptXY;
 		m_pcDocRef->m_cLayoutMgr.LogicToLayout( CLogicPoint(CLogicInt(0), nLineCount), &ptXY );

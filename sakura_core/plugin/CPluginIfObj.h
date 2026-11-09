@@ -37,7 +37,7 @@ class CPluginIfObj : public CWSHIfObj {
 	// コンストラクタ
 public:
 	CPluginIfObj( CPlugin& cPlugin )
-		: CWSHIfObj( L"Plugin", false )
+		: CWSHIfObj( LTEXT("Plugin"), false )
 		, m_cPlugin( cPlugin )
 	{
 	}
@@ -79,9 +79,9 @@ public:
 		case F_PL_GETOPTION:			//オプションファイルから値を読む
 			{
 				CDataProfile cProfile;
-				std::wstring sSection;
-				std::wstring sKey;
-				std::wstring sValue;
+				sakura::wstring sSection;
+				sakura::wstring sKey;
+				sakura::wstring sValue;
 				if( variant_to_wstr( Arguments[0], sSection ) != true) return false;
 				if( variant_to_wstr( Arguments[1], sKey ) != true) return false;
 
@@ -96,8 +96,8 @@ public:
 					// 設定されていなければデフォルトを取得 
 					CPluginOption::ArrayIter it;
 					for (it = m_cPlugin.m_options.cbegin(); it != m_cPlugin.m_options.cend(); it++) {
-						std::wstring sSectionTmp;
-						std::wstring sKeyTmp;
+						sakura::wstring sSectionTmp;
+						sakura::wstring sKeyTmp;
 						(*it)->GetKey(&sSectionTmp, &sKeyTmp);
 						if (sSection == sSectionTmp && sKey == sKeyTmp) {
 							sValue = (*it)->GetDefaultVal();
@@ -122,11 +122,11 @@ public:
 				int num;
 				if(variant_to_int( Arguments[0], num ) == false) return false;
 				if( 0 < num && num < MAX_PLUG_STRING ){
-					std::wstring& str = m_cPlugin.m_aStrings[num];
+					sakura::wstring& str = m_cPlugin.m_aStrings[num];
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
 				}else if( 0 == num ){
-					std::wstring str = m_cPlugin.m_sLangName;
+					sakura::wstring str = m_cPlugin.m_sLangName;
 					SysString S(str.c_str(), str.size());
 					Wrap(&Result)->Receive(S);
 				}
@@ -152,9 +152,9 @@ public:
 
 				cProfile.ReadProfile( m_cPlugin.GetOptionPath().c_str() );
 				cProfile.SetWritingMode();
-				std::wstring tmp(Arguments[2]);
+				sakura::wstring tmp(Arguments[2]);
 				cProfile.IOProfileData( Arguments[0], Arguments[1], tmp );
-				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + L" プラグイン設定ファイル").c_str() );
+				cProfile.WriteProfile( m_cPlugin.GetOptionPath().c_str(), (m_cPlugin.m_sName + LTEXT(" プラグイン設定ファイル")).c_str() );
 			}
 			break;
 		case F_PL_ADDCOMMAND:			//コマンドを追加する
@@ -183,8 +183,8 @@ private:
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] = 
 {
 	//ID									関数名					引数										戻り値の型	m_pszData
-	{EFunctionCode(F_PL_SETOPTION),			L"SetOption",			{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	nullptr }, //オプションファイルに値を書く
-	{EFunctionCode(F_PL_ADDCOMMAND),		L"AddCommand",			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	nullptr }, //コマンドを追加する
+	{EFunctionCode(F_PL_SETOPTION),			LTEXT("SetOption"),			{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	nullptr }, //オプションファイルに値を書く
+	{EFunctionCode(F_PL_ADDCOMMAND),		LTEXT("AddCommand"),			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	nullptr }, //コマンドを追加する
 	//	終端
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 };
@@ -193,11 +193,11 @@ MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] =
 MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] = 
 {
 	//ID									関数名					引数										戻り値の型	m_pszData
-	{EFunctionCode(F_PL_GETPLUGINDIR),		L"GetPluginDir",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //プラグインフォルダーパスを取得する
-	{EFunctionCode(F_PL_GETDEF),			L"GetDef",				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //設定ファイルから値を読む
-	{EFunctionCode(F_PL_GETOPTION),			L"GetOption",			{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //オプションファイルから値を読む
-	{EFunctionCode(F_PL_GETCOMMANDNO),		L"GetCommandNo",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //オプションファイルから値を読む
-	{EFunctionCode(F_PL_GETSTRING),			L"GetString",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //設定ファイルから文字列を読む
+	{EFunctionCode(F_PL_GETPLUGINDIR),		LTEXT("GetPluginDir"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //プラグインフォルダーパスを取得する
+	{EFunctionCode(F_PL_GETDEF),			LTEXT("GetDef"),				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //設定ファイルから値を読む
+	{EFunctionCode(F_PL_GETOPTION),			LTEXT("GetOption"),			{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //オプションファイルから値を読む
+	{EFunctionCode(F_PL_GETCOMMANDNO),		LTEXT("GetCommandNo"),		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //オプションファイルから値を読む
+	{EFunctionCode(F_PL_GETSTRING),			LTEXT("GetString"),			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //設定ファイルから文字列を読む
 	//	終端
 	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 };

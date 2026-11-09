@@ -38,8 +38,8 @@
 */
 template <size_t nCapacity>
 inline
-wchar_t* lineColumnToString(
-	wchar_t (&strWork)[nCapacity],	/*!< [out] 出力先 */
+WCHAR* lineColumnToString(
+	WCHAR (&strWork)[nCapacity],	/*!< [out] 出力先 */
 	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColumn				/*!< [in] マッチした桁番号(1～) */
 )
@@ -55,17 +55,17 @@ wchar_t* lineColumnToString(
 		+ 1		// \0 終端0文字の分
 	;
 	static_assert(nCapacity >= requiredMinimumCapacity, "nCapacity not enough.");
-	wchar_t* p = strWork;
-	*p++ = L'(';
+	WCHAR* p = strWork;
+	*p++ = LCHAR('(');
 	p += int2dec(nLine, p);
-	*p++ = L',';
+	*p++ = LCHAR(',');
 	p += int2dec(nColumn, p);
-	*p++ = L')';
+	*p++ = LCHAR(')');
 	*p = '\0';
 #ifdef _DEBUG
 	// Debug 版に限って両方実行して、両者が一致することを確認
-	wchar_t strWork2[requiredMinimumCapacity];
-	::auto_sprintf( strWork2, L"(%I64d,%d)", nLine, nColumn );
+	WCHAR strWork2[requiredMinimumCapacity];
+	::auto_sprintf( strWork2, LTEXT("(%I64d,%d)"), nLine, nColumn );
 	assert(wcscmp(strWork, strWork2) == 0);
 #endif
 	return strWork;
@@ -94,11 +94,11 @@ void SetGrepResult(
 	/* マッチした行の情報 */
 	LONGLONG	nLine,				/*!< [in] マッチした行番号(1～) */
 	int			nColumn,			/*!< [in] マッチした桁番号(1～) */
-	const wchar_t*	pCompareData,	/*!< [in] 行の文字列 */
+	const WCHAR*	pCompareData,	/*!< [in] 行の文字列 */
 	int			nLineLen,			/*!< [in] 行の文字列の長さ */
 	int			nEolCodeLen,		/*!< [in] EOLの長さ */
 	/* マッチした文字列の情報 */
-	const wchar_t*	pMatchData,		/*!< [in] マッチした文字列 */
+	const WCHAR*	pMatchData,		/*!< [in] マッチした文字列 */
 	int			nMatchLen,			/*!< [in] マッチした文字列の長さ */
 	/* オプション */
 	const GrepInfo&	gi
@@ -123,8 +123,8 @@ void SetGrepResult(
 void AppendFolderHeadings(
 	CNativeW&			cmemMessage,
 	const GrepInfo&		gi,
-	std::wstring_view	baseFolder,
-	std::wstring_view	folder,
+	sakura::wstring_view	baseFolder,
+	sakura::wstring_view	folder,
 	bool&				bOutputBaseFolder,
 	bool&				bOutputFolderName
 );
@@ -175,10 +175,10 @@ struct SGrepResultFile {
 struct SGrepResultMatch {
 	LONGLONG		nLine;		//!< 行番号(1～)
 	int				nColumn;	//!< 桁番号(1～)
-	const wchar_t*	pLine;		//!< 行の文字列
+	const WCHAR*	pLine;		//!< 行の文字列
 	int				nLineLen;	//!< 行の長さ(行末を含む)
 	int				nEolLen;	//!< 行末の長さ
-	const wchar_t*	pMatch;		//!< 一致した文字列
+	const WCHAR*	pMatch;		//!< 一致した文字列
 	int				nMatchLen;	//!< 一致した文字列の長さ
 };
 

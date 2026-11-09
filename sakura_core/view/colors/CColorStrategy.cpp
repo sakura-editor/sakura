@@ -368,64 +368,64 @@ bool CColorStrategyPool::HasRangeBasedColorStrategies(void) const noexcept
 */
 const SColorAttributeData g_ColorAttributeArr[] =
 {
-	{L"TXT", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
-	{L"RUL", COLOR_ATTRIB_NO_EFFECTS},
-	{L"CAR", COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
-	{L"IME", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
-	{L"CBK", COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
-	{L"UND", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
-	{L"CVL", COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
-	{L"NOT", COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
-	{L"LNO", 0},
-	{L"MOD", 0},
-	{L"EBK", COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
-	{L"TAB", 0},
-	{L"SPC", 0},	//2002.04.28 Add By KK
-	{L"ZEN", 0},
-	{L"CTL", 0},
-	{L"EOL", 0},
-	{L"RAP", 0},
-	{L"VER", 0},  // 2005.11.08 Moca 指定桁縦線
-	{L"EOF", 0},
-	{L"NUM", 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
-	{L"BRC", 0},	//対括弧	// 02/09/18 ai Add
-	{L"SEL", 0},
-	{L"FND", 0},
-	{L"FN2", 0},
-	{L"FN3", 0},
-	{L"FN4", 0},
-	{L"FN5", 0},
-	{L"CMT", 0},
-	{L"SQT", 0},
-	{L"WQT", 0},
-	{L"HDC", 0},
-	{L"URL", 0},
-	{L"KW1", 0},
-	{L"KW2", 0},
-	{L"KW3", 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
-	{L"KW4", 0},
-	{L"KW5", 0},
-	{L"KW6", 0},
-	{L"KW7", 0},
-	{L"KW8", 0},
-	{L"KW9", 0},
-	{L"KWA", 0},
-	{L"RK1", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK2", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK3", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK4", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK5", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK6", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK7", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK8", 0},	//@@@ 2001.11.17 add MIK
-	{L"RK9", 0},	//@@@ 2001.11.17 add MIK
-	{L"RKA", 0},	//@@@ 2001.11.17 add MIK
-	{L"DFA", 0},	//DIFF追加	//@@@ 2002.06.01 MIK
-	{L"DFC", 0},	//DIFF変更	//@@@ 2002.06.01 MIK
-	{L"DFD", 0},	//DIFF削除	//@@@ 2002.06.01 MIK
-	{L"MRK", 0},	//ブックマーク	// 02/10/16 ai Add
-	{L"PGV", COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
-	{L"LAST", 0}	// Not Used
+	{LTEXT("TXT"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("RUL"), COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("CAR"), COLOR_ATTRIB_FORCE_DISP | COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// キャレット		// 2006.12.07 ryoji
+	{LTEXT("IME"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},	// IMEキャレット	// 2006.12.07 ryoji
+	{LTEXT("CBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("UND"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("CVL"), COLOR_ATTRIB_NO_BACK | ( COLOR_ATTRIB_NO_EFFECTS & ~COLOR_ATTRIB_NO_BOLD )}, // 2007.09.09 Moca カーソル位置縦線
+	{LTEXT("NOT"), COLOR_ATTRIB_NO_BACK | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("LNO"), 0},
+	{LTEXT("MOD"), 0},
+	{LTEXT("EBK"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("TAB"), 0},
+	{LTEXT("SPC"), 0},	//2002.04.28 Add By KK
+	{LTEXT("ZEN"), 0},
+	{LTEXT("CTL"), 0},
+	{LTEXT("EOL"), 0},
+	{LTEXT("RAP"), 0},
+	{LTEXT("VER"), 0},  // 2005.11.08 Moca 指定桁縦線
+	{LTEXT("EOF"), 0},
+	{LTEXT("NUM"), 0},	//@@@ 2001.02.17 by MIK 半角数値の強調
+	{LTEXT("BRC"), 0},	//対括弧	// 02/09/18 ai Add
+	{LTEXT("SEL"), 0},
+	{LTEXT("FND"), 0},
+	{LTEXT("FN2"), 0},
+	{LTEXT("FN3"), 0},
+	{LTEXT("FN4"), 0},
+	{LTEXT("FN5"), 0},
+	{LTEXT("CMT"), 0},
+	{LTEXT("SQT"), 0},
+	{LTEXT("WQT"), 0},
+	{LTEXT("HDC"), 0},
+	{LTEXT("URL"), 0},
+	{LTEXT("KW1"), 0},
+	{LTEXT("KW2"), 0},
+	{LTEXT("KW3"), 0},	//@@@ 2003.01.13 by MIK 強調キーワード3-10
+	{LTEXT("KW4"), 0},
+	{LTEXT("KW5"), 0},
+	{LTEXT("KW6"), 0},
+	{LTEXT("KW7"), 0},
+	{LTEXT("KW8"), 0},
+	{LTEXT("KW9"), 0},
+	{LTEXT("KWA"), 0},
+	{LTEXT("RK1"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK2"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK3"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK4"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK5"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK6"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK7"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK8"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RK9"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("RKA"), 0},	//@@@ 2001.11.17 add MIK
+	{LTEXT("DFA"), 0},	//DIFF追加	//@@@ 2002.06.01 MIK
+	{LTEXT("DFC"), 0},	//DIFF変更	//@@@ 2002.06.01 MIK
+	{LTEXT("DFD"), 0},	//DIFF削除	//@@@ 2002.06.01 MIK
+	{LTEXT("MRK"), 0},	//ブックマーク	// 02/10/16 ai Add
+	{LTEXT("PGV"), COLOR_ATTRIB_NO_TEXT | COLOR_ATTRIB_NO_EFFECTS},
+	{LTEXT("LAST"), 0}	// Not Used
 };
 
 /*

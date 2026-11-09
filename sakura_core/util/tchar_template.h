@@ -20,7 +20,7 @@
 */
 
 typedef char ACHAR;
-typedef wchar_t WCHAR;
+typedef WCHAR WCHAR;
 
 template <class CHAR_TYPE, int CHAR_VALUE>
 CHAR_TYPE _TextTemplate();

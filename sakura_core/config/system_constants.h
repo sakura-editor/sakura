@@ -554,67 +554,67 @@
 */
 #define N_SHAREDATA_VERSION		183
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
-#define	GSTR_SHAREDATA	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
+#define	GSTR_SHAREDATA	(LTEXT("SakuraShareData") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      ミューテックス                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! アプリケーション実行検出用(インストーラで使用)
-#define	GSTR_MUTEX_SAKURA					L"MutexSakuraEditor"
+#define	GSTR_MUTEX_SAKURA					LTEXT("MutexSakuraEditor")
 
 //! コントロールプロセス
-#define	GSTR_MUTEX_SAKURA_CP				(L"MutexSakuraEditorCP"				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_CP				(LTEXT("MutexSakuraEditorCP")				_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! ノーマルプロセス初期化同期
-#define	GSTR_MUTEX_SAKURA_INIT				(L"MutexSakuraEditorInit"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_INIT				(LTEXT("MutexSakuraEditorInit")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! ノード操作同期
-#define	GSTR_MUTEX_SAKURA_EDITARR			(L"MutexSakuraEditorEditArr"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_EDITARR			(LTEXT("MutexSakuraEditorEditArr")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //DLLSHARE Work操作同期
-#define	GSTR_MUTEX_SAKURA_SHAREWORK			(L"MutexSakuraEditorShareWork"		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_SHAREWORK			(LTEXT("MutexSakuraEditorShareWork")		_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! 強調キーワードロック
-#define	GSTR_MUTEX_SAKURA_KEYWORD			(L"MutexSakuraEditorKeyword"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_KEYWORD			(LTEXT("MutexSakuraEditorKeyword")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //タイプ別設定転送用
-#define	GSTR_MUTEX_SAKURA_DOCTYPE			(L"MutexSakuraEditorDocType"			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_MUTEX_SAKURA_DOCTYPE			(LTEXT("MutexSakuraEditorDocType")			_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         イベント                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! 初期化完了イベント
-#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(L"EventSakuraEditorCPInitialized"	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(LTEXT("EventSakuraEditorCPInitialized")	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! 初期化完了イベント
-inline constexpr std::wstring_view GSTR_EVENT_SAKURA_EP_INITIALIZED = L"EventSakuraEditorEPInitialized_{:d}";
+inline constexpr sakura::wstring_view GSTR_EVENT_SAKURA_EP_INITIALIZED = LTEXT("EventSakuraEditorEPInitialized_{:d}");
 
 //! Grep完了イベント
-inline constexpr std::wstring_view GSTR_EVENT_SAKURA_GREP_COMPLETED = L"EventSakuraEditorGrepCompleted_{:d}";
+inline constexpr sakura::wstring_view GSTR_EVENT_SAKURA_GREP_COMPLETED = LTEXT("EventSakuraEditorGrepCompleted_{:d}");
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ウィンドウクラス                        //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 //! コントロールトレイ
-#define	GSTR_CEDITAPP		(L"CControlTray" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
+#define	GSTR_CEDITAPP		(LTEXT("CControlTray") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)		_T(STR_SHAREDATA_VERSION))
 
 //! メインウィンドウ
-#define	GSTR_EDITWINDOWNAME	(L"TextEditorWindow" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+#define	GSTR_EDITWINDOWNAME	(LTEXT("TextEditorWindow") _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
 
 //! ビュー
-#define	GSTR_VIEWNAME		(L"SakuraView"												_T(STR_SHAREDATA_VERSION))
+#define	GSTR_VIEWNAME		(LTEXT("SakuraView")												_T(STR_SHAREDATA_VERSION))
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         リソース                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //	Dec. 2, 2002 genta
 //	固定ファイル名
-#define FN_APP_ICON  L"my_appicon.ico"
-#define FN_GREP_ICON L"my_grepicon.ico"
-#define FN_TOOL_BMP  L"my_icons.bmp"
+#define FN_APP_ICON  LTEXT("my_appicon.ico")
+#define FN_GREP_ICON LTEXT("my_grepicon.ico")
+#define FN_TOOL_BMP  LTEXT("my_icons.bmp")
 
 //	標準アプリケーションアイコンリソース名
 #define ICON_DEFAULT_APP IDI_ICON_STD

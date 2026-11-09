@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include "CMacroFactory.h"
 
-static const WCHAR NULSTR[] = L"";
+static const WCHAR NULSTR[] = LTEXT("");
 
 CMacroFactory::CMacroFactory() = default;
 
@@ -29,13 +29,13 @@ CMacroFactory::CMacroFactory() = default;
 	@li NULLは""にする。
 	@li アルファベットは小文字に統一
 */
-std::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
+sakura::wstring CMacroFactory::Ext2Key(const WCHAR *ext)
 {
 	if( ext == nullptr ){
 		ext = NULSTR;
 	}
 	
-	std::wstring key = ext;
+	sakura::wstring key = ext;
 	std::transform( key.begin(), key.end(), key.begin(), towlower);
 
 	return key;
@@ -100,14 +100,14 @@ bool CMacroFactory::Unregister( Creator f )
 */
 CMacroManagerBase* CMacroFactory::Create(const WCHAR* ext)
 {
-	std::wstring key = Ext2Key( ext );
+	sakura::wstring key = Ext2Key( ext );
 
 	//	Creatorを順に試す
 	for( auto c_it = m_mMacroCreators.begin();
 		c_it != m_mMacroCreators.end(); ++ c_it ){
 		CMacroManagerBase* pobj = (*c_it)(key.c_str());
 		if( pobj != nullptr ){
-			DEBUG_TRACE( L"CMacroFactory::Create/ Answered for (%s)\n", key.c_str() );
+			DEBUG_TRACE( LTEXT("CMacroFactory::Create/ Answered for (%s)\n"), key.c_str() );
 			return pobj;
 		}
 	}

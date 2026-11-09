@@ -25,12 +25,12 @@ CLayout::~CLayout()
 
 void CLayout::DUMP( void )
 {
-	DEBUG_TRACE( L"\n\n■CLayout::DUMP()======================\n" );
-	DEBUG_TRACE( L"m_ptLogicPos.y=%d\t\t対応する論理行番号\n", m_ptLogicPos.y );
-	DEBUG_TRACE( L"m_ptLogicPos.x=%d\t\t対応する論理行の先頭からのオフセット\n", m_ptLogicPos.x );
-	DEBUG_TRACE( L"m_nLength=%d\t\t対応する論理行のハイト数\n", (int)m_nLength );
-	DEBUG_TRACE( L"m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
-	DEBUG_TRACE( L"======================\n" );
+	DEBUG_TRACE( LTEXT("\n\n■CLayout::DUMP()======================\n") );
+	DEBUG_TRACE( LTEXT("m_ptLogicPos.y=%d\t\t対応する論理行番号\n"), m_ptLogicPos.y );
+	DEBUG_TRACE( LTEXT("m_ptLogicPos.x=%d\t\t対応する論理行の先頭からのオフセット\n"), m_ptLogicPos.x );
+	DEBUG_TRACE( LTEXT("m_nLength=%d\t\t対応する論理行のハイト数\n"), (int)m_nLength );
+	DEBUG_TRACE( LTEXT("m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n"), m_nTypePrev );
+	DEBUG_TRACE( LTEXT("======================\n") );
 	return;
 }
 
@@ -41,14 +41,14 @@ void CLayout::DUMP( void )
 CLayoutInt CLayout::CalcLayoutWidth(const CLayoutMgr& cLayoutMgr) const
 {
 	//ソース
-	const wchar_t* pText    = m_pCDocLine->GetPtr();
+	const WCHAR* pText    = m_pCDocLine->GetPtr();
 	CLogicInt      nTextLen = m_pCDocLine->GetLengthWithoutEOL();
 
 	//計算
 	CLayoutInt nWidth = GetIndent();
 	CLogicInt nLen = GetLogicPos().x + m_nLength; //EOL=0,1
 	for(CLogicInt i=m_ptLogicPos.GetX2();i<nLen;){
-		if(pText[i]==WCODE::TAB || (pText[i] == L',' && cLayoutMgr.m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)){
+		if(pText[i]==WCODE::TAB || (pText[i] == LCHAR(',') && cLayoutMgr.m_tsvInfo.m_nTsvMode == TSV_MODE_CSV)){
 			nWidth += cLayoutMgr.GetActualTsvSpace(nWidth, pText[i]);
 		}
 		else{
@@ -64,11 +64,11 @@ CLayoutInt CLayout::CalcLayoutOffset(const CLayoutMgr& cLayoutMgr, CLogicInt nSt
 {
 	CLayoutInt nRet = nStartOffset;
 	if(this->GetLogicOffset()){
-		const wchar_t* pLine = this->m_pCDocLine->GetPtr();
+		const WCHAR* pLine = this->m_pCDocLine->GetPtr();
 		int nLineLen = this->m_pCDocLine->GetLengthWithEOL();
 		const int nOffset = GetLogicOffset();
 		for(int i = (Int)nStartPos; i < nOffset; i++){
-			if(pLine[i]==WCODE::TAB || pLine[i] == L','){
+			if(pLine[i]==WCODE::TAB || pLine[i] == LCHAR(',')){
 				nRet+=cLayoutMgr.GetActualTsvSpace(nRet, pLine[i]);
 			}
 			else{

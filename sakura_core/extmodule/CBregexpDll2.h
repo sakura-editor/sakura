@@ -39,30 +39,30 @@ protected:
 
 protected:
 	// DLL関数の型
-	typedef int            (__cdecl *BREGEXP_BMatchW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BSubstW2)        (const wchar_t* str, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BTransW2)        (const wchar_t* str, wchar_t* target, wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BSplitW2)        (const wchar_t* str, wchar_t* target, wchar_t* targetendp, int limit, BREGEXP_W** rxp, wchar_t* msg);
+	typedef int            (__cdecl *BREGEXP_BMatchW2)        (const WCHAR* str, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg);
+	typedef int            (__cdecl *BREGEXP_BSubstW2)        (const WCHAR* str, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg);
+	typedef int            (__cdecl *BREGEXP_BTransW2)        (const WCHAR* str, WCHAR* target, WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg);
+	typedef int            (__cdecl *BREGEXP_BSplitW2)        (const WCHAR* str, WCHAR* target, WCHAR* targetendp, int limit, BREGEXP_W** rxp, WCHAR* msg);
 	typedef void           (__cdecl *BREGEXP_BRegfreeW2)      (BREGEXP_W* rx);
-	typedef const wchar_t* (__cdecl *BREGEXP_BRegexpVersionW2)(void);
-	typedef int            (__cdecl *BREGEXP_BMatchExW2)      (const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
-	typedef int            (__cdecl *BREGEXP_BSubstExW2)      (const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg);
+	typedef const WCHAR* (__cdecl *BREGEXP_BRegexpVersionW2)(void);
+	typedef int            (__cdecl *BREGEXP_BMatchExW2)      (const WCHAR* str, const WCHAR* targetbeg, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg);
+	typedef int            (__cdecl *BREGEXP_BSubstExW2)      (const WCHAR* str, const WCHAR* targetbeg, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg);
 
 public:
 	// UNICODEインターフェースを提供する
-	int BMatch(const wchar_t* str, const wchar_t* target,const wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
+	int BMatch(const WCHAR* str, const WCHAR* target,const WCHAR* targetendp,BREGEXP_W** rxp,WCHAR* msg)
 	{
 		return m_BMatch(str,target,targetendp,rxp,msg);
 	}
-	int BSubst(const wchar_t* str, const wchar_t* target,const wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
+	int BSubst(const WCHAR* str, const WCHAR* target,const WCHAR* targetendp,BREGEXP_W** rxp,WCHAR* msg)
 	{
 		return m_BSubst(str,target,targetendp,rxp,msg);
 	}
-	int BTrans(const wchar_t* str, wchar_t* target,wchar_t* targetendp,BREGEXP_W** rxp,wchar_t* msg)
+	int BTrans(const WCHAR* str, WCHAR* target,WCHAR* targetendp,BREGEXP_W** rxp,WCHAR* msg)
 	{
 		return m_BTrans(str,target,targetendp,rxp,msg);
 	}
-	int BSplit(const wchar_t* str, wchar_t* target,wchar_t* targetendp,int limit,BREGEXP_W** rxp,wchar_t* msg)
+	int BSplit(const WCHAR* str, WCHAR* target,WCHAR* targetendp,int limit,BREGEXP_W** rxp,WCHAR* msg)
 	{
 		return m_BSplit(str,target,targetendp,limit,rxp,msg);
 	}
@@ -70,15 +70,15 @@ public:
 	{
 		return m_BRegfree(rx);
 	}
-	const wchar_t* BRegexpVersion(void)
+	const WCHAR* BRegexpVersion(void)
 	{
 		return m_BRegexpVersion();
 	}
-	int BMatchEx(const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg)
+	int BMatchEx(const WCHAR* str, const WCHAR* targetbeg, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg)
 	{
 		return m_BMatchEx(str,targetbeg,target,targetendp,rxp,msg);
 	}
-	int BSubstEx(const wchar_t* str, const wchar_t* targetbeg, const wchar_t* target, const wchar_t* targetendp, BREGEXP_W** rxp, wchar_t* msg)
+	int BSubstEx(const WCHAR* str, const WCHAR* targetbeg, const WCHAR* target, const WCHAR* targetendp, BREGEXP_W** rxp, WCHAR* msg)
 	{
 		return m_BSubstEx(str,targetbeg,target,targetendp,rxp,msg);
 	}

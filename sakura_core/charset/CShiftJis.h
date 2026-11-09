@@ -21,7 +21,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return SJISToUnicode(cSrc, pDst); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToSJIS(cSrc, pDst); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const WCHAR* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -35,9 +35,9 @@ protected:
 	// 実装
 	// 2008.11.10 変換ロジックを書き直す
 	inline static int _SjisToUni_char( const unsigned char *pSrc, unsigned short *pDst, const ECharSet eCharset, bool* pbError );
-	static int SjisToUni( const char *pSrc, const int nSrcLen, wchar_t *pDst, bool* pbError );
+	static int SjisToUni( const char *pSrc, const int nSrcLen, WCHAR *pDst, bool* pbError );
 	inline static int _UniToSjis_char( const unsigned short* pSrc, unsigned char* pDst, const ECharSet eCharset, bool* pbError );
-	static int UniToSjis( const wchar_t* pSrc, const int nSrcLen, char* pDst, bool *pbError );
+	static int UniToSjis( const WCHAR* pSrc, const int nSrcLen, char* pDst, bool *pbError );
 };
 
 /*!
@@ -72,7 +72,7 @@ inline int CShiftJis::_SjisToUni_char( const unsigned char *pSrc, unsigned short
 	default:
 		// 致命的エラー回避コード
 		berror = true;
-		pDst[0] = L'?';
+		pDst[0] = LCHAR('?');
 		nret = 1;
 	}
 

@@ -28,16 +28,16 @@ CJackManager::CJackManager()
 //		{ PP_UNINSTALL				, L"Uninstall"			},
 //		{ PP_APP_START				, L"AppStart"			},
 //		{ PP_APP_END				, L"AppEnd"				},
-		{ PP_EDITOR_START			, L"EditorStart"		},
-		{ PP_EDITOR_END				, L"EditorEnd"			},
-		{ PP_DOCUMENT_OPEN			, L"DocumentOpen"		},
-		{ PP_DOCUMENT_CLOSE			, L"DocumentClose"		},
-		{ PP_DOCUMENT_BEFORE_SAVE	, L"DocumentBeforeSave"	},
-		{ PP_DOCUMENT_AFTER_SAVE	, L"DocumentAfterSave"	},
-		{ PP_OUTLINE				, L"Outline"			},
-		{ PP_SMARTINDENT			, L"SmartIndent"		},
-		{ PP_COMPLEMENT				, L"Complement"			},
-		{ PP_COMPLEMENTGLOBAL		, L"ComplementGlobal"	},
+		{ PP_EDITOR_START			, LTEXT("EditorStart")		},
+		{ PP_EDITOR_END				, LTEXT("EditorEnd")			},
+		{ PP_DOCUMENT_OPEN			, LTEXT("DocumentOpen")		},
+		{ PP_DOCUMENT_CLOSE			, LTEXT("DocumentClose")		},
+		{ PP_DOCUMENT_BEFORE_SAVE	, LTEXT("DocumentBeforeSave")	},
+		{ PP_DOCUMENT_AFTER_SAVE	, LTEXT("DocumentAfterSave")	},
+		{ PP_OUTLINE				, LTEXT("Outline")			},
+		{ PP_SMARTINDENT			, LTEXT("SmartIndent")		},
+		{ PP_COMPLEMENT				, LTEXT("Complement")			},
+		{ PP_COMPLEMENTGLOBAL		, LTEXT("ComplementGlobal")	},
 	};
 
 	m_Jacks.reserve( PP_BUILTIN_JACK_COUNT );
@@ -61,7 +61,7 @@ std::vector<JackDef> CJackManager::GetJackDef() const
 
 //プラグをジャックに関連付ける
 ERegisterPlugResult CJackManager::RegisterPlug(
-	std::wstring_view pszJack,
+	sakura::wstring_view pszJack,
 	CPlug* plug
 )
 {
@@ -109,7 +109,7 @@ ERegisterPlugResult CJackManager::RegisterPlug(
 
 //プラグの関連付けを解除する
 bool CJackManager::UnRegisterPlug(
-	std::wstring_view pszJack,
+	sakura::wstring_view pszJack,
 	const CPlug* plug
 )
 {
@@ -149,7 +149,7 @@ bool CJackManager::UnRegisterPlug(
 }
 
 //ジャック名をジャック番号に変換する
-EJack CJackManager::GetJackFromName(std::wstring_view sName) const
+EJack CJackManager::GetJackFromName(sakura::wstring_view sName) const
 {
 	for (const auto& jack : m_Jacks) {
 		if (jack.szName == sName) {
@@ -205,7 +205,7 @@ int CJackManager::GetCommandName( int funccode, WCHAR* buf, int size ) const
 	for( CPlug::ArrayIter it = m_Jacks[ PP_COMMAND ].plugs.cbegin(); it != m_Jacks[ PP_COMMAND ].plugs.cend(); it++ ){
 		if( ((CPlug*)(*it))->GetFunctionCode() == funccode ){
 			wcsncpy( buf, ((CPlug*)(*it))->m_sLabel.c_str(), size );
-			buf[ size-1 ] = L'\0';
+			buf[ size-1 ] = LCHAR('\0');
 			return 1;
 		}
 	}

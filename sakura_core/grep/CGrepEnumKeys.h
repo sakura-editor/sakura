@@ -28,7 +28,7 @@
 #include "util/string_ex.h"
 #include "util/file.h"
 
-using VGrepEnumKeys = std::vector< std::wstring >;
+using VGrepEnumKeys = std::vector< sakura::wstring >;
 
 class CGrepEnumKeys {
 
@@ -46,7 +46,7 @@ public:
 	VGrepEnumKeys m_vecExceptFileRegexKeys;	//!< 除外ファイル(正規表現)。SetFileKeys() の bExceptFileRegex が true のときに使う
 
 	//! 除外ファイルの照合関数(正規表現)。フルパスを受け取る。未設定なら照合しない
-	std::function<bool(std::wstring_view)> m_fnIsExceptFilePath;
+	std::function<bool(sakura::wstring_view)> m_fnIsExceptFilePath;
 
 public:
 	CGrepEnumKeys() noexcept = default;
@@ -86,10 +86,10 @@ public:
 		@retval 0以外 エラー(ValidateKey() の戻り値、または絶対パスの検索対象で 2)
 	*/
 	int SetFileKeys( LPCWSTR lpKeys, bool bExceptFileRegex = false ){
-		const WCHAR* WILDCARD_ANY = L"*.*";	//サブフォルダー探索用
+		const WCHAR* WILDCARD_ANY = LTEXT("*.*");	//サブフォルダー探索用
 		ClearItems();
 		
-		std::vector< std::wstring > patterns = SplitPattern(lpKeys);
+		std::vector< sakura::wstring > patterns = SplitPattern(lpKeys);
 		for (const auto& element : patterns) {
 			if( const int nStatus = AddFileKey( element.c_str(), bExceptFileRegex ); 0 != nStatus ){
 				return nStatus;
@@ -125,7 +125,7 @@ public:
 		@param[in]	filePath	ファイルのフルパス
 		@retval false 一致しない、または照合関数が未設定
 	*/
-	bool IsExceptFilePath( std::wstring_view filePath ) const {
+	bool IsExceptFilePath( sakura::wstring_view filePath ) const {
 		return m_fnIsExceptFilePath && m_fnIsExceptFilePath( filePath );
 	}
 
@@ -134,13 +134,13 @@ public:
 		@param[in]		lpKeys					ファイルパターン
 		@return 引用符を取り除いた要素の配列
 	*/
-	static std::vector< std::wstring > SplitPattern(LPCWSTR lpKeys)
+	static std::vector< sakura::wstring > SplitPattern(LPCWSTR lpKeys)
 	{
-		std::vector< std::wstring > patterns;
+		std::vector< sakura::wstring > patterns;
 		for (const auto& quoted : SplitPatternKeepQuotes(lpKeys)) {
 			// "を取り除く
-			std::wstring& element = patterns.emplace_back(quoted);
-			std::erase(element, L'"');
+			sakura::wstring& element = patterns.emplace_back(quoted);
+			std::erase(element, LCHAR('"'));
 		}
 		return patterns;
 	}
@@ -154,18 +154,18 @@ public:
 		@param[in]		keys					ファイルパターン
 		@return 引用符を残した要素の配列。各要素は keys の部分文字列を指す
 	*/
-	static std::vector< std::wstring_view > SplitPatternKeepQuotes(std::wstring_view keys)
+	static std::vector< sakura::wstring_view > SplitPatternKeepQuotes(sakura::wstring_view keys)
 	{
-		constexpr std::wstring_view WILDCARD_DELIMITER = L" ;,";	//リストの区切り
+		constexpr sakura::wstring_view WILDCARD_DELIMITER = LTEXT(" ;,");	//リストの区切り
 
-		std::vector< std::wstring_view > patterns;
+		std::vector< sakura::wstring_view > patterns;
 		bool bInQuote = false;	//ダブルコーテーションの中か？
 		size_t nBegin = 0;
 		for (size_t i = 0; i < keys.size(); ++i) {
-			if (keys[i] == L'"') {
+			if (keys[i] == LCHAR('"')) {
 				bInQuote = !bInQuote;
 			}
-			else if (!bInQuote && WILDCARD_DELIMITER.find(keys[i]) != std::wstring_view::npos) {
+			else if (!bInQuote && WILDCARD_DELIMITER.find(keys[i]) != sakura::wstring_view::npos) {
 				if (nBegin < i) {
 					patterns.push_back(keys.substr(nBegin, i - nBegin));
 				}
@@ -186,8 +186,8 @@ public:
 	*/
 	static bool HasUnclosedQuote(LPCWSTR lpKeys)
 	{
-		const std::wstring_view keys(lpKeys);
-		return std::ranges::count(keys, L'"') % 2 != 0;
+		const sakura::wstring_view keys(lpKeys);
+		return std::ranges::count(keys, LCHAR('"')) % 2 != 0;
 	}
 
 private:
@@ -221,9 +221,9 @@ private:
 		// 
 		bool wildcard = false;
 		for( int i = 0; key[i]; i++ ){
-			if( !wildcard && (key[i] == L'*' || key[i] == L'?') ){
+			if( !wildcard && (key[i] == LCHAR('*') || key[i] == LCHAR('?')) ){
 				wildcard = true;
-			}else if( wildcard && (key[i] == L'\\' || key[i] == L'/') ){
+			}else if( wildcard && (key[i] == LCHAR('\\') || key[i] == LCHAR('/')) ){
 				return 1;
 			}
 		}
@@ -246,17 +246,17 @@ private:
 		};
 		const WCHAR* token = pattern;
 		KeyFilterType keyType = FILTER_SEARCH;
-		if( token[0] == L'!' ){
+		if( token[0] == LCHAR('!') ){
 			token++;
 			keyType = FILTER_EXCEPT_FILE;
-		}else if( token[0] == L'#' ){
+		}else if( token[0] == LCHAR('#') ){
 			token++;
 			keyType = FILTER_EXCEPT_FOLDER;
 		}
 
 		// 除外ファイルを正規表現として扱うときは、パスとしての検査(ValidateKey・絶対パス)をしない
 		if( bExceptFileRegex && keyType == FILTER_EXCEPT_FILE ){
-			if( token[0] != L'\0' ){
+			if( token[0] != LCHAR('\0') ){
 				push_back_unique( m_vecExceptFileRegexKeys, token );
 			}
 			return 0;
@@ -287,10 +287,10 @@ private:
 		@param[in,out]	exceptionAbsoluteKeys	除外ファイルパターンの絶対パスの解析結果を追加する
 	*/
 	int ParseAndAddException(LPCWSTR lpKeys, VGrepEnumKeys& exceptionKeys, VGrepEnumKeys & exceptionAbsoluteKeys) {
-		std::vector< std::wstring > patterns = SplitPattern(lpKeys);
+		std::vector< sakura::wstring > patterns = SplitPattern(lpKeys);
 
 		for (size_t i = 0; i < patterns.size(); i++) {
-			const std::wstring& element = patterns[i];
+			const sakura::wstring& element = patterns[i];
 			const WCHAR* token = element.c_str();
 
 			bool bRelPath = _IS_REL_PATH(token);

@@ -203,7 +203,7 @@ void CDialog::SetDialogPosSize()
 	/* ダイアログのサイズ、位置の再現 */
 	if( -1 != m_xPos && -1 != m_yPos ){
 		::SetWindowPos( m_hWnd, NULL, m_xPos, m_yPos, 0, 0, SWP_NOSIZE | SWP_NOOWNERZORDER | SWP_NOZORDER );
-		DEBUG_TRACE( L"CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n", m_xPos, m_yPos );
+		DEBUG_TRACE( LTEXT("CDialog::OnInitDialog() m_xPos=%d m_yPos=%d\n"), m_xPos, m_yPos );
 	}
 	if( -1 != m_nWidth && -1 != m_nHeight ){
 		::SetWindowPos( m_hWnd, NULL, 0, 0, m_nWidth, m_nHeight, SWP_NOMOVE | SWP_NOOWNERZORDER | SWP_NOZORDER );
@@ -465,20 +465,20 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 	// 通知元がコントロールだった場合の処理
 	if( hwndCtl ){
 		::GetClassName(hwndCtl, szClass, int(std::size(szClass)));
-		if( ::lstrcmpi(szClass, L"Button") == 0 ){
+		if( ::lstrcmpi(szClass, LTEXT("Button")) == 0 ){
 			switch( wNotifyCode ){
 			/* ボタン／チェックボックスがクリックされた */
 			case BN_CLICKED:	return OnBnClicked( wID );
 			default:
 				break;
 			}
-		}else if( ::lstrcmpi(szClass, L"Static") == 0 ){
+		}else if( ::lstrcmpi(szClass, LTEXT("Static")) == 0 ){
 			switch( wNotifyCode ){
 			case STN_CLICKED:	return OnStnClicked( wID );
 			default:
 				break;
 			}
-		}else if( ::lstrcmpi(szClass, L"Edit") == 0 ){
+		}else if( ::lstrcmpi(szClass, LTEXT("Edit")) == 0 ){
 			switch( wNotifyCode ){
 			case EN_CHANGE:		return OnEnChange( hwndCtl, wID );
 			case EN_SETFOCUS:	return OnEnSetFocus( hwndCtl, wID );
@@ -486,14 +486,14 @@ BOOL CDialog::OnCommand( WPARAM wParam, LPARAM lParam )
 			default:
 				break;
 			}
-		}else if( ::lstrcmpi(szClass, L"ListBox") == 0 ){
+		}else if( ::lstrcmpi(szClass, LTEXT("ListBox")) == 0 ){
 			switch( wNotifyCode ){
 			case LBN_SELCHANGE:	return OnLbnSelChange( hwndCtl, wID );
 			case LBN_DBLCLK:	return OnLbnDblclk( wID );
 			default:
 				break;
 			}
-		}else if( ::lstrcmpi(szClass, L"ComboBox") == 0 ){
+		}else if( ::lstrcmpi(szClass, LTEXT("ComboBox")) == 0 ){
 			switch( wNotifyCode ){
 			/* コンボボックス用メッセージ */
 			case CBN_SELCHANGE:	return OnCbnSelChange( hwndCtl, wID );
@@ -548,7 +548,7 @@ BOOL CDialog::OnCbnSelEndOk( HWND hwndCtl, [[maybe_unused]] int wID )
 	int nLength = ::GetWindowTextLength( hwndCtl );
 	LPWSTR sBuf = new WCHAR[nLength + 1];
 	::GetWindowText( hwndCtl, sBuf, nLength+1 );
-	sBuf[nLength] = L'\0';
+	sBuf[nLength] = LCHAR('\0');
 
 	//リストを非表示にする
 	ApiWrap::Combo_ShowDropdown( hwndCtl, FALSE );
@@ -784,7 +784,7 @@ static void DeleteRecentItem(
 }
 
 //! コンボボックスのエディットの単語削除処理を行う
-static int DeletePreviousWord(wchar_t* text, int length, int curPos)
+static int DeletePreviousWord(WCHAR* text, int length, int curPos)
 {
 	if (curPos == 0) {
 		// カーソル位置が既に先頭なので何もしない
@@ -827,7 +827,7 @@ LRESULT CALLBACK CDialog::SubEditProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARA
 
 			// 単語削除する
 			const int length = ::GetWindowTextLength(hwndCombo);
-			auto text = std::make_unique<wchar_t[]>(length + 1);
+			auto text = std::make_unique<WCHAR[]>(length + 1);
 			::GetWindowText(hwndCombo, text.get(), length + 1);
 
 			const int pos = DeletePreviousWord(text.get(), length, selStart);

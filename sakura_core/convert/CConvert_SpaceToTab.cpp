@@ -16,9 +16,9 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 {
 	using namespace WCODE;
 
-	const wchar_t*	pLine;
+	const WCHAR*	pLine;
 	int			nLineLen;
-	wchar_t*	pDes;
+	WCHAR*	pDes;
 	int			nBgn;
 	int			i;
 	int			nPosDes;
@@ -41,7 +41,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 	if( 0 >= nPosDes ){
 		return false;
 	}
-	pDes = new wchar_t[nPosDes + 1];
+	pDes = new WCHAR[nPosDes + 1];
 	nBgn = 0;
 	nPosDes = 0;
 	/* CRLFで区切られる「行」を返す。CRLFは行長に加えない */
@@ -119,7 +119,7 @@ bool CConvert_SpaceToTab::DoConvert(CNativeW* pcData)
 		wmemcpy( &pDes[nPosDes], cEol.GetValue2(), cEol.GetLen() );
 		nPosDes += cEol.GetLen();
 	}
-	pDes[nPosDes] = L'\0';
+	pDes[nPosDes] = LCHAR('\0');
 
 	pcData->SetString( pDes, nPosDes );
 	delete [] pDes;

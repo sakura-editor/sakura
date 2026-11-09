@@ -52,7 +52,7 @@ const DWORD p_helpids[] = {	//12100
 
 CDlgExec::CDlgExec()
 {
-	m_szCommand[0] = L'\0';	/* コマンドライン */
+	m_szCommand[0] = LCHAR('\0');	/* コマンドライン */
 	return;
 }
 
@@ -62,7 +62,7 @@ static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 /* モーダルダイアログの表示 */
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
-	m_szCommand[0] = L'\0';	/* コマンドライン */
+	m_szCommand[0] = LCHAR('\0');	/* コマンドライン */
 	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
@@ -183,7 +183,7 @@ int CDlgExec::GetData( void )
 	if( IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_CUR_DIR ) ){
 		ApiWrap::DlgItem_GetText( GetHwnd(), IDC_COMBO_CUR_DIR, &m_szCurDir[0], std::size( m_szCurDir ));
 	}else{
-		m_szCurDir[0] = L'\0';
+		m_szCurDir[0] = LCHAR('\0');
 	}
 	{	//	From Here 2007.01.02 maru 引数を拡張のため
 		//	マクロからの呼び出しではShareDataに保存させないように，ShareDataとの受け渡しはExecCmdの外で
@@ -246,7 +246,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 			cDlgOpenFile.Create(
 				m_hInstance,
 				GetHwnd(),
-				L"*.com;*.exe;*.bat;*.cmd",
+				LTEXT("*.com;*.exe;*.bat;*.cmd"),
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){

@@ -60,10 +60,10 @@ bool CEditView::TagJumpSub(
 	// 2007.05.19 ryoji 相対パスは設定ファイルからのパスを優先
 	WCHAR	szJumpToFile[1024];
 	HWND hwndTarget = nullptr;
-	constexpr auto& szTargetPrefix = L":HWND:[";
+	constexpr auto& szTargetPrefix = LTEXT(":HWND:[");
 	constexpr auto cchTargetPrefix = int(std::size(szTargetPrefix)) - 1;
 	if( 0 == wcsncmp(pszFileName, szTargetPrefix, cchTargetPrefix) ){
-		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, L"%zx", (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
+		if( 0 >= ::swscanf_s(pszFileName + cchTargetPrefix, LTEXT("%zx"), (size_t*)&hwndTarget) || !IsSakuraMainWindow(hwndTarget) ){
 			return false;
 		}
 	}else{

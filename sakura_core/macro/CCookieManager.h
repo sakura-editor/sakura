@@ -28,10 +28,10 @@ public:
 	int DeleteAll(LPCWSTR scope);
 
 private:
-	std::map<std::wstring, std::wstring>* SelectCookieType(LPCWSTR scope) const;
+	std::map<sakura::wstring, sakura::wstring>* SelectCookieType(LPCWSTR scope) const;
 	bool ValidateCookieName(LPCWSTR cookieName) const;
 
-	std::map<std::wstring, std::wstring> m_cookieWindow;
-	std::map<std::wstring, std::wstring> m_cookieDocument;
+	std::map<sakura::wstring, sakura::wstring> m_cookieWindow;
+	std::map<sakura::wstring, sakura::wstring> m_cookieDocument;
 };
 #endif /* SAKURA_CCOOKIEMANAGER_69A96E71_61BD_417E_BD29_10B3D27AA11D_H_ */

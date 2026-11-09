@@ -55,9 +55,9 @@ public:
 
 	// 操作
 	void AddInterfaceObject( CIfObj* obj );
-	bool Execute(const std::wstring& WScript);
+	bool Execute(const sakura::wstring& WScript);
 	void Error(BSTR Description, BSTR Source); ///< ScriptErrorHandlerを呼び出す。
-	void Error(const wchar_t* Description);          ///< ScriptErrorHandlerを呼び出す。
+	void Error(const WCHAR* Description);          ///< ScriptErrorHandlerを呼び出す。
 
 private:
 	cxx::com_pointer<IActiveScript> m_Engine = nullptr;

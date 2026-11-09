@@ -27,11 +27,11 @@ class CDlgTypeAscertain final : public CDialog
 public:
 	// 型
 	struct SAscertainInfo {
-		std::wstring	sImportFile;	//!< in インポートファイル名
-		std::wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
-		std::wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
+		sakura::wstring	sImportFile;	//!< in インポートファイル名
+		sakura::wstring	sTypeNameTo;	//!< in タイプ名（インポート先）
+		sakura::wstring	sTypeNameFile;	//!< in タイプ名（ファイルから）
 		int 			nColorType;		//!< out 文書種類(カラーコピー用)
-		std::wstring	sColorFile;		//!< out 色設定ファイル名
+		sakura::wstring	sColorFile;		//!< out 色設定ファイル名
 		bool			bAddType;		//!< out タイプを追加する
 	};
 
