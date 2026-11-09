@@ -1,0 +1,33 @@
+name: Dump Windows code pages
+
+# Mac 版的代码页转换表（macos/platform/data/codepages.bin）由这个工作流在 Windows 上生成。
+# 只在需要更新转换表时手动运行，生成结果下载后提交到仓库。
+on:
+  workflow_dispatch:
+
+jobs:
+  dump:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build and run dump_codepages (MSVC x64)
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSDIR=%%i"
+          call "%VSDIR%\VC\Auxiliary\Build\vcvars64.bat" || exit /b 1
+          cl /nologo /std:c++20 /EHsc /W4 /utf-8 /DUNICODE /D_UNICODE macos\tools\codepage_dump\dump_codepages.cpp /Fe:dump_codepages.exe || exit /b 1
+          mkdir out
+          dump_codepages.exe out\codepages.bin out\codepages.tsv || exit /b 1
+          ver > out\windows-version.txt
+
+      - name: Upload
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: codepages
+          path: out/
