@@ -2,7 +2,7 @@
 
 Mac 版在 `macos` 分支开发，原版代码（`sakura_core/`、`src/test/`）和上游 [sakura-editor/sakura](https://github.com/sakura-editor/sakura) 共用。为了让 Mac 版能编译，第 15 步把原版代码里的宽字符写法机械地换成了在两个平台上都能用的写法（约 1 万行，Windows 上展开后与原来完全相同，见 [phase1-char-type.md](phase1-char-type.md)）。上游新提交的代码仍然用 `L"…"`、`wchar_t`、`std::wstring` 等写法，所以每次合并后都要再替换一次。
 
-> **当前状态**：2026-11-09 按项目负责人的要求，把上游 `master` 到 `4fe60275c` 为止的全部更新合并进了 `macos` 分支（见下面“合并记录”）。`macos` 分支不自动运行 Windows 构建。之后上游的新更新按下面的流程合并；最晚在计划第 50 步“核对对照表”时再合并一次，让 Mac 版与最新的 Windows 版一致。
+> **当前状态**：2026-11-09 按项目负责人的要求，把上游 `master` 到 `4fe60275c` 为止的全部更新合并进了 `macos` 分支（见下面“合并记录”）。`macos` 分支不自动运行 Windows 构建。项目负责人随后确认：此后开发期间不再合并上游的更新，等到计划第 50 步“核对对照表”时，再按下面的流程统一合并，并相应修改 Mac 版，让 Mac 版与最新的 Windows 版一致。
 
 ## 步骤
 
