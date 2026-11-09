@@ -117,6 +117,9 @@ set_source_files_properties("${SAKURA_ROOT}/macos/platform/src/codepage_data.cpp
   OBJECT_DEPENDS "${SAKURA_CODEPAGES_BIN}"
   SKIP_PRECOMPILE_HEADERS ON)
 add_dependencies(sakura_core sakura_funccode)
+# UTF-7、GB18030、ISO-2022 系代码页用 iconv（macOS 上是系统自带的 libiconv）
+find_package(Iconv REQUIRED)
+target_link_libraries(sakura_core PUBLIC Iconv::Iconv)
 target_include_directories(sakura_core PUBLIC
   "${SAKURA_ROOT}/macos/platform/include"   # Mac 版 StdAfx.h 优先
   "${SAKURA_CORE}"
