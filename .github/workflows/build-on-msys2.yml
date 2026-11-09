@@ -2,8 +2,6 @@ name: MinGW Build and Test
 
 on:
   push:
-    branches-ignore:
-      - macos # Mac 版开发分支只跑 build-macos.yml
     paths-ignore:
       - '**/*.md'
       - '.gitignore'

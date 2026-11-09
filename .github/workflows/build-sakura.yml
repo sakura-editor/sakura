@@ -5,8 +5,6 @@ name: build sakura
 on:
   workflow_dispatch:
   push:
-    branches-ignore:
-      - macos # Mac 版开发分支只跑 build-macos.yml
     paths-ignore:
       - '**/*.md'
       - .gitignore
