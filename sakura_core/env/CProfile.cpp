@@ -12,7 +12,7 @@
 	Copyright (C) 2004, D.S.Koba, MIK, genta
 	Copyright (C) 2006, D.S.Koba, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -28,6 +28,7 @@
 #include "io/CTextStream.h"
 #include "charset/CUtf8.h"		// Resource読み込みに使用
 #include "basis/CEol.h"
+#include "basis/CMyString.h"
 #include "util/file.h"
 #include "apiwrap/StdApi.h"
 
@@ -39,7 +40,7 @@
 	@param line [in] 読み込んだ行
 */
 void CProfile::_ReadOneline(
-	const std::wstring& line
+	std::wstring_view line
 )
 {
 	//	空行を読み飛ばす
@@ -52,15 +53,22 @@ void CProfile::_ReadOneline(
 	}
 
 	// セクション取得
-	if (std::wsmatch m; std::regex_match(line, m, std::wregex(LR"(^\[([^=]+)\]$)"))) {
-		m_ProfileData.emplace_back(static_cast<std::wstring>(m[1]));
+	if (2 < line.length() && L'[' == line.front() && L']' == line.back()) {
+		if (const auto sectionName{ line.substr(1, line.length() - 2) };
+			std::wstring_view::npos == sectionName.find(L'=')) {
+			m_ProfileData.emplace_back(sectionName);
+			return;
+		}
+	}
+
+	// 最初のセクション以前の行のエントリは無視
+	if (m_ProfileData.empty()) {
 		return;
 	}
 
 	// エントリ取得
-	// ※最初のセクション以前の行のエントリは無視
-	if (std::wsmatch m; !m_ProfileData.empty() && std::regex_match(line, m, std::wregex(LR"(^([^=]+)=(.*)$)"))) {
-		m_ProfileData.back().m_Entries.try_emplace(m[1], m[2]);
+	if (const auto pos = line.find(L'='); std::wstring_view::npos != pos && 0 < pos && pos + 1 <= line.length()) {
+		m_ProfileData.back().m_Entries.try_emplace(std::wstring{ line.substr(0, pos) }, line.substr(pos + 1));
 	}
 }
 
@@ -91,9 +99,11 @@ bool CProfile::ReadProfile(
 	}
 
 	try{
-		while( in ){
+		std::wstring line;
+
+		while (in) {
 			//1行読込
-			std::wstring line=in.ReadLineW();
+			in.ReadLineW(line);
 
 			//解析
 			_ReadOneline(line);
@@ -288,8 +298,8 @@ bool CProfile::_WriteFile(
 	@date 2003-10-22 D.S.Koba 作成
 */
 bool CProfile::GetProfileData(
-	const std::wstring&	sectionName,	//!< [in] セクション名
-	const std::wstring&	entryKey,		//!< [in] エントリ名
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
 	std::wstring&		strEntryValue	//!< [out] エントリ値
 ) const
 {
@@ -317,8 +327,8 @@ bool CProfile::GetProfileData(
 	@date 2003-10-21 D.S.Koba 作成
 */
 void CProfile::SetProfileData(
-	const std::wstring&	sectionName,	//!< [in] セクション名
-	const std::wstring&	entryKey,		//!< [in] エントリ名
+	std::wstring_view	sectionName,	//!< [in] セクション名
+	std::wstring_view	entryKey,		//!< [in] エントリ名
 	std::wstring_view	entryValue		//!< [in] エントリ値
 )
 {
@@ -334,7 +344,7 @@ void CProfile::SetProfileData(
 	}
 
 	// エントリに指定された値を書き込む
-	foundSection->m_Entries[entryKey] = entryValue;
+	foundSection->m_Entries[std::wstring(entryKey)] = entryValue;
 }
 
 void CProfile::DUMP( void )

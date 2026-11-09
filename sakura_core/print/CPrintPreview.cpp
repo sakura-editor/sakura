@@ -37,6 +37,7 @@
 #include "CSelectLang.h"
 #include "sakura_rc.h"
 #include "config/system_constants.h"
+#include "apiwrap/DarkMode.h"
 
 #define MIN_PREVIEW_ZOOM 10
 #define MAX_PREVIEW_ZOOM 400
@@ -848,7 +849,8 @@ void CPrintPreview::OnPreviewGoDirectPage( void )
 {
 	const int  INPUT_PAGE_NUM_LEN = 12;
 
-	CDlgInput1 cDlgInputPage;
+	auto& cDlgInputPage = *CDlgInput1::getInstance();
+
 	WCHAR      szMessage[512];
 	WCHAR      szPageNum[INPUT_PAGE_NUM_LEN];
 	
@@ -1942,7 +1944,6 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	si.nPos	 = 0;
 	si.nTrackPos = 1;
 	::SetScrollInfo( m_hwndVScrollBar, SB_CTL, &si, TRUE );
-	::ShowScrollBar( m_hwndVScrollBar, SB_CTL, TRUE );
 
 	/* 横スクロールバーの作成 */
 	m_hwndHScrollBar = ::CreateWindowEx(
@@ -1967,7 +1968,6 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 	si.nPos	 = 0;
 	si.nTrackPos = 1;
 	::SetScrollInfo( m_hwndHScrollBar, SB_CTL, &si, TRUE );
-	::ShowScrollBar( m_hwndHScrollBar, SB_CTL, TRUE );
 
 	/* サイズボックスの作成 */
 	m_hwndSizeBox = ::CreateWindowEx(
@@ -1984,7 +1984,12 @@ void CPrintPreview::CreatePrintPreviewControls( void )
 		CEditApp::getInstance()->GetAppInstance(),										/* instance owning this window	*/
 		(LPVOID) nullptr										/* pointer not needed			*/
 	);
-	::ShowWindow( m_hwndPrintPreviewBar, SW_SHOW );
+
+	DarkMode::setDarkWndSafe(m_hwndPrintPreviewBar);
+	DarkMode::setChildCtrlsTheme(m_pParentWnd->GetHwnd());
+	::ShowScrollBar(m_hwndVScrollBar, SB_CTL, TRUE);
+	::ShowScrollBar(m_hwndHScrollBar, SB_CTL, TRUE);
+	::ShowWindow(m_hwndPrintPreviewBar, SW_SHOW);
 
 	/* WM_SIZE 処理 */
 	RECT		rc1;

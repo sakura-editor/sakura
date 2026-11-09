@@ -34,7 +34,7 @@
         - MSBuild.exe sakura.sln
             - cmake.exe Gitリポジトリ情報を version.h に書き出す。
                 - git.exe
-            - HeaderMake.exe : Funccode_define.h, Funccode_enum.h を生成する
+                - python.exe [src/main/py/header_make.py](../src/main/py/header_make.py) : Funccode_define.h, Funccode_enum.h を生成する
             - cmake.exe 外部ソースからツールをビルドする、または、配布zipから展開する
                 - cmake.exe
                 - 7z.exe
@@ -48,7 +48,7 @@
         - cmake.exe
           - ChmSourceConverter.exe : ヘルプファイルの文字コードを UTF-8 から Shift_JIS に変換する
           - pwsh.exe
-            - [help\CompileChm.ps1](../help/CompileChm.ps1)
+            - python.exe [src/main/py/compile_chm.py](../src/main/py/compile_chm.py)
               - hhc.exe (Visual Studio に同梱) : compiled HTML をビルドするコンパイラ。かなり古いツールであり、日本語 HTML をビルドするためには Windows のシステムロケールを日本語に変更する必要がある。
     - [build-installer.bat](../build-installer.bat)
         - ISCC.exe : [InnoSetup](https://www.jrsoftware.org/isinfo.php) でインストーラをビルドする

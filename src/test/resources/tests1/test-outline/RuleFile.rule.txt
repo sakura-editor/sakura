@@ -1,0 +1,7 @@
+﻿;Title=通常ルール
+;CommentChar=#
+# この行はコメントとして無視される
+ /// ルート,Lv=0
+CHAPTER,Chapter /// 章,Lv=1
+SECTION /// 節,Lv=2
+SKIP /// Except,Lv=2

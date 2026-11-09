@@ -9,7 +9,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2000, jepro
 	Copyright (C) 2002, YAZAKI
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,9 +18,8 @@
 #define SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_
 #pragma once
 
-class CDlgJump;
-
 #include "dlg/CDialog.h"
+
 //! 指定行へのジャンプダイアログボックス
 class CDlgJump final : public CDialog
 {
@@ -42,7 +41,6 @@ protected:
 	/*
 	||  実装ヘルパ関数
 	*/
-	BOOL OnNotify(NMHDR* pNMHDR) override;	//	Oct. 6, 2000 JEPRO added for Spin control
 	BOOL OnCbnSelChange(HWND hwndCtl, int wID) override;
 	BOOL OnBnClicked(int wID) override;
 	BOOL OnEnSetFocus(HWND hwndCtl, int wID) override;
@@ -52,4 +50,5 @@ protected:
 	void SetData( void ) override;	/* ダイアログデータの設定 */
 	int GetData( void ) override;	/* ダイアログデータの取得 */
 };
+
 #endif /* SAKURA_CDLGJUMP_13AD9DC8_92E0_43AB_81D4_A0FBA28EE2D8_H_ */

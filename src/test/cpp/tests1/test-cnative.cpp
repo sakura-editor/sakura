@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,6 +9,11 @@
 #include "charset/charcode.h"
 #include "mem/CNativeW.h"
 #include "mem/CNativeA.h"
+
+#include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
+#include "testing/MsvcReportMode.hpp"
+
+using namespace testing;
 
 /*!
 	CStringRefのテスト
@@ -24,6 +29,13 @@ TEST(CStringRef, CStringRef)
 	EXPECT_FALSE(v1.IsValid());
 	EXPECT_EQ(L'\0', v1.At(0));
 
+	EXPECT_THAT(v1, StrEq(L""));
+	EXPECT_THAT(v1.empty(), IsTrue());
+	EXPECT_THAT(v1.length(), Eq(0));
+
+	SFilePath p1{ v1 };
+	EXPECT_THAT(p1, StrEq(L""));
+
 	CStringRef v2(sz, cch);
 	EXPECT_STREQ(sz, v2.GetPtr());
 	EXPECT_EQ(cch, v2.GetLength());
@@ -33,6 +45,16 @@ TEST(CStringRef, CStringRef)
 	EXPECT_EQ(L's', v2.At(2));
 	EXPECT_EQ(L't', v2.At(3));
 	EXPECT_EQ(L'\0', v2.At(4));
+
+	EXPECT_THAT(v2, StrEq(L"test"));
+	EXPECT_THAT(v2.empty(), IsFalse());
+	EXPECT_THAT(v2.length(), Eq(4));
+
+	p1 = v2;
+	EXPECT_THAT(p1, StrEq(L"test"));
+
+	p1 = nullptr;
+	EXPECT_THAT(p1, StrEq(L""));
 
 	CNativeW cmem(sz, cch);
 	CStringRef v3(cmem);
@@ -44,6 +66,12 @@ TEST(CStringRef, CStringRef)
 	EXPECT_EQ(L's', v3.At(2));
 	EXPECT_EQ(L't', v3.At(3));
 	EXPECT_EQ(L'\0', v3.At(4));
+
+	SFilePath p2{ cmem };
+	EXPECT_THAT(p2, StrEq(L"test"));
+
+	CStringRef v4{ p2 };
+	EXPECT_THAT(v4.str(), StrEq(L"test"));
 }
 
 /*!
@@ -302,6 +330,46 @@ TEST(CNativeW, AppendString)
 	EXPECT_LE(cch, value.capacity());
 }
 
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeW, AppendStringF101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	std::wstring_view format{ nullptr, 0 };
+	CNativeW value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		value.AppendStringF(format); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 22"))
+	);
+
+	EXPECT_THAT(errno, Eq(EINVAL));
+
+	// メモリ確保前に落ちるので値はNULLのまま。
+	EXPECT_THAT(value.GetStringPtr(), IsNull());
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeW, AppendStringF102)
+{
+	CNativeW value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		// エンコードエラーを発生させる。（ShiftJISの後続バイトが欠落）
+		value.AppendStringF(L"%S", "\x81\0"); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+	);
+
+	EXPECT_THAT(errno, Eq(EILSEQ));
+}
+
 /*!
  * @brief 加算代入演算子(NULL指定)の仕様
  * @remark 加算代入しても内容に変化無し
@@ -327,10 +395,6 @@ TEST(CNativeW, AppendStringWithFormatting)
 	CNativeW value;
 	value.AppendStringF(L"いちご%d%%", 100);
 	ASSERT_STREQ(L"いちご100%", value.GetStringPtr());
-
-	// フォーマットに NULL を渡したケースをテストする
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(NULL, 0)), std::invalid_argument);
-	ASSERT_THROW(value.AppendStringF(std::wstring_view(L"ダミー", 0)), std::invalid_argument);
 
 	// 文字列長を0にして、追加確保が行われないケースをテストする
 	value = L"いちご100%"; //テスト前の初期値(念のため再代入しておく
@@ -730,6 +794,50 @@ TEST(CNativeW, CompareWithStringPtr)
 }
 
 /*!
+ * @brief 比較演算子の複合テスト
+ */
+TEST(CNativeW, comparisonOperators001)
+{
+	CNativeW value{ L"test data" };
+
+	// 同じオブジェクト
+	EXPECT_TRUE(value == value);
+	EXPECT_THAT(value != value, IsFalse());
+
+	// 同じ値
+	EXPECT_TRUE(value == L"test data");
+	EXPECT_THAT(value != L"test data", IsFalse());
+
+	// 異なる値
+	EXPECT_TRUE(value != L"test date");
+	EXPECT_THAT(value == L"test date", IsFalse());
+
+	// 比較対象が空
+	EXPECT_TRUE(L"" < value);
+	EXPECT_TRUE(value > L"");
+
+	// 比較対象がNULL
+	EXPECT_TRUE(nullptr <= value);
+	EXPECT_TRUE(value >= nullptr);
+
+	// 先頭部分が一致、かつ、比較対象より短い
+	EXPECT_TRUE(L"test" < value);
+	EXPECT_TRUE(value > L"test");
+
+	// 先頭部分が一致、かつ、比較対象より長い
+	EXPECT_TRUE(value < L"test data1");
+	EXPECT_TRUE(L"test data1" > value);
+
+	// 比較対象より大きい（辞書順で後）
+	EXPECT_TRUE(L"exam" < value);
+	EXPECT_TRUE(value > L"exam");
+
+	// 比較対象より小さい（辞書順で前）
+	EXPECT_TRUE(value < L"xyz");
+	EXPECT_TRUE(L"xyz" > value);
+}
+
+/*!
  * @brief グローバル加算演算子のテスト
  * @remark 1つ目の引数の末尾に2つ目の引数を連結する
  * @remark 順序逆転版も同仕様。
@@ -936,4 +1044,87 @@ TEST(CNativeW, GetCharPrev_Bugs_Preview)
 
 	// 対処方法 関数コメントにある仕様通りに修正する。
 	ASSERT_EQ(&text[2], CNativeW::GetCharPrev(pText, 2, pText));
+}
+
+/*!
+ * @brief GetCharPrev: 行の先頭のサロゲートペアの次から戻ると、ペアの先頭を返す
+ *
+ * 今は動かないので DISABLED_ にしている(#2743 の 3)。今は nDataPrev が 1 のときにペアを判定しないので、下位サロゲート(text + 1)を返す。
+ * 単語単位の検索(CWordParse::WhereCurrentWord_2() など)が、行の先頭のサロゲートペアを分けてしまう。
+ */
+TEST(CNativeW, DISABLED_GetCharPrevPairAtTop)
+{
+	constexpr const wchar_t text[] = L"\U0001F6B9x";	// カラー絵文字「男性のシンボル」、x
+	EXPECT_THAT(CNativeW::GetCharPrev(text, 3, text + 2), Eq(text));
+}
+
+TEST(CNativeW, length001)
+{
+	CNativeW mem{ L"test" };
+	EXPECT_THAT(mem, StrEq(L"test"));
+	EXPECT_THAT(mem.empty(), IsFalse());
+	EXPECT_THAT(mem.length(), Eq(4));
+}
+
+TEST(CNativeW, length101)
+{
+	CNativeW mem{};
+	EXPECT_THAT(mem, StrEq(L""));
+	EXPECT_THAT(mem.empty(), IsTrue());
+	EXPECT_THAT(mem.length(), Eq(0));
+}
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeA, AppendStringF101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	std::string_view format{ nullptr, 0 };
+	CNativeA value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		value.AppendStringF(format); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 22"))
+	);
+
+	EXPECT_THAT(errno, Eq(EINVAL));
+
+	// メモリ確保前に落ちるので値はNULLのまま。
+	EXPECT_THAT(value.GetStringPtr(), IsNull());
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(CNativeA, AppendStringF102)
+{
+	CNativeA value;
+
+	// Cランタイムの呼出が失敗したら例外を投げる
+	EXPECT_THAT(([&] {
+		// エンコードエラーを発生させる。（無効な文字値WEOF）
+		value.AppendStringF("%S", L"\xFFFF"); }),
+		ThrowsMessage<std::domain_error>(Eq("AppendStringF error. errno = 42"))
+	);
+
+	EXPECT_THAT(errno, Eq(EILSEQ));
+}
+
+TEST(CNativeA, AppendStringWithFormatting)
+{
+	CNativeA value;
+
+	// 文字列長を0にして、追加確保が行われないケースをテストする
+	value = "いちご100%"; //テスト前の初期値(念のため再代入しておく
+	EXPECT_THAT(value.GetStringPtr(), StrEq("いちご100%"));
+
+	value = "";
+	EXPECT_THAT(value.GetStringPtr(), StrEq(""));
+
+	value.AppendStringF("%s%d%%", "いちご", 25);
+	EXPECT_THAT(value.GetStringPtr(), StrEq("いちご25%"));
 }

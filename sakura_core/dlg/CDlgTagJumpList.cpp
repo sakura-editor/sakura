@@ -10,7 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -118,6 +118,8 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 	m_psFind0Match->m_nDepth  = -1;
 	m_psFind0Match->m_nMatchAll = 0;
 }
+
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
 
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
@@ -1600,6 +1602,9 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const WCHAR* p )
 WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	WCHAR* basePath, const WCHAR* fileName, int depth )
 {
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(pszOutput, count);
+
 	DEBUG_TRACE( L"base  %s\n", basePath );
 	DEBUG_TRACE( L"file  %s\n", fileName );
 	DEBUG_TRACE( L"depth %d\n",  depth );
@@ -1614,7 +1619,7 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 			//wcscat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, L"%s%s", basePath, p ) ){
+		if( -1 == auto_sprintf_s( buffer, L"%s%s", basePath, p ) ){
 			return nullptr;
 		}
 	}
@@ -1624,18 +1629,41 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 /*!
 	ディレクトリとディレクトリを連結する
 */
-WCHAR* CDlgTagJumpList::CopyDirDir( WCHAR* dest, const WCHAR* target, const WCHAR* base )
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base )
 {
+	const auto destLen = std::size(destination);
+
+	assert(0 < destLen);
+
+	auto dest = std::data(destination);
+
 	if( _IS_REL_PATH( target ) ){
-		wcscpy( dest, base );
-		AddLastYenFromDirectoryPath( dest );
-		wcscat( dest, target );
+		::wcscpy_s(dest, destLen, base);
+		AddLastYenFromDirectoryPath(destination);
+		if (dest[0]) ::wcscat_s(dest, destLen, target);
 	}else{
-		wcscpy( dest, target );
+		::wcscpy_s(dest, destLen, target);
 	}
-	AddLastYenFromDirectoryPath( dest );
+	AddLastYenFromDirectoryPath(destination);
 	return dest;
 }
+
+namespace cxx {
+
+WCHAR* CopyDirDir(
+	std::span<WCHAR> destination,
+	_In_z_ LPCWSTR target,
+	_In_z_ LPCWSTR base
+)
+{
+	return ::CopyDirDir(
+		destination,
+		target,
+		base
+	);
+}
+
+} // namespace cxx
 
 /*
 	@param dir [in,out] フォルダーのパス 

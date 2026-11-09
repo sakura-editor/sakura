@@ -12,7 +12,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji, maru
 	Copyright (C) 2007, ryoji, maru, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,7 +21,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
@@ -34,6 +33,7 @@
 #include "env/CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
+#include "util/os/Shell32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
@@ -503,9 +503,12 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
-	if( profMgr.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
-		WCHAR szOpt[MAX_PATH+10];
-		auto_sprintf( szOpt, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str() );
+	if (SProfileName profileName{};
+		profMgr.DoModal(m_pCommanderView->GetHwnd(), profileName))
+	{
+		using SOpts = StaticString<_MAX_PATH + 10>;	// サイズの根拠は不明
+		SOpts szOpt{};
+		swprintf_s(szOpt, LR"(-PROF="%s")", profMgr.m_ProfileName);
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
@@ -556,21 +559,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
-	/*
-		以下のコマンドを実行する
-		cmd.exe /k cd /d "<ディレクトリパス>"
-		
-		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
-		その場合、管理者用のコマンドプロンプトに対しては動作しない。
-		
-		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
-	*/
-	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
-	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
-
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
-	WCHAR szCmdExePathBuf[MAX_PATH];
+	SFilePath szCmdExePathBuf;
 	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
 		ErrorBeep();
 		return;
@@ -592,9 +582,16 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(nullptr, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
-	// If the function succeeds, it returns a value greater than 32. 
-	if (hInstance <= (decltype(hInstance))32) {
+
+	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
+	execInfo.fMask = SEE_MASK_DEFAULT;
+	execInfo.lpVerb = pVerb;
+	execInfo.lpFile = szCmdExePathBuf;
+	execInfo.lpParameters = nullptr;	// 対話モードにするためパラメーターを指定しない
+	execInfo.lpDirectory = std::data(strFolder);
+	execInfo.nShow = SW_SHOWNORMAL;
+
+	if (!Shell32::getInstance()->ShellExecuteExW(&execInfo)) {
 		ErrorBeep();
 		return;
 	}
@@ -616,8 +613,16 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		-Command を使用する際は -NoExit を指定して PowerShell が終了しないようにする
 		(-NoExit がない場合は -Command で指定したコマンドレットが終了すると PowerShellも終了する)
 	*/
+
+	// PowerShell の単一引用符文字列内でシングルクォートを '' にエスケープする (OS コマンドインジェクション対策)
+	std::wstring strFolderEscaped = strFolder;
+	for (size_t pos = 0; (pos = strFolderEscaped.find(L'\'', pos)) != std::wstring::npos; pos += 2)
+	{
+		strFolderEscaped.replace(pos, 1, L"''");
+	}
+
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
+	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolderEscaped.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	LPCWSTR pVerb = L"open";

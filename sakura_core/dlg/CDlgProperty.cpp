@@ -104,10 +104,10 @@ void CDlgProperty::SetData( void )
 	//	To Here  2008/4/27 Uchi
 	cmemProp.AppendString( L"\r\n" );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP_LINE_COUNT), pCEditDoc->m_cDocLineMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_LINE_COUNT), int(pCEditDoc->m_cDocLineMgr.GetLineCount()) );
 	cmemProp.AppendString( szWork );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP_LAYOUT_LINE), pCEditDoc->m_cLayoutMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_LAYOUT_LINE), int(pCEditDoc->m_cLayoutMgr.GetLineCount()) );
 	cmemProp.AppendString( szWork );
 
 	if( CAppMode::getInstance()->IsViewMode() ){
@@ -122,7 +122,7 @@ void CDlgProperty::SetData( void )
 	auto_sprintf( szWork, LS(STR_DLGFLPROP_CMD_COUNT), pCEditDoc->m_nCommandExecNum );
 	cmemProp.AppendString( szWork );
 
-	auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_INFO), pCEditDoc->m_cDocLineMgr.GetLineCount() );
+	auto_sprintf( szWork, LS(STR_DLGFLPROP_FILE_INFO), int(pCEditDoc->m_cDocLineMgr.GetLineCount()) );
 	cmemProp.AppendString( szWork );
 
 	if( INVALID_HANDLE_VALUE != ( nFind = ::FindFirstFile( pCEditDoc->m_cDocFile.GetFilePath(), &wfd ) ) ){

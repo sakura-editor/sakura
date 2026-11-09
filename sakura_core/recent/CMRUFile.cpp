@@ -10,7 +10,7 @@
 	Copyright (C) 2002, YAZAKI, Moca, genta
 	Copyright (C) 2003, MIK
 	Copyright (C) 2006, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -33,8 +33,7 @@
 */
 CMRUFile::CMRUFile()
 {
-	//	初期化。
-	m_pShareData = &GetDllShareData();
+	return;
 }
 
 /*	デストラクタ	*/
@@ -75,7 +74,6 @@ HMENU CMRUFile::CreateMenu( CMenuDrawer* pCMenuDrawer ) const
 HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 {
 	WCHAR	szMenu[_MAX_PATH * 2 + 10];				//	メニューキャプション
-	int		i;
 	bool	bFavorite;
 	const BOOL bMenuIcon = m_pShareData->m_Common.m_sWindow.m_bMenuIcon;
 
@@ -86,7 +84,7 @@ HMENU CMRUFile::CreateMenu( HMENU	hMenuPopUp, CMenuDrawer* pCMenuDrawer ) const
 	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, met.cbSize, &met, 0);
 	CDCFont dcFont(met.lfMenuFont);
 
-	for( i = 0; i < m_cRecentFile.GetItemCount(); ++i )
+	for (int i = 0; i < m_cRecentFile.GetItemCount(); ++i)
 	{
 		//	「共通設定」→「全般」→「ファイルの履歴MAX」を反映
 		if ( i >= m_cRecentFile.GetViewCount() ) break;

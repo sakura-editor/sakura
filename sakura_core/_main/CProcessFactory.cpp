@@ -10,18 +10,20 @@
 	Copyright (C) 2001, masami shoji
 	Copyright (C) 2002, aroka WinMainより分離
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CProcessFactory.h"
-#include "CControlProcess.h"
-#include "CNormalProcess.h"
-#include "CCommandLine.h"
-#include "CControlTray.h"
+#include "_main/CProcessFactory.h"
+
+#include "_main/CControlProcess.h"
+#include "_main/CControlTray.h"
+#include "_main/CNormalProcess.h"
+#include "basis/primitive.h"
+
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
@@ -29,7 +31,12 @@
 #include "CSelectLang.h"
 #include "config/system_constants.h"
 
-class CProcess;
+CProcessFactory::CProcessFactory(
+	_In_opt_ HINSTANCE hInstance
+)
+	: m_hInstance(hInstance ? hInstance : G_AppInstance())
+{
+}
 
 /*!
 	@brief プロセスクラスを生成する
@@ -38,22 +45,43 @@ class CProcess;
 	適当なプロセスクラスを生成する。
 	
 	@param[in] hInstance インスタンスハンドル
-	@param[in] lpCmdLine コマンドライン文字列
+	@param[in] commandLine コマンドライン文字列
 	
 	@author aroka
 	@date 2002/01/08
 	@date 2006/04/10 ryoji
 */
-CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+std::unique_ptr<CProcess> CProcessFactory::CreateInstance(
+	std::wstring_view commandLine
+) const
 {
-	// 言語環境を初期化する
-	CSelectLang::InitializeLanguageEnvironment();
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _CommandLine{ commandLine };
 
-	if( !ProfileSelect( hInstance, lpCmdLine ) ){
+	// NUL終端文字列から文字列ポインターを取り出す
+	const auto lpCmdLine = _CommandLine.c_str();
+
+	//コマンドラインクラスのインスタンスを生成する
+	auto cmdLineHolder = std::make_unique<CCommandLine>();
+
+	auto& cCommandLine = *cmdLineHolder;
+
+	// 実行ファイル名を取得する
+	std::wstring exeFileName{ GetExeFileName() };
+	auto szExeFileName = exeFileName.data();
+	const auto cchExeFileName = static_cast<int>(exeFileName.length());
+
+	// 実行ファイル名をもとに漢字コードを固定する．
+	cCommandLine.ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
+
+	// コマンドラインを解析する
+	cCommandLine.ParseCommandLine(lpCmdLine);
+
+	if (!ProfileSelect(cCommandLine))
+	{
 		return nullptr;
 	}
 
-	CProcess* process = nullptr;
 	if( !IsValidVersion() ){
 		return nullptr;
 	}
@@ -68,38 +96,27 @@ CProcess* CProcessFactory::Create( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	// しかし、そのような場合でもミューテックスを最初に確保したコントロールプロセスが唯一生き残る。
 	//
 	if( IsStartingControlProcess() ){
-		if( !IsExistControlProcess() ){
-			process = new CControlProcess( hInstance, lpCmdLine );
-		}
+		return std::make_unique<CControlProcess>(m_hInstance, std::move(cmdLineHolder));
 	}
 	else{
-		if( !IsExistControlProcess() ){
-			StartControlProcess();
-		}
-		if( WaitForInitializedControlProcess() ){	// 2006.04.10 ryoji コントロールプロセスの初期化完了待ち
-			process = new CNormalProcess( hInstance, lpCmdLine );
-		}
+		return std::make_unique<CNormalProcess>(m_hInstance,  std::move(cmdLineHolder));
 	}
-	return process;
 }
 
-bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
+bool CProcessFactory::ProfileSelect(
+	CCommandLine& cCommandLine
+) const
 {
-	//	May 30, 2000 genta
-	//	実行ファイル名をもとに漢字コードを固定する．
-	WCHAR szExeFileName[MAX_PATH];
-	const int cchExeFileName = ::GetModuleFileName(nullptr, szExeFileName, int(std::size(szExeFileName)));
-	CCommandLine::getInstance()->ParseKanjiCodeFromFileName(szExeFileName, cchExeFileName);
-
-	CCommandLine::getInstance()->ParseCommandLine(lpCmdLine);
+	auto* pCommandLine = &cCommandLine;
 
 	// コマンドラインオプションから起動プロファイルを判定する
-	bool profileSelected = CDlgProfileMgr::TrySelectProfile( CCommandLine::getInstance() );
-	if( !profileSelected ){
+	if (const auto profileSelected = CDlgProfileMgr::TrySelectProfile(pCommandLine);
+		!profileSelected)	// プロファイルが決まらなかった
+	{
+		// プロファイルマネージャを表示して選択させる
 		CDlgProfileMgr dlgProf;
-		if( dlgProf.DoModal( hInstance, nullptr, 0 ) ){
-			CCommandLine::getInstance()->SetProfileName( dlgProf.m_strProfileName.c_str() );
-		}else{
+		if (HWND hWndParent = nullptr;
+			!dlgProf.DoModal(hWndParent, pCommandLine->GetProfileNameRef())) {
 			return false; // プロファイルマネージャで「閉じる」を選んだ。プロセス終了
 		}
 	}
@@ -115,7 +132,7 @@ bool CProcessFactory::ProfileSelect( HINSTANCE hInstance, LPCWSTR lpCmdLine )
 	@author aroka
 	@date 2002/01/03
 */
-bool CProcessFactory::IsValidVersion()
+bool CProcessFactory::IsValidVersion() const
 {
 	// Windowsバージョンは廃止。
 	// 動作可能バージョン(=windows7以降)でなければ起動できない。
@@ -128,7 +145,7 @@ bool CProcessFactory::IsValidVersion()
 	@author aroka
 	@date 2002/01/03 作成 2002/01/18 変更
 */
-bool CProcessFactory::IsStartingControlProcess()
+bool CProcessFactory::IsStartingControlProcess() const
 {
 	return CCommandLine::getInstance()->IsNoWindow();
 }
@@ -140,9 +157,9 @@ bool CProcessFactory::IsStartingControlProcess()
 	@date 2002/01/03
 	@date 2006/04/10 ryoji
 */
-bool CProcessFactory::IsExistControlProcess()
+/* static */ bool CProcessFactory::IsExistControlProcess()
 {
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 	std::wstring strMutexSakuraCp = GSTR_MUTEX_SAKURA_CP;
 	strMutexSakuraCp += pszProfileName;
  	HANDLE hMutexCP;
@@ -155,7 +172,6 @@ bool CProcessFactory::IsExistControlProcess()
 	return false;	// コントロールプロセスは存在していないか、まだ CreateMutex() してない
 }
 
-//	From Here Aug. 28, 2001 genta
 /*!
 	@brief コントロールプロセスを起動する
 	
@@ -166,9 +182,25 @@ bool CProcessFactory::IsExistControlProcess()
 	@date Aug. 28, 2001
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
-bool CProcessFactory::StartControlProcess()
+/* static */ bool CProcessFactory::StartControlProcess()
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"StartControlProcess" );
+
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+
+	const auto pszProfileName = GetProfileName();
+
+	// 初期化完了イベントの名前を組み立てる
+	SFilePath initEventName{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
+	initEventName.append(pszProfileName);
+
+	// 初期化完了イベントを作成する
+	HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
+	if (!hEvent || ERROR_ALREADY_EXISTS == ::GetLastError()) {
+		// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。
+		TopErrorMessage(nullptr, LS(STR_ERR_DLGPROCFACT5));
+		return false;
+	}
 
 	//	プロセスの起動
 	PROCESS_INFORMATION p;
@@ -188,10 +220,10 @@ bool CProcessFactory::StartControlProcess()
 
 	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)));
 	if( CCommandLine::getInstance()->IsSetProfile() ){
-		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN -PROF=\"%ls\"",
-			szEXE, CCommandLine::getInstance()->GetProfileName() );
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN -PROF=\"%ls\"",
+			szEXE, GetProfileName() );
 	}else{
-		::auto_sprintf( szCmdLineBuf, L"\"%s\" -NOWIN", szEXE ); // ""付加
+		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN", szEXE ); // ""付加
 	}
 
 	//常駐プロセス起動
@@ -229,42 +261,16 @@ bool CProcessFactory::StartControlProcess()
 		return false;
 	}
 
-	::CloseHandle( p.hThread );
-	::CloseHandle( p.hProcess );
-	
-	return true;
-}
-//	To Here Aug. 28, 2001 genta
+	HandleHolder hProcess{ p.hProcess };
+	HandleHolder hThread{ p.hThread };
 
-/*!
-	@brief コントロールプロセスの初期化完了イベントを待つ。
-
-	@author ryoji by assitance with karoto
-	@date 2006/04/10
-*/
-bool CProcessFactory::WaitForInitializedControlProcess()
-{
-	// 初期化完了イベントを待つ
-	//
-	// Note: コントロールプロセス側は多重起動防止用ミューテックスを ::CreateMutex() で
-	// 作成するよりも先に初期化完了イベントを ::CreateEvent() で作成する。
-	//
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
-	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
-	strInitEvent += pszProfileName;
-	HANDLE hEvent;
-	hEvent = ::CreateEventW( nullptr, TRUE, FALSE, strInitEvent.c_str() );
-	if( nullptr == hEvent ){
-		TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
+	// 初期化完了を待つ
+	std::array handles{ hEvent.get(), hProcess.get()};
+	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000); WAIT_OBJECT_0 != dwRet) {
+		// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。
+		TopErrorMessage(nullptr, LS(STR_ERR_DLGPROCFACT5));
 		return false;
 	}
-	DWORD dwRet;
-	dwRet = ::WaitForSingleObject( hEvent, 30000 );
-	if( WAIT_TIMEOUT == dwRet ){	// コントロールプロセスの初期化が終了しない
-		::CloseHandle( hEvent );
-		TopErrorMessage( nullptr, L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。" );
-		return false;
-	}
-	::CloseHandle( hEvent );
+
 	return true;
 }

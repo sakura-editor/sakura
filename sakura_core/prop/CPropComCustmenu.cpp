@@ -155,7 +155,7 @@ INT_PTR CPropCustmenu::DispatchEvent(
 	WCHAR		szLabel[300];
 	WCHAR		szLabel2[300+4];
 
-	CDlgInput1	cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	switch( uMsg ){
 	case WM_INITDIALOG:

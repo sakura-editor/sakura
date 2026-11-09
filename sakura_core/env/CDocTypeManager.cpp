@@ -82,7 +82,10 @@ CTypeConfig CDocTypeManager::GetDocumentTypeOfId( int id )
 	return CTypeConfig(-1);	//	ハズレ
 }
 
-bool CDocTypeManager::GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type)
+[[nodiscard]] bool CDocTypeManager::GetTypeConfig(
+	CTypeConfig		cDocumentType,
+	STypeConfig&	type
+)
 {
 	int n = cDocumentType.GetIndex();
 	if( 0 <= n && n < m_pShareData->m_nTypesCount ){

@@ -21,6 +21,8 @@
 #define SAKURA_CDIALOG_17C8C15C_881C_4C1F_B953_CB11FCC8B70B_H_
 #pragma once
 
+#include "basis/CMyString.h"	// SFilePath
+
 struct DLLSHAREDATA;
 class CRecent;
 

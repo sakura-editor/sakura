@@ -77,13 +77,11 @@ INT_PTR CALLBACK CPropBackup::DlgProc_page(
 /* メッセージ処理 */
 INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
+	const auto hWndDlg = hwndDlg;
+
 	WORD		wNotifyCode;
 	WORD		wID;
 	NMHDR*		pNMHDR;
-	NM_UPDOWN*	pMNUD;
-	int			idCtrl;
-//	int			nVal;
-	int			nVal;	//Sept.21, 2000 JEPRO スピン要素を加えたので復活させた
 //	int			nDummy;
 //	int			nCharChars;
 
@@ -101,14 +99,12 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFOLDER ), std::size(m_Common.m_sBackup.m_szBackUpFolder) - 1 - 1 );
 		// 20051107 aroka
 		ApiWrap::EditCtl_LimitText( ::GetDlgItem( hwndDlg, IDC_EDIT_BACKUPFILE ), std::size(m_Common.m_sBackup.m_szBackUpPathAdvanced) - 1 - 1 );
+		apiwrap::SetUpDownRange(hWndDlg, IDC_SPIN_BACKUP_GENS, 1, 99);
 		return TRUE;
 
 	case WM_NOTIFY:
-		idCtrl = (int)wParam;
 		pNMHDR = (NMHDR*)lParam;
-		pMNUD  = (NM_UPDOWN*)lParam;
-		switch( idCtrl ){
-		default:
+
 			switch( pNMHDR->code ){
 			case PSN_HELP:
 				OnHelp( hwndDlg, IDD_PROP_BACKUP );
@@ -124,26 +120,7 @@ INT_PTR CPropBackup::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			default:
 				break;
 			}
-			break;
 
-		case IDC_SPIN_BACKUP_GENS:
-			/* バックアップファイルの世代数 */
-			nVal = ::GetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nullptr, FALSE );
-			if( pMNUD->iDelta < 0 ){
-				++nVal;
-			}else
-			if( pMNUD->iDelta > 0 ){
-				--nVal;
-			}
-			if( nVal < 1 ){
-				nVal = 1;
-			}
-			if( nVal > 99 ){
-				nVal = 99;
-			}
-			::SetDlgItemInt( hwndDlg, IDC_EDIT_BACKUP_3, nVal, FALSE );
-			return TRUE;
-		}
 //****	To Here Sept. 21, 2000 JEPRO ダイアログ要素にスピンを入れるので以下のWM_NOTIFYをコメントアウトにし下に修正を置いた
 		break;
 

@@ -10,7 +10,7 @@
 	Copyright (C) 2001, YAZAKI
 	Copyright (C) 2002, YAZAKI, aroka, genta, Moca
 	Copyright (C) 2003, Moca, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -44,8 +44,12 @@ CPPA::~CPPA()
 {
 }
 
-//	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
-bool CPPA::Execute(CEditView* pcEditView, int flags )
+/*!
+ * @brief PPA.DLLを実行する
+ *
+ * @date 2007/07/22 genta flags追加
+ */
+bool CPPA::Execute(CEditView* pcEditView, int flags) const
 {
 	//PPAの多重起動禁止 2008.10.22 syat
 	if ( CPPA::m_bIsRunning ) {
@@ -58,7 +62,6 @@ bool CPPA::Execute(CEditView* pcEditView, int flags )
 
 	PpaExecInfo info;
 	info.m_pcEditView = pcEditView;
-	info.m_pShareData = &GetDllShareData();
 	info.m_bError = false;			//	2003.06.01 Moca
 	info.m_cMemDebug.SetString("");	//	2003.06.01 Moca
 	info.m_commandflags = flags | FA_FROMMACRO;	//	2007.07.22 genta
@@ -148,15 +151,15 @@ bool CPPA::InitDllImp()
 	if( ! RegisterEntries(table) )
 		return false;
 
-	SetIntFunc((void *)CPPA::stdIntFunc);	// 2003.02.24 Moca
-	SetStrFunc((void *)CPPA::stdStrFunc);
-	SetProc((void *)CPPA::stdProc);
+	SetIntFunc(&stdIntFunc);
+	SetStrFunc(&stdStrFunc);
+	SetProc(&stdProc);
 
 	// 2003.06.01 Moca エラーメッセージを追加
-	SetErrProc((void *)CPPA::stdError);
-	SetStrObj((void *)CPPA::stdStrObj);	// UserErrorMes用
+	SetErrProc(&stdError);
+	SetStrObj(&stdStrObj);	// UserErrorMes用
 #if PPADLL_VER >= 123
-	SetFinishProc((void *)CPPA::stdFinishProc);
+	SetFinishProc(&stdFinishProc);
 #endif
 
 	SetDefine( "sakura-editor" );	// 2003.06.01 Moca SAKURAエディタ用独自関数を準備
@@ -208,17 +211,10 @@ std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 
 	//	引数用バッファ
 	std::vector<std::string> args{};
-	args.reserve(8);
+	args.reserve(MacroFuncInfo::MaxArgs);
 
-	for (int i = 0; i < 8; ++i) {
-		VARTYPE vt = VT_EMPTY;
-		if( i < 4 ){
-			vt = cMacroFuncInfo.m_varArguments[i];
-		}else{
-			if( cMacroFuncInfo.m_pData && i < cMacroFuncInfo.m_pData->m_nArgMinSize ){
-				vt = cMacroFuncInfo.m_pData->m_pVarArgEx[i - 4];
-			}
-		}
+	for (size_t i = 0; i < std::size(cMacroFuncInfo.m_varArguments); ++i) {
+		const auto vt = cMacroFuncInfo.m_varArguments[i];
 		if ( vt == VT_EMPTY ){
 			break;
 		}
@@ -254,6 +250,33 @@ std::string CPPA::GetDeclarations(const MacroFuncInfo& cMacroFuncInfo)
 			cMacroFuncInfo.m_nFuncID
 		);
 	}
+}
+
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallStrObj(
+	PpaExecInfo& info,
+	int index,
+	bool isSetMode,
+	LPSTR* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	int errCd = 0;
+	stdStrObj(funcName, index, isSetMode ? 1 : 0, & errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
 }
 
 /*! ユーザー定義文字列型オブジェクト
@@ -359,54 +382,97 @@ void __stdcall CPPA::stdError( int Err_CD, const char* Err_Mes )
 	}
 }
 
+/*!
+ * CPPAマクロ呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallProc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdProc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
+}
+
 //----------------------------------------------------------------------
 /** プロシージャ実行callback
 
 	@date 2007.07.20 genta Indexと一緒にフラグを渡す
 */
 void __stdcall CPPA::stdProc(
-	const char*		FuncName,
+	const char*		FuncName [[maybe_unused]],
 	const int		_Index,
-	const char*		Argument[],
+	const char**	Arguments,
 	const int		ArgSize,
 	int*			Err_CD
 )
 {
-	NEVER_USED_PARAM(FuncName);
-	EFunctionCode Index=(EFunctionCode)_Index;
-
 	*Err_CD = 0;
 
+	auto tmpArguments = std::vector<std::wstring>();
+
 	//Argumentをwchar_t[]に変換 -> tmpArguments
-	WCHAR** tmpArguments2=new WCHAR*[ArgSize];
-	int* tmpArgLengths = new int[ArgSize];
-	for(int i=0;i<ArgSize;i++){
-		if(Argument[i]){
-			tmpArguments2[i]=mbstowcs_new(Argument[i]);
-			tmpArgLengths[i]=(int)wcslen(tmpArguments2[i]);
+	auto tmpArguments2 = std::vector<LPCWSTR>(ArgSize);
+	auto tmpArgLengths = std::vector<int>(ArgSize);
+	for (int i = 0; i < ArgSize; ++i) {
+		if (Arguments[i]) {
+			tmpArguments.emplace_back(cxx::to_wstring(Arguments[i], CP_SJIS));
+			tmpArguments2[i] = std::data(tmpArguments.back());
+			tmpArgLengths[i] = int(std::size(tmpArguments.back()));
 		}
 		else{
 			tmpArguments2[i]=nullptr;
 			tmpArgLengths[i]=0;
 		}
 	}
-	const WCHAR** tmpArguments=(const WCHAR**)tmpArguments2;
 
 	//処理
-	bool bRet = CMacro::HandleCommand( m_CurInstance->m_pcEditView, (EFunctionCode)(Index | m_CurInstance->m_commandflags), tmpArguments,tmpArgLengths, ArgSize );
-	if( !bRet ){
-		*Err_CD = Index + 1;
+	if (const auto bRet = CMacro::HandleCommand(m_CurInstance->m_pcEditView, static_cast<EFunctionCode>(_Index | m_CurInstance->m_commandflags), std::data(tmpArguments2), std::data(tmpArgLengths), ArgSize); !bRet) {
+		*Err_CD = _Index + 1;
 	}
+}
 
-	//tmpArgumentsを解放
-	for(int i=0;i<ArgSize;i++){
-		if(tmpArguments2[i]){
-			WCHAR* p=const_cast<WCHAR*>(tmpArguments2[i]);
-			delete[] p;
-		}
-	}
-	delete[] tmpArguments2;
-	delete[] tmpArgLengths;
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallIntFunc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments,
+	int* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdIntFunc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
 }
 
 //----------------------------------------------------------------------
@@ -428,7 +494,8 @@ void __stdcall CPPA::stdIntFunc(
 
 	*ResultValue = 0;
 	*Err_CD = 0;
-	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
+
+	if (CallHandleFunction(Index, std::span(Argument, ArgSize), &Ret)) {
 		switch( Ret.vt ){
 		case VT_I4:
 			*ResultValue = Ret.lVal;
@@ -450,6 +517,34 @@ void __stdcall CPPA::stdIntFunc(
 	return;
 }
 
+/*!
+ * CPPAマクロ関数呼出コールバックをテストできるようI/Fを公開する関数。
+ *
+ * 既存コードをできるだけ改変せずにテストできるよう作成。
+ * 可能であれば、そのうち消す。
+ */
+/* static */ int CPPA::CallStrFunc(
+	PpaExecInfo& info,
+	EFunctionCode eFuncCd,
+	std::span<LPCSTR> arguments,
+	LPSTR* ResultValue
+)
+{
+	// PPA実行情報をセットする
+	m_CurInstance = &info;
+
+	// CPPAマクロ呼出コールバックを呼び出す
+	auto funcName = LPCSTR(nullptr);
+	auto ppArguments = std::data(arguments);
+	int errCd = 0;
+	stdStrFunc(funcName, int(eFuncCd), ppArguments, int(std::size(arguments)), &errCd, ResultValue);
+
+	// PPA実行情報をクリアする
+	m_CurInstance = nullptr;
+
+	return errCd;
+}
+
 //----------------------------------------------------------------------
 /*!
 	文字列を返す関数を処理する
@@ -467,8 +562,9 @@ void __stdcall CPPA::stdStrFunc(
 	VARIANT Ret;
 	::VariantInit(&Ret);
 	*Err_CD = 0;
-	if( false != CallHandleFunction(Index, Argument, ArgSize, &Ret) ){
-		if(VT_BSTR == Ret.vt){
+
+	if (CallHandleFunction(Index, std::span(Argument, ArgSize), &Ret) &&
+		VT_BSTR == Ret.vt) {
 			int len;
 			char* buf;
 			Wrap(&Ret.bstrVal)->Get(&buf,&len);
@@ -477,7 +573,6 @@ void __stdcall CPPA::stdStrFunc(
 			*ResultValue = m_CurInstance->m_cMemRet.GetStringPtr();
 			::VariantClear(&Ret);
 			return;
-		}
 	}
 	::VariantClear(&Ret);
 	*Err_CD = Index + 1;
@@ -490,69 +585,56 @@ void __stdcall CPPA::stdStrFunc(
 
 	文字列で与えられた引数をVARIANT/BSTRに変換してCMacro::HandleFunction()を呼びだす
 	@author Moca
-*/
+ * @date 2002.02.24 Moca
+ */
 bool CPPA::CallHandleFunction(
-	const int Index, const char* Arg[],
-	int ArgSize, VARIANT* Result )
+	const int Index,
+	std::span<LPCSTR> Args,
+	VARIANT* Result
+)
 {
-	int i, ArgCnt;
-	const int maxArgSize = 8;
-	VARIANT vtArg[maxArgSize];
-	const MacroFuncInfo* mfi;
-	bool Ret;
+	if (Index < F_FUNCTION_FIRST) return false;
 
-	mfi = CSMacroMgr::GetFuncInfoByID(Index);
-	for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-		::VariantInit( &vtArg[i] );
-	}
-	for(i=0, ArgCnt=0; i<maxArgSize && i<ArgSize; i++ ){
-		VARTYPE type = VT_EMPTY;
-		if( i < 4 ){
-			type = mfi->m_varArguments[i];
-		}else{
-			if( mfi->m_pData && i < mfi->m_pData->m_nArgMinSize ){
-				type = mfi->m_pData->m_pVarArgEx[i - 4];
-			}
-		}
-		if(VT_EMPTY == type){
+	const auto mfi = CSMacroMgr::GetFuncInfoByID(Index);
+
+	const auto nArgSizeMax = std::size(mfi->m_varArguments);
+
+	std::vector<_variant_t> varArgs{};
+	varArgs.reserve(nArgSizeMax);
+
+	for (size_t i = 0; i < std::min(std::size(Args), nArgSizeMax); ++i)
+	{
+		const VARTYPE varType = mfi->m_varArguments[i];
+		if (VT_EMPTY == varType) {
 			break;
 		}
 
-		switch( type ){
+		switch (varType) {
 		case VT_I4:
-		{
-			vtArg[i].vt = VT_I4;
-			vtArg[i].lVal = atoi( Arg[i] );
+			varArgs.emplace_back(
+				atol(Args[i]),
+				static_cast<VARTYPE>(VT_I4)
+			);
 			break;
-		}
+
 		case VT_BSTR:
-		{
-			SysString S(Arg[i],lstrlenA(Arg[i]));
-			Wrap(&vtArg[i])->Receive(S);
+			varArgs.emplace_back(
+				Args[i]
+			);
 			break;
-		}
+
 		default:
-			for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-				::VariantClear( &vtArg[i] );
-			}
 			return false;
 		}
-		ArgCnt++;
 	}
 
-	if(Index >= F_FUNCTION_FIRST)
-	{
-		Ret = CMacro::HandleFunction(m_CurInstance->m_pcEditView, (EFunctionCode)Index, vtArg, ArgCnt, *Result);
-		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-			::VariantClear( &vtArg[i] );
-		}
-		return Ret;
-	}else{
-		for( i=0; i<maxArgSize && i<ArgSize; i++ ){
-			::VariantClear( &vtArg[i] );
-		}
-		return false;
-	}
+	return CMacro::HandleFunction(
+		m_CurInstance->m_pcEditView,
+		static_cast<EFunctionCode>(Index),
+		varArgs.data(),
+		static_cast<int>(varArgs.size()),
+		*Result
+	);
 }
 
 #if PPADLL_VER >= 123

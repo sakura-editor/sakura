@@ -33,13 +33,15 @@ if (-not(Test-Path "$HomePath\build\$Platform\$Configuration")) {
 }
 
 # build-wrapperでプロジェクトをリビルドする
-$p = Start-Process `
-  -FilePath $buildWrapperPath `
-  -ArgumentList $msBuildArgs `
-  -NoNewWindow `
-  -WorkingDirectory $HomePath `
-  -PassThru `
-  -Wait
+$startProcessParams = @{
+  FilePath = $buildWrapperPath
+  ArgumentList = $msBuildArgs
+  NoNewWindow = $true
+  WorkingDirectory = $HomePath
+  PassThru = $true
+  Wait = $true
+}
+$p = Start-Process @startProcessParams
 
 if ($p.ExitCode -ne 0) {
   throw "MsBuild was Failed."

@@ -14,9 +14,12 @@ namespace env {
  */
 /* static */ void ShareDataTestSuite::SetUpShareData()
 {
+	// 言語環境を初期化する
+	CSelectLang::InitializeLanguageEnvironment();
+
 	pcShareData = std::make_unique<CShareData>();
 
-	EXPECT_THAT(pcShareData->InitShareData(), IsTrue());
+	pcShareData->InitShareData();
 }
 
 /*!

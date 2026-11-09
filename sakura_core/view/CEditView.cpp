@@ -47,11 +47,17 @@
 #include "config/system_constants.h"
 
 #include "CSelectLang.h"
+#include "apiwrap/DarkMode.h"
 
 LRESULT CALLBACK EditViewWndProc( HWND, UINT, WPARAM, LPARAM );
 VOID CALLBACK EditViewTimerProc( HWND, UINT, UINT_PTR, DWORD );
 
 #define IDT_ROLLMOUSE	1
+
+extern template
+bool CDropTargetWnd::AttachDropTarget<CEditView>(
+	CEditView* pThis
+);
 
 /*
 || ウィンドウプロシージャ
@@ -124,6 +130,12 @@ CEditView::CEditView( void )
 , m_cTextDrawer(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 , m_cCommander(this)			// warning C4355: 'this' : ベース メンバー初期化子リストで使用されました。
 {
+	constexpr bool bMiniMap = false;	// TODO: パラメーターで受け取るようにしたい
+
+	m_bMiniMap = bMiniMap;	// SetFont内で使用するため、初期化しておく必要がある
+
+	// 設定に従いフォント情報を初期化する
+	SetFont(nullptr, false);	// 再描画しない
 }
 
 // 2007.10.23 kobake コンストラクタ内の処理をすべてCreateに移しました。(初期化処理が不必要に分散していたため)
@@ -227,7 +239,6 @@ BOOL CEditView::Create(
 
 	WNDCLASS	wc;
 	m_hwndParent = hwndParent;
-	m_pTypeData = &m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 	m_nMyIndex = nMyIndex;
 
 	//	2007.08.18 genta 初期化にShareDataの値が必要になった
@@ -283,10 +294,12 @@ BOOL CEditView::Create(
 	if( nullptr == GetHwnd() ){
 		return FALSE;
 	}
+	if (IsDarkModeActive()) {
+		DarkMode::setWindowExStyle(GetHwnd(), false, WS_EX_STATICEDGE);
+	}
 
 	if( !m_bMiniMap ){
-		m_pcDropTarget = new CDropTarget( this );
-		m_pcDropTarget->Register_DropTarget( GetHwnd() );
+		m_DropTargetWnd->AttachDropTarget(this);
 	}
 
 	/* 辞書Tip表示ウィンドウ作成 */
@@ -307,6 +320,8 @@ BOOL CEditView::Create(
 	/* スクロールバー作成 */
 	CreateScrollBar();		// 2006.12.19 ryoji
 
+	// 設定に従いフォント情報を初期化する
+	// (分割ビューのために残しておく)
 	SetFont();
 
 	if( bShow ){
@@ -363,8 +378,7 @@ void CEditView::Close()
 	//	m_hbmpCompatBMPもここで削除される．
 	UseCompatibleDC(FALSE);
 
-	delete m_pcDropTarget;
-	m_pcDropTarget = nullptr;
+	m_DropTargetWnd = nullptr;
 
 	delete m_cRegexKeyword;	//@@@ 2001.11.17 add MIK
 	m_cRegexKeyword = nullptr;
@@ -434,6 +448,7 @@ LRESULT CEditView::DispatchEvent(
 		if (m_hwndSizeBoxPlaceholder == nullptr) {
 			return -1;
 		}
+		DarkMode::setWindowCtlColorSubclass(hwnd);
 		return 0L;
 
 		// From Here 2007.09.09 Moca 互換BMPによる画面バッファ
@@ -719,10 +734,6 @@ LRESULT CEditView::DispatchEvent(
 		::DestroyWindow( hwnd );
 		return 0L;
 	case WM_DESTROY:
-		if( nullptr != m_pcDropTarget ){
-			m_pcDropTarget->Revoke_DropTarget();
-		}
-
 		/* タイマー終了 */
 		::KillTimer( GetHwnd(), IDT_ROLLMOUSE );
 
@@ -1062,9 +1073,18 @@ void CEditView::OnKillFocus( void )
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 /* フォントの変更 */
-void CEditView::SetFont( void )
+void CEditView::SetFont(
+	HWND hWnd,
+	bool bReDraw
+)
 {
-	HDC hdc = ::GetDC( GetHwnd() );
+	if (!hWnd)
+	{
+		hWnd = GetHwnd();
+	}
+
+	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
+	MemDcHolder hdc = ::CreateCompatibleDC(nullptr);
 
 	// メトリクス更新
 	if( m_bMiniMap ){
@@ -1073,7 +1093,7 @@ void CEditView::SetFont( void )
 		GetTextMetrics().Update(hdc, GetFontset().GetFontHan(), DpiScaleY(m_pTypeData->m_nLineSpace), DpiScaleX(m_pTypeData->m_nColumnSpace));
 	}
 
-	::ReleaseDC( GetHwnd(), hdc );
+	hdc = nullptr;
 
 	// エリア情報を更新
 	GetTextArea().UpdateAreaMetrics();
@@ -1081,11 +1101,14 @@ void CEditView::SetFont( void )
 	// 行番号表示に必要な幅を設定
 	GetTextArea().DetectWidthOfLineNumberArea( false );
 
-	// ぜんぶ再描画
-	::InvalidateRect( GetHwnd(), nullptr, TRUE );
+	if (bReDraw)
+	{
+		// ぜんぶ再描画
+		::InvalidateRect(hWnd, nullptr, TRUE);
 
-	//	Oct. 11, 2002 genta IMEのフォントも変更
-	SetIMECompFormFont();
+		//	Oct. 11, 2002 genta IMEのフォントも変更
+		SetIMECompFormFont();
+	}
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1773,7 +1796,6 @@ bool CEditView::GetSelectedData(
 	CLogicInt		nIdxTo;
 	int				nRowNum;
 	int				nLineNumCols = 0;
-	wchar_t*		pszLineNum = nullptr;
 	const wchar_t*	pszSpaces = L"                    ";
 	const CLayout*	pcLayout;
 
@@ -1787,8 +1809,7 @@ bool CEditView::GetSelectedData(
 		// 2014.11.30 桁はレイアウト単位である必要がある
 		nLineNumCols = GetTextArea().DetectWidthOfLineNumberArea_calculate(&m_pcEditDoc->m_cLayoutMgr, true);
 		nLineNumCols += 1;
-		strLineNum.assign(nLineNumCols, L'\0');
-		pszLineNum = strLineNum.data();
+		strLineNum.resize(nLineNumCols);
 	}
 
 	CLayoutRect			rcSel;
@@ -1947,9 +1968,10 @@ bool CEditView::GetSelectedData(
 				buffer->Append( pszQuote, quoteLen );
 			}
 			if( bWithLineNumber ){	/* 行番号を付与する */
-				auto lineNumLen = auto_sprintf( pszLineNum, L" %d:" , nLineNum + 1 );
-				buffer->Append( pszSpaces, nLineNumCols - wcslen( pszLineNum ) );
-				buffer->Append( pszLineNum, (size_t)lineNumLen );
+				const auto lineNumLen = strprintf(strLineNum, L" %d:", nLineNum + 1);
+				const auto pszLineNum = strLineNum.data();
+				buffer->Append(pszSpaces, nLineNumCols - lineNumLen);
+				buffer->Append(pszLineNum, lineNumLen );
 			}
 
 			if( pcLayout->GetLayoutEol().IsValid() ){

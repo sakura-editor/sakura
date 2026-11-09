@@ -9,7 +9,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -31,10 +31,12 @@ static void MacroError(BSTR Description, BSTR Source, void *Data)
 
 CWSHMacroManager::CWSHMacroManager(std::wstring const AEngineName) : m_EngineName(AEngineName)
 {
+	return;
 }
 
 CWSHMacroManager::~CWSHMacroManager()
 {
+	return;
 }
 
 /** WSHマクロの実行
@@ -64,36 +66,50 @@ bool CWSHMacroManager::ExecKeyMacro(CEditView *EditView, int flags) const
 }
 
 /*!
-	WSHマクロの読み込み（ファイルから）
-
-	@param hInstance [in] インスタンスハンドル(未使用)
-	@param pszPath   [in] ファイルのパス
-*/
-BOOL CWSHMacroManager::LoadKeyMacro([[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszPath)
+ * @brief WSHマクロの読み込み（ファイルから）
+ *
+ * @param[in] hInstance インスタンスハンドル(未使用)
+ * @param[in] pszPath   ファイルのパス
+ */
+BOOL CWSHMacroManager::LoadKeyMacro(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszPath
+)
 {
 	//ソース読み込み -> m_Source
 	m_Source.clear();
 	
 	CTextInputStream in(pszPath);
-	if(!in)
+	if (!in) {
+		ResetReady();
 		return FALSE;
+	}
 
 	while(in){
 		m_Source+=in.ReadLineW()+L"\r\n";
 	}
+
+	SetReady();
+
 	return TRUE;
 }
 
 /*!
-	WSHマクロの読み込み（文字列から）
-
-	@param hInstance [in] インスタンスハンドル(未使用)
-	@param pszCode   [in] マクロコード
-*/
-BOOL CWSHMacroManager::LoadKeyMacroStr([[maybe_unused]] HINSTANCE hInstance, const WCHAR* pszCode)
+ * @brief WSHマクロの読み込み（文字列から）
+ *
+ * @param[in] hInstance インスタンスハンドル(未使用)
+ * @param[in] pszCode   マクロコード
+ */
+BOOL CWSHMacroManager::LoadKeyMacroStr(
+	HINSTANCE hInstance [[maybe_unused]],
+	const WCHAR* pszCode
+)
 {
 	//ソース読み込み -> m_Source
 	m_Source = pszCode;
+
+	SetReady();
+
 	return TRUE;
 }
 

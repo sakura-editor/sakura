@@ -1,10 +1,10 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
-*/
+ */
 #ifndef SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #define SAKURA_DLLSHAREDATA_13672D62_A18D_4E76_B3E7_A8192BCDC6A1_H_
 #pragma once
@@ -15,6 +15,7 @@
 #include "env/CAppNodeManager.h"	//SShare_Nodes
 //2007.09.28 kobake Common構造体をCShareData.hから分離
 #include "env/CommonSetting.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/CSearchKeywordManager.h"	//SShare_SearchKeywords
 #include "env/CTagJumpManager.h"		//SShare_TagJump
 #include "env/CFileNameManager.h"		//SShare_FileNameManagement
@@ -47,18 +48,22 @@ struct SShare_WorkBuffer{
 	//2007.09.16 kobake char型だと、常に文字列であるという誤解を招くので、BYTE型に変更。変数名も変更。
 	//           UNICODE版では、余分に領域を使うことが予想されるため、ANSI版の2倍確保。
 private:
-	BYTE				m_pWork[32000*sizeof(WCHAR)];
-public:
-	template <class T>
-	T* GetWorkBuffer(){ return reinterpret_cast<T*>(m_pWork); }
-
-	template <class T>
-	size_t GetWorkBufferCount(){ return sizeof(m_pWork)/sizeof(T); }
+	using SWorkBuffer = StaticString<32000>;
+	SWorkBuffer			m_WorkBuffer{};
 
 public:
-	EditInfo			m_EditInfo_MYWM_GETFILEINFO;	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
-	CLogicPoint			m_LogicPoint;					//!< カーソル位置
-	STypeConfig			m_TypeConfig;
+	template <class T>
+	T* GetWorkBuffer() noexcept { return std::bit_cast<T*>(LPWSTR(m_WorkBuffer)); }
+
+	template <class T>
+	size_t GetWorkBufferCount() const noexcept { return std::size(m_WorkBuffer) * sizeof(WCHAR) / sizeof(T); }
+
+	template <class T>
+	std::span<T> GetBuffer() noexcept { return std::span<T>(GetWorkBuffer<T>(), GetWorkBufferCount<T>()); }
+
+	EditInfo			m_EditInfo_MYWM_GETFILEINFO{};	//MYWM_GETFILEINFOデータ受け渡し用	####美しくない
+	CLogicPoint			m_LogicPoint{};					//!< カーソル位置
+	STypeConfig			m_TypeConfig{};
 };
 
 //! 共有ハンドル
@@ -123,7 +128,7 @@ struct DLLSHAREDATA{
 	//DIFF差分表示ダイアログのオプション
 	int							m_nDiffFlgOpt;				/* DIFF差分表示 */	//@@@ 2002.05.27 MIK
 	//タグファイルの作成ダイアログのオプション
-	WCHAR						m_szTagsCmdLine[_MAX_PATH];	/* TAGSコマンドラインオプション */	//@@@ 2003.05.12 MIK
+	SFilePath					m_szTagsCmdLine{};			/* TAGSコマンドラインオプション */
 	int							m_nTagsOpt;					/* TAGSオプション(チェック) */	//@@@ 2003.05.12 MIK
 
 	// -- -- テンポラリ -- -- //
@@ -131,7 +136,7 @@ struct DLLSHAREDATA{
 	bool						m_bLineNumIsCRLF_ForJump;			/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 };
 
-class CShareDataLockCounter{
+class CShareDataLockCounter : private env::ShareDataClient {
 	using Me = CShareDataLockCounter;
 
 public:

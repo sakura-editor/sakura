@@ -10,7 +10,7 @@
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, aroka
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -19,54 +19,28 @@
 #include "StdAfx.h"
 #include "debug/Debug1.h"
 
-#include <stdio.h>
-#include <stdarg.h>
+#include "basis/primitive.h"
 
-#include "util/string_ex.h"
+namespace cxx {
 
-#if defined(_DEBUG) || defined(USE_RELPRINT)
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                   メッセージ出力：実装                      //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-/*! @brief 書式付きデバッガ出力
-
-	@param[in] lpFmt printfの書式付き文字列
-
-	引数で与えられた情報をDebugStringとして出力する．
-*/
-void DebugOutW( LPCWSTR lpFmt, ...)
+/*!
+ * @brief デバッガーに文字列を送信します。
+ *
+ * MSVCのデバッグウィンドウにログ出力するためのWindows API。
+ *
+ * 将来的にはロガーを使うべきと考えられる
+ * 
+ * @param[in] outputString 出力する文字列
+ */
+void OutputDebugStringW(
+	std::wstring_view outputString
+)
 {
-	static WCHAR szText[16000];
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString str{ outputString };
 
-	va_list argList;
-	va_start(argList, lpFmt);
-
-	//整形
-	int ret = _vsnwprintf_s( szText, _TRUNCATE, lpFmt, argList );
-
-	//出力
-	if( errno != EINVAL ){
-		::OutputDebugStringW( szText );
-	}
-
-	//切り捨て対策
-	if( -1 == ret && errno != ERANGE ){
-		::OutputDebugStringW( L"(切り捨てました...)\n" );
-
-		::DebugBreak();
-
-		std::wstring strTooLongMessage;
-		vstrprintf( strTooLongMessage, lpFmt, argList );
-
-		::OutputDebugStringW( strTooLongMessage.c_str() );
-	}
-
-	va_end(argList);
-
-	//ウェイト
-	::Sleep(1);	// Norio Nakatani, 2001/06/23 大量にトレースするときのために
+	// デバッガーに文字列を送信する
+	::OutputDebugStringW(str.c_str());
 }
 
-#endif	// _DEBUG || USE_RELPRINT
+} // namespace cxx

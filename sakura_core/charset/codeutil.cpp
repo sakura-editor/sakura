@@ -67,13 +67,17 @@ unsigned int _mbcjmstojis_ex( unsigned int nSrc, bool* pbNonroundtrip )
 }
 #endif
 
-static _locale_t ja_locale = nullptr;
+/*!
+	@brief 常に使う日本語のロケールを返す
 
-static void init_ja_locale()
+	関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る。
+
+	@return 日本語(コードページ 932)のロケール
+*/
+static _locale_t GetJaLocale()
 {
-	if (ja_locale == nullptr) {
-		ja_locale = _create_locale(LC_ALL, "Japanese_Japan.932");
-	}
+	static const _locale_t ja_locale = _create_locale(LC_ALL, "Japanese_Japan.932");
+	return ja_locale;
 }
 
 /*!
@@ -85,8 +89,7 @@ static void init_ja_locale()
 */
 unsigned int _mbcjmstojis_j( unsigned int c )
 {
-	init_ja_locale();
-	return _mbcjmstojis_l(c, ja_locale);
+	return _mbcjmstojis_l(c, GetJaLocale());
 }
 
 /*!
@@ -98,8 +101,7 @@ unsigned int _mbcjmstojis_j( unsigned int c )
 */
 unsigned int _mbcjistojms_j( unsigned int c )
 {
-	init_ja_locale();
-	return _mbcjistojms_l(c, ja_locale);
+	return _mbcjistojms_l(c, GetJaLocale());
 }
 
 /*

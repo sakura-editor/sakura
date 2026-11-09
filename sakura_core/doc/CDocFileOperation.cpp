@@ -67,13 +67,13 @@ bool CDocFileOperation::OpenFileDialog(
 	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダーを指定できる
 	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 	std::vector<std::wstring>&	files
-)
+) const
 {
 	/* アクティブにする */
 	ActivateFrameWindow( hwndParent );
 
 	// ファイルオープンダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		hwndParent,
@@ -203,7 +203,7 @@ void CDocFileOperation::ReloadCurrentFile(
 */
 bool CDocFileOperation::SaveFileDialog(
 	SSaveInfo*	pSaveInfo	//!< [out]
-)
+) const
 {
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
@@ -260,7 +260,7 @@ bool CDocFileOperation::SaveFileDialog(
 	}
 
 	// ダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
 		G_AppInstance(),
 		CEditWnd::getInstance()->GetHwnd(),
@@ -297,9 +297,9 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		// ### 無変更なら上書きしないで抜ける処理はどの CDocListener の OnCheckSave() よりも前に
 		// ### （保存するかどうか問い合わせたりするよりも前に）やるぺきことなので、
 		// ### スマートじゃない？かもしれないけど、とりあえずここに配置しておく
-		if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
+		if (!GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite &&
 			// 上書きの場合
-			if(pSaveInfo->bOverwriteMode){
+			pSaveInfo->bOverwriteMode) {
 				// 無変更の場合は警告音を出し、終了
 				if (!m_pcDocRef->m_cDocEditor.IsModified() &&
 					pSaveInfo->cEol.IsNone() &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
@@ -307,7 +307,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 					CEditApp::getInstance()->m_cSoundSet.NeedlessToSaveBeep();
 					throw CFlowInterruption();
 				}
-			}
+
 		}
 
 		//セーブ前チェック

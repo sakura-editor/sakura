@@ -13,42 +13,224 @@ on:
       - '.editorconfig'
   workflow_dispatch:
 
+env:
+  VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,read
+  VCPKG_NUGET_FEED: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
+  VCPKG_NUGET_OWNER: ${{ github.repository_owner }}
+  VCPKG_ROOT: ${{ github.workspace }}\tools\vcpkg
+
+defaults:
+  run:
+    shell: msys2 {0} # 指定しない限りmsys2シェルを使う
+
 jobs:
+  build-vcpkg:
+    name: Build vcpkg (x64-mingw-static)
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      VCPKG_BINARY_SOURCES: clear;nuget,https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json,readwrite
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: true
+
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-iconv
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-uv
+            mingw-w64-ucrt-x86_64-7zip
+            mingw-w64-ucrt-x86_64-gdb
+            mingw-w64-ucrt-x86_64-ctags
+            diffutils
+
+      - run: uv venv
+
+      - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+
+      - name: Bootstrap vcpkg
+        run: ./bootstrap-vcpkg.sh -disableMetrics
+        working-directory: ${{ env.VCPKG_ROOT }}
+
+      - name: Configure GitHub Packages for vcpkg
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+          $nuget = & $vcpkg fetch nuget
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+              throw "Failed to obtain nuget.exe."
+          }
+
+          & $nuget sources remove `
+              -Name GitHubPackages `
+              -NonInteractive 2>$null
+
+          & $nuget sources add `
+              -Name GitHubPackages `
+              -Source "$env:VCPKG_NUGET_FEED" `
+              -UserName "$env:VCPKG_NUGET_OWNER" `
+              -Password "$env:GITHUB_TOKEN" `
+              -StorePasswordInClearText `
+              -NonInteractive
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to add the GitHub Packages NuGet source."
+          }
+
+      - name: vcpkg install (x64-mingw-static)
+        run: |
+          "$VCPKG_ROOT/vcpkg.exe" install \
+            --triplet x64-mingw-static \
+            --clean-after-build
+
   mingw:
     runs-on: windows-latest
+    needs: build-vcpkg
+    permissions:
+      contents: read
+      packages: read
     strategy:
       matrix:
         configuration: [Debug, Release]
     env:
       BuildPlatform: MinGW
       Configuration: ${{ matrix.configuration }}
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: true
 
+      - name: Install OpenCppCoverage (winget)
+        id: install_opencppcoverage_winget
+        if: ${{ env.Configuration == 'Debug' }}
+        continue-on-error: true
+        run: |
+          winget install `
+            --id OpenCppCoverage.OpenCppCoverage `
+            --exact `
+            --accept-package-agreements `
+            --accept-source-agreements
+        shell: pwsh
+
+      # wingetは失敗することがあるので、インストーラー方式も残しておく。
+      - name: Install OpenCppCoverage (installer)
+        if: ${{ env.Configuration == 'Debug' && steps.install_opencppcoverage_winget.outcome == 'failure' }}
+        shell: pwsh
+        working-directory: ${{ runner.temp }}
+        run: |
+          $installer = '.\OpenCppCoverageSetup.exe'
+          Invoke-WebRequest `
+            -Uri "https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe" `
+            -OutFile $installer
+          $expectedSha256 = '2295a733da39412c61e4f478677519dd0bb1893d88313ce56b468c9e50517888'
+          $actualSha256 = (Get-FileHash $installer -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualSha256 -ne $expectedSha256.ToLowerInvariant()) {
+            throw "SHA256 mismatch: expected=$expectedSha256 actual=$actualSha256"
+          }
+          $startProcessParams = @{
+            FilePath = $installer
+            ArgumentList = "/VERYSILENT", "/SUPPRESSMSGBOXES"
+            Wait = $true
+          }
+          Start-Process @startProcessParams
+          echo "C:\Program Files\OpenCppCoverage" >> $env:GITHUB_PATH
+
       - name: Set up MSYS2
-        uses: msys2/setup-msys2@v2
+        uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
-            mingw-w64-x86_64-iconv
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-make
-            mingw-w64-x86_64-7zip
+            mingw-w64-ucrt-x86_64-iconv
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-uv
+            mingw-w64-ucrt-x86_64-7zip
+            mingw-w64-ucrt-x86_64-gdb
+            mingw-w64-ucrt-x86_64-ctags
+            diffutils
 
-      - name: Show environment variables for debug
-        run: set
-        shell: cmd
+      - run: uv venv
+
+      - run: uv pip install --require-hashes --no-build --no-deps -r requirements.txt
+
+      - name: Bootstrap vcpkg
+        run: ./bootstrap-vcpkg.sh -disableMetrics
+        working-directory: ${{ env.VCPKG_ROOT }}
+
+      - name: Configure GitHub Packages for vcpkg
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
+          $nuget = & $vcpkg fetch nuget
+
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $nuget)) {
+              throw "Failed to obtain nuget.exe."
+          }
+
+          & $nuget sources remove `
+              -Name GitHubPackages `
+              -NonInteractive 2>$null
+
+          & $nuget sources add `
+              -Name GitHubPackages `
+              -Source "$env:VCPKG_NUGET_FEED" `
+              -UserName "$env:VCPKG_NUGET_OWNER" `
+              -Password "$env:GITHUB_TOKEN" `
+              -StorePasswordInClearText `
+              -NonInteractive
+
+          if ($LASTEXITCODE -ne 0) {
+              throw "Failed to add the GitHub Packages NuGet source."
+          }
 
       - name: Build with MinGW-w64-gcc
-        shell: msys2 {0}
         run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }} --no-test
 
       - name: Run unit tests
-        shell: cmd
-        run: tests1.exe --gtest_output=xml:${{ github.workspace }}/tests1.exe-googletest-${{ env.BuildPlatform }}-${{ env.Configuration }}.xml
+        id: run_unit_tests
+        continue-on-error: true
+        timeout-minutes: ${{ env.Configuration == 'Debug' && 90 || 30 }}  # 指定時間を越えたら打ち切る。値は暫定。
+        run: ./build-gnu.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
+
+      - name: Try gdb backtrace on test failure
+        if: steps.run_unit_tests.outcome == 'failure' && env.Configuration != 'Release'
+        continue-on-error: true
         working-directory: ${{ github.workspace }}/${{ env.BuildPlatform }}/${{ env.Configuration }}
+        run: |
+          set -eo pipefail
+          echo "Run gdb trace for: tests1.exe"
+          gdb -batch \
+            -ex "set pagination off" \
+            -ex "run" \
+            -ex "bt" \
+            -ex "bt full" \
+            -ex "info registers" \
+            --args ./tests1.exe --gtest_repeat=100 --gtest_throw_on_failure
+
+      - name: Mark workflow failed when unit tests fail
+        if: steps.run_unit_tests.outcome == 'failure'
+        run: |
+          echo "Unit tests failed. See the gdb trace above."
+          exit 1

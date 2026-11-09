@@ -5,7 +5,7 @@
 	SPDX-License-Identifier: Zlib
  */
 #include "pch.h"
-#include "env/ShareDataTestSuite.hpp"
+#include "env/CShareData.h"
 
 #include "config/system_constants.h"
 #include "dlg/CDialog.h"	//仮置き、本来は不要。
@@ -13,8 +13,15 @@
 #include "env/DLLSHAREDATA.h"
 #include "uiparts/CMenuDrawer.h"
 #include "util/window.h"
+#include "util/file.h"
+
+#include "window/TrayWndTestSuite.hpp"
+
 #include "version.h"
 #include "sakura_rc.h"
+
+using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 using SFuncCodeArray = std::array<EFunctionCode, 8>;
 
@@ -74,15 +81,15 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
     // プロパティごとに等価評価を行う
 	EXPECT_THAT(actual.m_nIdx, expected.m_nIdx);
 	EXPECT_THAT(actual.m_id, expected.m_id);
-	EXPECT_THAT(actual.m_szTypeName, StrEq(expected.m_szTypeName));
-	EXPECT_THAT(actual.m_szTypeExts, StrEq(expected.m_szTypeExts));
+	EXPECT_THAT(actual.m_szTypeName, StrEq(expected.m_szTypeName.c_str()));
+	EXPECT_THAT(actual.m_szTypeExts, StrEq(expected.m_szTypeExts.c_str()));
 	EXPECT_THAT(actual.m_nTextWrapMethod, expected.m_nTextWrapMethod);
 	EXPECT_THAT(actual.m_nMaxLineKetas, expected.m_nMaxLineKetas);
 	EXPECT_THAT(actual.m_nColumnSpace, expected.m_nColumnSpace);
 	EXPECT_THAT(actual.m_nLineSpace, expected.m_nLineSpace);
 	EXPECT_THAT(actual.m_nTabSpace, expected.m_nTabSpace);
 	EXPECT_THAT(actual.m_bTabArrow, expected.m_bTabArrow);
-	EXPECT_THAT(actual.m_szTabViewString, StrEq(expected.m_szTabViewString));
+	EXPECT_THAT(actual.m_szTabViewString, StrEq(expected.m_szTabViewString.c_str()));
 	EXPECT_THAT(actual.m_bInsSpace, expected.m_bInsSpace);
 	EXPECT_THAT(actual.m_nTsvMode, expected.m_nTsvMode);
 	for (size_t i = 0; i < std::size(actual.m_nKeyWordSetIdx); ++i) {
@@ -102,7 +109,7 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	EXPECT_THAT(actual.m_bStringLineOnly, expected.m_bStringLineOnly);
 	EXPECT_THAT(actual.m_bStringEndLine, expected.m_bStringEndLine);
 	EXPECT_THAT(actual.m_nHeredocType, expected.m_nHeredocType);
-	EXPECT_THAT(actual.m_szIndentChars, StrEq(expected.m_szIndentChars));
+	EXPECT_THAT(actual.m_szIndentChars, StrEq(expected.m_szIndentChars.c_str()));
 	EXPECT_THAT(actual.m_nColorInfoArrNum, expected.m_nColorInfoArrNum);
 	for (size_t i = 0; i < std::size(actual.m_ColorInfoArr); ++i) {
 		EXPECT_THAT(actual.m_ColorInfoArr[i].m_bDisp,                  expected.m_ColorInfoArr[i].m_bDisp)                  << L"Unexpected value at index " << i;
@@ -133,9 +140,9 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	EXPECT_THAT(actual.m_bKinsokuRet, expected.m_bKinsokuRet);
 	EXPECT_THAT(actual.m_bKinsokuKuto, expected.m_bKinsokuKuto);
 	EXPECT_THAT(actual.m_bKinsokuHide, expected.m_bKinsokuHide);
-	EXPECT_THAT(actual.m_szKinsokuHead, StrEq(expected.m_szKinsokuHead));
-	EXPECT_THAT(actual.m_szKinsokuTail, StrEq(expected.m_szKinsokuTail));
-	EXPECT_THAT(actual.m_szKinsokuKuto, StrEq(expected.m_szKinsokuKuto));
+	EXPECT_THAT(actual.m_szKinsokuHead, StrEq(expected.m_szKinsokuHead.c_str()));
+	EXPECT_THAT(actual.m_szKinsokuTail, StrEq(expected.m_szKinsokuTail.c_str()));
+	EXPECT_THAT(actual.m_szKinsokuKuto, StrEq(expected.m_szKinsokuKuto.c_str()));
 	EXPECT_THAT(actual.m_nCurrentPrintSetting, expected.m_nCurrentPrintSetting);
 	EXPECT_THAT(actual.m_bOutlineDockDisp, expected.m_bOutlineDockDisp);
 	EXPECT_THAT(actual.m_eOutlineDockSide, expected.m_eOutlineDockSide);
@@ -183,13 +190,13 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 	for (size_t i = 0; i < std::size(actual.m_RegexKeywordArr); ++i) {
 		EXPECT_THAT(actual.m_RegexKeywordArr[i].m_nColorIndex, expected.m_RegexKeywordArr[i].m_nColorIndex) << L"Unexpected value at index " << i;
 	}
-	EXPECT_THAT(actual.m_RegexKeywordList, StrEq(expected.m_RegexKeywordList));
+	EXPECT_THAT(actual.m_RegexKeywordList, StrEq(expected.m_RegexKeywordList.c_str()));
 	EXPECT_THAT(actual.m_bUseKeyWordHelp, expected.m_bUseKeyWordHelp);
 	EXPECT_THAT(actual.m_nKeyHelpNum, expected.m_nKeyHelpNum);
 	for (size_t i = 0; i < std::size(actual.m_KeyHelpArr); ++i) {
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_bUse,    expected.m_KeyHelpArr[i].m_bUse)                  << L"Unexpected value at index " << i;
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szAbout, StrEq(expected.m_KeyHelpArr[i].m_szAbout))        << L"Unexpected value at index " << i;
-		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szPath,  StrEq(expected.m_KeyHelpArr[i].m_szPath.c_str())) << L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_bUse,    expected.m_KeyHelpArr[i].m_bUse)						<< L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szAbout, StrEq(expected.m_KeyHelpArr[i].m_szAbout.c_str()))	<< L"Unexpected value at index " << i;
+		EXPECT_THAT(actual.m_KeyHelpArr[i].m_szPath,  StrEq(expected.m_KeyHelpArr[i].m_szPath.c_str()))		<< L"Unexpected value at index " << i;
 	}
 	EXPECT_THAT(actual.m_bUseKeyHelpAllSearch, expected.m_bUseKeyHelpAllSearch);
 	EXPECT_THAT(actual.m_bUseKeyHelpKeyDisp, expected.m_bUseKeyHelpKeyDisp);
@@ -210,6 +217,8 @@ MATCHER_P(EqSTypeConfig, expected, "Checks if STypeConfig is equal to the expect
 }
 
 namespace env {
+
+using WindowHolder = cxx::ResourceHolder<&::DestroyWindow>;
 
 /*!
  * @brief トップメニュー項目の機能ID
@@ -373,6 +382,7 @@ MATCHER(IsInitializedCommonSettingWindow, "Checks if CommonSetting_Window is pro
 	EXPECT_THAT(sWindow.m_nMiniMapFontSize, -2);
 	EXPECT_THAT(sWindow.m_nMiniMapQuality, NONANTIALIASED_QUALITY);
 	EXPECT_THAT(sWindow.m_nMiniMapWidth, 150);
+	EXPECT_THAT(sWindow.m_bDarkMode, IsFalse());
 	EXPECT_THAT(sWindow.m_bSplitterWndHScroll, IsTrue());
 	EXPECT_THAT(sWindow.m_bSplitterWndVScroll, IsTrue());
 	EXPECT_THAT(sWindow.m_eSaveWindowSize, WINSIZEMODE_SAVE);
@@ -1556,7 +1566,10 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionMS, MAKELONG(VER_B, VER_A));
 	EXPECT_THAT(shareData.m_sVersion.m_dwProductVersionLS, MAKELONG(VER_D, VER_C));
 
-	// SShare_WorkBuffer m_sWorkBuffer (初期化漏れ)
+	//EXPECT_THAT(shareData.m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO, Eq(EditInfo()));
+	EXPECT_THAT(shareData.m_sWorkBuffer.m_LogicPoint, Eq(CLogicPoint()));
+	//auto pTypeConfig = std::make_unique<STypeConfig>();
+	//EXPECT_THAT(shareData.m_sWorkBuffer.m_TypeConfig, EqSTypeConfig(*pTypeConfig));
 
 	EXPECT_THAT(shareData.m_sFlags.m_bEditWndChanging, IsFalse());
 	EXPECT_THAT(shareData.m_sFlags.m_bRecordingKeyMacro, IsFalse());
@@ -1570,8 +1583,8 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 	EXPECT_THAT(shareData.m_sHandles.m_hwndTray, nullptr);
 	EXPECT_THAT(shareData.m_sHandles.m_hwndDebug, nullptr);
 
-	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName.data(), StrEq(L""));
-	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName2.data(), StrEq(L""));
+	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName1, StrEq(L""));
+	EXPECT_THAT(shareData.m_sCharWidth.m_lfFaceName2, StrEq(L""));
 	for (int i = 0; i < std::ssize(shareData.m_sCharWidth.m_nCharPxWidthCache); ++i) {
 		EXPECT_THAT(shareData.m_sCharWidth.m_nCharPxWidthCache[i], 0) << L"Unexpected value at index " << i;
 	}
@@ -1617,8 +1630,8 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		auto type = std::make_unique<STypeConfig>();
 		table[i]->InitTypeConfig(i, *type);
 		EXPECT_THAT(shareData.m_TypeMini[i].m_id, type->m_id);
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName));
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName.c_str()));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts.c_str()));
 		EXPECT_THAT(shareData.m_TypeMini[i].m_encoding, type->m_encoding);
 
 		EXPECT_THAT(shareData.m_TypeBasis.m_nIdx, type->m_nIdx);
@@ -1629,13 +1642,13 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		auto type = std::make_unique<STypeConfig>();
 		table[i]->InitTypeConfig(i, *type);
 		EXPECT_THAT(shareData.m_TypeMini[i].m_id, type->m_id);
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName));
-		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeName, StrEq(type->m_szTypeName.c_str()));
+		EXPECT_THAT(shareData.m_TypeMini[i].m_szTypeExts, StrEq(type->m_szTypeExts.c_str()));
 		EXPECT_THAT(shareData.m_TypeMini[i].m_encoding, type->m_encoding);
 	}
 
 	for (int i = 0; i < std::ssize(shareData.m_PrintSettingArr); ++i) {
-		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(std::format(L"{:s} {:d}", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
+		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintSettingName, StrEq(strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), i + 1))) << L"Unexpected value at index " << i;
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceHan, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_szPrintFontFaceZen, StrEq(L"ＭＳ 明朝"));
 		EXPECT_THAT(shareData.m_PrintSettingArr[i].m_bColorPrint, IsFalse());
@@ -1702,7 +1715,7 @@ MATCHER_P4(IsInitializedShareData, pszProfileName, isMultiUserSettings, userRoot
 		&& true;
 }
 
-struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
+struct CShareDataTest : public ::testing::Test, public window::TrayWndTestSuite {
 	/*!
 	 * テストスイートの開始前に1回だけ呼ばれる関数
 	 */
@@ -1726,7 +1739,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 #pragma endregion CanBeMove
 
 		// 共有データを生成して初期化する
-		SetUpShareData();
+		SetUpTrayWnd();
 
 		// 共有データがあるので値を返す
 		EXPECT_THAT(GetDllShareDataPtr(), pcShareData->GetDllShareDataPtr());
@@ -1747,7 +1760,7 @@ struct CShareDataTest : public ::testing::Test, public env::ShareDataTestSuite {
 	static void TearDownTestSuite()
 	{
 		// 共有データを破棄する
-		TearDownShareData();
+		TearDownTrayWnd();
 
 		// 共有データがなくなってもエラーにならない
 		EXPECT_THAT(GetDllShareDataPtr(), IsNull());
@@ -1769,6 +1782,8 @@ TEST_F(CShareDataTest, InitShareData001)
 
 	const auto& shareData = ::GetDllShareData();
 	EXPECT_THAT(shareData, IsInitializedShareData(pszProfileName, isMultiUserSettings, userRootFolder, userSubFolder));
+
+	EXPECT_THAT(::GetDllShareData().m_sWorkBuffer.GetBuffer<WCHAR>(), ::testing::SizeIs(Eq(size_t(32000))));
 }
 
 /*!
@@ -1785,6 +1800,246 @@ TEST_F(CShareDataTest, ChangeLang001)
 
 	// 言語を元に戻す
 	CSelectLang::ChangeLang(L"");
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * インデックス-1はキーマクロのファイル名を返す。
+ */
+TEST_F(CShareDataTest, GetMacroFilename001)
+{
+	const auto keyMacoroPath = GetExeFileName().replace_filename(L"RecKey.mac"s);
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// バッファにnullを指定した場合、格納すべき文字数を符号反転して返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, nullptr, 0), Eq(-std::ssize(keyMacoroPath.native())));
+
+	// 適切なバッファを指定した場合、キーマクロの文字数を返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(keyMacoroPath.native())));
+	EXPECT_THAT(buffer, StartsWith(keyMacoroPath.native()));
+
+	// バッファサイズが足りない場合、格納すべき文字数を符号反転して返す
+	EXPECT_THAT(pcShareData->GetMacroFilename(-1, std::data(buffer), int(std::size(keyMacoroPath.native()))), Eq(-std::ssize(keyMacoroPath.native())));
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が未設定だった場合、0を返す
+ */
+TEST_F(CShareDataTest, GetMacroFilename002)
+{
+	auto& shareData = ::GetDllShareData();
+	auto& sMacro = shareData.m_Common.m_sMacro;
+
+	sMacro.m_MacroTable[2].m_szFile[0] = L'\0';
+	EXPECT_THAT(pcShareData->GetMacroFilename(2, nullptr, 0), Eq(0));
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名がフルパスだった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename003)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetIniFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, testFilePath.c_str());
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(3, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[1].m_szFile, L"");
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が相対パスだった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename004)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	::wcscpy_s(sMacro.m_szMACROFOLDER, L".");
+	const auto testFilePath = GetIniFileName().remove_filename() / L"." / L"test.mac";
+	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"test.mac");
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(4, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[4].m_szFile, L"");
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
+}
+
+/*!
+ * @brief マクロファイル名取得のテスト
+ *
+ * 指定されたインデックスのファイル名が相対パス、かつ、マクロフォルダーが '\' で終わらない限界長のフルパス だった場合のテスト
+ */
+TEST_F(CShareDataTest, GetMacroFilename005)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH * 2, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	const std::filesystem::path tooLongPath{ std::format(LR"(C:\{:a<256})", L'a') };	// 259文字のパスを作る（MAX_PATHに収まる限界長。）
+	::wcsncpy_s(sMacro.m_szMACROFOLDER, tooLongPath.c_str(), _TRUNCATE);
+	const auto testFilePath = tooLongPath / L"test.mac";
+	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"test.mac");
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, nullptr, 0), Eq(-std::ssize(testFilePath.native())));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(buffer))), Eq(std::ssize(testFilePath.native())));
+	EXPECT_THAT(buffer, StartsWith(testFilePath.native()));
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(5, std::data(buffer), int(std::size(testFilePath.native()))), Eq(-std::ssize(testFilePath.native())));
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[5].m_szFile, L"");
+	::wmemset(sMacro.m_szMACROFOLDER, 0, std::size(sMacro.m_szMACROFOLDER));
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
+}
+
+TEST_F(CShareDataTest, GetMacroFilename101)
+{
+	EXPECT_THAT(pcShareData->GetMacroFilename(-2, nullptr, 0), Eq(0)); // 👈バグです。インデックスに下限を下回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, GetMacroFilename102)
+{
+	auto& shareData = GetDllShareData();
+	std::wstring buffer(_MAX_PATH, L'\0');
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const std::wstring macroFolder{ sMacro.m_szMACROFOLDER };
+	sMacro.m_szMACROFOLDER[0] = L'\0';
+
+	EXPECT_THAT(pcShareData->GetMacroFilename(MAX_CUSTMACRO, nullptr, 0), Eq(0)); // 👈バグです。インデックスに上限を上回る値を指定したときに、範囲外アクセスしています。
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_szMACROFOLDER, macroFolder.c_str());
+}
+
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスのファイル名が未設定だった場合、falseを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro001)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	sMacro.m_MacroTable[1].m_szFile[0] = L'\0';
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(1), IsFalse());
+}
+
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスの再読み込みが有効だった場合、trueを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro002)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetExeFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[2].m_szFile, testFilePath.c_str());
+	sMacro.m_MacroTable[2].m_bReloadWhenExecute = true;
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(2), IsTrue());
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[2].m_szFile, L"");
+	sMacro.m_MacroTable[2].m_bReloadWhenExecute = false;
+}
+
+/*!
+ * @brief マクロの再読み込み設定取得のテスト
+ *
+ * 指定されたインデックスの再読み込みが無効だった場合、falseを返す
+ */
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro003)
+{
+	auto& shareData = GetDllShareData();
+
+	// テストのために共有データを弄る
+	auto& sMacro = shareData.m_Common.m_sMacro;
+	const auto testFilePath = GetExeFileName().replace_filename(L"test.mac"s);
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, testFilePath.c_str());
+	sMacro.m_MacroTable[3].m_bReloadWhenExecute = false;
+
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(3), IsFalse());
+
+	// 共有データを元に戻す
+	::wcscpy_s(sMacro.m_MacroTable[3].m_szFile, L"");
+}
+
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro101)
+{
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(-1), IsFalse()); // 👈バグです。インデックスに下限を下回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, BeReloadWhenExecuteMacro102)
+{
+	EXPECT_THAT(pcShareData->BeReloadWhenExecuteMacro(MAX_CUSTMACRO), IsFalse()); // 👈バグです。インデックスに上限を上回る値を指定したときに、範囲外アクセスしています。
+}
+
+TEST_F(CShareDataTest, CShareDataLockCounter001)
+{
+	const auto hInstance = ::GetModuleHandleW(nullptr);
+	const auto hWndDummy = ::CreateWindowExW(0, WC_STATIC, L"ダミーウインドウ", 0, 1, 1, 1, 1, HWND(nullptr), HMENU(nullptr), hInstance, nullptr);
+
+	WindowHolder windowHolder{ hWndDummy };
+
+	auto& shareData = GetDllShareData();
+
+	// 最初にロックする
+	shareData.m_nLockCount = 1;
+
+	EXPECT_THAT(CShareDataLockCounter::GetLockCounter(), shareData.m_nLockCount);
+
+	// 別スレッドでロック解除する
+	std::jthread t([&shareData] {
+		// WaitLockでダイアログを表示するまで2000mxなので、少し余裕を持って2500ms待つ
+		::Sleep(2500);
+
+		shareData.m_nLockCount = 0;	// ロック解除
+	});
+
+	// ロック解除待ちを実行する
+	CShareDataLockCounter* pLock = nullptr;
+	CShareDataLockCounter::WaitLock(hWndDummy, &pLock);
+
+	delete pLock;	// ここの設計は見直すべき。
 }
 
 } // namespace env

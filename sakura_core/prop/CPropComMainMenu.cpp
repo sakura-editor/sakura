@@ -249,7 +249,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	HTREEITEM		htiTemp2;
 	TV_DISPINFO*	ptdi;
 
-	CDlgInput1		cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	static	bool	bInMove;
 	bool			bIsNode;
@@ -839,8 +839,16 @@ static std::wstring	SupplementAmpersand( std::wstring sLavel)
 }
 
 // & の削除
-static std::wstring	RemoveAmpersand( std::wstring sLavel)
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+static std::wstring	RemoveAmpersand(
+	const A& label
+)
 {
+	// 入力元をNUL終端文字列とみなす
+	const auto  _Label = cxx::NullTerminatedString<WCHAR>{ label };
+
+	std::wstring sLavel{ _Label.str() };
+
 	size_t	nPos =0;
 	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
 		if (sLavel[nPos+1] == L'&') {

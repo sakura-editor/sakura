@@ -15,7 +15,7 @@
 	Copyright (C) 2008, syat
 	Copyright (C) 2009, syat
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -31,26 +31,80 @@
 #include "env/CShareData.h"
 #include "config/system_constants.h"
 
-/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-void CViewCommander::Command_SPLIT_V( void )
+namespace cmd::window {
+
+/*!
+ * @brief 編集ウインドウのウインドウハンドルを取得する
+ *
+ * @throws 編集ウインドウが未作成のとき
+ */
+_Ret_maybenull_
+HWND GetMainWindow()
 {
-	GetEditWindow()->m_cSplitterWnd.VSplitOnOff();
+	return GetEditWnd().GetHwnd();
+}
+
+/*!
+ * @brief 上下に分割
+ *
+ * @date 2000/09/17 jepro 説明の「縦」を「上下に」に変更
+ */
+void Command_SPLIT_V( void )
+{
+	GetEditWnd().m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
-/* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-void CViewCommander::Command_SPLIT_H( void )
+/*!
+ * @brief 左右に分割
+ *
+ * @date 2000/09/17 jepro 説明の「横」を「左右に」に変更
+ */
+void Command_SPLIT_H( void )
 {
-	GetEditWindow()->m_cSplitterWnd.HSplitOnOff();
+	GetEditWnd().m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
-/* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
-void CViewCommander::Command_SPLIT_VH( void )
+/*!
+ * @brief 縦横に分割
+ *
+ * @date 2000/09/17 jepro 説明に「に」を追加
+ */
+void Command_SPLIT_VH( void )
 {
-	GetEditWindow()->m_cSplitterWnd.VHSplitOnOff();
+	GetEditWnd().m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
+
+/* 編集ウィンドウを最大化 */
+void Command_WINMAXIMIZE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_MAXIMIZE);
+	}
+	return;
+}
+
+/* 編集ウィンドウを最小化 */
+void Command_WINMINIMIZE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_MINIMIZE);
+	}
+	return;
+}
+
+/* 編集ウィンドウを元のサイズに戻す */
+void Command_WINRESTORE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_RESTORE);
+	}
+	return;
+}
+
+} // namespace cmd::window
 
 /* ウィンドウを閉じる */
 void CViewCommander::Command_WINCLOSE( void )

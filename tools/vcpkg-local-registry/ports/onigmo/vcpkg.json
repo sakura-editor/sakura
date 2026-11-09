@@ -1,0 +1,8 @@
+{
+  "name": "onigmo",
+  "version": "6.2.0",
+  "port-version": 0,
+  "license": "BSD-2-Clause",
+  "description": "Onigmo regular expression library",
+  "homepage": "https://github.com/k-takata/Onigmo"
+}

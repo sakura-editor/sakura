@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta, MIK
 	Copyright (C) 2005, ryoji
 	Copyright (C) 2006, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,12 +22,13 @@
 #define SAKURA_CDLGOPENFILE_8084B9DB_6463_4168_BA59_132EB2596AE7_H_
 #pragma once
 
-#include <memory>
-#include <vector>
+#include "doc/CDocListener.h"	// SLoadInfo, SSaveInfo
 #include "util/design_template.h"
 
-struct SLoadInfo;	// doc/CDocListener.h
-struct SSaveInfo;	// doc/CDocListener.h
+#include <memory>
+#include <span>
+#include <string>
+#include <vector>
 
 /*! フィルタ設定 */
 enum EFilter {
@@ -40,6 +41,8 @@ enum EFilter {
 class IDlgOpenFile
 {
 public:
+	virtual ~IDlgOpenFile() = default;
+
 	virtual void Create(
 		HINSTANCE					hInstance,
 		HWND						hwndParent,
@@ -52,21 +55,21 @@ public:
 	// 操作
 
 	/*! 開くダイアログ モーダルダイアログの表示
-		@param[in,out] pszPath 初期ファイル名．選択されたファイル名の格納場所
+		@param[in,out] szPath 初期ファイル名．選択されたファイル名の格納場所
 		@param[in] eAddFiler フィルタ設定
 		@retval true ユーザーがファイル名を選択してOKした
 		@retval false ダイアログをユーザーがキャンセル等で閉じたかもしくは開くのに失敗したか
 	*/
 	virtual bool DoModal_GetOpenFileName(
-		WCHAR* pszPath,
+		std::span<WCHAR> szPath,
 		EFilter eAddFilter
 	) = 0;
 
 	/*! 保存ダイアログ モーダルダイアログの表示
-		@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
+		@param szPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 	*/
 	virtual bool DoModal_GetSaveFileName(
-		WCHAR* pszPath
+		std::span<WCHAR> szPath
 	) = 0;
 
 	/* 開くダイアログ モーダルダイアログの表示 */
@@ -86,12 +89,12 @@ public:
 
 /*!	ファイルオープンダイアログボックス
 */
-class CDlgOpenFile final : public IDlgOpenFile
+class CDlgOpenFile : public TSakuraSingleton<CDlgOpenFile>, public IDlgOpenFile
 {
 public:
 	//コンストラクタ・デストラクタ
 	CDlgOpenFile();
-	~CDlgOpenFile() = default;
+	~CDlgOpenFile() override = default;
 
 	void Create(
 		HINSTANCE					hInstance,
@@ -103,8 +106,8 @@ public:
 	) override;
 
 	//操作
-	bool DoModal_GetOpenFileName(WCHAR* pszPath, EFilter eAddFileter = EFITER_TEXT) override;
-	bool DoModal_GetSaveFileName(WCHAR* pszPath) override;
+	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter = EFITER_TEXT) override;
+	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
 	bool DoModalOpenDlg(SLoadInfo* pLoadInfo,
 		std::vector<std::wstring>* pFilenames,
 		bool bOptions = true) override;
@@ -115,7 +118,9 @@ public:
 						   bool resolvePath, EFilter eAddFilter = EFITER_TEXT);
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgOpenFile);
+
 private:
 	std::shared_ptr<IDlgOpenFile> m_pImpl;
 };
+
 #endif /* SAKURA_CDLGOPENFILE_8084B9DB_6463_4168_BA59_132EB2596AE7_H_ */

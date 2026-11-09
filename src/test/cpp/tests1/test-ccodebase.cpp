@@ -718,33 +718,33 @@ INSTANTIATE_TEST_SUITE_P(GetEolCases
 		GetEolTestParam{ CODE_SJIS,    EEolType::cr_and_lf,           "\r\n" },
 		GetEolTestParam{ CODE_SJIS,    EEolType::line_feed,           "\n"   },
 		GetEolTestParam{ CODE_SJIS,    EEolType::carriage_return,     "\r"   },
-		GetEolTestParam{ CODE_SJIS,    EEolType::next_line,           ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_SJIS,    EEolType::line_separator,      ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_SJIS,    EEolType::paragraph_separator, ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
+		GetEolTestParam{ CODE_SJIS,    EEolType::next_line,           {}     },
+		GetEolTestParam{ CODE_SJIS,    EEolType::line_separator,      {}     },
+		GetEolTestParam{ CODE_SJIS,    EEolType::paragraph_separator, {}     },
 
 		GetEolTestParam{ CODE_JIS,     EEolType::none,                {}     },
 		GetEolTestParam{ CODE_JIS,     EEolType::cr_and_lf,           "\r\n" },
 		GetEolTestParam{ CODE_JIS,     EEolType::line_feed,           "\n"   },
 		GetEolTestParam{ CODE_JIS,     EEolType::carriage_return,     "\r"   },
-		GetEolTestParam{ CODE_JIS,     EEolType::next_line,           ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_JIS,     EEolType::line_separator,      ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_JIS,     EEolType::paragraph_separator, ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
+		GetEolTestParam{ CODE_JIS,     EEolType::next_line,           {}     },
+		GetEolTestParam{ CODE_JIS,     EEolType::line_separator,      {}     },
+		GetEolTestParam{ CODE_JIS,     EEolType::paragraph_separator, {}     },
 
 		GetEolTestParam{ CODE_EUC,     EEolType::none,                {}     },
 		GetEolTestParam{ CODE_EUC,     EEolType::cr_and_lf,           "\r\n" },
 		GetEolTestParam{ CODE_EUC,     EEolType::line_feed,           "\n"   },
 		GetEolTestParam{ CODE_EUC,     EEolType::carriage_return,     "\r"   },
-		GetEolTestParam{ CODE_EUC,     EEolType::next_line,           ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_EUC,     EEolType::line_separator,      ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_EUC,     EEolType::paragraph_separator, ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
+		GetEolTestParam{ CODE_EUC,     EEolType::next_line,           {}     },
+		GetEolTestParam{ CODE_EUC,     EEolType::line_separator,      {}     },
+		GetEolTestParam{ CODE_EUC,     EEolType::paragraph_separator, {}     },
 
 		GetEolTestParam{ CODE_LATIN1,  EEolType::none,                {}     },
 		GetEolTestParam{ CODE_LATIN1,  EEolType::cr_and_lf,           "\r\n" },
 		GetEolTestParam{ CODE_LATIN1,  EEolType::line_feed,           "\n"   },
 		GetEolTestParam{ CODE_LATIN1,  EEolType::carriage_return,     "\r"   },
-		GetEolTestParam{ CODE_LATIN1,  EEolType::next_line,           ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_LATIN1,  EEolType::line_separator,      ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
-		GetEolTestParam{ CODE_LATIN1,  EEolType::paragraph_separator, ""     },		// 👈バグ。存在しないのでstd::nulloptを返すべき
+		GetEolTestParam{ CODE_LATIN1,  EEolType::next_line,           {}     },
+		GetEolTestParam{ CODE_LATIN1,  EEolType::line_separator,      {}     },
+		GetEolTestParam{ CODE_LATIN1,  EEolType::paragraph_separator, {}     },
 
 		GetEolTestParam{ CODE_UTF7,    EEolType::none,                {}      },
 		GetEolTestParam{ CODE_UTF7,    EEolType::cr_and_lf,           "\r\n"  },

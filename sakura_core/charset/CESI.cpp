@@ -110,11 +110,19 @@ void CESI::SetEvaluation( const ECodeType eCodeId, const int v1, const int v2 )
 	struct tagEncodingInfo *pcEI;
 
 	nidx = GetIndexById( eCodeId );
+
+	if (nidx < 0) return;
+
 	if( eCodeId == CODE_UNICODE || eCodeId == CODE_UNICODEBE ){
+		assert(nidx < std::ssize(m_aWcInfo));
+
 		pcEI = &m_aWcInfo[nidx];
 	}else{
+		if (std::ssize(m_aMbcInfo) <= nidx) return;
+
 		pcEI = &m_aMbcInfo[nidx];
 	}
+
 	pcEI->eCodeID = eCodeId;
 	pcEI->nSpecific = v1;
 	pcEI->nPoints = v2;
@@ -135,11 +143,19 @@ void CESI::GetEvaluation( const ECodeType eCodeId, int *pv1, int *pv2 ) const
 	const struct tagEncodingInfo *pcEI;
 
 	nidx = GetIndexById( eCodeId );
+
+	if (nidx < 0) return;
+
 	if( eCodeId == CODE_UNICODE || eCodeId == CODE_UNICODEBE ){
+		assert(nidx < std::ssize(m_aWcInfo));
+
 		pcEI = &m_aWcInfo[nidx];
 	}else{
+		if (std::ssize(m_aMbcInfo) <= nidx) return;
+
 		pcEI = &m_aMbcInfo[nidx];
 	}
+
 	*pv1 = pcEI->nSpecific;
 	*pv2 = pcEI->nPoints;
 
@@ -1032,7 +1048,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						while( i < nSize && !IsXMLWhiteSpace(pBuf[i]) ){ i++; }
 					}
 					if( nSize <= i ){ return CODE_NONE; }
-					while( IsXMLWhiteSpace(pBuf[i]) && i < nSize ){ i++; }
+					while( i < nSize && IsXMLWhiteSpace(pBuf[i]) ){ i++; }	// 2026.06.23 CWE-125 fix: range check before deref (pBuf[nSize] OOB read)
 					if( nSize <= i ){ return CODE_NONE; }
 					if( '=' == pBuf[i]){
 						i += 1;
@@ -1042,7 +1058,7 @@ ECodeType CESI::AutoDetectByHTML( const char* pBuf, int nSize )
 						i--;
 						continue;
 					}
-					while( IsXMLWhiteSpace(pBuf[i]) && i < nSize ){ i++; }
+					while( i < nSize && IsXMLWhiteSpace(pBuf[i]) ){ i++; }	// 2026.06.23 CWE-125 fix: range check before deref (pBuf[nSize] OOB read)
 					if( nSize <= i ){ return CODE_NONE; }
 					char quoteChar = '\0';
 					int nBeginAttVal = i;

@@ -9,7 +9,7 @@
 */
 /*
 	Copyright (C) 2003-2006, D.S.Koba
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,13 @@
 #ifndef SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
 #define SAKURA_CPROFILE_1871E9A6_3FD3_45B5_A67D_6CC42F60363E_H_
 #pragma once
+
+#include <map>
+#include <span>
+#include <optional>
+#include <string>
+#include <string_view>
+#include <vector>
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -29,7 +36,7 @@ class CProfile
 private:
 	struct SectionType
 	{
-		using EntriesType = std::map< std::wstring, std::wstring >;
+		using EntriesType = std::map<std::wstring, std::wstring, std::less<>>;
 
 		explicit SectionType(
 			std::wstring_view name
@@ -55,13 +62,22 @@ public:
 	bool ReadProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt) noexcept;
 	bool WriteProfile(const std::optional<std::filesystem::path>& optProfilePath = std::nullopt, const std::optional<std::wstring>& optComment = std::nullopt);
 
-	bool GetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring& strEntryValue) const;
-	void SetProfileData(const std::wstring& sectionName, const std::wstring& entryKey, std::wstring_view entryValue);
+	bool GetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring&		strEntryValue
+	) const;
+
+	void SetProfileData(
+		std::wstring_view	sectionName,
+		std::wstring_view	entryKey,
+		std::wstring_view	entryValue
+	);
 
 	void DUMP( void );
 
 private:
-	void _ReadOneline(const std::wstring& line);
+	void _ReadOneline(std::wstring_view line);
 	bool _WriteFile(const std::filesystem::path& path, std::span<const std::wstring> lines);
 
 	// メンバ変数

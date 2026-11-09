@@ -17,24 +17,34 @@
 	Please contact the copyright holders to use this code for other purpose.
 */
 #include "StdAfx.h"
-#include <memory>
 #include "env/CHokanMgr.h"
+
 #include "env/CShareData.h"
 #include "view/CEditView.h"
 #include "plugin/CJackManager.h"
 #include "plugin/CComplementIfObj.h"
 #include "util/input.h"
 #include "util/os.h"
+#include "window/CEditWnd.h"
+
 #include "apiwrap/StdApi.h"
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 
-WNDPROC			gm_wpHokanListProc;
-
-LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
+LRESULT APIENTRY HokanList_SubclassProc(
+	HWND hWnd,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam,
+	UINT_PTR uIdSubclass,
+	DWORD_PTR dwRefData
+)
 {
-	// Modified by KEITA for WIN64 2003.9.6
-	CHokanMgr* pCHokanMgr = (CHokanMgr*)::GetWindowLongPtr( ::GetParent( hwnd ), DWLP_USER );
+	const auto hwnd = hWnd;
+
+	using CHokanMgrPtr = CHokanMgr*;
+	auto pCHokanMgr = CHokanMgrPtr(dwRefData);
+	if (!pCHokanMgr) return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
 
 	switch( uMsg ){
 	case WM_LBUTTONDOWN:
@@ -53,22 +63,37 @@ LRESULT APIENTRY HokanList_SubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LP
 			}
 		}
 		return 0;	// 本来のウィンドウプロシージャは呼ばない（アクティブ化しない）
+
+	case WM_DESTROY:
+		// サブクラスを解除する
+		::RemoveWindowSubclass(hWnd, &HokanList_SubclassProc, uIdSubclass);
+		break;
+
 	default:
 		break;
 	}
-	return CallWindowProc( gm_wpHokanListProc, hwnd, uMsg, wParam, lParam);
+
+	//あとはデフォルトに任せる
+	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
+}
+
+bool CHokanMgr::EatMessage(const MSG& msg)
+{
+	auto& cHokanMgr = GetEditWnd().m_cHokanMgr;
+
+	const auto hWnd = cHokanMgr.GetHwnd();
+
+	return handled == cHokanMgr.KeyProc(hWnd, msg.message, msg.wParam, msg.lParam);
 }
 
 CHokanMgr::CHokanMgr()
 {
-	m_cmemCurWord.SetString(L"");
-
-	m_nCurKouhoIdx = -1;
-	m_bTimerFlag = TRUE;
+	return;
 }
 
 CHokanMgr::~CHokanMgr()
 {
+	return;
 }
 
 /* モードレスダイアログの表示 */
@@ -78,9 +103,10 @@ HWND CHokanMgr::DoModeless( HINSTANCE hInstance , HWND hwndParent, LPARAM lParam
 	hwndWork = CDialog::DoModeless( hInstance, hwndParent, IDD_HOKAN, lParam, SW_HIDE );
 	::SetFocus( ((CEditView*)m_lParam)->GetHwnd() );	//エディタにフォーカスを戻す
 	OnSize( 0, 0 );
-	/* リストをフック */
-	// Modified by KEITA for WIN64 2003.9.6
-	::gm_wpHokanListProc = (WNDPROC) ::SetWindowLongPtr( GetItemHwnd( IDC_LIST_WORDS ), GWLP_WNDPROC, (LONG_PTR)HokanList_SubclassProc  );
+
+	// 候補リストをサブクラス化してカスタマイズする
+	const auto hWndList = GetItemHwnd(IDC_LIST_WORDS);
+	::SetWindowSubclass(hWndList, &HokanList_SubclassProc, 0, DWORD_PTR(this));
 
 	return hwndWork;
 }
@@ -92,14 +118,15 @@ void CHokanMgr::ChangeView( LPARAM pcEditView )
 	return;
 }
 
-void CHokanMgr::Hide( void )
+void CHokanMgr::Hide()
 {
 	::ShowWindow( GetHwnd(), SW_HIDE );
 	m_nCurKouhoIdx = -1;
+
 	/* 入力フォーカスを受け取ったときの処理 */
-	CEditView* pcEditView = reinterpret_cast<CEditView*>(m_lParam);
-	pcEditView->OnSetFocus();
-	return;
+	if (auto pcEditView = std::bit_cast<CEditView*>(m_lParam)) {
+		pcEditView->OnSetFocus();
+	}
 }
 
 /*!	初期化
@@ -573,6 +600,8 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 	return TRUE;
 }
 
+#if 0 // コメントアウトされたコード
+
 /*
 戻り値が -2 の場合は、アプリケーションは項目の選択を完了し、
 リスト ボックスでそれ以上の動作が必要でないことを示します。
@@ -617,12 +646,29 @@ BOOL CHokanMgr::DoHokan( int nVKey )
 //		return -1;
 //	}
 
-int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
+#endif
+
+int CHokanMgr::KeyProc(
+	HWND hWndDlg,
+	UINT uMsg,
+	WPARAM wParam,
+	LPARAM lParam
+)
 {
-	WORD vkey;
-	vkey = LOWORD(wParam);		// virtual-key code
-//	MYTRACE( L"CHokanMgr::OnVKeyToItem vkey=%xh\n", vkey );
-	switch( vkey ){
+	constexpr auto notHandled = handled - 1;
+
+	// WM_KEYDOWN以外、補完中でない場合、処理なし。
+	if (const auto& view = GetEditWnd().GetActiveView();
+		WM_KEYDOWN != uMsg ||
+		!hWndDlg ||
+		!::IsWindowVisible(hWndDlg) ||
+		!view.m_bHokan)
+	{
+		return notHandled;	// メッセージを処理しなかった
+	}
+
+	// 仮想キーコードで分岐する
+	switch (auto vkey = LOWORD(wParam)) {
 	case VK_HOME:
 	case VK_END:
 	case VK_UP:
@@ -630,8 +676,10 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_PRIOR:
 	case VK_NEXT:
 		/* リストボックスのデフォルトの動作をさせる */
-		::CallWindowProc( (WNDPROC)gm_wpHokanListProc, GetItemHwnd( IDC_LIST_WORDS ), WM_KEYDOWN, wParam, lParam );
-		return -1;
+		::SendDlgItemMessageW(hWndDlg, IDC_LIST_WORDS, WM_KEYDOWN, wParam, lParam);
+
+		return handled;
+
 	case VK_RETURN:
 	case VK_TAB:
 	case VK_RIGHT:
@@ -639,18 +687,21 @@ int CHokanMgr::KeyProc( WPARAM wParam, LPARAM lParam )
 	case VK_SPACE:
 #endif
 		/* 補完実行 */
-		if( DoHokan( vkey ) ){
-			return -1;
-		}else{
-			return -2;
-		}
+		if (DoHokan(vkey)) return handled;
+
+		break;
+
+#if 0 //defaultと同じなので不要
 	case VK_ESCAPE:
 	case VK_LEFT:
-		return -2;
+		return notHandled;
+#endif
+
 	default:
 		break;
 	}
-	return -2;
+
+	return notHandled;	// メッセージを処理しなかった
 }
 
 //	2001/06/18 Start by asa-o: 補完ウィンドウで選択中の単語にキーワードヘルプを表示

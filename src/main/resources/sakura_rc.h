@@ -795,6 +795,8 @@
 #define IDC_CHECK_DETECT_INDENTATION_STYLE_ON_FILE_LOAD 1738
 #define IDC_PYTHONDIR                   1739
 #define IDC_PYTHONDIRREF                1740
+#define IDC_CHECK_bDarkMode             1741
+#define IDC_CHK_EXCLUDE_FILE_REGEXP     1742
 #define IDS_AUTHOR_PAGE                 4054
 #define IDS_ABOUT_DESCRIPTION           4056
 #define IDD_TYPELIST                    5000
@@ -1841,17 +1843,30 @@
 #define STR_DLGGREP_THISDOC_ERROR       35046
 #define STR_GSTR_APPNAME                35047
 #define STR_REGEX_COMPILE_ERR_PREAMBLE  35048
-#define IDS_STRING35049                 35049
-#define STR_PROPCOMMACR_SEL_PYTHONDIR   35050
+#define STR_PROPCOMMACR_SEL_PYTHONDIR   35049
+#define IDS_EOLTYPENAME_0               35050
+#define IDS_EOLTYPENAME_1               35051
+#define IDS_EOLTYPENAME_2               35052
+#define IDS_EOLTYPENAME_3               35053
+#define IDS_EOLTYPENAME_4               35054
+#define IDS_EOLTYPENAME_5               35055
+#define IDS_EOLTYPENAME_6               35056
+#define STR_ERR_MACRO_ENCODING          35057
+#define STR_DLGGREP_QUOTE_ERROR         35058
+#define STR_GREP_ERR_EXCLUDE_REGEXP     35059
+#define STR_GREP_EXCLUDE_FILE_REGEXP    35060
+#define IDS_BAD_ALLOC                   35061
+#define IDS_UNHANDLED                   35062
+#define IDS_APPNAME_JP                  35063
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        35051
+#define _APS_NEXT_RESOURCE_VALUE        35064
 #define _APS_NEXT_COMMAND_VALUE         101
-#define _APS_NEXT_CONTROL_VALUE         1741
+#define _APS_NEXT_CONTROL_VALUE         1743
 #define _APS_NEXT_SYMED_VALUE           10000
 #endif
 #endif

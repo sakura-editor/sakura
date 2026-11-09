@@ -1,6 +1,6 @@
 ﻿/*! @file
 
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -44,34 +44,8 @@ bool CRecentExcludeFile::DataToReceiveType( LPCWSTR* dst, const CExcludeFileStri
 	return true;
 }
 
-bool CRecentExcludeFile::TextToDataType( CExcludeFileString* dst, LPCWSTR pszText ) const
-{
-	if( false == ValidateReceiveType(pszText) ){
-		return false;
-	}
-	CopyItem(dst, pszText);
-	return true;
-}
-
 int CRecentExcludeFile::CompareItem( const CExcludeFileString* p1, LPCWSTR p2 ) const
 {
 	return _wcsicmp(*p1,p2);
 }
 
-void CRecentExcludeFile::CopyItem( CExcludeFileString* dst, LPCWSTR src ) const
-{
-	wcscpy(*dst,src);
-}
-
-bool CRecentExcludeFile::ValidateReceiveType( LPCWSTR p ) const
-{
-	if( GetTextMaxLength() <= wcslen(p) ){
-		return false;
-	}
-	return true;
-}
-
-size_t CRecentExcludeFile::GetTextMaxLength() const
-{
-	return m_nTextMaxLength;
-}

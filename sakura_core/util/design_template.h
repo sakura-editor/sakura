@@ -7,7 +7,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,7 +16,11 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
+#include <memory>
+#include <mutex>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #include "debug/Debug2.h"
@@ -30,10 +34,14 @@
   TypeName& operator=(TypeName&&) = delete;
 
 /*!
-	Singletonパターン
-
-	2008.03.03 kobake 作成
-*/
+ * @brief Singletonパターン
+ *
+ * @note シングルトンは状態を持ってはならない。
+ * @note C++では状態を持たないオブジェクトをインスタンス化する意味はない。
+ * @note シングルトンが必要な場合、TSakuraSingletonの利用を検討すること。
+ *
+ * @date 2008.03.03 kobake 作成
+ */
 template <class T>
 class TSingleton{
 public:
@@ -50,7 +58,93 @@ protected:
 };
 
 /*!
-	複数インスタンスを生成しようとしたときのエラー
+ * @brief サクラエディタの変則Singletonパターン。
+ *
+ * TSingletonを元に作成。
+ * TSingleInstanceとは異なり、インスタンスを自動生成する。
+ * 生成したインスタンスをリセットできるようにしてある。
+ */
+template <class T>
+class TSakuraSingleton {
+private:
+	using Me = TSakuraSingleton<T>;
+
+	//! 生成済みインスタンス
+	static inline std::unique_ptr<T> gm_Instance = nullptr;
+
+	//! インスタンス生成の排他制御用ミューテックス
+	static inline std::mutex gm_Mutex;
+
+public:
+	/*!
+	 * @brief インスタンスポインタを取得する
+	 *
+	 * @returns インスタンスポインタ
+	 * @note インスタンスが未生成の場合は生成する
+	 */
+	static T* getInstance()
+	{
+		static_assert(
+			std::default_initializable<T> && !std::is_array_v<T>,
+			"T must be publicly default-initializable and must not be an array"
+		);
+
+		std::unique_lock lock{ gm_Mutex };
+
+		if (!gm_Instance) {
+			gm_Instance = std::make_unique<T>();
+		}
+
+		return gm_Instance.get();
+	}
+
+	/*!
+	 * @brief インスタンスを破棄する
+	 *
+	 * @note 取得したポインタを破棄後に使用しないこと
+	 */
+	static void resetInstance()
+	{
+		std::unique_lock lock{ gm_Mutex };
+
+		gm_Instance.reset();
+	}
+
+	/*!
+	 * @brief インスタンスを設定する
+	 *
+	 * @note テスト用にモックを注入して疑似DIを実現する
+	 * @note 古い設計と根本的に考え方が異なるため、注意。
+	 */
+	template <class U>
+	static void setInstance()
+	{
+		static_assert(
+			std::has_virtual_destructor_v<T> &&
+			std::is_nothrow_destructible_v<T>,
+			"T must have a virtual noexcept destructor"
+		);
+
+		std::unique_lock lock{ gm_Mutex };
+
+		gm_Instance = std::make_unique<U>();
+	}
+
+protected:
+	TSakuraSingleton() = default;
+
+public:
+	TSakuraSingleton(const Me&) = delete;
+	Me& operator = (const Me&) = delete;
+
+	TSakuraSingleton(Me&&) = delete;
+	Me& operator = (Me&&) = delete;
+
+	virtual ~TSakuraSingleton() = default;
+};
+
+/*!
+ * @brief 複数インスタンスを生成しようとしたときのエラー
  */
 class multi_instance_not_allowed : public std::domain_error {
 public:

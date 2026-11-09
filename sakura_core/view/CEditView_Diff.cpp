@@ -148,8 +148,8 @@ void CEditView::ViewDiffInfo(
 
 	{
 		//コマンドライン文字列作成(MAX:1024)
-		auto_sprintf(
-			cmdline,
+		auto_sprintf_s(
+			cmdline, std::size(cmdline),
 			L"\"%s\\%s\" %s \"%s\" \"%s\"",
 			szExeFolder,	//sakura.exeパス
 			L"diff.exe",		//diff.exe

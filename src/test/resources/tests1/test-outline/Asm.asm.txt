@@ -1,0 +1,42 @@
+﻿; アウトライン解析テスト向け アセンブラ 構文サンプル（MASM）
+; アウトラインに現れる代表的な文書構造を示す。
+;
+; 	Copyright (C) 2026, Sakura Editor Organization
+;
+; 	SPDX-License-Identifier: Zlib
+;
+
+.386
+.model flat, stdcall
+option casemap:none
+
+.data
+message BYTE "Hello from assembly", 0
+
+.code
+
+PUBLIC AddValues
+AddValues PROC
+    push ebp
+    mov ebp, esp
+
+calculate:
+    mov eax, DWORD PTR [ebp+8]
+    add eax, DWORD PTR [ebp+12]
+
+    pop ebp
+    ret 8
+AddValues ENDP
+
+PUBLIC FindMaximum
+FindMaximum PROC
+    mov eax, DWORD PTR [esp+4]
+    cmp eax, DWORD PTR [esp+8]
+    jge maximum_found
+    mov eax, DWORD PTR [esp+8]
+
+maximum_found:
+    ret 8
+FindMaximum ENDP
+
+END

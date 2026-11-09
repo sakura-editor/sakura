@@ -4,7 +4,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -12,23 +12,22 @@
 #define SAKURA_CDOCTYPEMANAGER_ACE5AE64_5C6A_4A70_BACF_99F9A448360D_H_
 #pragma once
 
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "types/CType.h"
 
-struct DLLSHAREDATA;
-DLLSHAREDATA& GetDllShareData();
 
 //! ドキュメントタイプ管理
-class CDocTypeManager{
+class CDocTypeManager : private env::ShareDataClient {
 public:
-	CDocTypeManager()
-	{
-		m_pShareData = &GetDllShareData();
-	}
 	CTypeConfig GetDocumentTypeOfPath( const WCHAR* pszFilePath );	/* ファイルパスを渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfExt( const WCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfId( int id );
 
-	bool GetTypeConfig(CTypeConfig cDocumentType, STypeConfig& type);
+	[[nodiscard]] bool GetTypeConfig(
+		CTypeConfig		cDocumentType,
+		STypeConfig&	type
+	);
+
 	bool SetTypeConfig(CTypeConfig cDocumentType, const STypeConfig& type);
 	[[nodiscard]] bool GetTypeConfigMini(CTypeConfig cDocumentType, const STypeConfigMini** type);
 	bool AddTypeConfig(CTypeConfig cDocumentType);
@@ -40,8 +39,6 @@ public:
 
 	static const WCHAR* m_typeExtSeps;			// タイプ別拡張子の区切り文字
 	static const WCHAR* m_typeExtWildcards;		// タイプ別拡張子のワイルドカード
-
-private:
-	DLLSHAREDATA* m_pShareData;
 };
+
 #endif /* SAKURA_CDOCTYPEMANAGER_ACE5AE64_5C6A_4A70_BACF_99F9A448360D_H_ */

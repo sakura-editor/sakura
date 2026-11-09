@@ -14,6 +14,8 @@ add_custom_command(
     ${GENERATOR_ARGS}
     -S "${CMAKE_SOURCE_DIR}/src/test/resources/compiletests"
     -B "${COMPILE_TEST_BUILD_DIR}"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/test/resources/compiletests/CMakeLists.txt"
   COMMENT "Running compiletests"
 )
 
@@ -21,3 +23,9 @@ add_custom_target(run_compiletests
   DEPENDS
     "${COMPILE_TEST_CACHE}"
 )
+
+if(MINGW)
+  set_property(DIRECTORY APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${COMPILE_TEST_BUILD_DIR}"
+  )
+endif()

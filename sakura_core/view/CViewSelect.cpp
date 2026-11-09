@@ -1,12 +1,12 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include <limits.h>
-#include "CViewSelect.h"
+#include "view/CViewSelect.h"
+
 #include "CEditView.h"
 #include "doc/CEditDoc.h"
 #include "doc/layout/CLayout.h"
@@ -19,19 +19,11 @@
 #include "types/CTypeSupport.h"
 
 CViewSelect::CViewSelect(CEditView* pcEditView)
-: m_pcEditView(pcEditView)
+	: m_pcEditView(pcEditView)
 {
-	m_bSelectingLock   = false;	// 選択状態のロック
-	m_bBeginSelect     = false;		// 範囲選択中
-	m_bBeginBoxSelect  = false;	// 矩形範囲選択中
-	m_bBeginLineSelect = false;	// 行単位選択中
-	m_bBeginWordSelect = false;	// 単語単位選択中
-
 	m_sSelectBgn.Clear(-1); // 範囲選択(原点)
 	m_sSelect   .Clear(-1); // 範囲選択
 	m_sSelectOld.Clear(0);  // 範囲選択(Old)
-	m_bSelectAreaChanging = false;	// 選択範囲変更中
-	m_nLastSelectedByteLen = 0;	// 前回選択時の選択バイト数
 }
 
 void CViewSelect::CopySelectStatus(CViewSelect* pSelect) const
@@ -490,7 +482,8 @@ void CViewSelect::DrawSelectAreaLine(
 	const CLayoutRange&	sRange		//!< [in] 選択範囲(レイアウト単位)
 ) const
 {
-	CEditView const * const pView = m_pcEditView;
+	auto pView = m_pcEditView;
+
 	bool bCompatBMP = pView->m_hbmpCompatBMP && hdc != pView->m_hdcCompatDC;
 
 	const CLayoutMgr& layoutMgr = pView->m_pcEditDoc->m_cLayoutMgr;
@@ -673,7 +666,7 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		}
 		int select_col_keta = (Int)select_col / (Int)pView->GetTextMetrics().GetLayoutXDefault();
 		auto_sprintf( msg, L"%d col (%dpx) * %d lines selected.",
-			select_col_keta, select_col, select_line );
+			select_col_keta, int(select_col), int(select_line) );
 	}
 	else {
 		//	通常の選択では選択範囲の中身を数える
@@ -819,9 +812,10 @@ void CViewSelect::PrintSelectionInfoMsg() const
 		auto_sprintf( msg, L"%d %s (%d lines) selected. [%d:%d]-[%d:%d]",
 			select_sum,
 			( bCountByByte ? L"bytes" : L"chars" ),
-			select_line,
-			m_sSelect.GetFrom().x, m_sSelect.GetFrom().y,
-			m_sSelect.GetTo().x, m_sSelect.GetTo().y );
+			int(select_line),
+			int(m_sSelect.GetFrom().x), int(m_sSelect.GetFrom().y),
+			int(m_sSelect.GetTo().x), int(m_sSelect.GetTo().y)
+		);
 #else
 		auto_sprintf( msg, L"%d %s (%d lines) selected.", select_sum, ( bCountByByte ? L"bytes" : L"chars" ), select_line );
 #endif

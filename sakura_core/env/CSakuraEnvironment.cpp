@@ -212,7 +212,7 @@ void CSakuraEnvironment::ExpandParameter(const wchar_t* pszSource, wchar_t* pszB
 				}else{
 					WCHAR szText[10];
 					const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow()->GetHwnd() );
-					if( 0 < node->m_nId ){
+					if( node && 0 < node->m_nId ){
 						_swprintf( szText, L"%d", node->m_nId );
 						q = wcs_pushW( q, q_max - q, szText );
 					}
@@ -675,7 +675,7 @@ wchar_t* ExParam_LongName( wchar_t* q, wchar_t* q_max, EExpParamName eLongParam 
 	switch( eLongParam ){
 	case EExpParamName_profile:
 		{
-			LPCWSTR pszProf = CCommandLine::getInstance()->GetProfileName();
+			LPCWSTR pszProf = GetProfileName();
 			q = wcs_pushW( q, q_max - q, pszProf );
 		}
 		break;
@@ -747,8 +747,7 @@ std::wstring CSakuraEnvironment::GetDlgInitialDir(bool bControlProcess)
 		}
 		break;
 	default:
-		assert(0);
-		return L"";
+		throw std::out_of_range(std::format("Invalid eOpenDialogDir value({})", int(eOpenDialogDir)));
 	}
 }
 

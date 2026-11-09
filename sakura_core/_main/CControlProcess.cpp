@@ -9,22 +9,27 @@
 	Copyright (C) 2002, aroka CProcessより分離, YAZAKI
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CControlProcess.h"
-#include "CControlTray.h"
-#include "env/DLLSHAREDATA.h"
-#include "CCommandLine.h"
-#include "env/CShareData_IO.h"
+#include "_main/CControlProcess.h"
+
+#include "apiwrap/DarkMode.h"
+#include "basis/make_initialization_error.hpp"
 #include "debug/CRunningTimer.h"
 #include "env/CShareData.h"
-#include "sakura_rc.h"/// IDD_EXITTING 2002/2/10 aroka ヘッダー整理
+#include "env/CShareData_IO.h"
+#include "env/DLLSHAREDATA.h"
+#include "util/os.h"
+#include "util/sync/MutexHandle.hpp"
+
 #include "config/system_constants.h"
+
+#include "sakura_rc.h"
 
 //-------------------------------------------------
 
@@ -51,8 +56,8 @@ std::filesystem::path CControlProcess::GetIniFileName() const
 	const auto filename = iniPath.filename();
 	iniPath.remove_filename();
 
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		iniPath.append(pCommandLine->GetProfileName());
+	if (const auto pszProfileName = GetProfileName(); *pszProfileName) {
+		iniPath.append(pszProfileName);
 	}
 
 	return iniPath.append(filename.c_str());
@@ -96,8 +101,8 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	}
 	privateIniPath.append(subFolder);
 
-	if (const auto* pCommandLine = CCommandLine::getInstance(); pCommandLine->IsSetProfile() && *pCommandLine->GetProfileName()) {
-		privateIniPath.append(pCommandLine->GetProfileName());
+	if (const auto pszProfileName = GetProfileName(); *pszProfileName) {
+		privateIniPath.append(pszProfileName);
 	}
 
 	return privateIniPath.append(filename.c_str());
@@ -115,59 +120,84 @@ std::filesystem::path CControlProcess::GetPrivateIniFileName(const std::wstring&
 	@date 2006/04/10 ryoji 初期化完了イベントの処理を追加、異常時の後始末はデストラクタに任せる
 	@date 2013.03.20 novice コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
 */
-bool CControlProcess::InitializeProcess()
+bool CControlProcess::InitializeProcess(
+	int nCmdShow [[maybe_unused]] // 指定を無視して非表示で起動する
+)
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CControlProcess::InitializeProcess" );
 
 	// アプリケーション実行検出用(インストーラで使用)
-	m_hMutex = ::CreateMutex( nullptr, FALSE, GSTR_MUTEX_SAKURA );
-	if( nullptr == m_hMutex ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+	try
+	{
+		// ミューテックスを作成する
+		m_hMutex = MutexHandle::CreateMutexW(nullptr, FALSE, GSTR_MUTEX_SAKURA);
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 
-	const auto pszProfileName = CCommandLine::getInstance()->GetProfileName();
+	const auto pszProfileName = GetProfileName();
 
-	// 初期化完了イベントを作成する
+	// 初期化完了イベントの名前を組み立てる
 	std::wstring strInitEvent = GSTR_EVENT_SAKURA_CP_INITIALIZED;
 	strInitEvent += pszProfileName;
-	m_hEventCPInitialized = ::CreateEvent( nullptr, TRUE, FALSE, strInitEvent.c_str() );
-	if( nullptr == m_hEventCPInitialized )
-	{
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateEvent()失敗。\n終了します。" );
-		return false;
-	}
+
+	// 起動元が作成した初期化完了イベントを開く。
+	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	HandleHolder hEvent{ ::OpenEventW(EVENT_MODIFY_STATE, FALSE, std::data(strInitEvent)) };
 
 	/* コントロールプロセスの目印 */
 	std::wstring strCtrlProcEvent = GSTR_MUTEX_SAKURA_CP;
 	strCtrlProcEvent += pszProfileName;
-	m_hMutexCP = ::CreateMutex( nullptr, TRUE, strCtrlProcEvent.c_str() );
-	if( nullptr == m_hMutexCP ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, L"CreateMutex()失敗。\n終了します。" );
-		return false;
+	try
+	{
+		// ミューテックスを作成する
+		m_hMutexCP = MutexHandle::CreateMutexW(nullptr, TRUE, strCtrlProcEvent);
 	}
-	if( ERROR_ALREADY_EXISTS == ::GetLastError() ){
-		return false;
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateMutex()失敗。\n終了します。"
+			LS(STR_ERR_CTRLMTX1)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 	
-	/* 共有メモリを初期化 */
-	if( !CProcess::InitializeProcess() ){
-		return false;
+	if (ERROR_ALREADY_EXISTS == ::GetLastError())
+	{
+		throw basis::make_initialization_error(
+			L"",
+			static_cast<int>(EAppExitCode::Exited)
+		);
 	}
 
 	// コントロールプロセスのカレントディレクトリをシステムディレクトリに変更
-	WCHAR szDir[_MAX_PATH];
-	::GetSystemDirectory( szDir, int(std::size(szDir)) );
-	::SetCurrentDirectory( szDir );
+	const auto sysDir = cxx::GetSystemDirectoryW();
+	if (const auto curDir = cxx::GetCurrentDirectoryW();
+		curDir != sysDir)
+	{
+		// カレントディレクトリを変更する
+		cxx::SetCurrentDirectoryW(sysDir);
+	}
+
+	/* 共有メモリを初期化 */
+	GetShareData().InitShareData();
 
 	/* 共有データのロード */
 	if( !CShareData_IO::LoadShareData() ){
 		/* レジストリ項目 作成 */
 		CShareData_IO::SaveShareData();
 	}
+
+	/* ダークモード設定を反映する */
+	ApplyDarkModeSetting(GetDllShareData().m_Common.m_sWindow.m_bDarkMode);
 
 	/* 言語を選択する */
 	CSelectLang::ChangeLang( GetDllShareData().m_Common.m_sWindow.m_szLanguageDll );
@@ -176,7 +206,7 @@ bool CControlProcess::InitializeProcess()
 	MY_TRACETIME( cRunningTimer, L"Before new CControlTray" );
 
 	/* タスクトレイにアイコン作成 */
-	m_pcTray = new CControlTray;
+	m_pcTray = std::make_unique<CControlTray>();
 
 	MY_TRACETIME( cRunningTimer, L"After new CControlTray" );
 
@@ -186,61 +216,11 @@ bool CControlProcess::InitializeProcess()
 		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX3) );
 		return false;
 	}
-	SetMainWindow(hwnd);
+	SetMainWindow(*m_pcTray);
 	GetDllShareData().m_sHandles.m_hwndTray = hwnd;
 
 	// 初期化完了イベントをシグナル状態にする
-	if( !::SetEvent( m_hEventCPInitialized ) ){
-		ErrorBeep();
-		TopErrorMessage( nullptr, LS(STR_ERR_CTRLMTX4) );
-		return false;
-	}
+	if (hEvent) ::SetEvent(hEvent);
 
 	return true;
 }
-
-/*!
-	@brief コントロールプロセスのメッセージループ
-	
-	@author aroka
-	@date 2002/01/07
-*/
-bool CControlProcess::MainLoop()
-{
-	if( m_pcTray && GetMainWindow() ){
-		m_pcTray->MessageLoop();	/* メッセージループ */
-		return true;
-	}
-	return false;
-}
-
-/*!
-	@brief コントロールプロセスを終了する
-	
-	@author aroka
-	@date 2002/01/07
-	@date 2006/07/02 ryoji 共有データ保存を CControlTray へ移動
-*/
-void CControlProcess::OnExitProcess()
-{
-	GetDllShareData().m_sHandles.m_hwndTray = nullptr;
-}
-
-CControlProcess::~CControlProcess()
-{
-	delete m_pcTray;
-
-	if( m_hEventCPInitialized ){
-		::ResetEvent( m_hEventCPInitialized );
-	}
-	::CloseHandle( m_hEventCPInitialized );
-	if( m_hMutexCP ){
-		::ReleaseMutex( m_hMutexCP );
-	}
-	::CloseHandle( m_hMutexCP );
-	// 旧バージョン（1.2.104.1以前）との互換性：「異なるバージョン...」が二回出ないように
-	if( m_hMutex ){
-		::ReleaseMutex( m_hMutex );
-	}
-	::CloseHandle( m_hMutex );
-};

@@ -17,7 +17,7 @@
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -35,29 +35,33 @@
 #include "CMainStatusBar.h"
 #include "view/CEditView.h"
 #include "window/CSplitterWnd.h"
+#include "basis/CMyRect.h"
 #include "dlg/CDlgFind.h"
 #include "dlg/CDlgReplace.h"
 #include "dlg/CDlgJump.h"
 #include "dlg/CDlgGrep.h"
 #include "dlg/CDlgGrepReplace.h"
 #include "dlg/CDlgSetCharSet.h"
+#include "doc/CDocListener.h"
 #include "outline/CDlgFuncList.h"
 #include "env/CHokanMgr.h"
+#include "recent/CMruListener.h"
 #include "util/design_template.h"
-#include "doc/CDocListener.h"
-#include "uiparts/CMenuDrawer.h"
 #include "view/CViewFont.h"
 #include "view/CMiniMapView.h"
+#include "window/CAppMainWnd.hpp"
+#include "window/CDropTargetWnd.hpp"
 
 #include "cxx/ResourceHolder.hpp"
 
 #include "print/CPrintPreview.h"
 
+#include <memory>
+
 static const int MENUBAR_MESSAGE_MAX_LEN = 30;
 
 class CPlug;
 class CEditDoc;
-struct DLLSHAREDATA;
 
 //メインウィンドウ内コントロールID
 #define IDT_EDIT		455  // 20060128 aroka
@@ -82,20 +86,24 @@ struct STabGroupInfo {
 // 2007.10.30 kobake OnHelp_MenuItemをCEditAppに移動
 class CEditWnd
 	: public TSingleInstance<CEditWnd>
+	, public CAppMainWnd
 , public CDocListenerEx
 {
 private:
 	using AccelHolder = cxx::ResourceHolder<&::DestroyAcceleratorTable>;
-	using CDropTargetHolder = std::unique_ptr<CDropTarget>;
 	using CEditViewHolder = std::unique_ptr<CEditView>;
 	using CEditViewsArray = std::array<CEditViewHolder, 4>;
+	using CMruListenerHolder = std::unique_ptr<CMruListener>;
 	using CPrintPreviewHolder = std::unique_ptr<CPrintPreview>;
 	using CViewFontHolder = std::unique_ptr<CViewFont>;
+	using DropTargetWndHolder = std::unique_ptr<CDropTargetWnd>;
 	using FontHolder = cxx::ResourceHolder<&::DeleteObject, HFONT>;
 	using MemDcHolder = cxx::ResourceHolder<&::DeleteDC>;
 	using SelectionHolder = cxx::ResourceHolder<&::SelectObject>;
 	using SMenubarMessage = StaticString<MENUBAR_MESSAGE_MAX_LEN>;
 	using WindowDcHolder = cxx::ResourceHolder<&::ReleaseDC>;
+
+	using Base = CAppMainWnd;
 
 public:
 	CEditWnd();
@@ -104,17 +112,14 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           作成                              //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	//	Mar. 7, 2002 genta 文書タイプ用引数追加
-	// 2007.06.26 ryoji グループ指定引数追加
 	//! 作成
-	HWND Create(
-		const CEditDoc*	pcEditDoc,
-		CImageListMgr*	pcIcons,
-		int				nGroup
+	HWND CreateMainWnd(
+		int nCmdShow
 	);
-	void _GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup);
-	void _GetWindowRectForInit(CMyRect* rcResult, int nGroup, const STabGroupInfo& sTabGroupInfo);	//!< ウィンドウ生成用の矩形を取得
-	HWND _CreateMainWindow(int nGroup, const STabGroupInfo& sTabGroupInfo);
+
+	void	_GetTabGroupInfo(STabGroupInfo* pTabGroupInfo, int& nGroup) const;
+	bool	_GetWindowRectForInit(CMyRect& rectForInit, const STabGroupInfo& sTabGroupInfo, int nCmdShow) const;	//!< ウィンドウ生成用の矩形を取得
+	HWND	_CreateMainWindow(const CMyRect& rectForInit);
 	void _AdjustInMonitor(const STabGroupInfo& sTabGroupInfo);
 
 	void OpenDocumentWhenStart(
@@ -134,8 +139,9 @@ public:
 	void OnAfterSave(const SSaveInfo& sSaveInfo) override;
 
 	//管理
-	void MessageLoop( void );								/* メッセージループ */
-	LRESULT DispatchEvent(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* メッセージ処理 */
+	EAppExitCode MessageLoop() const override;
+
+	LRESULT	DispatchEvent(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	//各種イベント
 	LRESULT OnPaint(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);	/* 描画処理 */
@@ -153,7 +159,7 @@ public:
 	BOOL OnPrintPageSetting( void );/* 印刷ページ設定 */
 	LRESULT OnTimer(WPARAM wParam, LPARAM lParam);	// WM_TIMER 処理	// 2007.04.03 ryoji
 	void OnEditTimer( void );	/* タイマーの処理 */
-	void OnCaptionTimer( void );
+	void	OnCaptionTimer() const;
 	void OnSysMenuTimer( void );
 	void OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl);
 	LRESULT OnNcLButtonDown(WPARAM wp, LPARAM lp);
@@ -165,7 +171,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 	//ファイル名変更通知
-	void ChangeFileNameNotify( const WCHAR* pszTabCaption, const WCHAR* pszFilePath, bool bIsGrep );	//@@@ 2003.05.31 MIK, 2006.01.28 ryoji ファイル名、Grepモードパラメータを追加
+	void	ChangeFileNameNotify(std::wstring_view tabCaption, std::wstring_view tabFilePath, bool bIsGrep) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         メニュー                            //
@@ -199,7 +205,7 @@ public:
 	void PrintPreviewModeONOFF( void );	/* 印刷プレビューモードのオン/オフ */
 	
 	//アイコン
-	void SetWindowIcon(HICON hIcon, int flag);	//	Sep. 10, 2002 genta
+	void	SetWindowIcon(HICON hIcon, int flag) const;
 	void GetDefaultIcon( HICON* hIconBig, HICON* hIconSmall ) const;	//	Sep. 10, 2002 genta
 	bool GetRelatedIcon(const WCHAR* szFile, HICON* hIconBig, HICON* hIconSmall) const;	//	Sep. 10, 2002 genta
 	void SetPageScrollByWheel( BOOL bState ) { m_bPageScrollByWheel = bState; }		// ホイール操作によるページスクロール有無を設定する（TRUE=あり, FALSE=なし）	// 2009.01.17 nasukoji
@@ -234,7 +240,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                      ウィンドウ操作                         //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	void WindowTopMost(int top); // 2004.09.21 Moca
+	void	WindowTopMost(int top) const;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        ビュー管理                           //
@@ -263,8 +269,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                       各種アクセサ                          //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-	HWND			GetHwnd()		const	{ return m_hWnd; }
-	CMenuDrawer&	GetMenuDrawer()			{ return m_cMenuDrawer; }
 	CEditDoc*		GetDocument()           { return m_pcEditDoc; }
 	const CEditDoc*	GetDocument() const     { return m_pcEditDoc; }
 
@@ -303,7 +307,7 @@ protected:
 	int	CreateFileDropDownMenu(HWND hwnd);	//開く(ドロップダウン)	//@@@ 2002.06.15 MIK
 
 	//タイマー
-	void Timer_ONOFF(bool bStart); /* 更新の開始／停止 20060128 aroka */
+	void	Timer_ONOFF(bool bStart) const; /* 更新の開始／停止 20060128 aroka */
 
 	// メニュー
 	void CheckFreeSubMenu(HWND hWnd, HMENU hMenu, UINT uPos);		// メニューバーの無効化を検査	2010/6/18 Uchi
@@ -329,12 +333,6 @@ public:
 	bool GetDragMode() const{ return m_bDragMode; }
 	const CMyPoint& GetDragPosOrg() const{ return m_ptDragPosOrg; }
 
-	/* IDropTarget実装 */	// 2008.06.20 ryoji
-	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragLeave( void );
-	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-
 	//フォーカス管理
 	int GetCurrentFocus() const{ return m_nCurrentFocus; }
 	void SetCurrentFocus(int n){ m_nCurrentFocus = n; }
@@ -349,14 +347,8 @@ public:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	//共有データ
-	DLLSHAREDATA*	m_pShareData = &GetDllShareData();
-
 	//ドキュメント
 	CEditDoc* 		m_pcEditDoc = &GetEditDoc();
-
-	//自ウィンドウ
-	HWND			m_hWnd = nullptr;
 
 public:
 	//子ウィンドウ
@@ -390,36 +382,34 @@ private:
 	int				m_nEditViewCount = 1;	//!< 有効なビューの数
 	const int		m_nEditViewMaxCount = int(std::size(m_pcEditViewArr));//!< ビューの最大数=4
 
-	//ヘルパ
-	CMenuDrawer		m_cMenuDrawer;
-
 	//状態
 	bool			m_bIsActiveApp = false;		//!< 自アプリがアクティブかどうか	// 2007.03.08 ryoji
 	LPWSTR			m_pszLastCaption = nullptr;
 	SMenubarMessage m_pszMenubarMessage;		//!< メニューバー右端に表示するメッセージ
 public:
-	int				m_nTimerCount;		//!< OnTimer用 2003.08.29 wmlhq
+	int				m_nTimerCount = 0;		//!< OnTimer用 2003.08.29 wmlhq
 	CLogicPointEx*	m_posSaveAry = nullptr;		//!< フォント変更前の座標
 private:
 	int				m_nCurrentFocus = 0;	//!< 現在のフォーカス情報
-	int				m_nWinSizeType;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
-	BOOL			m_bPageScrollByWheel;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
-	BOOL			m_bHorizontalScrollByWheel;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
+	int				m_nWinSizeType = 0;		//!< サイズ変更のタイプ。SIZE_MAXIMIZED, SIZE_MINIMIZED 等。
+	BOOL			m_bPageScrollByWheel = FALSE;		//!< ホイール操作によるページスクロールあり	// 2009.01.17 nasukoji
+	BOOL			m_bHorizontalScrollByWheel = FALSE;	//!< ホイール操作による横スクロールあり		// 2009.01.17 nasukoji
 	AccelHolder		m_hAccel = nullptr;			//!< ウィンドウ毎のアクセラレータテーブルのハンドル
 
 	//フォント・イメージ
 	FontHolder		m_hFontCaretPosInfo = nullptr;	//!< キャレットの行桁位置表示用フォント
-	int				m_nCaretPosInfoCharWidth;	//!< キャレットの行桁位置表示用フォントの幅
-	int				m_nCaretPosInfoCharHeight;	//!< キャレットの行桁位置表示用フォントの高さ
+	int				m_nCaretPosInfoCharWidth = 0;	//!< キャレットの行桁位置表示用フォントの幅
+	int				m_nCaretPosInfoCharHeight = 0;	//!< キャレットの行桁位置表示用フォントの高さ
 
 	//D&Dフラグ
 	bool			m_bDragMode = false;
 	CMyPoint		m_ptDragPosOrg;
-	CDropTargetHolder	m_pcDropTarget = std::make_unique<CDropTarget>(this);	//!< 右ボタンドロップ用
+	DropTargetWndHolder	m_DropTargetWnd = std::make_unique<CDropTargetWnd>();	//!< 右ボタンドロップ用
 
 	//その他フラグ
-	BOOL				m_bUIPI;		// エディタ－トレイ間でのUI特権分離確認用フラグ	// 2007.06.07 ryoji
 	EIconClickStatus	m_IconClicked = icNone;
+
+	CMruListenerHolder	m_pcMruListener = std::make_unique<CMruListener>();	//!< MRUリスナ
 
 public:
 	ESelectCountMode	m_nSelectCountMode = SELECT_COUNT_TOGGLE; // 選択文字カウント方法

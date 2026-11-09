@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -12,10 +12,7 @@
 #include "doc/CDocListener.h"
 #include "util/design_template.h"
 
-class CCodeChecker : public CDocListenerEx, public TSingleton<CCodeChecker>{
-	friend class TSingleton<CCodeChecker>;
-	CCodeChecker(){}
-
+class CCodeChecker final : public CDocListenerEx, public TSakuraSingleton<CCodeChecker>{
 public:
 	//セーブ時チェック
 	ECallbackResult OnCheckSave(SSaveInfo* pSaveInfo) override;
@@ -24,4 +21,5 @@ public:
 	//ロード時チェック
 	void OnFinalLoad(ELoadResult eLoadResult) override;
 };
+
 #endif /* SAKURA_CCODECHECKER_44D0ED68_9D9D_4B3E_88F5_185934F5FF0E_H_ */

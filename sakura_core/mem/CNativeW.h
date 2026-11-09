@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,19 +9,77 @@
 #define SAKURA_CNATIVEW_3B48F63E_5B62_4FAB_9718_0D80114E20C1_H_
 #pragma once
 
-#include "CNative.h"
 #include "basis/SakuraBasis.h"
+#include "basis/primitive.h"
 #include "charset/charcode.h"
 #include "debug/Debug2.h" //assert
+#include "mem/CNative.h"
+
+#include <compare>
+#include <string_view>
 
 class CNativeW;
 
 //! 文字列への参照を保持するクラス
+// TODO: いつか廃止する
 class CStringRef final{
 public:
 	CStringRef() noexcept = default;
+
 	CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept;
-	explicit CStringRef( const CNativeW& cmem ) noexcept;
+
+	/*!
+	 * @brief 文字列を指定して構築する
+	 *
+	 * @tparam A [in] 文字列の型（文字列参照に変換できる型）
+	 * @param source [in] 文字列
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	constexpr explicit CStringRef(const A& source)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto szText = cxx::NullTerminatedString<WCHAR>{ source };
+
+		// 入力元を文字列として扱う
+		const auto text = static_cast<std::wstring_view>(szText);
+
+		m_pData = text.data();
+		m_nDataLen = static_cast<unsigned>(text.length());
+	}
+
+	/*!
+	 * @brief バッファへのポインタを取得する
+	 */
+	constexpr LPCWSTR data() const noexcept
+	{
+		return m_pData;
+	}
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	constexpr bool empty() const noexcept
+	{
+		return 0 == m_nDataLen || !data() || 0 == data()[0];
+	}
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	constexpr size_t length() const noexcept
+	{
+		return m_nDataLen;
+	}
+
+	/*!
+	 * @brief 文字列参照を取得する
+	 *
+	 * @return 文字列参照
+	 */
+	constexpr std::wstring_view str() const noexcept
+	{
+		return std::wstring_view{ data(), length() };
+	}
 
 	[[nodiscard]] const wchar_t* GetPtr() const noexcept { return m_pData; }
 	[[nodiscard]] int GetLength() const noexcept { return static_cast<int>(m_nDataLen); }
@@ -29,28 +87,109 @@ public:
 	[[nodiscard]] wchar_t At( size_t nIndex ) const noexcept;
 	[[nodiscard]] wchar_t operator []( size_t nIndex ) const noexcept { return m_pData[nIndex]; }
 
+	/*!
+	 * @brief 文字列に変換する演算子
+	 *
+	 * @return 文字列
+	 */
+	constexpr explicit operator std::wstring() const
+	{
+		return std::wstring{ str() };
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * @return 文字列参照
+	 */
+	constexpr explicit operator std::wstring_view() const& noexcept
+	{
+		return str();
+	}
+
 private:
 	const wchar_t*	m_pData = nullptr;
 	unsigned		m_nDataLen = 0;
 };
 
 // グローバル演算子の前方宣言
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept;
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept;
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept;
 CNativeW operator + (const CNativeW& lhs, const wchar_t* rhs) noexcept(false);
 CNativeW operator + (const wchar_t* lhs, const CNativeW& rhs) noexcept(false);
 
 //! UNICODE文字列管理クラス
 class CNativeW final : public CNative{
-	friend bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept;
+private:
+	using Base = CNative;
+	using Me = CNativeW;
 
 public:
 	//コンストラクタ・デストラクタ
 	CNativeW() noexcept = default;
+
+	/*!
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * explicitを付けないのはC++の作法に照らして適切でない。
+	 *
+	 * @param source [in, opt] 文字列
+	 */
+	/* implicit */ CNativeW(_In_opt_z_ LPCWSTR source)
+	{
+		SetString(source);
+	}
+
+	/*!
+	 * @brief 文字列をコピーして構築する
+	 *
+	 * @tparam A [in] コピーする文字列の型（文字列参照に変換できる型）
+	 * @param source [in] コピーする文字列
+	 */
+	template<basis::NullTerminatedStringConstructible<WCHAR> A>
+	explicit CNativeW(const A& source)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto szText = cxx::NullTerminatedString<WCHAR>{ source };
+
+		// 入力元を文字列として扱う
+		const auto text = static_cast<std::wstring_view>(szText);
+		SetString(text.data(), text.length());
+	}
+
 	CNativeW( const wchar_t* pData, size_t nDataLen ); //!< nDataLenは文字単位。
-	CNativeW( const wchar_t* pData );
+
+	/*!
+	 * @brief バッファへのポインタを取得する
+	 */
+	LPCWSTR data() const noexcept
+	{
+		return GetStringPtr();
+	}
+
+	/*!
+	 * @brief 文字列が空かどうか調べる
+	 */
+	bool empty() const noexcept
+	{
+		return !length() || !data() || !data()[0];
+	}
+
+	/*!
+	 * @brief 文字列長を取得する
+	 */
+	size_t length() const noexcept
+	{
+		return static_cast<size_t>(GetStringLength());
+	}
+
+	/*!
+	 * @brief 文字列参照を取得する
+	 *
+	 * @return 文字列参照
+	 */
+	std::wstring_view str() const noexcept
+	{
+		return std::wstring_view{ data(), length() };
+	}
 
 	/*! メモリ確保済みかどうか */
 	[[nodiscard]] bool IsValid() const noexcept { return GetStringPtr() != nullptr; }
@@ -60,11 +199,109 @@ public:
 
 	//WCHAR
 	void SetString( const wchar_t* pData, size_t nDataLen );			//!< バッファの内容を置き換える。nDataLenは文字単位。
-	void SetString( const wchar_t* pszData );							//!< バッファの内容を置き換える。
+
+	/*!
+	 * @brief バッファの内容を置き換える
+	 *
+	 * @param pszData [in, opt] コピーする文字列
+	 */
+	void SetString(_In_opt_z_ LPCWSTR pszData)
+	{
+		if (pszData) {
+			std::wstring_view data(pszData);
+			SetString(data.data(), data.length());
+		}
+		else {
+			Reset();
+		}
+	}
+
 	void SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen );
+
 	void AppendString( const wchar_t* pszData, size_t nDataLen );		//!< バッファの最後にデータを追加する。nLengthは文字単位。成功すればtrue。メモリ確保に失敗したらfalseを返す。
-	void AppendString( std::wstring_view data );						//!< バッファの最後にデータを追加する
-	void AppendStringF( std::wstring_view format, ... );				//!< バッファの最後にデータを追加する (フォーマット機能付き)
+
+	/*!
+	 * @brief バッファの最後にデータを追加する
+	 *
+	 * @param pszData [in, opt] 追加する文字列
+	 */
+	void AppendString(_In_opt_z_ LPCWSTR pszData)
+	{
+		if (pszData) {
+			std::wstring_view text(pszData);
+			AppendString(text.data(), text.length());
+		}
+		else {
+			// 何もしない
+		}
+	}
+
+	/*!
+	 * バッファの最後にデータを追加する (フォーマット機能付き)
+	 *
+	 * @param[in] format フォーマット書式文字列
+	 * @param[in, opt] args 引数リスト
+	 * @throws std::invalid_argument formatが無効値
+	 * @throws std::bad_alloc メモリ確保に失敗
+	 * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
+	 */
+	template <typename... Params>
+	void AppendStringF(
+		std::wstring_view format,
+		const Params&... params
+	)
+	{
+		using namespace cxx;
+
+		const auto phase1ConvertedArgs = std::make_tuple(
+			PrintfArg::ConvertArgPhase1(std::as_const(params))...
+		);
+
+		// 整形によって追加される文字数をカウント
+		const int additional = std::apply(
+			[pszFormat = format.data()] (const auto&... args) {
+				return cxx::_scprintf(
+					pszFormat,
+					std::as_const(args)...
+				);
+			},
+			phase1ConvertedArgs
+		);
+
+		if (additional < 0) {
+			const auto e = errno;
+			throw std::domain_error(std::format("AppendStringF error. errno = {:d}", e));
+		}
+
+		if (additional <= 0) return;
+
+		// 現在の文字列長を取得
+		const auto currentLength = GetStringLength();
+
+		// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
+		const auto newCapacity = currentLength + additional;
+		AllocStringBuffer(newCapacity);
+
+		// 出力先を固定長バッファとして扱う
+		auto buffer = std::span(&GetStringPtr()[currentLength], additional + 1);
+
+		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
+		const auto added = std::apply(
+			[&buffer, pszFormat = format.data()](const auto&... args) {
+				return cxx::_sprintf_s(
+					buffer,
+					pszFormat,
+					std::as_const(args)...
+				);
+			},
+			phase1ConvertedArgs
+		);
+
+		if (added <= 0) return;
+
+		// 文字列終端を再設定する
+		_SetStringLength(currentLength + added);
+	}
 
 	//CNativeW
 	void SetNativeData( const CNativeW& cNative );						//!< バッファの内容を置き換える
@@ -72,10 +309,59 @@ public:
 
 	//演算子
 	CNativeW  operator + (const CNativeW& rhs) const	{ return (CNativeW(*this) += rhs); }
-	CNativeW& operator += (const CNativeW& rhs)			{ AppendNativeData(rhs); return *this; }
-	CNativeW& operator += (wchar_t ch)					{ return (*this += CNativeW(&ch, 1)); }
-	bool operator == (const CNativeW& rhs) const noexcept { return 0 == Compare(rhs); }
-	bool operator != (const CNativeW& rhs) const noexcept { return !(*this == rhs); }
+
+	/*!
+	 * @brief 三方比較演算子(C++20で導入された比較演算子)
+	 *
+	 * 標準的な演算子 <, <=, ==, !=, >=, > を自動的に生成する。
+	 * 自前実装を用意する場合は == の実装が別途必要。
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 比較結果(std::strong_ordering)
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	auto operator <=> (const A& rhs) const
+	{
+		if constexpr (std::is_same_v<A, Me>) {
+			// compare結果を0と比較することで、標準的な比較結果を生成する
+			return Compare(rhs) <=> 0;
+		}
+		else {
+			// 入力元をNUL終端文字列とみなす
+			const auto szRhs = cxx::NullTerminatedString<WCHAR>{ rhs };
+
+			// compare結果を0と比較することで、標準的な比較結果を生成する
+			return Compare(szRhs.c_str()) <=> 0;
+		}
+	}
+
+	/*!
+	 * @brief 等価比較演算子
+	 *
+	 * @tparam A [in] 比較する文字列の型（NUL終端文字列に変換できる型）
+	 * @param rhs [in, opt] 比較する文字列
+	 * @return 等価比較の結果
+	 * @retval true  等しい
+	 * @retval false 等しくない
+	 * @throws std::invalid_argument 文字列が不正だったとき
+	 */
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+	bool operator == (const A& rhs) const
+	{
+		if constexpr (std::is_same_v<A, Me>) {
+			// 比較結果が0かどうかを返す
+			return 0 == Compare(rhs);
+		}
+		else {
+			// 入力元をNUL終端文字列とみなす
+			const auto szRhs = cxx::NullTerminatedString<WCHAR>{ rhs };
+
+			// 比較結果が0かどうかを返す
+			return 0 == Compare(szRhs.c_str());
+		}
+	}
 
 	//ネイティブ取得インターフェース
 	[[nodiscard]] wchar_t operator[]( size_t nIndex ) const;                    //!< 任意位置の文字取得。nIndexは文字単位。
@@ -133,6 +419,72 @@ public:
 
 	void Replace( std::wstring_view strFrom, std::wstring_view strTo );   //!< 文字列置換
 	void Replace( const wchar_t* pszFrom, size_t nFromLen, const wchar_t* pszTo, size_t nToLen );   //!< 文字列置換
+
+	/*!
+	 * @brief バッファの最後にデータを追加する
+	 *
+	 * @param rhs [in] 追加する文字列
+	 * @return 自分自身への参照
+	 */
+	Me& operator += (const Me& rhs)
+	{
+		AppendNativeData(rhs);
+
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの最後にデータを追加する
+	 *
+	 * @tparam A [in] コピーする文字列の型（文字列参照に変換できる型）
+	 * @param rhs [in] 追加する文字列
+	 * @return 自分自身への参照
+	 */
+	template<basis::NullTerminatedStringConstructible<WCHAR> A>
+	Me& operator += (const A & rhs)
+	{
+		// 入力元をNUL終端文字列とみなす
+		const auto szText = cxx::NullTerminatedString{ rhs };
+
+		// 入力元を文字列として扱う
+		const auto text = static_cast<std::wstring_view>(szText);
+		AppendString(text.data(), text.length());
+
+		return *this;
+	}
+
+	/*!
+	 * @brief バッファの最後に文字を追加する
+	 *
+	 * @param rhs [in] 追加する文字
+	 * @return 自分自身への参照
+	 */
+	Me& operator += (const WCHAR& rhs)
+	{
+		AppendString(&rhs, 1);
+
+		return *this;
+	}
+
+	/*!
+	 * @brief 文字列に変換する演算子
+	 *
+	 * @return 文字列
+	 */
+	explicit operator std::wstring() const
+	{
+		return std::wstring{ str() };
+	}
+
+	/*!
+	 * @brief 文字列参照に変換する
+	 *
+	 * @return 文字列参照
+	 */
+	explicit operator std::wstring_view() const& noexcept
+	{
+		return str();
+	}
 
 public:
 	// -- -- staticインターフェース -- -- //

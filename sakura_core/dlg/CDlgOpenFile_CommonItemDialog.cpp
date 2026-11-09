@@ -12,13 +12,14 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
+#include <bit>
 #include <shobjidl.h>
 #include "charset/CCodePage.h"
 #include "dlg/CDlgOpenFile.h"
@@ -50,8 +51,8 @@ struct CDlgOpenFile_CommonItemDialog final
 		const std::vector<LPCWSTR>& vOPENFOLDER
 	) override;
 
-	bool DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFileter ) override;
-	bool DoModal_GetSaveFileName( WCHAR* pszPath ) override;
+	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter) override;
+	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo,
 						 std::vector<std::wstring>* pFileNames,
 						 bool bOptions ) override;
@@ -71,8 +72,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	HRESULT DoModalSaveDlgImpl1( IFileSaveDialog* pFileSaveDialog,
 								 WCHAR* pszPath );
 
-	HINSTANCE		m_hInstance;	/* アプリケーションインスタンスのハンドル */
-	HWND			m_hwndParent;	/* オーナーウィンドウのハンドル */
+	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
+	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
 
 	DLLSHAREDATA*	m_pShareData;
 
@@ -101,6 +102,9 @@ struct CDlgOpenFile_CommonItemDialog final
 
 	IFileDialog* m_pFileDialog = nullptr;
 	IFileDialogCustomize* m_pFileDialogCustomize = nullptr;
+
+	static LRESULT CALLBACK FileDialogSubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
+	void ReplaceSlashInFileName() const;
 
 	// IFileDialogCustomize
 
@@ -304,10 +308,8 @@ struct CDlgOpenFile_CommonItemDialog final
 	}
 		
 	HRESULT STDMETHODCALLTYPE OnFolderChange(
-		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
-		return E_NOTIMPL;
-	}
-		
+		/* [in] */ __RPC__in_opt IFileDialog *pfd) override;
+
 	HRESULT STDMETHODCALLTYPE OnSelectionChange(
 		/* [in] */ [[maybe_unused]] __RPC__in_opt IFileDialog *pfd) override {
 		return E_NOTIMPL;
@@ -373,9 +375,6 @@ enum CtrlId {
 
 CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 {
-	m_hInstance = nullptr;		/* アプリケーションインスタンスのハンドル */
-	m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
-
 	/* 共有データ構造体のアドレスを返す */
 	m_pShareData = &GetDllShareData();
 
@@ -389,7 +388,6 @@ CDlgOpenFile_CommonItemDialog::CDlgOpenFile_CommonItemDialog()
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
 	wcscpy( m_szInitialDir, szDrive );
 	wcscat( m_szInitialDir, szDir );
-
 
 	return;
 }
@@ -430,8 +428,17 @@ void CDlgOpenFile_CommonItemDialog::Create(
 	return;
 }
 
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFilter )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName(
+	std::span<WCHAR> szPath,
+	EFilter eAddFilter
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+
+	auto pszPath = std::data(szPath);
+
 	//	2003.05.12 MIK
 	std::vector<COMDLG_FILTERSPEC> specs;
 	specs.reserve(7);
@@ -468,7 +475,7 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 	std::vector<std::wstring> fileNames;
 	bool ret = DoModalOpenDlgImpl0(false, &fileNames, L"", specs);
 	if (ret) {
-		wcscpy(pszPath, fileNames[0].c_str());
+		::wcscpy_s(pszPath, cchPath, fileNames[0].c_str());
 	}
 	return ret;
 }
@@ -476,8 +483,16 @@ bool CDlgOpenFile_CommonItemDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 /*! 保存ダイアログ モーダルダイアログの表示
 	@param pszPath [i/o] 初期ファイル名．選択されたファイル名の格納場所
 */
-bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
+bool CDlgOpenFile_CommonItemDialog::DoModal_GetSaveFileName(
+	std::span<WCHAR> szPath
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+
+	auto pszPath = std::data(szPath);
+
 	// 2010.08.28 カレントディレクトリを移動するのでパス解決する
 	if( pszPath[0] ){
 		WCHAR szFullPath[_MAX_PATH];
@@ -816,6 +831,61 @@ bool CDlgOpenFile_CommonItemDialog::DoModalSaveDlg( SSaveInfo* pSaveInfo, bool b
 		}
 	}
 	return ret;
+}
+
+/*!
+	フォルダーが変わったとき(ダイアログを表示した直後にも呼ばれる)
+
+	ダイアログのウィンドウをサブクラス化して、「開く」(IDOK)の前にファイル名の / を \ に置き換える(Issue #2727)。
+	同じプロシージャ・ID で SetWindowSubclass を呼び直しても二重にはならない。
+*/
+HRESULT CDlgOpenFile_CommonItemDialog::OnFolderChange(
+	/* [in] */ __RPC__in_opt IFileDialog *pfd)
+{
+	cxx::com_pointer<IOleWindow> pOleWindow;
+	if( HWND hwnd = nullptr;
+		pfd && SUCCEEDED( pfd->QueryInterface( &pOleWindow ) ) && SUCCEEDED( pOleWindow->GetWindow( &hwnd ) ) )
+	{
+		::SetWindowSubclass( hwnd, &FileDialogSubclassProc, 0, DWORD_PTR(this) );
+	}
+	return S_OK;
+}
+
+/*!
+	ファイルダイアログのサブクラスプロシージャ
+*/
+LRESULT CALLBACK CDlgOpenFile_CommonItemDialog::FileDialogSubclassProc( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData )
+{
+	const auto pThis = std::bit_cast<const CDlgOpenFile_CommonItemDialog*>( dwRefData );
+	switch( uMsg ){
+	case WM_COMMAND:
+		if( LOWORD( wParam ) == IDOK && HIWORD( wParam ) == BN_CLICKED ){
+			pThis->ReplaceSlashInFileName();
+		}
+		break;
+	case WM_NCDESTROY:
+		::RemoveWindowSubclass( hwnd, &FileDialogSubclassProc, uIdSubclass );
+		break;
+	default:
+		break;
+	}
+	return ::DefSubclassProc( hwnd, uMsg, wParam, lParam );
+}
+
+/*!
+	ファイル名ボックスに入力されたパスの区切りの / を \ に置き換える(Issue #2727)
+*/
+void CDlgOpenFile_CommonItemDialog::ReplaceSlashInFileName() const
+{
+	PWSTR pszFileName = nullptr;
+	if( !m_pFileDialog || FAILED( m_pFileDialog->GetFileName( &pszFileName ) ) || !pszFileName ){
+		return;
+	}
+	const std::wstring text{ pszFileName };
+	::CoTaskMemFree( pszFileName );
+	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
+		m_pFileDialog->SetFileName( replaced.c_str() );
+	}
 }
 
 HRESULT CDlgOpenFile_CommonItemDialog::OnItemSelected(

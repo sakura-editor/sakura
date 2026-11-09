@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,17 +21,6 @@
 CStringRef::CStringRef( const wchar_t* pData, size_t nDataLen ) noexcept
 	: m_pData(pData)
 	, m_nDataLen(static_cast<decltype(m_nDataLen)>(nDataLen))
-{
-}
-
-/*!
-	コンストラクタ
-
-	指定したCNativeWを参照するCStringRefを構築する。
- */
-CStringRef::CStringRef( const CNativeW& cmem ) noexcept
-	: m_pData(cmem.GetStringPtr())
-	, m_nDataLen(static_cast<decltype(m_nDataLen)>(cmem.GetStringLength()))
 {
 }
 
@@ -59,11 +48,6 @@ CNativeW::CNativeW( const wchar_t* pData, size_t nDataLen )
 	SetString( pData, nDataLen );
 }
 
-CNativeW::CNativeW( const wchar_t* pData )
-{
-	SetString(pData);
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //              ネイティブ設定インターフェース                 //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -72,17 +56,6 @@ CNativeW::CNativeW( const wchar_t* pData )
 void CNativeW::SetString( const wchar_t* pData, size_t nDataLen )
 {
 	SetRawData( pData,nDataLen * sizeof(wchar_t) );
-}
-
-// バッファの内容を置き換える
-void CNativeW::SetString( const wchar_t* pszData )
-{
-	if( pszData != nullptr ){
-		std::wstring_view data(pszData);
-		SetString( data.data(), data.length() );
-	}else{
-		Reset();
-	}
 }
 
 void CNativeW::SetStringHoldBuffer( const wchar_t* pData, size_t nDataLen )
@@ -106,55 +79,6 @@ void CNativeW::AllocStringBuffer( size_t nDataLen )
 void CNativeW::AppendString( const wchar_t* pszData, size_t nDataLen )
 {
 	AppendRawData( pszData, nDataLen * sizeof(wchar_t) );
-}
-
-//! バッファの最後にデータを追加する
-void CNativeW::AppendString( std::wstring_view data )
-{
-	AppendString( data.data(), data.length() );
-}
-
-/*!
- * バッファの最後にデータを追加する (フォーマット機能付き)
- *
- * @param format フォーマット書式文字列
- * @param va_args C-style の可変長引数
- * @throws std::invalid_argument formatが無効値
- * @throws std::bad_alloc メモリ確保に失敗
- * @remark 不正なフォーマットを指定すると無効なパラメータ例外で即死します。
- */
-void CNativeW::AppendStringF( std::wstring_view format, ... )
-{
-	// _vscwprintf に NULL を渡してはならないので除外する
-	if( format.empty() ){
-		throw std::invalid_argument( "format can't be empty" );
-	}
-
-	// 可変長引数のポインタを取得
-	va_list v;
-	va_start( v, format );
-
-	// 整形によって追加される文字数をカウント
-	const int additional = ::_vscwprintf( format.data(), v );
-
-	// 現在の文字列長を取得
-	const auto currentLength = GetStringLength();
-
-	// 現在の文字数 + 追加文字数が収まるようにバッファを拡張する
-	const auto newCapacity = currentLength + additional;
-	AllocStringBuffer( newCapacity );
-
-	int added = 0;
-	if( additional > 0 ){
-		// 追加処理の実体はCRTに委譲。この関数は無効な書式を与えると即死する。
-		added = ::_vsnwprintf_s( &GetStringPtr()[currentLength], static_cast<unsigned>(additional) + 1, _TRUNCATE, format.data(), v );
-	}
-
-	// 可変長引数のポインタを解放
-	va_end( v );
-
-	// 文字列終端を再設定する
-	_SetStringLength( currentLength + added );
 }
 
 //! バッファの最後にデータを追加する
@@ -273,58 +197,6 @@ bool CNativeW::IsEqual( const CNativeW& cmem1, const CNativeW& cmem2 )
 		}
 	}
 	return false;
-}
-
-/*!
- * 文字列ポインタ型との等価比較
- *
- * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
- * @retval true 等しい
- * @retval false 等しくない
- */
-bool operator == (const CNativeW& lhs, const wchar_t* rhs) noexcept
-{
-	return lhs.Equals(rhs);
-}
-
-/*!
- * 文字列ポインタ型との否定の等価比較
- *
- * @param lhs 比較対象(CNativeW)
- * @param rhs 比較対象(C string)
- * @retval true 等しくない
- * @retval false 等しい
- */
-bool operator != (const CNativeW& lhs, const wchar_t* rhs) noexcept
-{
-	return !(lhs == rhs);
-}
-
-/*!
- * 文字列ポインタ型との等価比較(引数逆転版)
- *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
- * @retval true 等しい
- * @retval false 等しくない
- */
-bool operator == (const wchar_t* lhs, const CNativeW& rhs) noexcept
-{
-	return rhs.Equals(lhs);
-}
-
-/*!
- * 文字列ポインタ型との否定の等価比較(引数逆転版)
- *
- * @param lhs 比較対象(C string)
- * @param rhs 比較対象(CNativeW)
- * @retval true 等しくない
- * @retval false 等しい
- */
-bool operator != (const wchar_t* lhs, const CNativeW& rhs) noexcept
-{
-	return !(lhs == rhs);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

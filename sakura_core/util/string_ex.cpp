@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -16,6 +16,7 @@
 #include "charset/charcode.h"
 #include "charset/codechecker.h"
 #include "util/std_macro.h"
+#include "util/tchar_convert.h"
 #include <limits.h>
 #include <locale.h>
 
@@ -188,427 +189,6 @@ const char* stristr_j( const char* s1, const char* s2 )
 		if( my_iskanji1( *(const unsigned char*)p1 ) && *(p1+1) != 0 ) p1++;
 	}
 	return nullptr;
-}
-
-/*!
-	@brief 文字列の終端位置を調整する
-	@param[in, out] strOut	終端位置修正対象のインスタンス
-	@param[in]  cchOut		終端位置
-	@returns 終端位置を調整されたインスタンス。
- */
-std::wstring& eos(std::wstring& strOut, size_t cchOut)
-{
-	if (strOut.empty() && cchOut < 8) {
-		std::wstring buf(strOut.data());
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
-
-	return strOut;
-}
-
-/*!
-	@brief 文字列の終端位置を調整する
-	@param[in, out] strOut	終端位置修正対象のインスタンス
-	@param[in]  cchOut		終端位置
-	@returns 終端位置を調整されたインスタンス。
- */
-std::string& eos(std::string& strOut, size_t cchOut)
-{
-	if (strOut.empty() && cchOut < 16) {
-		std::string buf(strOut.data());
-		strOut.assign(buf.data(), cchOut);
-	}
-	else {
-		strOut.assign(strOut.data(), cchOut);
-	}
-
-	return strOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  argList		引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
- */
-int vstrprintf(std::wstring& strOut, const WCHAR* pszFormat, va_list& argList)
-{
-	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const int cchOut = ::_vscwprintf(pszFormat, argList);
-	if (cchOut <= 0) {
-		strOut.clear();
-		return cchOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// フォーマットする
-	::vswprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return cchOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  argList		引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
- */
-int vstrprintf(std::string& strOut, const CHAR* pszFormat, va_list& argList)
-{
-	// _vscwprintf() はフォーマットに必要な文字数を返す。
-	const int cchOut = ::_vscprintf(pszFormat, argList);
-	if (cchOut <= 0) {
-		strOut.clear();
-		return cchOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// フォーマットする
-	::vsprintf_s(strOut.data(), strOut.capacity(), pszFormat, argList);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return cchOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  argList		引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
- */
-int strprintf(std::wstring& strOut, const WCHAR* pszFormat, ...)
-{
-	va_list argList;
-	va_start(argList, pszFormat);
-
-	const auto nRet = vstrprintf(strOut, pszFormat, argList);
-
-	va_end(argList);
-
-	return nRet;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	フォーマットされたテキストを受け取る変数
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  argList		引数リスト
-	@returns 出力された文字数。NUL終端を含まない。
-	@retval >= 0 正常終了
-	@retval < 0 異常終了
- */
-int strprintf(std::string& strOut, const CHAR* pszFormat, ...)
-{
-	va_list argList;
-	va_start(argList, pszFormat);
-
-	const auto nRet = vstrprintf(strOut, pszFormat, argList);
-
-	va_end(argList);
-
-	return nRet;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  ...			引数リスト
-	@returns フォーマットされた文字列
- */
-std::wstring vstrprintf(const WCHAR* pszFormat, va_list& argList)
-{
-	// 出力バッファを確保する
-	std::wstring strOut;
-
-	const auto nRet = vstrprintf(strOut, pszFormat, argList);
-	assert(nRet >= 0);
-
-	return strOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  ...			引数リスト
-	@returns フォーマットされた文字列
- */
-std::string vstrprintf(const CHAR* pszFormat, va_list& argList)
-{
-	// 出力バッファを確保する
-	std::string strOut;
-
-	const int nRet = vstrprintf(strOut, pszFormat, argList);
-	assert(nRet >= 0);
-
-	return strOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  ...			引数リスト
-	@returns フォーマットされた文字列
- */
-std::wstring strprintf(const WCHAR* pszFormat, ...)
-{
-	va_list argList;
-	va_start(argList, pszFormat);
-
-	const auto strOut = vstrprintf(pszFormat, argList);
-
-	va_end(argList);
-
-	return strOut;
-}
-
-/*!
-	@brief C-Styleのフォーマット文字列を使ってデータを文字列化する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  pszFormat	フォーマット文字列
-	@param[in]  ...			引数リスト
-	@returns フォーマットされた文字列
- */
-std::string strprintf(const CHAR* pszFormat, ...)
-{
-	va_list argList;
-	va_start(argList, pszFormat);
-
-	const auto strOut = vstrprintf(pszFormat, argList);
-
-	va_end(argList);
-
-	return strOut;
-}
-
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-//                      文字コード変換                         //
-// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-
-//SJIS→UNICODE。終端にL'\0'を付けてくれる版。
-size_t mbstowcs2(wchar_t* dst,const char* src,size_t dst_count)
-{
-	size_t ret=::mbstowcs(dst,src,dst_count-1);
-	dst[ret]=L'\0';
-	return ret;
-}
-size_t mbstowcs2(wchar_t* pDst, int nDstCount, const char* pSrc, int nSrcCount)
-{
-	int ret=MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcCount,
-		pDst,
-		nDstCount-1
-	);
-	pDst[ret]=L'\0';
-	return (size_t)ret;
-}
-
-//UNICODE→SJIS。終端に'\0'を付けてくれる版。
-size_t wcstombs2(char* dst,const wchar_t* src,size_t dst_count)
-{
-	size_t ret=::wcstombs(dst,src,dst_count-1);
-	dst[ret]='\0';
-	return ret;
-}
-
-//SJIS→UNICODE。戻り値はnew[]で確保して返す。
-wchar_t* mbstowcs_new(const char* src)
-{
-	size_t new_length=mbstowcs(nullptr,src,0);
-	wchar_t* ret=new wchar_t[new_length+1];
-	mbstowcs(ret,src,new_length);
-	ret[new_length]=L'\0';
-	return ret;
-}
-wchar_t* mbstowcs_new(const char* pSrc, int nSrcLen, int* pnDstLen)
-{
-	//必要な領域サイズ
-	int nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		nullptr,
-		0
-	);
-	
-	//確保
-	wchar_t* pNew = new wchar_t[nNewLength+1];
-
-	//変換
-	nNewLength = MultiByteToWideChar(
-		CP_SJIS,				// 2008/5/12 Uchi
-		0,
-		pSrc,
-		nSrcLen,
-		pNew,
-		nNewLength
-	);
-	pNew[nNewLength] = L'\0';
-	if( pnDstLen ){
-		*pnDstLen = nNewLength;
-	}
-	return pNew;
-}
-
-/*!
-	@brief u8文字列を標準文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換された標準文字列を受け取る変数
-	@param[in]  strInput	u8文字列
-	@returns 標準文字列
- */
-std::wstring u8stowcs(std::wstring& strOut, std::string_view strInput)
-{
-	// 必要なバッファのサイズを確認する
-	const auto cchOut = ::MultiByteToWideChar(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		nullptr,
-		0
-	);
-
-	if (cchOut <= 0) {
-		strOut.clear();
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// 変換する
-	::MultiByteToWideChar(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		strOut.data(),
-		(int)strOut.capacity()
-	);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return strOut;
-}
-
-/*!
-	@brief 標準文字列をu8文字列に変換する。
-		事前に確保したバッファに結果を書き込む高速バージョン
-	@param[in, out] strOut	変換されたu8文字列を受け取る変数
-	@param[in]  strInput	標準文字列
-	@returns u8文字列
- */
-std::string wcstou8s(std::string& strOut, std::wstring_view strInput)
-{
-	// 必要なバッファのサイズを確認する
-	const auto cchOut= ::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		nullptr,
-		0,
-		nullptr,
-		nullptr
-	);
-
-	if (cchOut <= 0) {
-		strOut.clear();
-		return strOut;
-	}
-
-	// 必要なバッファを確保する
-	if (const size_t required = cchOut + 1;
-		strOut.capacity() <= required)
-	{
-		strOut.resize(required, L'0');
-	}
-
-	// 変換する
-	::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		strInput.data(),
-		(int)strInput.length(),
-		strOut.data(),
-		(int)strOut.capacity(),
-		nullptr,
-		nullptr
-	);
-
-	// NUL終端する
-	eos(strOut, cchOut);
-
-	return strOut;
-}
-
-/*!
-	@brief u8文字列を標準文字列に変換する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  strInput	u8文字列
-	@returns 標準文字列
- */
-std::wstring u8stowcs(std::string_view strInput)
-{
-	std::wstring strOut;
-	return u8stowcs(strOut, strInput);
-}
-
-/*!
-	@brief 標準文字列をu8文字列に変換する。
-		動的にバッファを確保する簡易バージョン
-	@param[in]  strInput	標準文字列
-	@returns u8文字列
- */
-std::string wcstou8s(std::wstring_view strInput)
-{
-	std::string strOut;
-	return wcstou8s(strOut, strInput);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -865,18 +445,18 @@ int __cdecl my_internal_icmp( const char *s1, const char *s2, unsigned int n, un
 int skr_towupper( int c )
 {
 #ifdef _MSC_VER
-	static wchar_t szMap[256];	// c < 256 用の変換テーブル
-	static bool bInit = false;
-	if( !bInit ){
+	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
+	static const auto szMap = []{
+		std::array<wchar_t, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towupper( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 255; i++ ) szMap[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
-		szMap[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
+		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towupper( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 255; i++ ) map[i] = _towupper_l( (wchar_t)i, locale );	// "English"localeで変換
+		map[255] = 0x0178;	// Windows-1252 だと 0x9f(制御文字域) にマップしてしまうので
 		_free_locale( locale );
-		bInit = true;
-	}
+		return map;
+	}();
 
 	if( c < 256 ) return szMap[c];
 #endif
@@ -886,17 +466,17 @@ int skr_towupper( int c )
 int skr_towlower( int c )
 {
 #ifdef _MSC_VER
-	static wchar_t szMap[256];	// c < 256 用の変換テーブル
-	static bool bInit = false;
-	if( !bInit ){
+	// c < 256 用の変換テーブル。関数の static 変数の初期化なので、複数のスレッドから呼ばれても 1 回だけ作る
+	static const auto szMap = []{
+		std::array<wchar_t, 256> map{};
 		int i;
 		_locale_t locale = _create_locale( LC_CTYPE, "English" );
-		for( i = 0; i < 0x80; i++ ) szMap[i] = (wchar_t)my_towlower( i );	// 自前で変換
-		for( ; i < 0xA0; i++ ) szMap[i] = (wchar_t)i;						// 無変換（制御コード部）
-		for( ; i < 256; i++ ) szMap[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
+		for( i = 0; i < 0x80; i++ ) map[i] = (wchar_t)my_towlower( i );	// 自前で変換
+		for( ; i < 0xA0; i++ ) map[i] = (wchar_t)i;						// 無変換（制御コード部）
+		for( ; i < 256; i++ ) map[i] = _towlower_l( (wchar_t)i, locale );	// "English"localeで変換
 		_free_locale( locale );
-		bInit = true;
-	}
+		return map;
+	}();
 
 	if( c < 256 ) return szMap[c];
 #endif
