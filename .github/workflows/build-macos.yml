@@ -164,3 +164,21 @@ jobs:
           lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac"
           lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac" | grep -q arm64
           lipo -archs "$APP/Contents/MacOS/Sakura Editor for Mac" | grep -q x86_64
+
+      # 第 9 步：确认 App 能启动，不会一启动就崩溃（CI 没有屏幕可看，只确认进程启动 10 秒后仍在运行）
+      - name: Launch smoke test
+        working-directory: macos/app
+        run: |
+          APP="build/Build/Products/Release/Sakura Editor for Mac.app"
+          "$APP/Contents/MacOS/Sakura Editor for Mac" > launch.log 2>&1 &
+          PID=$!
+          sleep 10
+          if ! kill -0 $PID 2>/dev/null; then
+            echo "::error::App exited within 10 seconds"
+            cat launch.log
+            exit 1
+          fi
+          osascript -e 'tell application "System Events" to get name of every window of (first process whose unix id is '"$PID"')' || true
+          kill $PID
+          wait $PID 2>/dev/null || true
+          cat launch.log
