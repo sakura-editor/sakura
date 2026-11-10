@@ -15,6 +15,7 @@
 #include "CSelectLang.h"
 #include <atomic>
 #include <future>
+#include <thread>
 
 /*!
 	ファイルを読み込んで格納する（分割読み込みテスト版）
@@ -92,7 +93,10 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 		std::vector<CFileLoad> vecThreadFileLoads( nThreadCount );
 		std::vector<CDocLineMgr> vecThreadDocLineMgrs( nThreadCount );
 		std::vector<std::future<EConvertResult>> vecWorkerFutures;
+		std::vector<std::jthread> vecWorkerThreads;
 		std::atomic<bool> bCanceled = false;
+		vecWorkerFutures.reserve(nThreadCount - 1);
+		vecWorkerThreads.reserve(nThreadCount - 1);
 
 		size_t nOffsetBegin = cfl.GetNextLineOffset( (size_t)cfl.GetFileSize() );
 		for( int i = nThreadCount - 1; 0 <= i; i-- ){
@@ -112,17 +116,18 @@ EConvertResult CReadManager::ReadFile_To_CDocLineMgr(
 				eRet = ReadLines( true, vecThreadFileLoads[i], vecThreadDocLineMgrs[i], bCanceled );
 			}else{
 				// ワーカースレッドで処理
-				vecWorkerFutures.push_back(
-					std::async(
-						std::launch::async,
-						&CReadManager::ReadLines,
-						this,
-						false,
-						std::ref(vecThreadFileLoads[i]),
-						std::ref(vecThreadDocLineMgrs[i]),
-						std::ref(bCanceled)
-					)
+				std::packaged_task<EConvertResult()> task(
+					[this, &vecThreadFileLoads, &vecThreadDocLineMgrs, &bCanceled, i] {
+						return ReadLines(
+							false,
+							vecThreadFileLoads[i],
+							vecThreadDocLineMgrs[i],
+							bCanceled
+						);
+					}
 				);
+				vecWorkerFutures.emplace_back(task.get_future());
+				vecWorkerThreads.emplace_back(std::move(task));
 			}
 		}
 
