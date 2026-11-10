@@ -116,6 +116,11 @@ IFACEMETHODIMP CDropSource::GiveFeedback(
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
 
+/* static */ CLIPFORMAT CDataObject::cfColumnSelect	= (CLIPFORMAT)::RegisterClipboardFormatW(L"MSDEVColumnSelect");
+/* static */ CLIPFORMAT CDataObject::cfLineSelect1	= (CLIPFORMAT)::RegisterClipboardFormatW(L"MSDEVLineSelect");
+/* static */ CLIPFORMAT CDataObject::cfLineSelect2	= (CLIPFORMAT)::RegisterClipboardFormatW(L"VisualStudioEditorOperationsLineCutCopyClipboardTag");
+/* static */ CLIPFORMAT CDataObject::cfSakuraClip	= (CLIPFORMAT)::RegisterClipboardFormatW(L"SAKURAClipW");
+
 CDataObject::CDataObject(
 	std::wstring_view text,
 	bool bColumnSelect
@@ -183,7 +188,7 @@ void CDataObject::SetText(
 
 		if( bColumnSelect ){
 			i++;
-			m_pData[i].cfFormat = (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" );
+			m_pData[i].cfFormat = CDataObject::cfColumnSelect;
 			m_pData[i].size = 1;
 			m_pData[i].data = new BYTE[1];
 			m_pData[i].data[0] = '\0';
