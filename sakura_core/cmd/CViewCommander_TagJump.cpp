@@ -539,7 +539,8 @@ bool CViewCommander::Command_TagsMake( void )
 		return false;
 	}
 
-	HANDLE	hStdOutWrite, hStdOutRead;
+	HANDLE hStdOutWrite;
+	HANDLE hStdOutRead;
 	CDlgCancel	cDlgCancel;
 	CWaitCursor	cWaitCursor( m_pCommanderView->GetHwnd() );
 
@@ -577,14 +578,14 @@ bool CViewCommander::Command_TagsMake( void )
 	//	To Here Dec. 28, 2002 MIK
 
 	WCHAR	options[1024];
-	wcscpy( options, L"--excmd=n" );	//デフォルトのオプション
+	wcscpy_s( options, L"--excmd=n" );	//デフォルトのオプション
 	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダーも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
 		wcscat( options, L" " );
 		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	wcscat( options, L" *" );	//配下のすべてのファイル
+	wcscat_s( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -601,11 +602,19 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 
 	//コマンドライン実行
-	BOOL bProcessResult = CreateProcess(
-		nullptr, cmdline, nullptr, nullptr, TRUE,
-		CREATE_NEW_CONSOLE, nullptr, cDlgTagsMake.m_szPath, &sui, &pi
+	if (const auto bProcessResult = CreateProcessW(
+		nullptr,				//実行ファイルパス
+		cmdline,				//コマンドライン
+		nullptr,
+		nullptr,
+		TRUE,					//子プロセスにハンドルを継承させる
+		CREATE_NEW_CONSOLE,
+		nullptr,
+		cDlgTagsMake.m_szPath,
+		&sui,
+		&pi
 	);
-	if( !bProcessResult )
+		!bProcessResult)
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD04), cmdline );
 		goto finish;
@@ -652,10 +661,12 @@ bool CViewCommander::Command_TagsMake( void )
 				break;
 			}
 
+			//パイプの中の読み出し待機中の文字数を取得
 			new_cnt = 0;
-			if( PeekNamedPipe( hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr ) )	//パイプの中の読み出し待機中の文字数を取得
+			if (PeekNamedPipe(hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr) &&
+				//待機中のものがある
+				0 < new_cnt)
 			{
-				if( new_cnt > 0 )												//待機中のものがある
 				{
 					if( new_cnt >= int(std::size(work)) - 2 )							//パイプから読み出す量を調整
 					{
