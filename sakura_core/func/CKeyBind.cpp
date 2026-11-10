@@ -752,21 +752,21 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ 'Z',		{ L"Z" },			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
 
 	/* 記号 */
-	//keycode,	keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
-	{ 0x00bd,	{ L"-" },			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00de,	{ (LPCWSTR)STR_KEY_BIND_HAT_ENG_QT },		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00dc,	{ L"\\" },			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00c0,	{ (LPCWSTR)STR_KEY_BIND_AT_ENG_BQ },		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00db,	{ L"[" },			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bb,	{ L";" },			{ F_0,				F_0,				F_0,					F_SPLIT_VH,			F_INS_DATE,				F_0,				F_0,					F_0 }, },
-	{ 0x00ba,	{ L":" },			{ F_0,				F_0,				_COPYWITHLINENUM,		F_0,				F_INS_TIME,				F_0,				F_0,					F_0 }, },
-	{ 0x00dd,	{ L"]" },			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bc,	{ L"," },			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00be,	{ L"." },			{ F_0,				F_0,				F_COPYLINESASPASSAGE,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00bf,	{ L"/" },			{ F_0,				F_0,				F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00e2,	{ L"_" },			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ 0x00df,	{ L"_(PC-98)" },	{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
-	{ VK_APPS,	{ (LPCWSTR)STR_KEY_BIND_APLI },	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
+	//keycode,		keyname,			なし,				Shitf+,				Ctrl+,					Shift+Ctrl+,		Alt+,					Shit+Alt+,			Ctrl+Alt+,				Shift+Ctrl+Alt+
+	{ VK_OEM_MINUS,	{ L"-" },			{ F_0,				F_0,				F_COPYFNAME,			F_SPLIT_V,			F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_7,		{ (LPCWSTR)STR_KEY_BIND_HAT_ENG_QT },		{ F_0,				F_0,				F_COPYTAG,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_5,		{ L"\\" },			{ F_0,				F_0,				F_COPYPATH,				F_SPLIT_H,			F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_3,		{ (LPCWSTR)STR_KEY_BIND_AT_ENG_BQ },		{ F_0,				F_0,				F_COPYLINES,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_4,		{ L"[" },			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_PLUS,	{ L";" },			{ F_0,				F_0,				F_0,					F_SPLIT_VH,			F_INS_DATE,				F_0,				F_0,					F_0 }, },
+	{ VK_OEM_1,		{ L":" },			{ F_0,				F_0,				_COPYWITHLINENUM,		F_0,				F_INS_TIME,				F_0,				F_0,					F_0 }, },
+	{ VK_OEM_6,		{ L"]" },			{ F_0,				F_0,				F_BRACKETPAIR,			F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_COMMA,	{ L"," },			{ F_0,				F_0,				F_0,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_PERIOD,{ L"." },			{ F_0,				F_0,				F_COPYLINESASPASSAGE,	F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_2,		{ L"/" },			{ F_0,				F_0,				F_HOKAN,				F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_102,	{ L"_" },			{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_OEM_8,		{ L"_(PC-98)" },	{ F_0,				F_0,				F_UNDO,					F_0,				F_0,					F_0,				F_0,					F_0 }, },
+	{ VK_APPS,		{ (LPCWSTR)STR_KEY_BIND_APLI },	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
 };
 
 const WCHAR* jpVKEXNames[] = {
