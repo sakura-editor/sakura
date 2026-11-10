@@ -171,6 +171,20 @@ private:
 // 1 つのフォルダーの中のファイルを並列に検索するときの、ワーカーごとの正規表現を作る
 std::vector<std::unique_ptr<CBregexp>> CreateWorkerRegexps( const CSearchStringPattern& pattern, const GrepInfo& gi, bool bHwnd, size_t nMaxThreads );
 
+/*!
+	@brief 検索したファイルの合計(KB)に、ファイル 1 つの大きさを足した結果
+ */
+struct SAddFileSizeResult {
+	int		nWorkKB = 0;		//!< 足した後の合計(KB)。上限を超えるときは足す前のまま
+	bool	bOverLimit = false;	//!< 足すと上限を超える(早めに出力する時機)
+
+	//! 上限を超えるとき true
+	explicit operator bool() const noexcept { return bOverLimit; }
+};
+
+// 検索したファイルの合計(KB)に、ファイル 1 つの大きさを足す(上限を超えるなら足さない)
+SAddFileSizeResult AddFileSizeKB( int nWorkKB, ULONGLONG nFileSize );
+
 } // namespace grep
 
 //	Jun. 26, 2001 genta	正規表現ライブラリの差し替え

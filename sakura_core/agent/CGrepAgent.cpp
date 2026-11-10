@@ -253,6 +253,27 @@ std::vector<std::unique_ptr<CBregexp>> CreateWorkerRegexps( const CSearchStringP
 	return vRegexps;
 }
 
+/*!
+	@brief 検索したファイルの合計(KB)に、ファイル 1 つの大きさを足す
+
+	1KB に満たない端数は切り上げる。足すと上限(10000KB、約 10MB)を超えるなら足さずに、超えることを返す。
+	ファイルの大きさは 64 ビットのまま比べるので、2TB を超えるファイルでも合計は負にならず、あふれない。
+
+	@param[in]	nWorkKB		今までの合計(KB。0 以上、上限以下)
+	@param[in]	nFileSize	足すファイルの大きさ(バイト)
+	@return 足した後の合計(KB)と、上限を超えるか
+*/
+SAddFileSizeResult AddFileSizeKB( int nWorkKB, ULONGLONG nFileSize )
+{
+	constexpr ULONGLONG LIMIT_KB = 10000;
+	const ULONGLONG nFileSizeKB = nFileSize / 1024 + ( 0 != nFileSize % 1024 ? 1 : 0 );
+	const ULONGLONG nSumKB = static_cast<ULONGLONG>( nWorkKB ) + nFileSizeKB;
+	if( LIMIT_KB < nSumKB ){
+		return { nWorkKB, true };
+	}
+	return { static_cast<int>( nSumKB ), false };
+}
+
 } // namespace grep
 
 /*!
@@ -1201,10 +1222,11 @@ void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, ULO
 	// 2003.06.23 Moca リアルタイム表示のときは早めに表示
 	// データ検索のときファイルの合計が最大10MBを超えたら表示
 	if( out.pOutput->IsDrawing() && L'\0' != pszKey[0] ){
-		nWork += static_cast<int>( ( nFileSize + 1023 ) / 1024 );
-	}
-	if( out.pOutput->IsDrawing() && 10000 < nWork ){
-		nHitCountOld = -100; // 即表示
+		const auto result = grep::AddFileSizeKB( nWork, nFileSize );
+		nWork = result.nWorkKB;
+		if( result ){
+			nHitCountOld = -100; // 即表示
+		}
 	}
 	/* 結果出力 */
 	if( 0 < out.cmemMessage.GetStringLength() &&
