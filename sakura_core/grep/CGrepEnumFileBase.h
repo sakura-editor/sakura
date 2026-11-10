@@ -27,7 +27,7 @@
 #include "grep/CGrepEnumKeys.h"
 #include "util/string_ex.h"
 
-using PairGrepEnumItem = std::pair< std::wstring, DWORD >;
+using PairGrepEnumItem = std::pair< std::wstring, ULONGLONG >;	// 名前と、ファイルの大きさ(バイト)
 using VPGrepEnumItem = std::vector< PairGrepEnumItem >;
 
 class CGrepEnumOptions {
@@ -86,7 +86,7 @@ public:
 		return m_vpItems[ i ].first.c_str();
 	}
 
-	DWORD GetFileSizeLow( int i ) const {
+	ULONGLONG GetFileSize( int i ) const {
 		if( i < 0 || i >= GetCount() ) return 0;
 		return m_vpItems[ i ].second;
 	}
@@ -148,11 +148,13 @@ public:
 				if( pExceptItems && pExceptItems->IsExist( strFullPath ) ){
 					continue;
 				}
-				m_vpItems.emplace_back( strName, w32fd.nFileSizeLow );
+				// 4GB を超えるファイルもあるので、上位 32 ビットも合わせて持つ
+				const ULONGLONG nFileSize = ( static_cast<ULONGLONG>( w32fd.nFileSizeHigh ) << 32 ) | w32fd.nFileSizeLow;
+				m_vpItems.emplace_back( strName, nFileSize );
 				found++; // 2011.11.19
 				if( pExceptItems && nKeyDirLen ){
 					// フォルダーを含んだパスなら検索済みとして除外指定に追加する
-					pExceptItems->m_vpItems.emplace_back( strFullPath, w32fd.nFileSizeLow );
+					pExceptItems->m_vpItems.emplace_back( strFullPath, nFileSize );
 				}
 			}while( ::FindNextFile( handle, &w32fd ) );
 		}

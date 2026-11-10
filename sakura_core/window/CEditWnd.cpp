@@ -2798,59 +2798,67 @@ void CEditWnd::SetMenuFuncSel( HMENU hMenu, EFunctionCode nFunc, const WCHAR* sK
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, nFunc, sName, sKey );
 }
 
-STDMETHODIMP CEditWnd::DragEnter(
+IFACEMETHODIMP CDropTarget_CEditWnd::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt [[maybe_unused]],
 	LPDWORD pdwEffect
-) const
+)
 {
-	if( pDataObject == nullptr || pdwEffect == nullptr ){
-		return E_INVALIDARG;
-	}
+	if (!pDataObject) return E_UNEXPECTED;
 
-	// 右ボタンファイルドロップの場合だけ処理する
-	if( !((MK_RBUTTON & dwKeyState) && IsDataAvailable(pDataObject, CF_HDROP)) ){
-		*pdwEffect = DROPEFFECT_NONE;
-		return E_INVALIDARG;
-	}
+	if (!pdwEffect) return E_INVALIDARG;
 
-	// 印刷プレビューでは受け付けない
-	if( m_pPrintPreview ){
+	if (
+		// 印刷プレビューでは受け付けない
+		GetEditWnd().m_pPrintPreview ||
+		// 右ボタンファイルドロップの場合だけ処理する
+		!(MK_RBUTTON & dwKeyState) ||
+		!IsDataAvailable(pDataObject, CF_HDROP))
+	{
 		*pdwEffect = DROPEFFECT_NONE;
+
 		return E_INVALIDARG;
 	}
 
 	*pdwEffect &= DROPEFFECT_LINK;
+
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragOver(
+IFACEMETHODIMP CDropTarget_CEditWnd::DragOver(
 	DWORD dwKeyState [[maybe_unused]],
 	POINTL pt [[maybe_unused]],
 	LPDWORD pdwEffect
-) const
+)
 {
-	if( pdwEffect == nullptr )
-		return E_INVALIDARG;
+	if (!pdwEffect) return E_INVALIDARG;
 
 	*pdwEffect &= DROPEFFECT_LINK;
+
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::DragLeave() const
+IFACEMETHODIMP CDropTarget_CEditWnd::DragLeave()
 {
 	return S_OK;
 }
 
-STDMETHODIMP CEditWnd::Drop(LPDATAOBJECT pDataObject, [[maybe_unused]] DWORD dwKeyState, [[maybe_unused]] POINTL pt, LPDWORD pdwEffect)
+IFACEMETHODIMP CDropTarget_CEditWnd::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState [[maybe_unused]],
+	POINTL pt [[maybe_unused]],
+	LPDWORD pdwEffect
+)
 {
-	if( pDataObject == nullptr || pdwEffect == nullptr )
-		return E_INVALIDARG;
+	if (!pDataObject) return E_UNEXPECTED;
+
+	if (!pdwEffect) return E_INVALIDARG;
 
 	// ファイルドロップをアクティブビューで処理する
 	*pdwEffect &= DROPEFFECT_LINK;
-	return GetActiveView().PostMyDropFiles( pDataObject );
+
+	return GetEditWnd().GetActiveView().PostMyDropFiles( pDataObject );
 }
 
 /* ファイルがドロップされた */
