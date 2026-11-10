@@ -22,6 +22,8 @@
 #include "convert/convert_util2.h"
 #include "basis/primitive.h"
 
+#include <type_traits>
+
 /*!
 	内部的に認識する文字集合
 */
@@ -97,7 +99,8 @@ enum EMyJisEscseq {
 */
 
 // UTF7 文字を判別するテーブル
-extern const char TABLE_IsUtf7Direct[];
+extern const char TABLE_IsUtf7Direct[0x80];	// 配列サイズは内部仕様で固定。
+
 #if 0  // 未使用
 // JIS コードのエスケープシーケンス文字列データ
 extern const int TABLE_JISESCLEN[];
@@ -266,21 +269,29 @@ inline bool IsUtf8SurrogLow( const char* pS ) {
 	}
 	return false;
 }
+
+//! テーブル値取得用ユーティリティ関数(template関数はinline付けなくてもインライン扱いになる)
+template <typename CHAR_TYPE>
+char GetUtf7Set(const CHAR_TYPE c) {
+	using UnsignedCharType = std::make_unsigned_t<CHAR_TYPE>;
+	const auto index = static_cast<UnsignedCharType>(c);
+	if (0x80u <= index) return 0;
+	return TABLE_IsUtf7Direct[index];
+}
+
 //! UTF-7 Set D の文字か
 template< typename CHAR_TYPE >
-inline bool IsUtf7SetD( const CHAR_TYPE c ){
-	unsigned int c_ = c;
-	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 1 );
+bool IsUtf7SetD(const CHAR_TYPE c) {
+	return GetUtf7Set(c) == 1;
 }
 //! UTF-7 Set O の文字か
 template< typename CHAR_TYPE >
-inline bool IsUtf7SetO( const CHAR_TYPE c ){
-	unsigned int c_ = c;
-	return ( c_ < 0x80 && TABLE_IsUtf7Direct[c_] == 2 );
+bool IsUtf7SetO(const CHAR_TYPE c) {
+	return GetUtf7Set(c) == 2;
 }
 //! UTF-7 で直接エンコードされ得る文字か
 template< typename CHAR_TYPE >
-inline bool IsUtf7Direct( const CHAR_TYPE c ){
+bool IsUtf7Direct(const CHAR_TYPE c) {
 	return IsUtf7SetD( c ) || IsUtf7SetO( c );
 	// 2012.11.08 Set O も読み込めるように
 }
