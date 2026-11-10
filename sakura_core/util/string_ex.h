@@ -327,21 +327,33 @@ template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructi
  *
  * 必ずしも移行不要。
  *
- * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
  * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
  * @param[out] dst コピー先バッファ
  * @param[in] src コピー元文字列
+ * @param[in] count コピーする文字数
  * @return コピー先バッファ
  */
-template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
-constexpr WCHAR* wcscpy(
-	A1& dst,
-	const A2& src
+template <typename A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* dispatch_wcsncpy(
+	A1&& dst,
+	const A2& src,
+	size_t count
 )
 {
-	auto_strcpy_s(dst, src);
+	if constexpr (basis::WritableBuffer<std::remove_reference_t<A1>, WCHAR>) {
+		// 独自関数を呼び出す
+		auto_strncpy_s(dst, src, count);
 
-	return std::data(dst);
+		// 出力先バッファの先頭アドレスを返す
+		return std::data(dst);
+	}
+	else {
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Src{ src };
+
+		// Cランタイム関数を呼び出す
+		return ::wcsncpy(std::forward<A1>(dst), _Src.c_str(), count);
+	}
 }
 
 /*!
@@ -351,22 +363,107 @@ constexpr WCHAR* wcscpy(
  *
  * 必ずしも移行不要。
  *
- * @tparam[in] A1 コピー先バッファの型（固定長バッファとして扱える型）
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @param[in] count コピーする文字数
+ * @return コピー先バッファ
+ */
+template <typename A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* dispatch_wcsncat(
+	A1&& dst,
+	const A2& src,
+	size_t count
+)
+{
+	if constexpr (basis::WritableBuffer<std::remove_reference_t<A1>, WCHAR>) {
+		// 独自関数を呼び出す
+		auto_strncat_s(dst, src, count);
+
+		// 出力先バッファの先頭アドレスを返す
+		return std::data(dst);
+	}
+	else {
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Src{ src };
+
+		// Cランタイム関数を呼び出す
+		return ::wcsncat(std::forward<A1>(dst), _Src.c_str(), count);
+	}
+}
+
+/*!
+ * @brief 固定長バッファに文字列をコピーします。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要。
+ *
  * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
  * @param[out] dst コピー先バッファ
  * @param[in] src コピー元文字列
  * @return コピー先バッファ
  */
-template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
-constexpr WCHAR* wcscat(
-	A1& dst,
+template <typename A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* dispatch_wcscpy(
+	A1&& dst,
 	const A2& src
 )
 {
-	auto_strcat_s(dst, src);
+	if constexpr (basis::WritableBuffer<std::remove_reference_t<A1>, WCHAR>) {
+		// 独自関数を呼び出す
+		auto_strcpy_s(dst, src);
 
-	return std::data(dst);
+		// 出力先バッファの先頭アドレスを返す
+		return std::data(dst);
+	}
+	else {
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Src{ src };
+
+		// Cランタイム関数を呼び出す
+		return ::wcscpy(std::forward<A1>(dst), _Src.c_str());
+	}
 }
+
+/*!
+ * @brief 固定長バッファの末尾に文字列を追加します。
+ *
+ * バッファサイズを考慮しない実装を救済するためのもの。
+ *
+ * 必ずしも移行不要。
+ *
+ * @tparam[in] A2 コピー元文字列の型（NUL終端文字列を生成できる型）
+ * @param[out] dst コピー先バッファ
+ * @param[in] src コピー元文字列
+ * @return コピー先バッファ
+ */
+template <typename A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+constexpr WCHAR* dispatch_wcscat(
+	A1&& dst,
+	const A2& src
+)
+{
+	if constexpr (basis::WritableBuffer<std::remove_reference_t<A1>, WCHAR>) {
+		// 独自関数を呼び出す
+		auto_strcat_s(dst, src);
+
+		// 出力先バッファの先頭アドレスを返す
+		return std::data(dst);
+	}
+	else {
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Src{ src };
+
+		// Cランタイム関数を呼び出す
+		return ::wcscat(std::forward<A1>(dst), _Src.c_str());
+	}
+}
+
+#define wcsncpy(dst, src, count) dispatch_wcsncpy(dst, src, count)
+#define wcsncat(dst, src, count) dispatch_wcsncat(dst, src, count)
+#define wcscpy(dst, src) dispatch_wcscpy(dst, src)
+#define wcscat(dst, src) dispatch_wcscat(dst, src)
 
 //比較系
 inline int auto_memcmp (const ACHAR* p1, const ACHAR* p2, size_t count){ return amemcmp(p1,p2,count); }

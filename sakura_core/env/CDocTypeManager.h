@@ -23,7 +23,9 @@ public:
 	CTypeConfig GetDocumentTypeOfExt( const WCHAR* pszExt );		/* 拡張子を渡して、ドキュメントタイプ（数値）を取得する */
 	CTypeConfig GetDocumentTypeOfId( int id );
 
-	[[nodiscard]] bool GetTypeConfig(
+	//TODO: いつかコメントアウトを外す
+	//[[nodiscard]]
+	bool GetTypeConfig(
 		CTypeConfig		cDocumentType,
 		STypeConfig&	type
 	);
