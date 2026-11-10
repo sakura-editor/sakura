@@ -1377,6 +1377,19 @@ TEST(CopiedTextData, GetDataAnsiText)
 }
 
 /*!
+ * クリップボードデータのフォーマット一覧を取得するテスト。
+ */
+TEST(GetAvailableClipFormats, test001)
+{
+	const auto text = L"abc"s;
+	const auto target = CDataObject::make_instance(text);
+
+	const auto formats = GetAvailableClipFormats(target);
+
+	EXPECT_THAT(formats, ::testing::Contains(CF_UNICODETEXT));
+}
+
+/*!
  * CEnumFORMATETC のテスト。
  */
 TEST(CEnumFORMATETC, test001)
