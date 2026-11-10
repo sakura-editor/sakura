@@ -1662,16 +1662,24 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::DragEnter()\n" );
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
 	//編集禁止の場合はドロップを受け付けない
-	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
+	if (!GetDocument()->IsEditable()) return E_UNEXPECTED;
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
+	if (!pDataObject)
+		return E_UNEXPECTED;
+
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	m_cfDragData = GetAvailableClipFormat( pDataObject );
@@ -1696,11 +1704,18 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( TRUE );
 
-	DragOver( dwKeyState, pt, pdwEffect );
-	return S_OK;
+	return DragOver(
+		dwKeyState,
+		pt,
+		pdwEffect
+	);
 }
 
-STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::DragOver()\n" );
 
@@ -1708,7 +1723,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
 	OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
 
-	if ( pdwEffect == nullptr )
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
@@ -1726,7 +1741,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::DragLeave( void )
+IFACEMETHODIMP CEditView::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 	/* 選択テキストのドラッグ中か */
@@ -1745,7 +1760,12 @@ STDMETHODIMP CEditView::DragLeave( void )
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
 	BOOL		bBoxData;
@@ -1765,7 +1785,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( ::GetActiveWindow() == nullptr )
 		OnKillFocus();
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
+	if (!pDataObject)
+		return E_UNEXPECTED;
+
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	CLIPFORMAT cf;

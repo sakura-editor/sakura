@@ -2053,7 +2053,7 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_THAT(hDrop, NotNull());
 
 	//DragEnterのパラメーターエラー仕様をチェックする
-	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
 	//DragOverのパラメーターエラー仕様をチェックする
@@ -2066,7 +2066,7 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
 
 	//Dropのパラメーターエラー仕様をチェックする
-	EXPECT_HRESULT_EQ(target->Drop(nullptr, dwKeyState, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_HRESULT_EQ(target->Drop(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
 	//DragEnter～DragOverを実行させる(1回目)
