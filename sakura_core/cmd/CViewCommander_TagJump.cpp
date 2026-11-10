@@ -612,7 +612,6 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 
 	{
-		DWORD	read_cnt;
 		DWORD	new_cnt;
 		char	work[1024];
 		bool	bLoopFlag = true;
@@ -662,8 +661,11 @@ bool CViewCommander::Command_TagsMake( void )
 					{
 						new_cnt = int(std::size(work)) - 2;
 					}
-					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, nullptr );	//パイプから読み出し
-					if( read_cnt == 0 )
+
+					DWORD read_cnt = 0;
+					if (!::ReadFile(hStdOutRead, work, new_cnt, &read_cnt, nullptr) ||
+						read_cnt == 0 ||
+						std::size(work) <= read_cnt)
 					{
 						continue;
 					}
@@ -679,7 +681,7 @@ bool CViewCommander::Command_TagsMake( void )
 
 						cDlgCancel.CloseDialog( TRUE );
 
-						work[ read_cnt ] = L'\0';	// Nov. 15, 2003 genta 表示用に0終端する
+						work[read_cnt] = L'\0';	// Nov. 15, 2003 genta 表示用に0終端する
 						WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD06), work ); // 2003.11.09 じゅうじ
 
 						return true;
