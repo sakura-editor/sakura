@@ -1481,16 +1481,17 @@ struct TabBarInitializationTest : public ::testing::Test, public EditorTestSuite
 	 */
 	void TearDown() override
 	{
+		// ウィンドウ破棄前に共通設定を復元する
+		if (savedCommon) {
+			GetDllShareData().m_Common = *savedCommon;
+		}
 		// 次のテストで再作成できるよう、作成したウィンドウとクラス登録を解放する
 		if (pcEditWnd && ::IsWindow(pcEditWnd->GetHwnd())) {
 			::DestroyWindow(pcEditWnd->GetHwnd());
 			EXPECT_TRUE(::UnregisterClassW(GSTR_EDITWINDOWNAME, G_AppInstance()));
 			EXPECT_TRUE(::UnregisterClassW(L"SplitterWndClass", G_AppInstance()));
 		}
-		// 共通設定を復元してから編集オブジェクトとOLEを解放する
-		if (savedCommon) {
-			GetDllShareData().m_Common = *savedCommon;
-		}
+		// 編集オブジェクトとOLEを解放する
 		if (editorPrepared) {
 			TearDownEditor();
 		}
