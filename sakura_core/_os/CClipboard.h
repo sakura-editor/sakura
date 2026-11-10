@@ -14,6 +14,15 @@
 
 #include "mem/CNativeW.h"
 
+/*!
+ * @brief クリップボードの形式を指定するための定数
+ *
+ * 対応フォーマット全部、の意。
+ *
+ * クリップボードフォーマット識別子は 16bit 値なので、有効値と被ることはない。
+ */
+constexpr auto CF_ANY = static_cast<UINT>(-1);
+
 class CEol;
 class CStringRef;
 
@@ -68,11 +77,11 @@ public:
 	void	Close(); //!< クリップボードを閉じる
 
 	void Empty() const; //!< クリップボードを空にする
-	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
+	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = CF_ANY);   //!< テキストを設定する
 	bool SetHtmlText(const CNativeW& cmemBUf);
-	bool GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
+	bool GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
+	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
+	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
 	bool IsIncludeClipboardFormat(const wchar_t* pFormatName);
 	bool SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
