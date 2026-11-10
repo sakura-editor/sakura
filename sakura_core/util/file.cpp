@@ -229,6 +229,12 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 	return pszPath;
 }
 
+WCHAR* GetFileTitlePointer(WCHAR* pszPath)
+{
+	const auto p = GetFileTitlePointer(const_cast<const WCHAR*>(pszPath));
+	return pszPath + (p - pszPath);
+}
+
 /*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
 	@author Moca
 	@date 2003.06.23

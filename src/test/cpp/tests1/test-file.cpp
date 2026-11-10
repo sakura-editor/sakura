@@ -1279,7 +1279,21 @@ TEST(file, GetFileTitlePointer)
 	EXPECT_STREQ(L"test.txt", GetFileTitlePointer(L"test.txt"));
 
 	// 渡したパスが無効な場合は落ちます。
-	EXPECT_DEATH({ GetFileTitlePointer(nullptr); }, ".*");
+	EXPECT_DEATH({ GetFileTitlePointer(static_cast<const WCHAR*>(nullptr)); }, ".*");
+}
+
+TEST(file, DirUp)
+{
+	const auto verify = [](std::wstring path, std::wstring_view expected) {
+		EXPECT_THAT(CDlgTagJumpList::DirUp(path.data()), StrEq(std::wstring(expected)));
+	};
+
+	verify(LR"(C:\dir\subdir\)", LR"(C:\dir\)");
+	verify(LR"(C:\dir)", LR"(C:\)");
+	verify(LR"(C:\)", LR"(C:\)");
+	verify(L"relative", L"relative");
+	verify(L"", L"");
+	verify(LR"(\\host\share\dir\)", LR"(\\host\share\)");
 }
 
 /*!
