@@ -1673,9 +1673,9 @@ WCHAR* CopyDirDir(
 WCHAR* CDlgTagJumpList::DirUp( WCHAR* dir )
 {
 	CutLastYenFromDirectoryPath( dir );
-	const WCHAR *p = GetFileTitlePointer(dir); //最後の\の次の文字を取得 last_index_of('\\') + 1;
-	if( 0 < p - dir){
-		dir[p - dir] = '\0';
+	WCHAR* p = GetFileTitlePointer(dir); //最後の\の次の文字を取得 last_index_of('\\') + 1;
+	if( dir < p ){
+		*p = L'\0';
 	}
 	return dir;
 }
