@@ -101,6 +101,9 @@ constexpr errno_t strncpy_s(
 		count = text.length();
 	}
 
+	// コピー元の終端を越えて読み取らないよう、実際にコピーする文字数を制限する
+	count = std::min(count, text.length());
+
 	// 切り詰めが発生したかどうかを記録するフラグ
 	bool truncated = false;
 

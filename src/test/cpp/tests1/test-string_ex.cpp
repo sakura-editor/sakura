@@ -45,8 +45,28 @@ constexpr bool FixedArrayWcscatUsesSafeOverload()
 	return std::wstring_view(buffer) == L"abcDEF";
 }
 
+constexpr bool FixedArrayWcsncpyAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8]{};
+
+	wcsncpy(buffer, L"abc", std::size(buffer));
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+constexpr bool FixedArrayWcsncatAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8] = L"a";
+
+	wcsncat(buffer, L"bc", std::size(buffer) - 2);
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
 static_assert(FixedArrayWcscpyUsesSafeOverload());
 static_assert(FixedArrayWcscatUsesSafeOverload());
+static_assert(FixedArrayWcsncpyAcceptsCountLargerThanSource());
+static_assert(FixedArrayWcsncatAcceptsCountLargerThanSource());
 
 TEST(string_ex, FixedArrayWcscpyTruncates)
 {
