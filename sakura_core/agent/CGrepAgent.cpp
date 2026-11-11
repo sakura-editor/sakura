@@ -612,17 +612,16 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_bDoing_UndoRedo		= true;
 
 	/* アンドゥバッファの処理 */
-	if( nullptr != pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk ){	/* 操作ブロック */
+	if( nullptr != pcViewDst->GetCommander().GetOpeBlk() ){	/* 操作ブロック */
 //@@@2002.2.2 YAZAKI NULLじゃないと進まないので、とりあえずコメント。＆NULLのときは、new COpeBlkする。
 //		while( NULL != m_pcOpeBlk ){}
 //		delete m_pcOpeBlk;
 //		m_pcOpeBlk = NULL;
 	}
 	else {
-		pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk = new COpeBlk;
-		pcViewDst->GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
+		pcViewDst->GetCommander().SetOpeBlk(new COpeBlk);
 	}
-	pcViewDst->GetDocument()->m_cDocEditor.m_pcOpeBlk->AddRef();
+	pcViewDst->GetCommander().GetOpeBlk()->AddRef();
 
 	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
 	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
