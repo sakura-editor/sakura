@@ -709,7 +709,11 @@ struct TWinMainTest : public T, public window::UiaTestSuite {
 	 * テスト内で使うためのラッパー。
 	 * 関数が呼出元に返らないことをマークしたバージョン。
 	 */
-	static NORETURN void StartEditorProcess(const std::wstring& command) {
+	[[noreturn]]
+	static void StartEditorProcess(
+		const std::wstring& command
+	)
+	{
 		exit(testing::StartEditorProcess(command));
 	}
 
