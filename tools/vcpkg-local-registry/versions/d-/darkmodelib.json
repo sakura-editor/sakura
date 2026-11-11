@@ -2,8 +2,8 @@
     "versions": [
         {
           "version": "0.130.0",
-          "port-version": 0,
+          "port-version": 1,
           "path": "$/ports/darkmodelib"
         }
     ]
-}  
+}

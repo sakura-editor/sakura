@@ -380,20 +380,35 @@ int swprintf_s(
  * @return 書き込まれた文字数
  * @retval < 0 エラー発生
  */
-template <basis::WritableBuffer<WCHAR> A, typename... Args>
-int _swprintf(
-	A& buf,
+template <typename A, typename... Args>
+int dispatch_swprintf(
+	A&& buf,
 	_In_z_ _Printf_format_string_ const WCHAR* format,
 	const Args&... args
 )
 {
-	// パラメータ展開で転送する
-	return cxx::_sprintf_s(
-		buf,
-		format,
-		std::as_const(args)...
-	);
+	if constexpr (basis::WritableBuffer<std::remove_reference_t<A>, WCHAR>) {
+		// 独自関数を呼び出す
+		return cxx::_sprintf_s(
+			buf,
+			format,
+			std::as_const(args)...
+		);
+	}
+	else {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!buf) throw std::invalid_argument("buf is required.");
+
+		// Cランタイム関数を呼び出す
+		return ::_swprintf(
+			std::forward<A>(buf),
+			format,
+			std::as_const(args)...
+		);
+	}
 }
+
+#define _swprintf(...) dispatch_swprintf(__VA_ARGS__)
 
 /*!
  * @brief C-Styleのフォーマット文字列を使ってデータを文字列化する。

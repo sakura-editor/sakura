@@ -1,7 +1,7 @@
 ﻿{
   "name": "darkmodelib",
   "version": "0.130.0",
-  "port-version": 0,
+  "port-version": 1,
   "license": "MPL-2.0",
   "description": "Dark mode support library for Win32 applications",
   "homepage": "https://github.com/ozone10/darkmodelib",
