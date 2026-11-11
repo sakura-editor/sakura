@@ -35,6 +35,11 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
+void CEditView::EnterDragMode()
+{
+	_SetDragMode(true);
+}
+
 IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
@@ -68,6 +73,16 @@ IFACEMETHODIMP CDropTarget::Drop(
 )
 {
 	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
+}
+
+void CEditView::LeaveDragMode()
+{
+	_SetDragMode(false);
+
+	// 非アクティブ時は表示状態を非アクティブに戻す
+	if (!::GetActiveWindow()) {
+		OnKillFocus();
+	}
 }
 
 /* static */ DWORD CDropSource::DoDragDrop(

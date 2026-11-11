@@ -1701,8 +1701,8 @@ IFACEMETHODIMP CEditView::DragEnter(
 	// ドラッグデータは矩形か
 	m_bDragBoxData = IsDataAvailable( pDataObject, CDataObject::cfColumnSelect );
 
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( TRUE );
+	// ドラッグモードを開始する
+	EnterDragMode();
 
 	return DragOver(
 		dwKeyState,
@@ -1744,18 +1744,15 @@ IFACEMETHODIMP CEditView::DragOver(
 IFACEMETHODIMP CEditView::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( FALSE );
+
+	// ドラッグモードを終了する
+	LeaveDragMode();
 
 	// DragEnter時のカーソル位置を復元	// 2007.12.09 ryoji
 	// ※範囲選択中のときに選択範囲とカーソルが分離すると変だから
 	GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
 	GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
 	RedrawAll();	// ルーラー、アンダーライン、カーソル位置表示更新
-
-	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == nullptr )
-		OnKillFocus();
 
 	return S_OK;
 }
@@ -1778,12 +1775,8 @@ IFACEMETHODIMP CEditView::Drop(
 	CLayoutRange sSelectBgn_Old;
 	CLayoutRange sSelect_Old;
 
-	/* 選択テキストのドラッグ中か */
-	_SetDragMode( FALSE );
-
-	// 非アクティブ時は表示状態を非アクティブに戻す	// 2007.12.09 ryoji
-	if( ::GetActiveWindow() == nullptr )
-		OnKillFocus();
+	// ドラッグモードを終了する
+	LeaveDragMode();
 
 	if (!pDataObject)
 		return E_UNEXPECTED;

@@ -367,6 +367,9 @@ public: /* テスト用にアクセス属性を変更 */
 	DWORD TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect );
 	bool IsDragSource( void );
 
+	void EnterDragMode();
+	void LeaveDragMode();
+
 	void _SetDragMode(BOOL b)
 	{
 		m_bDragMode = b;
