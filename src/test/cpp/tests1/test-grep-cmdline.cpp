@@ -2542,23 +2542,23 @@ TEST(GrepWorkerProgressTest, FollowsCancelFlag)
 	EXPECT_THAT(progress.IsCancelRequested(), IsTrue());
 }
 
-//! 検索したファイルの合計(KB)は、1KB に満たない端数を切り上げて足し、10000KB を超えるなら足さずに知らせる
+//! 検索したファイルの合計(KB)は、1KB に満たない端数を切り上げて足し、10000KB を超えるなら足さずに false を返す
 TEST(GrepFileSizeKBTest, AddsUntilLimit)
 {
 	constexpr ULONGLONG TB = 1024ull * 1024 * 1024 * 1024;
 	const auto Add = [](int nWorkKB, ULONGLONG nFileSize) {
-		const auto result = grep::AddFileSizeKB(nWorkKB, nFileSize);
-		return std::make_pair(result.nWorkKB, bool(result));
+		const bool bAdded = grep::AddFileSizeKB(nWorkKB, nFileSize);
+		return std::make_pair(nWorkKB, bAdded);
 	};
-	EXPECT_THAT(Add(0, 0), Eq(std::make_pair(0, false)));
-	EXPECT_THAT(Add(0, 1), Eq(std::make_pair(1, false)));
-	EXPECT_THAT(Add(5, 1024), Eq(std::make_pair(6, false)));
-	EXPECT_THAT(Add(5, 1025), Eq(std::make_pair(7, false)));
-	EXPECT_THAT(Add(9999, 1024), Eq(std::make_pair(10000, false)));	// ちょうど上限までは足す
-	EXPECT_THAT(Add(10000, 1), Eq(std::make_pair(10000, true)));	// 超えるなら足さない
-	EXPECT_THAT(Add(0, 10000 * 1024ull + 1), Eq(std::make_pair(0, true)));
-	EXPECT_THAT(Add(0, 2 * TB), Eq(std::make_pair(0, true)));	// int にすると負になる大きさ
-	EXPECT_THAT(Add(9999, ~0ull), Eq(std::make_pair(9999, true)));	// 64 ビットの上限でもあふれない
+	EXPECT_THAT(Add(0, 0), Eq(std::make_pair(0, true)));
+	EXPECT_THAT(Add(0, 1), Eq(std::make_pair(1, true)));
+	EXPECT_THAT(Add(5, 1024), Eq(std::make_pair(6, true)));
+	EXPECT_THAT(Add(5, 1025), Eq(std::make_pair(7, true)));
+	EXPECT_THAT(Add(9999, 1024), Eq(std::make_pair(10000, true)));	// ちょうど上限までは足す
+	EXPECT_THAT(Add(10000, 1), Eq(std::make_pair(10000, false)));	// 超えるなら足さない
+	EXPECT_THAT(Add(0, 10000 * 1024ull + 1), Eq(std::make_pair(0, false)));
+	EXPECT_THAT(Add(0, 2 * TB), Eq(std::make_pair(0, false)));	// int にすると負になる大きさ
+	EXPECT_THAT(Add(9999, ~0ull), Eq(std::make_pair(9999, false)));	// 64 ビットの上限でもあふれない
 }
 
 //! 編集中のテキストの検索(:HWND:)では、ワーカーごとの正規表現を作らない(直列のまま)
