@@ -8,7 +8,9 @@
 
 #include "StdAfx.h"
 #include <shellapi.h>// HDROP
-#include "CClipboard.h"
+#include "_os/CClipboard.h"
+
+#include "_os/CDropTarget.h"
 #include "doc/CEditDoc.h"
 #include "charset/CCodeMediator.h"
 #include "charset/CCodeFactory.h"
@@ -169,7 +171,7 @@ bool CClipboard::SetText(
 	// 矩形選択を示すダミーデータ
 	HGLOBAL hgClipMSDEVColumn = nullptr;
 	if( bColumnSelect ){
-		uFormat = ::RegisterClipboardFormatW(L"MSDEVColumnSelect");
+		uFormat = CDataObject::cfColumnSelect;
 		if( 0 != uFormat ){
 			hgClipMSDEVColumn = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -187,7 +189,7 @@ bool CClipboard::SetText(
 	/* 行選択を示すダミーデータ */
 	HGLOBAL hgClipMSDEVLine = nullptr;		// VS2008 以前の形式
 	if( bLineSelect ){
-		uFormat = ::RegisterClipboardFormatW(L"MSDEVLineSelect");
+		uFormat = CDataObject::cfLineSelect1;
 		if( 0 != uFormat ){
 			hgClipMSDEVLine = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -203,7 +205,7 @@ bool CClipboard::SetText(
 	}
 	HGLOBAL hgClipMSDEVLine2 = nullptr;	// VS2010 形式
 	if( bLineSelect ){
-		uFormat = ::RegisterClipboardFormatW(L"VisualStudioEditorOperationsLineCutCopyClipboardTag");
+		uFormat = CDataObject::cfLineSelect2;
 		if( 0 != uFormat ){
 			hgClipMSDEVLine2 = GlobalAlloc(
 				GMEM_MOVEABLE | GMEM_DDESHARE,
@@ -317,7 +319,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 
 	//サクラ形式のデータがあれば取得
 	CLIPFORMAT uFormatSakuraClip = CClipboard::GetSakuraFormat();
-	if( (uGetFormat == -1 || uGetFormat == uFormatSakuraClip)
+	if( (uGetFormat == CF_ANY || uGetFormat == uFormatSakuraClip)
 		&& IsClipboardFormatAvailable( uFormatSakuraClip ) ){
 		HGLOBAL hSakura = GetClipboardData( uFormatSakuraClip );
 		if (hSakura != nullptr) {
@@ -340,7 +342,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 	//UNICODE形式のデータがあれば取得
 	// From Here 2005/05/29 novice UNICODE TEXT 対応処理を追加
 	HGLOBAL hUnicode = nullptr;
-	if( uGetFormat == -1 || uGetFormat == CF_UNICODETEXT ){
+	if( uGetFormat == CF_ANY || uGetFormat == CF_UNICODETEXT ){
 		hUnicode = GetClipboardData( CF_UNICODETEXT );
 	}
 	if( hUnicode != nullptr ){
@@ -355,7 +357,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 
 	//OEMTEXT形式のデータがあれば取得
 	HGLOBAL hText = nullptr;
-	if( uGetFormat == -1 || uGetFormat == CF_OEMTEXT ){
+	if( uGetFormat == CF_ANY || uGetFormat == CF_OEMTEXT ){
 		hText = GetClipboardData( CF_OEMTEXT );
 	}
 	if( hText != nullptr ){
@@ -374,7 +376,7 @@ bool CClipboard::GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSe
 
 	/* 2008.09.10 bosagami パス貼り付け対応 */
 	//HDROP形式のデータがあれば取得
-	if( (uGetFormat == -1 || uGetFormat == CF_HDROP)
+	if( (uGetFormat == CF_ANY || uGetFormat == CF_HDROP)
 		&& IsClipboardFormatAvailable(CF_HDROP) ){
 		HDROP hDrop = (HDROP)GetClipboardData(CF_HDROP);
 		if(hDrop != nullptr){
@@ -697,7 +699,7 @@ CLIPFORMAT CClipboard::GetSakuraFormat()
 		以前のバージョンのクリップボードデータと競合しないように
 		フォーマット名を変更
 	*/
-	return (CLIPFORMAT)::RegisterClipboardFormat( L"SAKURAClipW" );
+	return CDataObject::cfSakuraClip;
 }
 
 //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
