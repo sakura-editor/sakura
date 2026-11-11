@@ -53,7 +53,7 @@ bool CEditView::TagJumpSub(
 	}
 
 	// 参照元ウィンドウ保存
-	tagJump.hwndReferer = GetMainWindow();
+	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
 
 	//	Feb. 17, 2007 genta 実行ファイルからの相対指定の場合は
 	//	予め絶対パスに変換する．(キーワードヘルプジャンプで用いる)
@@ -71,14 +71,14 @@ bool CEditView::TagJumpSub(
 			GetInidirOrExedir( szJumpToFile, pszFileName );
 		}
 		else {
-			::wcsncpy_s(szJumpToFile, pszFileName, _TRUNCATE);
+			wcscpy( szJumpToFile, pszFileName );
 		}
 
 		/* ロングファイル名を取得する */
 		WCHAR	szWork[1024];
 		if( FALSE != ::GetLongFileName( szJumpToFile, szWork ) )
 		{
-			::wcsncpy_s(szJumpToFile, szWork, _TRUNCATE);
+			wcscpy( szJumpToFile, szWork );
 		}
 	}
 
@@ -130,14 +130,14 @@ bool CEditView::TagJumpSub(
 		EditInfo	inf;
 		bool		bSuccess;
 
-		::wcsncpy_s(inf.m_szPath, szJumpToFile, _TRUNCATE);
+		wcscpy( inf.m_szPath, szJumpToFile );
 		inf.m_ptCursor.Set(CLogicInt(ptJumpTo.x - 1), CLogicInt(ptJumpTo.y - 1));
 		inf.m_nViewLeftCol = CLayoutInt(-1);
 		inf.m_nViewTopLine = CLayoutInt(-1);
 		inf.m_nCharCode    = CODE_AUTODETECT;
 
 		bSuccess = CControlTray::OpenNewEditor2(
-			GetAppInstance(),
+			G_AppInstance(),
 			this->GetHwnd(),
 			&inf,
 			false,	/* ビューモードか */
@@ -207,7 +207,7 @@ open_c:;
 	_wsplitpath_s( GetDocument()->m_cDocFile.GetFilePath(), szDrive, szDir, szFname, szExt );
 
 	for( i = 0; i < open_extno; i++ ){
-		::_wmakepath_s( szPath, szDrive, szDir, szFname, open_ext[i] );
+		_wmakepath( szPath, szDrive, szDir, szFname, open_ext[i] );
 		if( !fexist(szPath) ){
 			if( i < open_extno - 1 )
 				continue;
@@ -233,7 +233,7 @@ open_c:;
 		sLoadInfo.eCharCode = GetDocument()->GetDocumentEncoding();
 		sLoadInfo.bViewMode = false;
 		CControlTray::OpenNewEditor(
-			GetAppInstance(),
+			G_AppInstance(),
 			this->GetHwnd(),
 			sLoadInfo,
 			nullptr,
@@ -267,7 +267,7 @@ open_c:;
 		GetCaret().GetCaretLayoutPos(),
 		&tagJump.point
 	);
-	tagJump.hwndReferer = GetMainWindow();
+	tagJump.hwndReferer = CEditWnd::getInstance()->GetHwnd();
 	// タグジャンプ情報の保存
 	CTagJumpManager().PushTagJump(&tagJump);
 	return TRUE;
@@ -370,13 +370,15 @@ BOOL CEditView::ChangeCurRegexp( bool bRedrawIfChanged )
 {
 	bool	bChangeState = false;
 
-	if( (GetDllShareData().m_Common.m_sSearch.m_bInheritKeyOtherView
-			&& m_nCurSearchKeySequence < GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence)
-		|| 0 == m_strCurSearchKey.size() ){
+	if (const auto& sSearch = GetDllShareData().m_Common.m_sSearch;
+		m_strCurSearchKey.empty() ||
+		sSearch.m_bInheritKeyOtherView &&
+		m_nCurSearchKeySequence < sSearch.m_nSearchKeySequence)
+	{
 		// 履歴の検索キーに更新
-		m_strCurSearchKey = GetDllShareData().m_sSearchKeywords.m_aSearchKeys[0];		// 検索文字列
-		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;// 検索／置換  オプション
-		m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
+		m_strCurSearchKey = CRecentSearch().GetItemText(0);		// 検索文字列
+		m_sCurSearchOption = sSearch.m_sSearchOption;// 検索／置換  オプション
+		m_nCurSearchKeySequence = sSearch.m_nSearchKeySequence;
 		bChangeState = true;
 	}else if( m_bCurSearchUpdate ){
 		bChangeState = true;
@@ -472,4 +474,15 @@ HWND CEditView::StartProgress()
 		ApiWrap::Progress_SetPos( hwndProgress, 0 );
 	}
 	return hwndProgress;
+}
+
+bool CEditView::RefreshSearchPattern()
+{
+	return m_sSearchPattern.SetPattern(
+		GetHwnd(),
+		m_strCurSearchKey.c_str(),
+		m_strCurSearchKey.size(),
+		m_sCurSearchOption,
+		&m_CurRegexp
+	);
 }

@@ -693,7 +693,7 @@ static bool AppendHTMLColor(
 					WCHAR szColor[60];
 					DWORD dwTEXTColor = (GetRValue(sColorAttrLast.m_cTEXT) << 16) + (GetGValue(sColorAttrLast.m_cTEXT) << 8) + GetBValue(sColorAttrLast.m_cTEXT);
 					DWORD dwBACKColor = (GetRValue(sColorAttrLast.m_cBACK) << 16) + (GetGValue(sColorAttrLast.m_cBACK) << 8) + GetBValue(sColorAttrLast.m_cBACK);
-					::_snwprintf_s(szColor, _TRUNCATE, L"<span style=\"color:#%06x;background-color:#%06x\">", dwTEXTColor, dwBACKColor);
+					_swprintf( szColor, L"<span style=\"color:#%06x;background-color:#%06x\">", dwTEXTColor, dwBACKColor);
 					cmemClip.AppendString( szColor );
 				}
 			}
@@ -727,7 +727,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	  || GetSelect().GetFrom() == GetSelect().GetTo() ){
 		return;
 	}
-	const STypeConfig& type = GetTypeConfig();
+	const STypeConfig& type = GetDocument()->m_cDocType.GetDocumentAttribute();
 	bool bLineNumLayout = GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy
 		|| m_pCommanderView->GetSelectionInfo().IsBoxSelecting();
 	CLayoutRect rcSel;
@@ -824,7 +824,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		}
 		nLineNumberMaxLen = i + 1; // "%d:"
 		cmemNullLine.AppendString(L":");
-		::_snwprintf_s(szLineFormat, _TRUNCATE, L"%%%dd:", i);
+		_swprintf(szLineFormat, L"%%%dd:", i);
 	}
 	if( bLineNumLayout ){
 		nBuffSize += (Int)(nLineNumberMaxLen * (rcSel.bottom - rcSel.top + 1));
@@ -837,7 +837,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 		COLORREF cBACK = type.m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 		DWORD dwBACKColor = (GetRValue(cBACK) << 16) + (GetGValue(cBACK) << 8) + GetBValue(cBACK);
 		WCHAR szBuf[50];
-		::_snwprintf_s(szBuf, _TRUNCATE, L"<pre style=\"background-color:#%06x\">", dwBACKColor);
+		_swprintf(szBuf, L"<pre style=\"background-color:#%06x\">", dwBACKColor);
 		cmemClip.AppendString( szBuf );
 	}
 	CLayoutInt nLayoutLineNum = rcSel.top;
@@ -923,12 +923,12 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 							cmemClip.AppendNativeData(cmemNullLine);
 						}
 					}else{
-						int ret = ::_snwprintf_s(szLineNum, _TRUNCATE, szLineFormat, int(nLineNum) + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}else{
 					if( bLineNumLayout || pcLayout->GetLogicOffset() == 0 ){
-						int ret = ::_snwprintf_s(szLineNum, _TRUNCATE, szLineFormat, int(nLayoutLineNum) + 1);
+						int ret = _swprintf(szLineNum, szLineFormat, nLayoutLineNum + 1);
 						cmemClip.AppendString(szLineNum, ret);
 					}
 				}
@@ -1015,7 +1015,7 @@ void CViewCommander::Command_COPY_COLOR_HTML(bool bLineNumber)
 	}
 	cmemClip.AppendString(L"</pre>", 6);
 
-	CClipboard cClipboard( GetMainWindow() );
+	CClipboard cClipboard( GetEditWindow()->GetHwnd() );
 	if(!cClipboard){
 		return;
 	}
@@ -1159,7 +1159,7 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 	CNativeW		cMemKeyList;
 
 	CKeyBind::CreateKeyBindList(
-		GetAppInstance(),
+		G_AppInstance(),
 		GetDllShareData().m_Common.m_sKeyBind.m_nKeyNameArrNum,
 		GetDllShareData().m_Common.m_sKeyBind.m_pKeyNameArr,
 		cMemKeyList,
@@ -1169,5 +1169,5 @@ void CViewCommander::Command_CREATEKEYBINDLIST( void )
 
 	// Windowsクリップボードにコピー
 	//2004.02.17 Moca 関数化
-	SetClipboardText( GetEditWnd().m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
+	SetClipboardText( CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd(), cMemKeyList.GetStringPtr(), cMemKeyList.GetStringLength() );
 }

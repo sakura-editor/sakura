@@ -18,7 +18,7 @@
 	Copyright (C) 2009, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
 	Copyright (C) 2012, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -26,7 +26,10 @@
 
 #include "StdAfx.h"
 #include "env/CShareData.h"
+
+#include "basis/make_initialization_error.hpp"
 #include "env/DLLSHAREDATA.h"
+#include "env/CFileNameManager.h"
 #include "env/CShareData_IO.h"
 #include "env/CSakuraEnvironment.h"
 #include "doc/CDocListener.h" // SLoadInfo
@@ -73,22 +76,8 @@ CShareData::CShareData() = default;
 */
 CShareData::~CShareData()
 {
-	if( m_pShareData ){
-		/* プロセスのアドレス空間から､ すでにマップされているファイル ビューをアンマップします */
-		::UnmapViewOfFile( m_pShareData );
-		m_pShareData = nullptr;
-	}
-	if( m_hFileMap ){
-		CloseHandle( m_hFileMap );
-	}
-	if( m_pvTypeSettings ){
-		for( int i = 0; i < (int)m_pvTypeSettings->size(); i++ ){
-			delete (*m_pvTypeSettings)[i];
-			(*m_pvTypeSettings)[i] = nullptr;
-		}
-		delete m_pvTypeSettings;
-		m_pvTypeSettings = nullptr;
-	}
+	CFileNameManager::resetInstance();
+	CAppNodeManager::resetInstance();
 }
 
 static CMutex g_cMutexShareWork( FALSE, GSTR_MUTEX_SAKURA_SHAREWORK );
@@ -97,60 +86,56 @@ CMutex& CShareData::GetMutexShareWork(){
 	return g_cMutexShareWork;
 }
 
-//! CShareDataクラスの初期化処理
 /*!
-	CShareDataクラスを利用する前に必ず呼び出すこと。
-
-	@retval true 初期化成功
-	@retval false 初期化失敗
-
-	@note 既に存在する共有メモリのバージョンがこのエディタが使うものと
-	異なる場合は致命的エラーを防ぐためにfalseを返します。CProcess::Initialize()
-	でInit()に失敗するとメッセージを出してエディタの起動を中止します。
-
-	@date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
-*/
-bool CShareData::InitShareData()
+ * @brief CShareDataクラスの初期化処理
+ *
+ * 共有メモリを新規作成して初期化する。
+ * 他プロセスが作成した共有メモリが残っていても上書きする。
+ *
+ * コントロールプロセス専用。
+ *
+ * @note ここで初期化した共有メモリは、後続のINI設定ファイルの読み込み処理で上書きされる。
+ *
+ * @date 2018/06/01 仕様変更 https://github.com/sakura-editor/sakura/issues/29
+ */
+void CShareData::InitShareData()
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"CShareData::InitShareData" );
 
 	m_hwndTraceOutSource = nullptr;	// 2006.06.26 ryoji
 
-	/* ファイルマッピングオブジェクト */
+	// ファイルマッピングオブジェクトを作成する
+	try
 	{
 		const auto pszProfileName = GetProfileName();
 		std::wstring strShareDataName = GSTR_SHAREDATA;
 		strShareDataName += pszProfileName;
-		m_hFileMap = ::CreateFileMapping(
+		m_FileMapping = FileMapping::CreateFileMappingW(
 			INVALID_HANDLE_VALUE,	//	Sep. 6, 2003 wmlhq
 			nullptr,
 			PAGE_READWRITE | SEC_COMMIT,
-			0,
-			sizeof( DLLSHAREDATA ),
-			strShareDataName.c_str()
+			ULARGE_INTEGER{ sizeof( DLLSHAREDATA ) },
+			strShareDataName
 		);
 	}
-	if( nullptr == m_hFileMap ){
-		::MessageBox(
-			nullptr,
-			L"CreateFileMapping()に失敗しました",
-			L"予期せぬエラー",
-			MB_OK | MB_APPLMODAL | MB_ICONSTOP
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateFileMapping()に失敗しました"
+			LS(STR_ERR_CSHAREDATA01)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
 		);
-		return false;
 	}
 
-	if( GetLastError() != ERROR_ALREADY_EXISTS ){
-		/* オブジェクトが存在していなかった場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
-		);
-		CreateTypeSettings();
+	// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+	m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
+
+	{
+		// マップされたビューにDLLSHAREDATA構造体を配置します
+		m_pShareData = new (m_MappedData.get()) DLLSHAREDATA;
 
 		m_pShareData->m_vStructureVersion = uShareDataVersion;
 		m_pShareData->m_nSize = sizeof(*m_pShareData);
@@ -212,7 +197,7 @@ bool CShareData::InitShareData()
 		lf.lfClipPrecision		= 0x2;
 		lf.lfQuality			= 0x1;
 		lf.lfPitchAndFamily	= 0x31;
-		::wcsncpy_s(lf.lfFaceName, L"ＭＳ ゴシック", _TRUNCATE);
+		wcscpy( lf.lfFaceName, L"ＭＳ ゴシック" );
 
 		// LoadShareDataでフォントが変わる可能性があるので、ここでは不要 // 2013.04.08 aroka
 		//InitCharWidthCacheCommon();								// 2008/5/17 Uchi
@@ -299,17 +284,16 @@ bool CShareData::InitShareData()
 			sWindow.m_bUseCompatibleBMP = TRUE;		// 2007.09.09 Moca 画面キャッシュを使う	// 2009.06.09 ryoji FALSE->TRUE
 
 			sWindow.m_bMenuIcon = TRUE;		/* メニューにアイコンを表示する */
+			sWindow.m_bDarkMode = FALSE;	/* ダークモードを使う */
 
 			//	Apr. 05, 2003 genta ウィンドウキャプションの初期値
 			//	Aug. 16, 2003 genta $N(ファイル名省略表示)をデフォルトに変更
-			::wcsncpy_s(sWindow.m_szWindowCaptionActive, 
-				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
-			::wcsncpy_s(sWindow.m_szWindowCaptionInactive, 
-				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} - $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>",
-				_TRUNCATE
-			);
+			wcscpy( sWindow.m_szWindowCaptionActive, 
+				L"${w?$h$:アウトプット$:${I?$f$n$:$N$n$}$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
+			wcscpy( sWindow.m_szWindowCaptionInactive, 
+				L"${w?$h$:アウトプット$:$f$n$}${U?(更新)$} -"
+				L" $A $V ${R?(ビューモード)$:(上書き禁止)$}${M?  【キーマクロの記録中】$} $<profile>" );
 		}
 
 		// [タブバー]タブ
@@ -318,9 +302,9 @@ bool CShareData::InitShareData()
 
 			sTabBar.m_bDispTabWnd = FALSE;			//タブウインドウ表示	//@@@ 2003.05.31 MIK
 			sTabBar.m_bDispTabWndMultiWin = FALSE;	//タブウインドウ表示	//@@@ 2003.05.31 MIK
-			::wcsncpy_s(sTabBar.m_szTabWndCaption,
-				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}",
-				_TRUNCATE
+			wcscpy(	//@@@ 2003.06.13 MIK
+				sTabBar.m_szTabWndCaption,
+				L"${w?【Grep】$h$:【アウトプット】$:$f$n$}${U?(更新)$}${R?(ビューモード)$:(上書き禁止)$}${M?【キーマクロの記録中】$}"
 			);
 			sTabBar.m_bSameTabWidth = FALSE;			//タブを等幅にする			//@@@ 2006.01.28 ryoji
 			sTabBar.m_bDispTabIcon = FALSE;			//タブにアイコンを表示する	//@@@ 2006.01.28 ryoji
@@ -363,7 +347,7 @@ bool CShareData::InitShareData()
 
 			sEdit.m_bOverWriteBoxDelete = false;
 			sEdit.m_eOpenDialogDir = OPENDIALOGDIR_CUR;
-			::wcsncpy_s(sEdit.m_OpenDialogSelDir, L"%Personal%\\", _TRUNCATE);
+			wcscpy(sEdit.m_OpenDialogSelDir, L"%Personal%\\");
 			sEdit.m_bAutoColumnPaste = TRUE;			/* 矩形コピーのテキストは常に矩形貼り付け */
 		}
 
@@ -421,18 +405,18 @@ bool CShareData::InitShareData()
 			CommonSetting_Format& sFormat = m_pShareData->m_Common.m_sFormat;
 
 			/* 見出し記号 */
-			::wcsncpy_s(sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍", _TRUNCATE);
+			wcscpy( sFormat.m_szMidashiKigou, L"１２３４５６７８９０（(［[「『【■□▲△▼▽◆◇○◎●§・※☆★第①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳ⅠⅡⅢⅣⅤⅥⅦⅧⅨⅩ一二三四五六七八九十壱弐参伍" );
 			/* 引用符 */
-			::wcsncpy_s(sFormat.m_szInyouKigou, L"> ", _TRUNCATE);		/* 引用符 */
+			wcscpy( sFormat.m_szInyouKigou, L"> " );		/* 引用符 */
 
 			/*
 				書式指定子の意味はWindows SDKのGetDateFormat(), GetTimeFormat()を参照のこと
 			*/
 
 			sFormat.m_nDateFormatType = 0;	//日付書式のタイプ
-			::wcsncpy_s(sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'", _TRUNCATE);	//日付書式
+			wcscpy( sFormat.m_szDateFormat, L"yyyy\'年\'M\'月\'d\'日(\'dddd\')\'" );	//日付書式
 			sFormat.m_nTimeFormatType = 0;	//時刻書式のタイプ
-			::wcsncpy_s(sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'", _TRUNCATE);			//時刻書式
+			wcscpy( sFormat.m_szTimeFormat, L"tthh\'時\'mm\'分\'ss\'秒\'"  );			//時刻書式
 		}
 
 		// [検索]タブ
@@ -450,6 +434,7 @@ bool CShareData::InitShareData()
 			sSearch.m_bGrepOutputFileOnly = false;
 			sSearch.m_bGrepOutputBaseFolder = false;
 			sSearch.m_bGrepSeparateFolder = false;
+			sSearch.m_bGrepExceptFileRegexp = false;
 			sSearch.m_bGrepBackup = true;
 
 			sSearch.m_bGrepDefaultFolder=FALSE;		/* Grep: フォルダーの初期値をカレントフォルダーにする */
@@ -473,11 +458,7 @@ bool CShareData::InitShareData()
 
 		// [キー割り当て]タブ
 		{
-			//	Jan. 30, 2005 genta 関数として独立
-			//	2007.11.04 genta 戻り値チェック．falseなら起動中断．
-			if( ! InitKeyAssign( m_pShareData )){
-				return false;
-			}
+			InitKeyAssign(*m_pShareData);
 		}
 
 		// [カスタムメニュー]タブ
@@ -583,7 +564,7 @@ bool CShareData::InitShareData()
 			}
 			//	To Here Sep. 14, 2001 genta
 
-			::wcsncpy_s(sMacro.m_szMACROFOLDER, szIniFolder, _TRUNCATE);	/* マクロ用フォルダー */
+			wcscpy( sMacro.m_szMACROFOLDER, szIniFolder );	/* マクロ用フォルダー */
 
 			sMacro.m_nMacroOnOpened = -1;	/* オープン後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
 			sMacro.m_nMacroOnTypeChanged = -1;	/* タイプ変更後自動実行マクロ番号 */	//@@@ 2006.09.01 ryoji
@@ -602,20 +583,20 @@ bool CShareData::InitShareData()
 				sFileName.m_szTransformFileNameFrom[i][0] = L'\0';
 				sFileName.m_szTransformFileNameTo[i][0] = L'\0';
 			}
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[0], L"デスクトップ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[1], L"マイドキュメント\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[2], L"IEキャッシュ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[3], L"TEMP\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[4], L"共有デスクトップ\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[5], L"共有ドキュメント\\", _TRUNCATE);
-			::wcsncpy_s(sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
-			::wcsncpy_s(sFileName.m_szTransformFileNameTo[6], L"アプリデータ\\", _TRUNCATE);	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameFrom[0], L"%DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[0],   L"デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[1], L"%Personal%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[1],   L"マイドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[2], L"%Cache%\\Content.IE5\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[2],   L"IEキャッシュ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[3], L"%TEMP%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[3],   L"TEMP\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[4], L"%Common DeskTop%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[4],   L"共有デスクトップ\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[5], L"%Common Documents%\\" );
+			wcscpy( sFileName.m_szTransformFileNameTo[5],   L"共有ドキュメント\\" );
+			wcscpy( sFileName.m_szTransformFileNameFrom[6], L"%AppData%\\" );	// 2007.05.19 ryoji 追加
+			wcscpy( sFileName.m_szTransformFileNameTo[6],   L"アプリデータ\\" );	// 2007.05.19 ryoji 追加
 			sFileName.m_nTransformFileNameArrNum = 7;
 		}
 
@@ -670,7 +651,7 @@ bool CShareData::InitShareData()
 		}
 
 		{
-			InitTypeConfigs( m_pShareData, *m_pvTypeSettings );
+			InitTypeConfigs( m_pShareData, GetTypeSettings() );
 		}
 
 		{
@@ -682,14 +663,14 @@ bool CShareData::InitShareData()
 				/*
 					2006.08.16 Moca 初期化単位を PRINTSETTINGに変更。CShareDataには依存しない。
 				*/
-				WCHAR szSettingName[64];
-				int i = 0;
-				auto_snprintf_s(szSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);
+				using SPrintSettingName = StaticString<64>;
+				SPrintSettingName szSettingName{};
+				szSettingName = strprintf(L"%s %d", LS(STR_PRINT_SET_NAME), 1);
 				CPrint::SettingInitialize( m_pShareData->m_PrintSettingArr[0], szSettingName );	//	初期化命令。
 			}
 			for( int i = 1; i < MAX_PRINTSETTINGARR; ++i ){
 				m_pShareData->m_PrintSettingArr[i] = m_pShareData->m_PrintSettingArr[0];
-				auto_snprintf_s(m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, _TRUNCATE, L"印刷設定 %d", i + 1);	/* 印刷設定の名前 */
+				auto_sprintf_s( m_pShareData->m_PrintSettingArr[i].m_szPrintSettingName, L"%s %d", LS(STR_PRINT_SET_NAME), i + 1 );	/* 印刷設定の名前 */
 			}
 		}
 
@@ -712,7 +693,7 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_sHistory.m_aExceptMRU.clear();
 
-			::wcsncpy_s(m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder, _TRUNCATE);	/* 設定インポート用フォルダー */
+			wcscpy( m_pShareData->m_sHistory.m_szIMPORTFOLDER, szIniFolder );	/* 設定インポート用フォルダー */
 
 			m_pShareData->m_sHistory.m_aCommands.clear();
 			m_pShareData->m_sHistory.m_aCurDirs.clear();
@@ -726,33 +707,65 @@ bool CShareData::InitShareData()
 
 			m_pShareData->m_bLineNumIsCRLF_ForJump = true;	/* 指定行へジャンプの「改行単位の行番号」か「折り返し単位の行番号」か */
 		}
-	}else{
-		/* オブジェクトがすでに存在する場合 */
-		/* ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします */
-		m_pShareData = (DLLSHAREDATA*)::MapViewOfFile(
-			m_hFileMap,
-			FILE_MAP_ALL_ACCESS,
-			0,
-			0,
-			0
+	}
+}
+
+/*!
+ * @brief CShareDataクラスの初期化処理
+ *
+ * 他プロセスが作成した共有メモリを開き、自プロセスに取り込む。
+ *
+ * エディタープロセス用。
+ */
+void CShareData::OpenShareData()
+{
+	// ファイルマッピングオブジェクト
+	try
+	{
+		const auto pszProfileName = GetProfileName();
+		std::wstring strShareDataName = GSTR_SHAREDATA;
+		strShareDataName += pszProfileName;
+		m_FileMapping = FileMapping::OpenFileMappingW(
+			GENERIC_READ | GENERIC_WRITE,
+			FALSE,
+			strShareDataName
 		);
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&)
+	{
+		throw basis::make_initialization_error(
+			// L"CreateFileMapping()に失敗しました"
+			LS(STR_ERR_CSHAREDATA01)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
+	}
+
+	// ファイルのビューを､ 呼び出し側プロセスのアドレス空間にマップします
+	m_MappedData = m_FileMapping.MapViewOfFile<DLLSHAREDATA*>(
+		FILE_MAP_ALL_ACCESS
+	);
+
+	{
+		// マップされたビューに配置されたDLLSHAREDATA構造体を参照します
+		m_pShareData = m_MappedData.get();
 
 		//	From Here Oct. 27, 2000 genta
 		//	2014.01.08 Moca サイズチェック追加
 		if( m_pShareData->m_vStructureVersion != uShareDataVersion ||
 			m_pShareData->m_nSize != sizeof(*m_pShareData) ){
 			//	この共有データ領域は使えない．
-			//	ハンドルを解放する
-			::UnmapViewOfFile( m_pShareData );
-			m_pShareData = nullptr;
-			return false;
+			throw basis::make_initialization_error(
+				// L"異なるバージョンのエディタを同時に起動することはできません。"
+				LS(STR_ERR_DLGPROCESS1)
+				, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+			);
 		}
 		//	To Here Oct. 27, 2000 genta
 
 		SelectCharWidthCache(CWM_FONT_EDIT, CWM_CACHE_SHARE);
 		InitCharWidthCache(m_pShareData->m_Common.m_sView.m_lf);
 	}
-	return true;
 }
 
 static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& org, std::wstring& to )
@@ -760,7 +773,8 @@ static void ConvertLangString( wchar_t* pBuf, size_t chBufSize, std::wstring& or
 	CNativeW mem;
 	mem.SetString(pBuf);
 	mem.Replace(org.c_str(), to.c_str());
-	::wcsncpy_s(pBuf, chBufSize, mem.GetStringPtr(), _TRUNCATE);
+	wcsncpy(pBuf, mem.GetStringPtr(), chBufSize);
+	pBuf[chBufSize - 1] = L'\0';
 }
 
 static void ConvertLangValueImpl( wchar_t* pBuf, size_t chBufSize, int nStrId, std::vector<std::wstring>& values, int& index, bool setValues, bool bUpdate )
@@ -837,12 +851,15 @@ void CShareData::ConvertLangValues(std::vector<std::wstring>& values, bool bSetV
 			break;
 		}
 	}
-	assert( m_pvTypeSettings != nullptr );
+
 	indexBackup = index;
 	ConvertLangValue( shareData.m_TypeBasis.m_szTypeName, STR_TYPE_NAME_BASIS );
-	for( i = 0; i < (int)GetTypeSettings().size(); i++ ){
+
+	// 注：コントロールプロセス専用
+	auto types = CShareData::getInstance()->GetTypeSettingArr();
+	for( i = 0; i < (int)types.size(); i++ ){
 		index = indexBackup;
-		STypeConfig& type = *(GetTypeSettings()[i]);
+		auto& type = *(types[i]);
 		ConvertLangValue2( type.m_szTypeName, STR_TYPE_NAME_BASIS );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_RICHTEXT );
 		ConvertLangValue( type.m_szTypeName, STR_TYPE_NAME_TEXT );
@@ -891,7 +908,8 @@ BOOL CShareData::IsPathOpened( const WCHAR* pszPath, HWND* phwndOwner )
 	for( int i = 0; i < m_pShareData->m_sNodes.m_nEditArrNum; ++i ){
 		if( IsSakuraMainWindow( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd ) ){
 			// トレイからエディタへの編集ファイル名要求通知
-			::SendMessageAny( m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0 );
+			if (!::SendMessageTimeoutW(m_pShareData->m_sNodes.m_pEditArr[i].m_hWnd, MYWM_GETFILEINFO, 1, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK, 3000, nullptr)) continue;
+
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 			// 同一パスのファイルが既に開かれているか
@@ -1125,14 +1143,14 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 		if( pszPath == nullptr || nBufLen <= nLen ){
 			return -nLen;
 		}
-		::wcsncpy_s(pszPath, nBufLen, pszFile, _TRUNCATE);
+		::wcscpy_s(pszPath, nBufLen, pszFile);
 		return nLen;
 	}
 	else {	//	フォルダー指定あり
 		//	相対パス→絶対パス
 		const auto nFolderSep = AddLastChar( m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER, std::size(m_pShareData->m_Common.m_sMacro.m_szMACROFOLDER), L'\\' );
 		int nAllLen;
-		WCHAR *pszDir;
+		LPCWSTR pszDir = nullptr;
 		WCHAR szDir[_MAX_PATH + SFilePath::size()];
 
 		 // 2003.06.24 Moca フォルダーも相対パスなら実行ファイルからのパス
@@ -1150,12 +1168,14 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 			return -nAllLen;
 		}
 
-		::wcsncpy_s(pszPath, nBufLen, pszDir, _TRUNCATE);
-		WCHAR *ptr2 = pszPath + nDirLen;
+		::wcsncpy_s(pszPath, nBufLen, pszDir, nDirLen);
+
 		if( -1 == nFolderSep ){
-			*ptr2++ = L'\\';
+			::wcscat_s(pszPath, nBufLen, L"\\");
 		}
-		::wcsncpy_s(ptr2, nBufLen, pszFile, _TRUNCATE);
+
+		::wcscat_s(pszPath, nBufLen, pszFile);
+
 		return nAllLen;
 	}
 }
@@ -1164,7 +1184,7 @@ int CShareData::GetMacroFilename( int idx, WCHAR *pszPath, int nBufLen )
 	idxは正確なものでなければならない。
 	YAZAKI
 */
-bool CShareData::BeReloadWhenExecuteMacro( int idx )
+bool CShareData::BeReloadWhenExecuteMacro(int idx) const
 {
 	if( !m_pShareData->m_Common.m_sMacro.m_MacroTable[idx].IsEnabled() )
 		return false;
@@ -1180,7 +1200,7 @@ bool CShareData::BeReloadWhenExecuteMacro( int idx )
 	@date 2005.01.30 genta CShareData::Init()から分離．
 		一つずつ設定しないで一気にデータ転送するように．
 */
-void CShareData::InitToolButtons(DLLSHAREDATA* pShareData)
+void CShareData::InitToolButtons(DLLSHAREDATA* pShareData) const
 {
 		/* ツールバーボタン構造体 */
 //Sept. 16, 2000 JEPRO
@@ -1449,18 +1469,6 @@ void CShareData::InitPopupMenu([[maybe_unused]] DLLSHAREDATA* pShareData)
 void CShareData::RefreshString()
 {
 	RefreshKeyAssignString( m_pShareData );
-}
-
-void CShareData::CreateTypeSettings()
-{
-	if( nullptr == m_pvTypeSettings ){
-		m_pvTypeSettings = new std::vector<STypeConfig*>();
-	}
-}
-
-std::vector<STypeConfig*>& CShareData::GetTypeSettings()
-{
-	return *m_pvTypeSettings;
 }
 
 void CShareData::InitFileTree( SFileTree* setting )

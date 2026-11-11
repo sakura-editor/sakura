@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, genta
 	Copyright (C) 2004, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,6 +19,7 @@
 #include <map>
 #include <list>
 #include <string>
+
 #include "util/design_template.h"
 
 class CMacroManagerBase;
@@ -37,11 +38,10 @@ class CMacroManagerBase;
 
 	Singleton
 */
-class CMacroFactory : public TSingleton<CMacroFactory> {
-	friend class TSingleton<CMacroFactory>;
+class CMacroFactory final : public TSakuraSingleton<CMacroFactory> {
+public:
 	CMacroFactory();
 
-public:
 	typedef CMacroManagerBase* (*Creator)(const WCHAR*);
 
 	bool RegisterCreator(Creator f);
@@ -69,4 +69,5 @@ private:
 	*/
 	MacroEngineRep m_mMacroCreators;
 };
+
 #endif /* SAKURA_CMACROFACTORY_67B6F8F6_0951_4717_84AD_C67E6D5F68AB_H_ */

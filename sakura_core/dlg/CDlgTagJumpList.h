@@ -109,7 +109,7 @@ private:
 	void find_key( const wchar_t* keyword );
 	int find_key_core(int  nTop, const wchar_t* keyword, bool bTagJumpPartialMatch, bool bTagJumpExactMatch, bool bTagJumpICase, bool bTagJumpICaseByTags, int  nDefaultNextMode);
 	bool parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2, int nTagFormat);
-	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, std::span<WCHAR> szNextPath, int* baseDirId);
+	bool ReadTagsParameter(FILE* fp, bool bTagJumpICaseByTags, STagFindState* state, CSortedTagJumpList& cList, int* nTagFormat, bool* bSorted, bool* bFoldcase, bool* bTagJumpICase, PTCHAR szNextPath, int* baseDirId);
 	void find_key_for_BinarySearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule );
 	void find_key_for_LinearSearch( FILE* fp, const ACHAR* paszKeyword, int nTagFormat, STagFindState* state, const STagSearchRule* rule, bool bSorted, bool bFoldcase, int length );
 
@@ -120,7 +120,7 @@ private:
 
 	//! depthから完全パス名(相対パス/絶対パス)を作成する
 	static WCHAR* GetFullPathFromDepth(WCHAR* pszOutput, int count, WCHAR* basePath, const WCHAR* fileName, int depth);
-	static WCHAR* CopyDirDir(std::span<WCHAR> dest, const WCHAR* target, const WCHAR* base);
+
 public:
 	static int CalcMaxUpDirectory(const WCHAR* p);
 	static WCHAR* DirUp( WCHAR* dir );
@@ -156,4 +156,30 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CDlgTagJumpList);
 };
+
+namespace cxx {
+
+WCHAR* CopyDirDir(
+	std::span<WCHAR> destination,
+	_In_z_ LPCWSTR target,
+	_In_z_ LPCWSTR base
+);
+
+} // namespace cxx
+
+template <basis::WritableBuffer<WCHAR> A1, basis::NullTerminatedStringConstructible<WCHAR> A2>
+inline WCHAR* CopyDirDir(
+	A1& destination,
+	const A2& target,
+	const A2& base
+)
+{
+	return cxx::CopyDirDir(
+		std::span<WCHAR>(destination),
+		static_cast<LPCWSTR>(cxx::NullTerminatedString(target)),
+		static_cast<LPCWSTR>(cxx::NullTerminatedString(base))
+	);
+}
+
+
 #endif /* SAKURA_CDLGTAGJUMPLIST_D44C3C98_9BF7_4B99_923B_9005CD54872F_H_ */

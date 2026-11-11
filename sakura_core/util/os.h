@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,9 +9,20 @@
 #define SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_
 #pragma once
 
-#include <ObjIdl.h> // LPDATAOBJECT
+#include "basis/primitive.h"
+#include "basis/CMyString.h"
+#include "cxx/ResourceHolder.hpp"
+#include "cxx/type_of_Nth_lambda_arg.hpp"
+#include "util/design_template.h"
+
+#include <set>
+#include <string>
+#include <string_view>
+
+#include <objidl.h> // LPDATAOBJECT
 
 //クリップボード
+std::set<CLIPFORMAT> GetAvailableClipFormats(LPDATAOBJECT pDataObject);
 bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength ); //!< クリープボードにText形式でコピーする。UNICODE版。nLengthは文字単位。
 BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
 HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat );
@@ -65,21 +76,34 @@ private:
 	PVOID	m_OldValue = nullptr;
 };
 
-//カレントディレクトリユーティリティ。
-//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
-//2008.03.01 kobake 作成
+/*!
+ * @brief カレントディレクトリ復元ポイント
+ *
+ * 構築時にカレントディレクトリを取得し、破棄時に復元する
+ *
+ * @note GUIスレッド専用ユーティリティです。
+ *
+ * @date 2008/03/01 kobake 作成
+ */
 class CCurrentDirectoryBackupPoint{
+private:
 	using Me = CCurrentDirectoryBackupPoint;
+
+	static void _CleanUp(
+		const CCurrentDirectoryBackupPoint* pThis
+	) noexcept;
+
+	using Holder = cxx::ResourceHolder<&_CleanUp>;
 
 public:
 	CCurrentDirectoryBackupPoint();
+
 	CCurrentDirectoryBackupPoint(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
-	CCurrentDirectoryBackupPoint(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CCurrentDirectoryBackupPoint();
+
 private:
-	WCHAR m_szCurDir[_MAX_PATH];
+	SFilePath	m_szCurDir{};
+	Holder		m_Holder{ this };
 };
 
 /*!
@@ -95,4 +119,332 @@ BOOL IsPowerShellAvailable(void);
 	@return	手続きが成功したら true 失敗したら false
 */
 BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup);
+
+namespace cxx {
+
+/*!
+ * @brief グローバルメモリを RAII で管理するヘルパークラス
+ *
+ * クリップボードや IDataObject でやり取りする HGLOBAL の基底。データ形式ごとに派生クラスを用意する。
+ */
+class GlobalMemory : public cxx::ResourceHolder<&::GlobalFree> {
+private:
+	using Base = cxx::ResourceHolder<&::GlobalFree>;
+	using Me = GlobalMemory;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//サイズだけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalMemory(SIZE_T cch) : GlobalMemory(::GlobalAlloc(GHND, cch)) {}
+
+	//HGLOBALを取得する
+	HGLOBAL Get() const noexcept { return Base::get(); }
+
+	//グローバルメモリをロックしてデータにアクセスする
+	template<typename TAction, typename T = cxx::type_of_Nth_lambda_arg<0, TAction>, typename R = cxx::lambda_traits<TAction>::return_type>
+	R Lock(TAction action) const
+	{
+		const auto hgClip = static_cast<HGLOBAL>(*this);
+		if (!hgClip) {
+			if constexpr (std::is_same_v<R, void>) {
+				return;	//戻り値は返せない
+			} else {
+				return R{};
+			}
+		}
+
+		auto pClip = static_cast<T>(::GlobalLock(hgClip));
+		if (!pClip) {
+			if constexpr (std::is_same_v<R, void>) {
+				return;	//戻り値は返せない
+			} else {
+				return R{};
+			}
+		}
+
+		using LockedGlobalHolder = cxx::ResourceHolder<&::GlobalUnlock>;
+		LockedGlobalHolder locked(hgClip);
+
+		if constexpr (std::is_same_v<R, void>) {
+			action(pClip);
+		} else {
+			const auto cbSize = ::GlobalSize(hgClip);
+			return action(pClip, cbSize);
+		}
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_UNICODETEXT (終端NUL付きのUTF-16文字列)
+ */
+class GlobalWString : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalWString;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalWString(SIZE_T cch) : GlobalMemory(sizeof(WCHAR) * (cch + 1)) {}
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalWString(std::wstring_view text);
+
+	//文字列を指定して更新する
+	void SetText(std::wstring_view text) const;
+
+	//格納されている文字列データのコピーを取得する
+	std::wstring wstring() const &;
+};
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_TEXT / CF_OEMTEXT / "HTML Format" (終端NUL付きのマルチバイト文字列)
+ */
+class GlobalString : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalString;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalString(SIZE_T cch) : GlobalMemory(cch + 1) {}
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalString(std::string_view text);
+
+	//文字列を指定して更新する
+	void SetText(std::string_view text) const;
+
+	//格納されている文字列データのコピーを取得する
+	std::string string() const &;
+};
+
+/*!
+ * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ *
+ * 対応形式: MSDEVColumnSelect / MSDEVLineSelect 等、型付きの生データを置く形式全般
+ */
+template<typename T>
+class GlobalData : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalData<T>;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//データ数だけ指定して構築（確保したメモリはゼロクリアされる）
+	explicit GlobalData(int count) : GlobalMemory(count * sizeof(T)) {}
+
+	//1データで構築
+	GlobalData() : GlobalData(1) {}
+
+	//データを指定して更新する
+	bool SetData(std::span<const T> data) const
+	{
+		return Lock([data](T* p, size_t cbSize) {
+			if (cbSize < std::size(data)) return false;
+			std::ranges::copy(data, p);
+			return true;
+		});
+	}
+
+	//データを指定して更新する
+	bool SetValue(const T& data) const
+	{
+		return Lock([data](T* p, size_t cbSize) {
+			if (cbSize < sizeof(T)) return false;
+			*p = data;
+			return true;
+		});
+	}
+
+	//格納されているデータの個数を取得する
+	size_t size() const & {
+		if (!get()) return 0UL;
+		const auto cbSize = ::GlobalSize(get());
+		return cbSize / sizeof(T);
+	}
+
+	//格納されているデータのコピーを取得する
+	std::vector<T> data() const & {
+		return Lock([](T* p, size_t cbSize) {
+			if (cbSize < sizeof(T)) return std::vector<T>();
+			return std::vector<T>(p, std::bit_cast<T*>(LPBYTE(p) + cbSize));
+		});
+	}
+
+	//格納されている値を取得する
+	T value() const & {
+		return Lock([](T* p, size_t cbSize [[maybe_unused]]) {
+			if (cbSize < sizeof(T)) return T();
+			return *p;
+		});
+	}
+};
+
+/*!
+ * @brief グローバルメモリ上のデータを RAII で管理するヘルパークラス
+ *
+ * 対応形式: CF_HDROP (DROPFILES ヘッダ + NUL区切りのパス列)
+ */
+class GlobalDropFiles : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalDropFiles;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//格納されているデータのコピーを取得する
+	std::vector<std::filesystem::path> data() const &;
+};
+
+/*!
+ * @brief グローバルメモリ上の文字列を RAII で管理するヘルパークラス
+ *
+ * 対応形式: SAKURAClipW (サクラエディタ独自のクリップボード形式)
+ *
+ * バイナリレイアウトは以下の通り。
+ *   [文字数 (CClipboard::SAKURAClipW_LengthFieldType)][本文 (WCHAR × 文字数)][終端NUL]
+ *
+ * 先頭に文字数を持つのは、終端NULに頼らず埋め込みNULを含む本文を正確な長さで受け渡すため。
+ * このレイアウトは Win32/x64/ARM64 の各ビルド間、及び過去バージョンとの間で
+ * 一致していなければならないので、文字数フィールドをポインタ幅に依存する型にしてはならない。(issue #2325)
+ */
+class GlobalSakura : public GlobalMemory {
+private:
+	using Base = GlobalMemory;
+	using Me = GlobalSakura;
+
+public:
+	//HGLOBALを指定して構築（メモリ変更は行わない）
+	using Base::Base;
+
+	//文字列を指定して必要サイズを計算する
+	static size_t CalcSize(std::wstring_view text) noexcept;
+
+	//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+	explicit GlobalSakura(std::wstring_view text);
+
+	//文字列を指定して更新する
+	void SetText(std::wstring_view text) const;
+
+	//格納されている文字列データのコピーを取得する
+	std::wstring wstring() const &;
+};
+
+GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files);
+
+/*!
+ * @brief カレントディレクトリのパスを取得する
+ *
+ * @return カレントディレクトリのパス
+ */
+std::wstring GetCurrentDirectoryW();
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+);
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW();
+
+/*!
+ * @brief ファイルマッピングのビューを取得する
+ *
+ * @param[in] hFileMappingObject ファイルマッピングオブジェクトのハンドル
+ * @param[in] dwDesiredAccess 要求するアクセス権
+ * @param[in] fileOffset ファイルマッピングのビューの開始位置
+ * @param[in] dwNumberOfBytesToMap マップするバイト数
+ * @return マッピングされたデータ
+ */
+std::span<std::byte> MapViewOfFile(
+	_In_ HANDLE hFileMappingObject,
+	_In_ DWORD dwDesiredAccess,
+	const ULARGE_INTEGER& fileOffset,
+	_In_ DWORD dwNumberOfBytesToMap
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+);
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+template <
+	basis::NullTerminatedStringConstructible<WCHAR> A1,
+	basis::NullTerminatedStringConstructible<WCHAR> A2
+> requires (!std::is_same_v<A1, std::wstring_view> || !std::is_same_v<A2, std::wstring_view>)
+void ReplaceFileW(
+	const A1 & replacedFileName,
+	const A2 & replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName = std::nullopt,
+	_In_ DWORD dwReplaceFlags = 0
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString _ReplacedFileName{ replacedFileName };
+	cxx::NullTerminatedString _ReplacementFileName{ replacementFileName };
+
+	// 指定したファイルを別ファイルで置換する
+	return ReplaceFileW(
+		_ReplacedFileName.str(),
+		_ReplacementFileName.str(),
+		optBackupFileName,
+		dwReplaceFlags
+	);
+}
+
+/*!
+ * @brief カレントディレクトリを変更する
+ *
+ * @param[in] newPath 新しいディレクトリ
+ */
+void SetCurrentDirectoryW(
+	std::wstring_view newPath
+);
+
+} // namespace cxx
+
 #endif /* SAKURA_OS_0C5BD7E8_67ED_467C_916F_CCDC1F9A26BF_H_ */

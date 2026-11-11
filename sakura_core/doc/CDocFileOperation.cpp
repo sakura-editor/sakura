@@ -67,15 +67,15 @@ bool CDocFileOperation::OpenFileDialog(
 	const WCHAR*		pszOpenFolder,	//!< [in]     NULL以外を指定すると初期フォルダーを指定できる
 	SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 	std::vector<std::wstring>&	files
-)
+) const
 {
 	/* アクティブにする */
 	ActivateFrameWindow( hwndParent );
 
 	// ファイルオープンダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
-		GetAppInstance(),
+		G_AppInstance(),
 		hwndParent,
 		L"*.*",
 		pszOpenFolder ? pszOpenFolder : CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
@@ -203,7 +203,7 @@ void CDocFileOperation::ReloadCurrentFile(
 */
 bool CDocFileOperation::SaveFileDialog(
 	SSaveInfo*	pSaveInfo	//!< [out]
-)
+) const
 {
 	//拡張子指定
 	// 一時適用や拡張子なしの場合の拡張子をタイプ別設定から持ってくる
@@ -213,7 +213,7 @@ bool CDocFileOperation::SaveFileDialog(
 	{
 		LPCWSTR	szExt;
 
-		const STypeConfig& type = GetTypeConfig();
+		const STypeConfig& type = m_pcDocRef->m_cDocType.GetDocumentAttribute();
 		//ファイルパスが無い場合は *.txt とする
 		if(!this->m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath()){
 			szExt = L"";
@@ -254,16 +254,16 @@ bool CDocFileOperation::SaveFileDialog(
 		SYSTEMTIME localTime = {};
 		::GetLocalTime( &localTime );
 		auto dateTimeString = GetDateTimeFormat( L"_%Y%m%d_%H%M%S", localTime );
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetEditWnd().GetHwnd() );
 		const int nId = (node != nullptr && 0 < node->m_nId) ? node->m_nId : 0;
 		auto_snprintf_s( pSaveInfo->cFilePath, pSaveInfo->cFilePath.GetBufferCount(), L"%s%.0d%s", LS(STR_NO_TITLE2), nId, dateTimeString.c_str() );
 	}
 
 	// ダイアログを表示
-	CDlgOpenFile cDlgOpenFile;
+	auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 	cDlgOpenFile.Create(
-		GetAppInstance(),
-		GetMainWindow(),
+		G_AppInstance(),
+		CEditWnd::getInstance()->GetHwnd(),
 		strDefaultWildCard.c_str(),
 		CSakuraEnvironment::GetDlgInitialDir().c_str(),	// 初期フォルダー
 		CMRUFile().GetPathList(),		//	最近のファイル
@@ -279,7 +279,7 @@ bool CDocFileOperation::SaveFileDialog(LPWSTR szPath)
 	sSaveInfo.cFilePath = szPath;
 	sSaveInfo.eCharCode = CODE_CODEMAX; //###トリッキー
 	bool bRet = SaveFileDialog(&sSaveInfo);
-	::wcsncpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath, _TRUNCATE);
+	wcscpy_s(szPath, _MAX_PATH, sSaveInfo.cFilePath);
 	return bRet;
 }
 
@@ -297,9 +297,9 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 		// ### 無変更なら上書きしないで抜ける処理はどの CDocListener の OnCheckSave() よりも前に
 		// ### （保存するかどうか問い合わせたりするよりも前に）やるぺきことなので、
 		// ### スマートじゃない？かもしれないけど、とりあえずここに配置しておく
-		if( !GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite ){
+		if (!GetDllShareData().m_Common.m_sFile.m_bEnableUnmodifiedOverwrite &&
 			// 上書きの場合
-			if(pSaveInfo->bOverwriteMode){
+			pSaveInfo->bOverwriteMode) {
 				// 無変更の場合は警告音を出し、終了
 				if (!m_pcDocRef->m_cDocEditor.IsModified() &&
 					pSaveInfo->cEol.IsNone() &&	//※改行コード指定保存がリクエストされた場合は、「変更があったもの」とみなす
@@ -307,7 +307,7 @@ bool CDocFileOperation::DoSaveFlow(SSaveInfo* pSaveInfo)
 					CEditApp::getInstance()->m_cSoundSet.NeedlessToSaveBeep();
 					throw CFlowInterruption();
 				}
-			}
+
 		}
 
 		//セーブ前チェック
@@ -453,7 +453,7 @@ bool CDocFileOperation::FileClose()
 	m_pcDocRef->SetCurDirNotitle();
 
 	// 無題番号取得
-	CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
+	CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
 
 	/* 親ウィンドウのタイトルを更新 */
 	GetEditWnd().UpdateCaption();
@@ -485,7 +485,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 	SLoadInfo sLoadInfo = _sLoadInfo;
 	if( sLoadInfo.cFilePath.Length()==0 ){
 		std::vector<std::wstring> files;
-		if( !OpenFileDialog( GetMainWindow(), nullptr, &sLoadInfo, files ) ){
+		if( !OpenFileDialog( CEditWnd::getInstance()->GetHwnd(), nullptr, &sLoadInfo, files ) ){
 			return;
 		}
 		sLoadInfo.cFilePath = files[0].c_str();
@@ -495,8 +495,8 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				GetAppInstance(),
-				GetMainWindow(),
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true
@@ -515,7 +515,7 @@ void CDocFileOperation::FileCloseOpen( const SLoadInfo& _sLoadInfo )
 
 	if( !m_pcDocRef->m_cDocFile.GetFilePathClass().IsValidPath() ){
 		m_pcDocRef->SetCurDirNotitle();
-		CAppNodeManager::getInstance()->GetNoNameNumber( GetMainWindow() );
+		CAppNodeManager::getInstance()->GetNoNameNumber( GetEditWnd().GetHwnd() );
 	}
 
 	/* 親ウィンドウのタイトルを更新 */

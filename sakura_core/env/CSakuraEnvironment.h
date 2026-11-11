@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,10 +11,15 @@
 
 #include <string>
 
+struct DLLSHAREDATA;
+
 class CEditWnd;
+
+DLLSHAREDATA& GetDllShareData();
 
 class CSakuraEnvironment{
 public:
+	static CEditWnd* GetMainWindow();
 	static void ExpandParameter(const wchar_t* pszSource, wchar_t* pszBuffer, int nBufferLen);
 	static std::wstring GetDlgInitialDir(bool bControlProcess = false);
 
@@ -27,4 +32,18 @@ private:
 //ウィンドウ管理
 /* 指定ウィンドウが、編集ウィンドウのフレームウィンドウかどうか調べる */
 BOOL IsSakuraMainWindow( HWND hWnd );
+
+namespace env {
+
+/*!
+ * @brief 共有メモリ依存オブジェクトの基底クラス
+ *
+ * @note 初期化する前に共有メモリを初期化しておく必要がある。
+ */
+struct ShareDataClient {
+	DLLSHAREDATA* m_pShareData = &GetDllShareData();
+};
+
+} // namespace env
+
 #endif /* SAKURA_CSAKURAENVIRONMENT_4B226B3A_5208_4C29_9D2E_E42DA8EFD875_H_ */

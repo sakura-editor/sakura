@@ -249,7 +249,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 	HTREEITEM		htiTemp2;
 	TV_DISPINFO*	ptdi;
 
-	CDlgInput1		cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	static	bool	bInMove;
 	bool			bIsNode;
@@ -377,10 +377,10 @@ INT_PTR CPropMainMenu::DispatchEvent(
 				}
 				pFuncWk = &msMenu[(int)tvi.lParam];
 				if (pFuncWk->m_nFunc != F_SEPARATOR) {
-					auto_snprintf_s(szKey, _TRUNCATE, L"%ls", pFuncWk->m_sKey);
+					auto_sprintf( szKey, L"%ls", pFuncWk->m_sKey);
 
 					if (!cDlgInput1.DoModal(
-							GetAppInstance(),
+							G_AppInstance(),
 							hwndDlg,
 							LS(STR_PROPCOMMAINMENU_ACCKEY1),
 							LS(STR_PROPCOMMAINMENU_ACCKEY2),
@@ -388,7 +388,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							szKey)) {
 						return TRUE;
 					}
-					auto_snprintf_s(pFuncWk->m_sKey, _TRUNCATE, L"%s", szKey);
+					auto_sprintf( pFuncWk->m_sKey, L"%s", szKey);
 					pFuncWk->m_bDupErr = false;
 
 					tvi.mask = TVIF_HANDLE | TVIF_TEXT | TVIF_PARAM;
@@ -524,7 +524,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 						}
 						if (nIdxFIdx == nSpecialFuncsNum) {
 							// 特殊機能
-							::wcsncpy_s(szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]), _TRUNCATE);
+							wcscpy( szLabel, LS(nsFuncCode::pnFuncList_Special[nIdxFunc]) );
 							eFuncCode = nsFuncCode::pnFuncList_Special[nIdxFunc];
 						}
 						else if (m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc ) != 0) {
@@ -532,7 +532,7 @@ INT_PTR CPropMainMenu::DispatchEvent(
 							eFuncCode = m_cLookup.Pos2FuncCode( nIdxFIdx, nIdxFunc );
 						}
 						else {
-							::wcsncpy_s(szLabel, L"?", _TRUNCATE);
+							wcscpy( szLabel, L"?" );
 							eFuncCode = F_SEPARATOR;
 						}
 						break;
@@ -839,8 +839,16 @@ static std::wstring	SupplementAmpersand( std::wstring sLavel)
 }
 
 // & の削除
-static std::wstring	RemoveAmpersand( std::wstring sLavel)
+template <basis::NullTerminatedStringConstructible<WCHAR> A>
+static std::wstring	RemoveAmpersand(
+	const A& label
+)
 {
+	// 入力元をNUL終端文字列とみなす
+	const auto  _Label = cxx::NullTerminatedString<WCHAR>{ label };
+
+	std::wstring sLavel{ _Label.str() };
+
 	size_t	nPos =0;
 	while ((nPos = sLavel.find( L'&', nPos)) != std::wstring::npos) {
 		if (sLavel[nPos+1] == L'&') {
@@ -938,7 +946,7 @@ void CPropMainMenu::SetData( HWND hwndDlg )
 				}
 				break;
 		}
-		::wcsncpy_s(pFuncWk->m_sKey, pcFunc->m_sKey, _TRUNCATE);
+		wcscpy(pFuncWk->m_sKey, pcFunc->m_sKey);
 		pFuncWk->m_bDupErr = false;
 		// TreeViewに挿入
 		tvis.item.mask = TVIF_TEXT | TVIF_PARAM | TVIF_CHILDREN;
@@ -1016,7 +1024,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 		switch(pFuncWk->m_nFunc) {
 		case F_NODE:
 			pcFunc->m_nType = T_NODE;
-			::wcsncpy_s(pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str(), _TRUNCATE);
+			wcscpy_s( pcFunc->m_sName, MAX_MAIN_MENU_NAME_LEN+1, SupplementAmpersand( pFuncWk->m_sName ).c_str() );
 			break;
 		case F_SEPARATOR:
 			pcFunc->m_nType = T_SEPARATOR;
@@ -1044,7 +1052,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			break;
 		}
 		pcFunc->m_nFunc = pFuncWk->m_nFunc;
-		::wcsncpy_s(pcFunc->m_sKey, pFuncWk->m_sKey, _TRUNCATE);
+		wcscpy( pcFunc->m_sKey, pFuncWk->m_sKey );
 		pcFunc->m_nLevel = nLevel;
 
 		if (tvi.cChildren) {
@@ -1066,7 +1074,7 @@ bool CPropMainMenu::GetDataTree( HWND hwndTree, HTREEITEM htiTrg, int nLevel )
 			pcFunc = &pcMenuTBL[m_Common.m_sMainMenu.m_nMainMenuNum++];
 			pcFunc->m_nType = T_NODE;
 			pcFunc->m_nFunc = F_NODE;
-			::wcsncpy_s(pcFunc->m_sName, L"auto_add", _TRUNCATE);
+			wcscpy( pcFunc->m_sName, L"auto_add" );
 			pcFunc->m_sKey[0] = L'\0';
 			pcFunc->m_nLevel = nLevel++;
 		}
@@ -1098,7 +1106,7 @@ void CPropMainMenu::Import( HWND hwndDlg )
 	CImpExpMainMenu	cImpExp( m_Common );
 
 	// インポート
-	if (!cImpExp.ImportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExp.ImportUI( G_AppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -1113,7 +1121,7 @@ void CPropMainMenu::Export( HWND hwndDlg )
 	GetData( hwndDlg );
 
 	// エクスポート
-	if (!cImpExp.ExportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExp.ExportUI( G_AppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}

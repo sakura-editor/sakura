@@ -95,7 +95,7 @@ CDlgFavorite::CDlgFavorite()
 	m_szMsg[0] = L'\0';
 
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)>);
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	{
 		i = 0;
@@ -553,7 +553,7 @@ BOOL CDlgFavorite::OnBnClicked( int wID )
 						size_t nLen = wcslen(pRecent->GetItemText(i));
 						std::vector<WCHAR> vecPath(nLen + 2);
 						WCHAR* szPath = &vecPath[0];
-						::wcsncpy_s(szPath, std::size(vecPath), pRecent->GetItemText(i), _TRUNCATE);
+						wcscpy( szPath, pRecent->GetItemText(i) );
 						CutLastYenFromDirectoryPath(szPath);
 						if( false == IsFileExists(szPath, false ) ){
 							pRecent->DeleteItem(i);
@@ -754,8 +754,8 @@ bool CDlgFavorite::RefreshList( void )
 		{
 			ret_val = true;
 		
-			if( msg[0] != L'\0' ) ::wcsncat_s(msg, LS( STR_DLGFAV_DELIMITER ), _TRUNCATE);
-			::wcsncat_s(msg, m_aFavoriteInfo[nTab].m_pszCaption, _TRUNCATE);
+			if( msg[0] != L'\0' ) wcscat( msg, LS( STR_DLGFAV_DELIMITER ) );
+			wcscat( msg, m_aFavoriteInfo[nTab].m_pszCaption );
 		}
 	}
 
@@ -937,10 +937,10 @@ void CDlgFavorite::AddItem()
 	WCHAR* szAddText = &vecAddText[0];
 	szAddText[0] = L'\0';
 
-	CDlgInput1	cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	std::wstring strTitle = LS( STR_DLGFAV_ADD );
 	std::wstring strMessage = LS( STR_DLGFAV_ADD_PROMPT );
-	if( !cDlgInput1.DoModal( GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
+	if( !cDlgInput1.DoModal( G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szAddText ) ){
 		return;
 	}
 
@@ -968,10 +968,10 @@ void CDlgFavorite::EditItem()
 			std::vector<WCHAR> vecAddText(max_size);
 			WCHAR* szText = &vecAddText[0];
 			wcsncpy_s(szText, max_size, recent.GetItemText(nRecIndex), _TRUNCATE);
-			CDlgInput1	cDlgInput1;
+			auto& cDlgInput1 = *CDlgInput1::getInstance();
 			std::wstring strTitle = LS( STR_DLGFAV_EDIT );
 			std::wstring strMessage = LS( STR_DLGFAV_EDIT_PROMPT );
-			if( !cDlgInput1.DoModal(GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
+			if( !cDlgInput1.DoModal(G_AppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 				return;
 			}
 			GetFavorite(m_nCurrentTab);
@@ -1078,13 +1078,17 @@ void CDlgFavorite::RightMenu(POINT &menuPos)
 	}
 }
 
-int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
+static int FormatFavoriteColumn(WCHAR* buf, int size, int index, bool view)
 {
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(buf, size);
+
 	// 2010.03.21 Moca Textに連番を設定することによってアクセスキーにする
 	// 0 - 9 A - Z
-	const int mod = index % 36;
-	const WCHAR c = (WCHAR)(((mod) <= 9)?(L'0' + mod):(L'A' + mod - 10));
-	return auto_snprintf_s( buf, size, _TRUNCATE, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
+	const auto mod = index % (10 + 26);	// 0,1,2,...,9,A,B,...,Z
+	const auto c = static_cast<WCHAR>((mod < 10 ? L'0' : L'A' - 10) + mod);
+
+	return auto_sprintf_s( buffer, L"%c %s", c, (view ? L"  " : LS( STR_DLGFAV_HIDDEN )) );
 }
 
 /*!
@@ -1146,7 +1150,7 @@ void CDlgFavorite::ListViewSort(ListViewSortInfo& info, const CRecent* pRecent, 
 	col.cchTextMax = int(std::size(szHeader)) - 4;
 	col.iSubItem = 0;
 	ListView_GetColumn( info.hListView, column, &col );
-	::wcsncat_s(szHeader, info.bSortAscending ? L"▼" : L"▲", _TRUNCATE);
+	wcscat(szHeader, info.bSortAscending ? L"▼" : L"▲");
 	col.mask = LVCF_TEXT;
 	col.pszText = szHeader;
 	col.iSubItem = 0;

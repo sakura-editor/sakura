@@ -1,0 +1,6 @@
+﻿;Mode=RegexReplace
+;Title=正規表現置換ルール
+ ///  /// ルート,Lv=0
+^CHAPTER[ ]+(.+)$ /// $1 /// 章,Lv=1
+^SECTION[ ]+(.+)$ /// $1 /// 節,Lv=2
+^PLAIN /// 通常正規表現,Lv=2

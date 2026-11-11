@@ -512,7 +512,7 @@ bool CViewCommander::Command_TagsMake( void )
 	WCHAR	szTargetPath[1024 /*_MAX_PATH+1*/ ];
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() )
 	{
-		::wcsncpy_s(szTargetPath, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
+		wcscpy( szTargetPath, GetDocument()->m_cDocFile.GetFilePath() );
 		szTargetPath[ wcslen( szTargetPath ) - wcslen( GetDocument()->m_cDocFile.GetFileName() ) ] = L'\0';
 	}
 	else
@@ -523,7 +523,7 @@ bool CViewCommander::Command_TagsMake( void )
 
 	//ダイアログを表示する
 	CDlgTagsMake	cDlgTagsMake;
-	if( !cDlgTagsMake.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
+	if( !cDlgTagsMake.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0, szTargetPath ) ) return false;
 
 	WCHAR	cmdline[1024];
 	/* exeのあるフォルダー */
@@ -539,7 +539,8 @@ bool CViewCommander::Command_TagsMake( void )
 		return false;
 	}
 
-	HANDLE	hStdOutWrite, hStdOutRead;
+	HANDLE hStdOutWrite;
+	HANDLE hStdOutRead;
 	CDlgCancel	cDlgCancel;
 	CWaitCursor	cWaitCursor( m_pCommanderView->GetHwnd() );
 
@@ -577,14 +578,14 @@ bool CViewCommander::Command_TagsMake( void )
 	//	To Here Dec. 28, 2002 MIK
 
 	WCHAR	options[1024];
-	::wcsncpy_s(options, L"--excmd=n", _TRUNCATE);	//デフォルトのオプション
-	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) ::wcsncat_s(options, L" -R", _TRUNCATE);	//サブフォルダーも対象
+	wcscpy_s( options, L"--excmd=n" );	//デフォルトのオプション
+	if( cDlgTagsMake.m_nTagsOpt & 0x0001 ) wcscat( options, L" -R" );	//サブフォルダーも対象
 	if( cDlgTagsMake.m_szTagsCmdLine[0] != L'\0' )	//個別指定のコマンドライン
 	{
-		::wcsncat_s(options, L" ", _TRUNCATE);
-		::wcsncat_s(options, cDlgTagsMake.m_szTagsCmdLine, _TRUNCATE);
+		wcscat( options, L" " );
+		wcscat( options, cDlgTagsMake.m_szTagsCmdLine );
 	}
-	::wcsncat_s(options, L" *", _TRUNCATE);	//配下のすべてのファイル
+	wcscat_s( options, L" *" );	//配下のすべてのファイル
 
 	//コマンドライン文字列作成(MAX:1024)
 	{
@@ -592,7 +593,7 @@ bool CViewCommander::Command_TagsMake( void )
 		WCHAR szCmdDir[_MAX_PATH];
 		::GetSystemDirectory(szCmdDir, int(std::size(szCmdDir)));
 		//	2006.08.04 genta add /D to disable autorun
-		auto_snprintf_s( cmdline, _TRUNCATE, L"\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
+		auto_sprintf_s( cmdline, std::size(cmdline), L"\"%s\\cmd.exe\" /D /C \"\"%s\\%s\" %s\"",
 				szCmdDir,
 				szExeFolder,	//sakura.exeパス
 				CTAGS_COMMAND,	//ctags.exe
@@ -601,18 +602,25 @@ bool CViewCommander::Command_TagsMake( void )
 	}
 
 	//コマンドライン実行
-	BOOL bProcessResult = CreateProcess(
-		nullptr, cmdline, nullptr, nullptr, TRUE,
-		CREATE_NEW_CONSOLE, nullptr, cDlgTagsMake.m_szPath, &sui, &pi
+	if (const auto bProcessResult = CreateProcessW(
+		nullptr,				//実行ファイルパス
+		cmdline,				//コマンドライン
+		nullptr,
+		nullptr,
+		TRUE,					//子プロセスにハンドルを継承させる
+		CREATE_NEW_CONSOLE,
+		nullptr,
+		cDlgTagsMake.m_szPath,
+		&sui,
+		&pi
 	);
-	if( !bProcessResult )
+		!bProcessResult)
 	{
 		WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD04), cmdline );
 		goto finish;
 	}
 
 	{
-		DWORD	read_cnt;
 		DWORD	new_cnt;
 		char	work[1024];
 		bool	bLoopFlag = true;
@@ -620,7 +628,7 @@ bool CViewCommander::Command_TagsMake( void )
 		//中断ダイアログ表示
 		HWND	hwndCancel;
 		HWND	hwndMsg;
-		hwndCancel = cDlgCancel.DoModeless( GetAppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
+		hwndCancel = cDlgCancel.DoModeless( G_AppInstance(), m_pCommanderView->m_hwndParent, IDD_EXECRUNNING );
 		hwndMsg = ::GetDlgItem( hwndCancel, IDC_STATIC_CMD );
 		SetWindowText( hwndMsg, LS(STR_ERR_CEDITVIEW_CMD05) );
 
@@ -653,17 +661,21 @@ bool CViewCommander::Command_TagsMake( void )
 				break;
 			}
 
+			//パイプの中の読み出し待機中の文字数を取得
 			new_cnt = 0;
-			if( PeekNamedPipe( hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr ) )	//パイプの中の読み出し待機中の文字数を取得
+			if (PeekNamedPipe(hStdOutRead, nullptr, 0, nullptr, &new_cnt, nullptr) &&
+				//待機中のものがある
+				0 < new_cnt)
 			{
-				if( new_cnt > 0 )												//待機中のものがある
 				{
 					if( new_cnt >= int(std::size(work)) - 2 )							//パイプから読み出す量を調整
 					{
 						new_cnt = int(std::size(work)) - 2;
 					}
-					::ReadFile( hStdOutRead, &work[0], new_cnt, &read_cnt, nullptr );	//パイプから読み出し
-					if( read_cnt == 0 )
+
+					DWORD read_cnt = 0;
+					if (!::ReadFile(hStdOutRead, work, new_cnt, &read_cnt, nullptr) ||
+						0 == read_cnt)
 					{
 						continue;
 					}
@@ -679,7 +691,9 @@ bool CViewCommander::Command_TagsMake( void )
 
 						cDlgCancel.CloseDialog( TRUE );
 
-						work[ read_cnt ] = L'\0';	// Nov. 15, 2003 genta 表示用に0終端する
+						read_cnt = DWORD((std::min)(size_t(read_cnt), std::size(work) - 1));
+						work[read_cnt] = L'\0';	// Nov. 15, 2003 genta 表示用に0終端する
+
 						WarningMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD06), work ); // 2003.11.09 じゅうじ
 
 						return true;
@@ -747,7 +761,7 @@ bool CViewCommander::Command_TagJumpByTagsFile( bool bClose )
 
 	//複数あれば選択してもらう。
 	if( 1 < nMatchAll ){
-		if( ! cDlgTagJumpList.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ){
+		if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)0 ) ){
 			nMatchAll = 0;
 			return true;	//キャンセル
 		}
@@ -789,7 +803,7 @@ bool CViewCommander::Command_TagJumpByTagsFileKeyword( const wchar_t* keyword )
 	cDlgTagJumpList.SetFileName( szCurrentPath );
 	cDlgTagJumpList.SetKeyword( keyword );
 
-	if( ! cDlgTagJumpList.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) )
+	if( ! cDlgTagJumpList.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), 0 ) )
 	{
 		return true;	//キャンセル
 	}
@@ -823,7 +837,7 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 
 	// 基準ファイル名の設定
 	if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
-		::wcsncpy_s(szCurrentPath, count, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
+		wcscpy( szCurrentPath, GetDocument()->m_cDocFile.GetFilePath() );
 	}else{
 		if( 0 == ::GetCurrentDirectory( count - int(std::size(L"\\dmy")) - MAX_TYPES_EXTS, szCurrentPath ) ){
 			return false;
@@ -833,10 +847,10 @@ bool CViewCommander::Sub_PreProcTagJumpByTagsFile( WCHAR* szCurrentPath, int cou
 		WCHAR szExts[MAX_TYPES_EXTS];
 		CDocTypeManager::GetFirstExt(m_pCommanderView->m_pTypeData->m_szTypeExts, szExts, int(std::size(szExts)));
 		auto nExtLen = wcsnlen_s(szExts, std::size(szExts) );
-		::wcsncat_s(szCurrentPath, count, L"\\dmy", _TRUNCATE);
+		wcscat( szCurrentPath, L"\\dmy" );
 		if( nExtLen ){
-			::wcsncat_s(szCurrentPath, count, L".", _TRUNCATE);
-			::wcsncat_s(szCurrentPath, count, szExts, _TRUNCATE);
+			wcscat( szCurrentPath, L"." );
+			wcscat( szCurrentPath, szExts );
 		}
 	}
 	return true;

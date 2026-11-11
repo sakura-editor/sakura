@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, aroka 新規作成
 	Copyright (C) 2006, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,9 +17,11 @@
 #define SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_
 #pragma once
 
-#include "global.h"
+#include "_main/CCommandLine.h"
+#include "_main/CProcess.h"
 
-class CProcess;
+#include <memory>
+#include <string_view>
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -33,16 +35,32 @@ class CProcess;
 	通常のエディタプロセスの起動が指定された場合には，必要に応じてコントロールプロセス
 	起動の起動をエディタの起動に先立って行う．
 */
-class CProcessFactory {
-public:
-	CProcess* Create( HINSTANCE hInstance, LPCWSTR lpCmdLine );
-protected:
+class CProcessFactory final {
 private:
-	bool IsValidVersion();
-	bool ProfileSelect(HINSTANCE hInstance, LPCWSTR lpCmdLine);
-	bool IsStartingControlProcess();
-	bool IsExistControlProcess();
-	bool StartControlProcess();
-	bool WaitForInitializedControlProcess();	// 2006.04.10 ryoji コントロールプロセスの初期化完了イベントを待つ
+	using CProcessHolder = std::unique_ptr<CProcess>;
+
+public:
+	static bool	IsExistControlProcess();
+	static bool	StartControlProcess();
+
+	explicit CProcessFactory(
+		_In_opt_ HINSTANCE hInstance = nullptr
+	);
+
+	CProcessHolder CreateInstance(
+		std::wstring_view commandLine
+	) const;
+
+private:
+	bool	IsValidVersion() const;
+
+	bool ProfileSelect(
+		CCommandLine& cCommandLine
+	) const;
+
+	bool	IsStartingControlProcess() const;
+
+	HINSTANCE	m_hInstance;
 };
+
 #endif /* SAKURA_CPROCESSFACTORY_5006562F_7795_40FF_AA4C_FFB94842F7C5_H_ */

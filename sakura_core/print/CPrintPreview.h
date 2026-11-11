@@ -31,6 +31,9 @@ class CLayoutMgr;
 class CStringRef;
 
 class CPrintPreview {
+	static constexpr auto COMPAT_BMP_BASE =      1;   /* COMPAT_BMP_SCALEピクセル幅を複写する画面ピクセル幅 */
+	static constexpr auto COMPAT_BMP_SCALE =     2;   /* 互換BMPのCOMPAT_BMP_BASEに対する倍率(1以上の整数倍) */
+
 /* メンバ関数宣言 */
 public:
 	/*
@@ -187,17 +190,17 @@ protected:
 	CEditWnd*		m_pParentWnd;	//	親のCEditDoc*。
 
 	// 2006.08.17 Moca YAZAKIさんのメモの通りDC/BMPをCEditDocからCPrintPreviewへ移動
-	HDC				m_hdcCompatDC;	//!< 再描画用コンパチブルDC
-	HBITMAP			m_hbmpCompatBMP;	//!< 再描画用メモリBMP
-	HBITMAP			m_hbmpCompatBMPOld;	//!< 再描画用メモリBMP(OLD)
-	int				m_nbmpCompatScale;	//!< BMPの画面の10(COMPAT_BMP_BASE)ピクセル幅あたりのBMPのピクセル幅
+	HDC				m_hdcCompatDC = nullptr;	//!< 再描画用コンパチブルDC
+	HBITMAP			m_hbmpCompatBMP = nullptr;	//!< 再描画用メモリBMP
+	HBITMAP			m_hbmpCompatBMPOld = nullptr;	//!< 再描画用メモリBMP(OLD)
+	int				m_nbmpCompatScale = COMPAT_BMP_BASE;	//!< BMPの画面の10(COMPAT_BMP_BASE)ピクセル幅あたりのBMPのピクセル幅
 
 	/*	コントロール制御用	*/
 	//	操作バー
 	HWND			m_hwndPrintPreviewBar;	/* 印刷プレビュー 操作バー */
 	//	スクロールバー
-	int				m_nPreviewVScrollPos;	/* 印刷プレビュー：スクロール位置縦 */
-	int				m_nPreviewHScrollPos;	/* 印刷プレビュー：スクロール位置横 */
+	int				m_nPreviewVScrollPos = 0;	/* 印刷プレビュー：スクロール位置縦 */
+	int				m_nPreviewHScrollPos = 0;	/* 印刷プレビュー：スクロール位置横 */
 	BOOL			m_SCROLLBAR_HORZ;
 	BOOL			m_SCROLLBAR_VERT;
 	HWND			m_hwndVScrollBar;	/* 垂直スクロールバーウィンドウハンドル */
@@ -207,7 +210,7 @@ protected:
 	BOOL			m_SizeBoxCanMove;	/* サイズボックスウィンドウハンドルを動かせるかどうか */
 
 	//	表示
-	int				m_nPreview_Zoom;	/* 印刷プレビュー：倍率 */
+	int				m_nPreview_Zoom = 100;	/* 印刷プレビュー：倍率 */
 
 	//	印刷位置を決定するための変数
 	int				m_nPreview_ViewWidth;		/* 印刷プレビュー：ビュー幅(ピクセル) */
@@ -224,7 +227,7 @@ protected:
 	int				m_bPreview_EnableLines;		/* 印字可能行数/ページ */
 	int				m_nPreview_LineNumberColumns;	/* 行番号エリアの幅（文字数） */
 	WORD			m_nAllPageNum;				/* 全ページ数 */
-	WORD			m_nCurPageNum;				/* 現在のページ */
+	WORD			m_nCurPageNum = 0;			/* 現在のページ */
 
 	PRINTSETTING*	m_pPrintSetting;			/* 現在の印刷設定(キャッシュへのポインタ) */
 	PRINTSETTING*	m_pPrintSettingOrg;			/* 現在の印刷設定(共有データ) */
@@ -253,8 +256,8 @@ protected:
 	// プレビューから出ても現在のプリンター情報を記憶しておけるようにstaticにする 2003.05.02 かろと
 	static CPrint	m_cPrint;					//!< 現在のプリンター情報
 
-	bool			m_bLockSetting;				// 設定のロック
-	bool			m_bDemandUpdateSetting;		// 設定の更新要求
+	bool			m_bLockSetting = false;				// 設定のロック
+	bool			m_bDemandUpdateSetting = false;		// 設定の更新要求
 
 	DISALLOW_COPY_AND_ASSIGN(CPrintPreview);
 };

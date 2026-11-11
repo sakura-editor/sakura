@@ -1,0 +1,7 @@
+﻿;Mode=Regex
+;Title=正規表現ルール
+;RegexOption=igxaudlR
+ /// ルート,Lv=0
+^CHAPTER /// 章,Lv=1
+^SECTION /// 節,Lv=2
+^SKIP /// Except,Lv=2

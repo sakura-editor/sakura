@@ -49,6 +49,13 @@ else()
   set(GENERATOR_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
+# マニフェスト用にCPUアーキテクチャを編集する
+if(ARCH STREQUAL "x64")
+  set(EXE_ARCH "amd64")
+else()
+  set(EXE_ARCH "${ARCH}")
+endif()
+
 # ホストツールのプラットフォームとCPUを決める
 if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64|x86_64")
   set(HOST_PLATFORM "x64")
@@ -68,18 +75,22 @@ else()
   set(GENERATOR_ARGS_FOR_HOST_TOOLS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}")
 endif()
 
-# vswhereを探す。（なくてもOK）
+# vswhereを探す。（必須）
+# Chocolatey版vswhere(ver3.1.7+)を最優先とする
+# Visual Studio付属のvswhereは %ProgramFiles(x86)% に入っている
+# %ProgramFiles% は Windows 10 32bit版向けなので削除可
 find_program(CMD_VSWHERE vswhere.exe
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ChocolateyInstall}/bin"
     "$ENV{ProgramFiles\(x86\)}/Microsoft Visual Studio/Installer"
-  PATH_SUFFIXES
-    "bin"
+    "$ENV{ProgramFiles}/Microsoft Visual Studio/Installer"
   DOC "Visual Studio Locator"
 )
 
 if(CMD_VSWHERE)
   message(STATUS "Found vswhere: ${CMD_VSWHERE}")
+else()
+  message(FATAL_ERROR "vswhere not found")
 endif()
 
 # 環境変数とvswhereを使ってVSバージョンを取得する
@@ -158,10 +169,35 @@ endif()
 
 message(STATUS "Found PowerShell Core: ${CMD_PWSH}")
 
+# Find Python interpreter and development artifacts(required)
+find_package(Python3 3.14 REQUIRED COMPONENTS Interpreter Development)
+
+list(GET Python3_INCLUDE_DIRS 0 Python3_INCLUDE_DIR)
+get_filename_component(Python3_EXECUTABLE_DIR "${Python3_EXECUTABLE}" DIRECTORY)
+find_file(Python3_STABLE_ABI_DLL
+  NAMES python3.dll
+  HINTS
+    "${Python3_EXECUTABLE_DIR}"
+    ${Python3_RUNTIME_LIBRARY_DIRS}
+  NO_DEFAULT_PATH
+  REQUIRED
+)
+
+configure_file(
+  "${CMAKE_SOURCE_DIR}/src/main/cmake/python3_config.h.in"
+  "${CMAKE_BINARY_DIR}/python3_config.h"
+  @ONLY
+)
+
+message(STATUS "Found Python interpreter: ${Python3_EXECUTABLE}")
+message(STATUS "Found Python headers: ${Python3_INCLUDE_DIR}")
+message(STATUS "Found Python Stable ABI DLL: ${Python3_STABLE_ABI_DLL}")
+
 # Find 7zip for archive extraction
 find_program(7ZIP_EXECUTABLE 7z
   PATHS
-    "$ENV{ChocolateyInstall}"
+    "$ENV{ProgramFiles}/7-zip"
+    "$ENV{ChocolateyInstall}/bin"
 )
 
 if(NOT 7ZIP_EXECUTABLE)
@@ -188,6 +224,10 @@ add_custom_command(
     -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
     -DGIT_EXECUTABLE=${GIT_EXECUTABLE}
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/version.h"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/version.h.in"
   COMMENT "Generating version.h"
 )
 
@@ -197,18 +237,19 @@ add_custom_target(generate_version_header
     "${CMAKE_BINARY_DIR}/version.h"
 )
 
-# Include HeaderMake.cmake for HeaderMake command
-include(${CMAKE_SOURCE_DIR}/src/main/cmake/HeaderMake.cmake)
-
 # Create a custom command for funccode_define generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_define.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_define.h
     -mode=define
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_define.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
@@ -220,19 +261,118 @@ add_custom_target(generate_funccode_define
 # Create a custom command for funccode_enum generation
 add_custom_command(
   OUTPUT "${CMAKE_BINARY_DIR}/Funccode_enum.h"
-  COMMAND ${HEADER_MAKE_EXECUTABLE}
+  COMMAND ${Python3_EXECUTABLE}
+    "${CMAKE_SOURCE_DIR}/src/main/py/header_make.py"
     -in=${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
     -out=${CMAKE_BINARY_DIR}/Funccode_enum.h
     -mode=enum
     -enum=EFunctionCode
-  DEPENDS generate_header_make
+  DEPENDS
+    ${CMAKE_SOURCE_DIR}/src/main/py/header_make.py
+    ${CMAKE_SOURCE_DIR}/sakura_core/Funccode_x.hsrc
   COMMENT "Generating Funccode_enum.h"
+  VERBATIM
 )
 
 # Create a custom target that depends on the generated file
 add_custom_target(generate_funccode_enum
   DEPENDS
     "${CMAKE_BINARY_DIR}/Funccode_enum.h"
+)
+
+# Create a custom command for sakura.exe.manifest generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  COMMAND ${CMAKE_COMMAND} 
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DEXE_NAME=sakura.exe
+    -DEXE_ARCH=${EXE_ARCH}
+    -DOUTPUT_FILE=${CMAKE_BINARY_DIR}/sakura.exe.manifest
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.in"
+  COMMENT "Generating sakura.exe.manifest"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_sakura_exe_manifest
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/sakura.exe.manifest"
+)
+
+# Resolve darkmodelib from vcpkg local registry
+find_package(darkmodelib CONFIG REQUIRED)
+
+# Resolve bregonig from vcpkg local registry
+find_package(bregonig CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/bregonig.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/bregonig.dll"
+  COMMENT "Copying bregonig.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_bregonig
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/bregonig.dll"
+)
+
+# Resolve cmigemo from vcpkg local registry
+find_package(cmigemo CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/migemo.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/migemo.dll"
+  COMMENT "Copying migemo.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(generate_cmigemo
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/migemo.dll"
+)
+
+find_package(ppa-stub CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll"
+  COMMENT "Copying ppa_stub.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(ppa_stub
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/ppa_stub.dll"
+)
+
+find_package(dll-plugin1 CONFIG REQUIRED)
+
+add_custom_command(
+  OUTPUT "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${OUTPUT_DIRECTORY}"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  DEPENDS "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/dll_plugin1.dll"
+  COMMENT "Copying dll_plugin1.dll from vcpkg_installed to output directory"
+)
+
+add_custom_target(dll_plugin1
+  DEPENDS
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
 )
 
 if(MINGW)
@@ -246,10 +386,7 @@ if(MINGW)
   message(STATUS "Found iconv: ${ICONV_PATH}")
 endif(MINGW)
 
-message(STATUS "Detected COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-message(STATUS "Detected SIMULATE_ID: ${CMAKE_CXX_SIMULATE_ID}")
-
-# Function to convert RC files from UTF-16LE to UTF-8 for MinGW and clang-cl
+# Function to convert RC files from UTF-16LE to UTF-8 for MinGW
 # Parameters:
 #   RC_FILES_VAR - Variable name containing list of RC file paths
 #   LOCALE_NAME  - Locale name
@@ -259,25 +396,20 @@ function(convert_rc_files_to_utf8 RC_FILES_VAR LOCALE_NAME BINARY_DIR)
   foreach(RC_FILE ${${RC_FILES_VAR}})
     get_filename_component(RC_NAME ${RC_FILE} NAME_WE)
     get_filename_component(RC_EXT ${RC_FILE} EXT)
-    set(UTF8_RC_FILE ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME}/${RC_NAME}${RC_EXT})
+    set(UTF8_RC_DIR ${BINARY_DIR}/${RC_NAME}_${LOCALE_NAME})
+    set(UTF8_RC_FILE ${UTF8_RC_DIR}/${RC_NAME}${RC_EXT})
     
-    if(MINGW)
-      # MinGWの場合はiconvを使用
-      add_custom_command(
-        OUTPUT ${UTF8_RC_FILE}
-        COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
-        DEPENDS ${RC_FILE}
-        COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
-      )
-    else()
-      # clang-clの場合はPowerShellを使用
-      add_custom_command(
-        OUTPUT ${UTF8_RC_FILE}
-        COMMAND ${CMD_PWSH} -NoProfile -ExecutionPolicy Bypass -Command "[System.IO.File]::WriteAllText('${UTF8_RC_FILE}', [System.IO.File]::ReadAllText('${RC_FILE}', [System.Text.Encoding]::Unicode), [System.Text.Encoding]::UTF8)"
-        DEPENDS ${RC_FILE}
-        COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using PowerShell"
-      )
-    endif()
+    add_custom_command(
+      OUTPUT ${UTF8_RC_FILE}
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${UTF8_RC_DIR}"
+      COMMAND ${ICONV_PATH} -f UTF-16LE -t UTF-8 "${RC_FILE}" > "${UTF8_RC_FILE}"
+      DEPENDS ${RC_FILE}
+      COMMENT "Converting ${RC_NAME}_${LOCALE_NAME}${RC_EXT} from UTF-16LE to UTF-8 using iconv"
+    )
+
+    set_property(DIRECTORY APPEND PROPERTY
+      ADDITIONAL_CLEAN_FILES "${UTF8_RC_DIR}"
+    )
     
     list(APPEND RC_FILES_UTF8 ${UTF8_RC_FILE})
   endforeach()
@@ -300,10 +432,10 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc
     ${RC_FOLDER}/sakura_rc_${LOCALE_NAME}.rc2)
   
-  # Convert RC files to UTF-8 for MinGW and clang-cl
-  if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+  if(MINGW)
+    # Convert RC files to UTF-8 for MinGW
     convert_rc_files_to_utf8(RESOURCE_SCRIPTS "${LOCALE_NAME}" ${CMAKE_CURRENT_BINARY_DIR})
-  endif()
+  endif(MINGW)
   
   # Create the library
   add_library(${SAKURA_LANG} MODULE ${RESOURCE_SCRIPTS})
@@ -324,6 +456,10 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
       # RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
   )
 
+  add_custom_command(TARGET ${SAKURA_LANG} PRE_LINK
+    COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:${SAKURA_LANG}>
+  )
+
   # MSVC specific settings
   if(MSVC)
     # Convert decimal LOCALE_ID to hexadecimal for MSVC RC
@@ -338,7 +474,7 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     # avoid error LNK2001 for "__DllMainCRTStartup@12"
     set_target_properties(${SAKURA_LANG}
       PROPERTIES
-        LINK_FLAGS "/NOENTRY"
+        LINK_FLAGS "/NOENTRY /INCREMENTAL:NO"
     )
   endif(MSVC)
   
@@ -347,7 +483,7 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
     # Set RC flags for MinGW (windres uses decimal)
     target_compile_options(${SAKURA_LANG}
       PRIVATE
-        "$<$<COMPILE_LANGUAGE:RC>:-c 65001 -l ${LOCALE_ID} --use-temp-file>"
+        "$<$<COMPILE_LANGUAGE:RC>:-c 65001-l ${LOCALE_ID} --use-temp-file>"
     )
 
     # avoid prefixing of DLL name, set PREFIX to blank.
@@ -357,28 +493,21 @@ function(create_language_dll LOCALE_NAME LOCALE_ID)
         PREFIX ""
     )
   endif(MINGW)
-
-  if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
-    # Add include directories for RC files
-    target_include_directories(${SAKURA_LANG}
-      PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/sakura_rc_${LOCALE_NAME}>"
-    )
-  endif()
 endfunction(create_language_dll)
 
 # add global definitions
 add_compile_definitions(
   UNICODE
   _UNICODE
-  _WIN32_WINNT=_WIN32_WINNT_WIN10
+  WINVER=0x0A00
+  _WIN32_WINNT=0x0A00
   $<$<CONFIG:Debug>:_DEBUG>
   $<$<CONFIG:Release>:NDEBUG>
 )
 
 # add include directories
 include_directories(
-  ${CMAKE_BINARY_DIR} 
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/main/cpp
   ${CMAKE_SOURCE_DIR}/src/main/resources
   ${CMAKE_SOURCE_DIR}/sakura_core
@@ -393,15 +522,9 @@ if(MSVC)
 
   add_compile_options(
     /source-charset:utf-8
+    /execution-charset:shift_jis
+    /w34996
   )
-  
-  # 実行文字セットと警告をエラーにするオプションはclang-clでは指定できない
-  if(NOT (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
-    add_compile_options(
-      /execution-charset:shift_jis
-      /WX
-    )
-  endif()
 endif(MSVC)
 
 if(MINGW)
@@ -412,7 +535,8 @@ if(MINGW)
     -MMD
     -finput-charset=utf-8
     -fexec-charset=cp932
-    -Wall
+    -Wdeprecated-declarations
+    -Wno-trigraphs
   )
 endif(MINGW)
 
@@ -442,10 +566,10 @@ set(NATVIS_FILES
 # define precompiled headers
 set(PCH_HEADER ${CMAKE_SOURCE_DIR}/sakura_core/StdAfx.h)
 
-# Convert RC files to UTF-8 for MinGW and clang-cl
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
-endif()
+endif(MINGW)
 
 # Create sakura_core object library
 add_library(sakura_core OBJECT ${PCH_HEADER} ${SOURCES} ${RESOURCE_SCRIPTS} ${HEADERS})
@@ -472,7 +596,10 @@ target_link_directories(sakura_core
 # link libraries
 target_link_libraries(sakura_core
   PUBLIC
+    darkmodelib::darkmodelib
+    bcrypt
     comctl32
+    dbghelp
     dwmapi
     htmlhelp
     imm32
@@ -493,6 +620,7 @@ add_dependencies(sakura_core
   generate_version_header
   generate_funccode_define
   generate_funccode_enum
+  generate_bregonig
   generate_cmigemo
 )
 
@@ -510,24 +638,13 @@ if(MSVC)
     PUBLIC
       NOMINMAX
   )
-  # add compile options for sakura_core (Visual Studio generator only)
-  if(CMAKE_GENERATOR MATCHES "^Visual Studio")
-    target_compile_options(sakura_core
-      PRIVATE
-        /FAsu
-        /Fa"${CMAKE_BINARY_DIR}"
-    )
-  endif()
-endif(MSVC)
-
-# clang-cl使用時にRC変換ファイルのためのincludeディレクトリを追加
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
-  # Add include directories for sakura_core
-  target_include_directories(sakura_core
+  # add compile options for sakura_core
+  target_compile_options(sakura_core
     PRIVATE
-      "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/sakura_rc_ja-JP>"
+      /FAsu
+      /Fa"${CMAKE_BINARY_DIR}"
   )
-endif()
+endif(MSVC)
 
 if(MINGW)
   # Set RC flags for MinGW (windres uses decimal)
@@ -544,5 +661,24 @@ if(MINGW)
       -municode
       -static
       $<$<CONFIG:Release>:-s>
+  )
+
+  set(SAKURA_EXE_MANIFEST "${CMAKE_BINARY_DIR}/sakura.exe.manifest")
+  set(SAKURA_MANIFEST_RC "${CMAKE_BINARY_DIR}/sakura_manifest.rc")
+
+  # Create a custom command for sakura_manifest.rc generation
+  add_custom_command(
+    OUTPUT "${SAKURA_MANIFEST_RC}"
+    COMMAND ${CMAKE_COMMAND} 
+      -DSOURCE_DIR="${CMAKE_SOURCE_DIR}"
+      -DOUTPUT_FILE="${SAKURA_MANIFEST_RC}"
+      -DMANIFEST_FILE="${SAKURA_EXE_MANIFEST}"
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${SAKURA_MANIFEST_RC}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.in"
+      "${SAKURA_EXE_MANIFEST}"
+    COMMENT "Generating sakura_manifest.rc"
   )
 endif(MINGW)

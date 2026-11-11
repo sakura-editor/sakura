@@ -174,7 +174,7 @@ void SColorStrategyInfo::DoChangeColor(CColor3Setting *pcColor)
 
 CColorStrategyPool::CColorStrategyPool()
 {
-	m_pcView = &(GetEditWnd().GetView(0));
+	m_pcView = &(CEditWnd::getInstance()->GetView(0));
 	m_pcSelectStrategy = new CColor_Select();
 	m_pcFoundStrategy = new CColor_Found();
 //	m_vStrategies.push_back(new CColor_Found);				// マッチ文字列
@@ -284,7 +284,7 @@ void CColorStrategyPool::OnChangeSetting(void)
 	m_pcDoubleQuote = static_cast<CColor_DoubleQuote*>(GetStrategyByColor(COLORIDX_WSTRING));	// ダブルクォーテーション文字列
 
 	// 色分けをしない場合に、処理をスキップできるように確認する
-	const STypeConfig& type = GetTypeConfig();
+	const STypeConfig& type = CEditDoc::GetInstance(0)->m_cDocType.GetDocumentAttribute();
 	EColorIndexType bSkipColorTypeTable[] = {
 		COLORIDX_DIGIT,
 		COLORIDX_COMMENT,

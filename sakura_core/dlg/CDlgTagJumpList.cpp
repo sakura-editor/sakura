@@ -10,7 +10,7 @@
 	Copyright (C) 2005, MIK
 	Copyright (C) 2006, genta, ryoji
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -119,12 +119,14 @@ inline void CDlgTagJumpList::ClearPrevFindInfo(){
 	m_psFind0Match->m_nMatchAll = 0;
 }
 
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base );
+
 CDlgTagJumpList::CDlgTagJumpList(bool bDirectTagJump)
 	: CDialog(true),
 	  m_bDirectTagJump(bDirectTagJump)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)>);
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	// 2010.07.22 Moca ページング採用で 最大値を100→50に減らす
 	m_pcList = new CSortedTagJumpList(50);
@@ -287,13 +289,13 @@ void CDlgTagJumpList::UpdateData( bool bInit )
 		ListView_InsertItem( hwndList, &lvi );
 
 		if( item->baseDirId ){
-			auto_snprintf_s(tmp, _TRUNCATE, L"(%d)", item->depth);
+			auto_sprintf( tmp, L"(%d)", item->depth );
 		}else{
-			auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->depth);
+			auto_sprintf( tmp, L"%d", item->depth );
 		}
 		ListView_SetItemText( hwndList, nIndex, 1, tmp );
 
-		auto_snprintf_s(tmp, _TRUNCATE, L"%d", item->no);
+		auto_sprintf( tmp, L"%d", item->no );
 		ListView_SetItemText( hwndList, nIndex, 2, tmp );
 
 		WCHAR *p = GetNameByType( item->type, item->filename );
@@ -717,7 +719,7 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 	SplitPath_FolderAndFile( GetFilePath(), path, nullptr );
 	AddLastYenFromDirectoryPath( path );
 	
-	m_pcList->GetParam(index, fileName, lineNum, &tempDepth, dirFileName);
+	m_pcList->GetParam( index, nullptr, fileName, lineNum, nullptr, nullptr, &tempDepth, dirFileName );
 	if( depth ){
 		*depth = tempDepth;
 	}
@@ -727,12 +729,12 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 		AddLastYenFromDirectoryPath( dirFileName );
 		const WCHAR	*p = fileName;
 		if( p[0] == L'\\' ){
-			::wcsncpy_s(dirFileName, p, _TRUNCATE);
+			wcscpy( dirFileName, p );
 		}else if( iswalpha( p[0] ) && p[1] == L':' ){
-			::wcsncpy_s(dirFileName, p, _TRUNCATE);
+			wcscpy( dirFileName, p );
 		}else{
 			// 相対パス：連結する
-			::wcsncat_s(dirFileName, p, _TRUNCATE);
+			wcscat( dirFileName, p );
 		}
 		fileNamePath = dirFileName;
 	}else{
@@ -753,7 +755,8 @@ bool CDlgTagJumpList::GetFullPathAndLine( int index, WCHAR *fullPath, int count,
 WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 {
 	const WCHAR	*p;
-
+	WCHAR	*token;
+	int		i;
 	//	2005.03.31 MIK
 	WCHAR	tmp[MAX_TAG_STRING_LENGTH];
 
@@ -761,32 +764,30 @@ WCHAR *CDlgTagJumpList::GetNameByType( const WCHAR type, const WCHAR *name )
 	if( ! p ) p = L".c";	//見つからないときは ".c" と想定する。
 	p++;
 
-	for (int i = 0; p_extentions[i]; i += 2)
+	for( i = 0; p_extentions[i]; i += 2 )
 	{
-		::wcsncpy_s(tmp, p_extentions[i], _TRUNCATE);
-		WCHAR* context1 = nullptr;
-		auto token1 = ::wcstok_s(tmp, L",", &context1);
-		while( token1 )
+		wcscpy( tmp, p_extentions[i] );
+		token = _wcstok( tmp, L"," );
+		while( token )
 		{
-			if( _wcsicmp( p, token1 ) == 0 )
+			if( _wcsicmp( p, token ) == 0 )
 			{
-				::wcsncpy_s(tmp, p_extentions[i+1], _TRUNCATE);
-				WCHAR* context2 = nullptr;
-				auto token2 = ::wcstok_s(tmp, L",", &context2);
-				while( token2 )
+				wcscpy( tmp, p_extentions[i+1] );
+				token = _wcstok( tmp, L"," );
+				while( token )
 				{
-					if( token2[0] == type )
+					if( token[0] == type )
 					{
-						return _wcsdup( &token2[2] );
+						return _wcsdup( &token[2] );
 					}
 
-					token2 = ::wcstok_s(nullptr, L",", &context2);
+					token = _wcstok( nullptr, L"," );
 				}
 
 				return _wcsdup( L"" );
 			}
 
-			token1 = ::wcstok_s(nullptr, L",", &context1);
+			token = _wcstok( nullptr, L"," );
 		}
 	}
 
@@ -888,7 +889,7 @@ int CDlgTagJumpList::SearchBestTag( void )
 			WCHAR szPath[_MAX_PATH];
 			GetFullPathAndLine( i, szPath, int(std::size(szPath)), nullptr, nullptr );
 			if( FALSE == GetLongFileName( szPath, lpPathInfo->szFileNameDst ) ){
-				::wcsncpy_s(lpPathInfo->szFileNameDst, szPath, _TRUNCATE);
+				wcscpy( lpPathInfo->szFileNameDst, szPath );
 			}
 		}
 
@@ -1099,7 +1100,7 @@ int CDlgTagJumpList::find_key_core(
 		// 初回or使えないときはクリア
 		ClearPrevFindInfo();
 		// ファイル名をコピーしたあと、ディレクトリ(最後\)のみにする
-		::wcsncpy_s(state.m_szCurPath, GetFilePath(), _TRUNCATE);
+		wcscpy( state.m_szCurPath, GetFilePath() );
 		state.m_szCurPath[ GetFileName() - GetFilePath() ] = L'\0';
 		state.m_nLoop = m_nLoop;
 	}
@@ -1130,11 +1131,12 @@ int CDlgTagJumpList::find_key_core(
 		}
 
 		//タグファイル名を作成する。
-		auto_snprintf_s(szTagFile, _TRUNCATE, L"%s%s", state.m_szCurPath, TAG_FILENAME_T);
+		auto_sprintf( szTagFile, L"%s%s", state.m_szCurPath, TAG_FILENAME_T );
 		DEBUG_TRACE( L"tag: %s\n", szTagFile );
 		
 		//タグファイルを開く。
-		if (FILE* fp = nullptr; 0 == ::_wfopen_s(&fp, szTagFile, L"rb"))
+		FILE* fp = _wfopen( szTagFile, L"rb" );
+		if( fp )
 		{
 			DEBUG_TRACE( L"open tags\n" );
 			bool bSorted = true;
@@ -1155,7 +1157,7 @@ int CDlgTagJumpList::find_key_core(
 			rule.nTop = nTop;
 
 			// tagsファイルのパラメータを読みこみ
-			bRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, szNextPath, &baseDirId);
+			bRet = ReadTagsParameter(fp, bTagJumpICaseByTags, &state, cList, &nTagFormat, &bSorted, &bFoldcase, &bTagJumpICase, &szNextPath[0], &baseDirId);
 			if ( bRet ) {
 				if ( bSorted && !bFoldcase && !bTagJumpICase && ( bTagJumpExactMatch && !bTagJumpPartialMatch ) ) {
 					//二分探索が可能な場合は二分探索を行う
@@ -1173,14 +1175,14 @@ int CDlgTagJumpList::find_key_core(
 		
 		if( szNextPath[0] ){
 			state.m_bJumpPath = true;
-			::wcsncpy_s(state.m_szCurPath, szNextPath, _TRUNCATE);
+			wcscpy( state.m_szCurPath, szNextPath );
 			std::wstring path = state.m_szCurPath;
 			path += L"\\dummy";
 			state.m_nLoop = CalcMaxUpDirectory( path.c_str() );
 			state.m_nDepth = 0;
 			szNextPath[0] = 0;
 		}else{
-//			::wcsncat_s(state.m_szCurPath, L"..\\", _TRUNCATE);
+//			wcscat( state.m_szCurPath, L"..\\" );
 			//カレントパスを1階層上へ。
 			DirUp( state.m_szCurPath );
 		}
@@ -1218,7 +1220,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 	bool* bSorted,
 	bool* bFoldcase,
 	bool* bTagJumpICase,
-	std::span<WCHAR> szNextPath,
+	PTCHAR szNextPath,
 	int* baseDirId
 )
 {
@@ -1246,10 +1248,10 @@ bool CDlgTagJumpList::ReadTagsParameter(
 			if (0 == strncmp_literal(szLineData + 1, "_TAG_")) {
 				int  nRet;
 				s[0][0] = s[1][0] = s[2][0] = 0;
-				nRet = ::sscanf_s(szLineData, TAG_FILE_INFO_A,	//tagsファイル情報
-					s[0], unsigned(std::size(s[0])),
-					s[1], unsigned(std::size(s[1])),
-					s[2], unsigned(std::size(s[2]))
+				nRet = sscanf(
+					szLineData,
+					TAG_FILE_INFO_A,	//tagsファイル情報
+					s[0], s[1], s[2]
 				);
 				if (nRet < 2) {
 					szLineData[nLINEDATA_LAST_CHAR] = '\0';
@@ -1284,7 +1286,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 							szNextPath[0] = 0;
 							if (!GetLongFileName(baseWork, szNextPath)) {
 								// エラーなら変換前を適用
-								::wcsncpy_s(std::data(szNextPath), std::size(szNextPath), baseWork, _TRUNCATE);
+								wcscpy(szNextPath, baseWork);
 							}
 						}
 					}
@@ -1298,7 +1300,7 @@ bool CDlgTagJumpList::ReadTagsParameter(
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
 					else {
-						::wcsncpy_s(baseWork, to_wchar(s[1]), _TRUNCATE);
+						wcscpy(baseWork, to_wchar(s[1]));
 						AddLastYenFromDirectoryPath(baseWork);
 						*baseDirId = cList.AddBaseDir(baseWork);
 					}
@@ -1329,22 +1331,20 @@ bool CDlgTagJumpList::parseTagsLine(ACHAR s[][1024], ACHAR* szLineData, int* n2,
 	//	@@ 2005.03.31 MIK TAG_FORMAT定数化
 	int nRet;
 	if (2 == nTagFormat) {
-		nRet = ::sscanf_s(szLineData, TAG_FORMAT_2_A,	//拡張tagsフォーマット
-			s[0], unsigned(std::size(s[0])),
-			s[1], unsigned(std::size(s[1])),
-			n2, 
-			s[2], unsigned(std::size(s[2])),
-			s[3], unsigned(std::size(s[3]))
+		nRet = sscanf(
+			szLineData,
+			TAG_FORMAT_2_A,	//拡張tagsフォーマット
+			s[0], s[1], n2, s[2], s[3]
 		);
 		// 2010.04.02 nRet < 4 を3に変更。標準フォーマットも読み込む
 		if (nRet < 3) bRet = false;
 		if (*n2 <= 0) bRet = false;	//行番号不正(-excmd=nが指定されてないかも)
 	}
 	else {
-		nRet = ::sscanf_s(szLineData, TAG_FORMAT_1_A,	//tagsフォーマット
-			s[0], unsigned(std::size(s[0])),
-			s[1], unsigned(std::size(s[1])),
-			n2
+		nRet = sscanf(
+			szLineData,
+			TAG_FORMAT_1_A,	//tagsフォーマット
+			s[0], s[1], n2
 		);
 		if (nRet < 2) bRet = false;
 		if (*n2 <= 0) bRet = false;
@@ -1602,21 +1602,24 @@ int CDlgTagJumpList::CalcMaxUpDirectory( const WCHAR* p )
 WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 	WCHAR* basePath, const WCHAR* fileName, int depth )
 {
+	// 出力先を固定長バッファとして扱う
+	auto buffer = std::span(pszOutput, count);
+
 	DEBUG_TRACE( L"base  %s\n", basePath );
 	DEBUG_TRACE( L"file  %s\n", fileName );
 	DEBUG_TRACE( L"depth %d\n",  depth );
 	//完全パス名を作成する。
 	const WCHAR	*p = fileName;
 	if( p[0] == L'\\' ){	//ドライブなし絶対パスか？
-		::wcsncpy_s(pszOutput, count, p, _TRUNCATE);	//何も加工しない。
+		wcscpy( pszOutput, p );	//何も加工しない。
 	}else if( iswalpha( p[0] ) && p[1] == L':' ){	//絶対パスか？
-		::wcsncpy_s(pszOutput, count, p, _TRUNCATE);	//何も加工しない。
+		wcscpy( pszOutput, p );	//何も加工しない。
 	}else{
 		for( int i = 0; i < depth; i++ ){
-			//::wcsncat_s(basePath, L"..\\", _TRUNCATE);
+			//wcscat( basePath, L"..\\" );
 			DirUp( basePath );
 		}
-		if( -1 == auto_snprintf_s( pszOutput, count, _TRUNCATE, L"%s%s", basePath, p ) ){
+		if( -1 == auto_sprintf_s( buffer, L"%s%s", basePath, p ) ){
 			return nullptr;
 		}
 	}
@@ -1626,18 +1629,41 @@ WCHAR* CDlgTagJumpList::GetFullPathFromDepth( WCHAR* pszOutput, int count,
 /*!
 	ディレクトリとディレクトリを連結する
 */
-WCHAR* CDlgTagJumpList::CopyDirDir(std::span<WCHAR> dest, const WCHAR* target, const WCHAR* base)
+WCHAR* CopyDirDir( std::span<WCHAR> destination, const WCHAR* target, const WCHAR* base )
 {
+	const auto destLen = std::size(destination);
+
+	assert(0 < destLen);
+
+	auto dest = std::data(destination);
+
 	if( _IS_REL_PATH( target ) ){
-		::wcsncpy_s(std::data(dest), std::size(dest), base, _TRUNCATE);
-		AddLastYenFromDirectoryPath(std::data(dest));
-		::wcsncat_s(std::data(dest), std::size(dest), target, _TRUNCATE);
+		::wcscpy_s(dest, destLen, base);
+		AddLastYenFromDirectoryPath(destination);
+		if (dest[0]) ::wcscat_s(dest, destLen, target);
 	}else{
-		::wcsncpy_s(std::data(dest), std::size(dest), target, _TRUNCATE);
+		::wcscpy_s(dest, destLen, target);
 	}
-	AddLastYenFromDirectoryPath(std::data(dest));
-	return std::data(dest);
+	AddLastYenFromDirectoryPath(destination);
+	return dest;
 }
+
+namespace cxx {
+
+WCHAR* CopyDirDir(
+	std::span<WCHAR> destination,
+	_In_z_ LPCWSTR target,
+	_In_z_ LPCWSTR base
+)
+{
+	return ::CopyDirDir(
+		destination,
+		target,
+		base
+	);
+}
+
+} // namespace cxx
 
 /*
 	@param dir [in,out] フォルダーのパス 
@@ -1647,9 +1673,9 @@ WCHAR* CDlgTagJumpList::CopyDirDir(std::span<WCHAR> dest, const WCHAR* target, c
 WCHAR* CDlgTagJumpList::DirUp( WCHAR* dir )
 {
 	CutLastYenFromDirectoryPath( dir );
-	const WCHAR *p = GetFileTitlePointer(dir); //最後の\の次の文字を取得 last_index_of('\\') + 1;
-	if( 0 < p - dir){
-		dir[p - dir] = '\0';
+	WCHAR* p = GetFileTitlePointer(dir); //最後の\の次の文字を取得 last_index_of('\\') + 1;
+	if( dir < p ){
+		*p = L'\0';
 	}
 	return dir;
 }

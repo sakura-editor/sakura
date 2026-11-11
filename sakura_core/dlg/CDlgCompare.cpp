@@ -55,7 +55,7 @@ CDlgCompare::CDlgCompare()
 	: CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)> );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	m_bCompareAndTileHorz = TRUE;	/* 左右に並べて表示 */
 
@@ -157,7 +157,7 @@ void CDlgCompare::SetData( void )
 			pfi = (EditInfo*)&m_pShareData->m_sWorkBuffer.m_EditInfo_MYWM_GETFILEINFO;
 
 //@@@ 2001.12.26 YAZAKI ファイル名で比較すると(無題)だったときに問題同士の比較ができない
-			if (pEditNodeArr[i].GetHwnd() == GetMainWindow()){
+			if (pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd()){
 				// 2010.07.30 自分の名前もここから設定する
 				CFileNameManager::getInstance()->GetMenuFullLabel_WinListNoEscape( szMenu, int(std::size(szMenu)), pfi, pEditNodeArr[i].m_nId, -1, calc.GetDC() );
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_STATIC_COMPARESRC, szMenu );

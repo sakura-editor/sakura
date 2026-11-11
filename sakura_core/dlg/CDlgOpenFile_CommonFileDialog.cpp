@@ -12,7 +12,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, novice, ryoji
 	Copyright (C) 2006, ryoji, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -34,6 +34,7 @@
 #include "util/shell.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
 #include "util/module.h"
 #include "util/design_template.h"
 #include "basis/CMyString.h"
@@ -41,6 +42,8 @@
 #include "apiwrap/StdControl.h"
 #include "sakura_rc.h"
 #include "sakura.hh"
+
+using namespace std::literals::string_view_literals;
 
 static const DWORD p_helpids[] = {	//13100
 //	IDOK,					HIDOK_OPENDLG,		//Winのヘルプで勝手に出てくる
@@ -58,6 +61,106 @@ static const DWORD p_helpids[] = {	//13100
 
 static int AddComboCodePages(HWND hdlg, HWND combo, int nSelCode, bool& bInit);
 
+namespace apiwrap {
+
+/*!
+ * @brief CommDlgExtendedError() のエラーコードを文字列に変換する
+ *
+ * @retval ""     エラーコードなし
+ * @retval ""以外 エラーコード文字列
+ *
+ * @throws std::out_of_range 未定義のエラーコードを検出した場合
+ */
+std::wstring CommDlgExtendedErrorString()
+{
+#pragma push_macro("CD_ERR_ENTRY")
+
+#define CD_ERR_ENTRY(code)	{ code, L ## #code ## sv }
+
+	const std::map<DWORD, std::wstring_view> codeMap{
+		CD_ERR_ENTRY(CDERR_DIALOGFAILURE),
+
+		CD_ERR_ENTRY(CDERR_GENERALCODES),
+		CD_ERR_ENTRY(CDERR_STRUCTSIZE),
+		CD_ERR_ENTRY(CDERR_INITIALIZATION),
+		CD_ERR_ENTRY(CDERR_NOTEMPLATE),
+		CD_ERR_ENTRY(CDERR_NOHINSTANCE),
+		CD_ERR_ENTRY(CDERR_LOADSTRFAILURE),
+		CD_ERR_ENTRY(CDERR_FINDRESFAILURE),
+		CD_ERR_ENTRY(CDERR_LOADRESFAILURE),
+		CD_ERR_ENTRY(CDERR_LOCKRESFAILURE),
+		CD_ERR_ENTRY(CDERR_MEMALLOCFAILURE),
+		CD_ERR_ENTRY(CDERR_MEMLOCKFAILURE),
+		CD_ERR_ENTRY(CDERR_NOHOOK),
+		CD_ERR_ENTRY(CDERR_REGISTERMSGFAIL),
+
+		CD_ERR_ENTRY(PDERR_PRINTERCODES),
+		CD_ERR_ENTRY(PDERR_SETUPFAILURE),
+		CD_ERR_ENTRY(PDERR_PARSEFAILURE),
+		CD_ERR_ENTRY(PDERR_RETDEFFAILURE),
+		CD_ERR_ENTRY(PDERR_LOADDRVFAILURE),
+		CD_ERR_ENTRY(PDERR_GETDEVMODEFAIL),
+		CD_ERR_ENTRY(PDERR_INITFAILURE),
+		CD_ERR_ENTRY(PDERR_NODEVICES),
+		CD_ERR_ENTRY(PDERR_NODEFAULTPRN),
+		CD_ERR_ENTRY(PDERR_DNDMMISMATCH),
+		CD_ERR_ENTRY(PDERR_CREATEICFAILURE),
+		CD_ERR_ENTRY(PDERR_PRINTERNOTFOUND),
+		CD_ERR_ENTRY(PDERR_DEFAULTDIFFERENT),
+
+		CD_ERR_ENTRY(CFERR_CHOOSEFONTCODES),
+		CD_ERR_ENTRY(CFERR_NOFONTS),
+		CD_ERR_ENTRY(CFERR_MAXLESSTHANMIN),
+
+		CD_ERR_ENTRY(FNERR_FILENAMECODES),
+		CD_ERR_ENTRY(FNERR_SUBCLASSFAILURE),
+		CD_ERR_ENTRY(FNERR_INVALIDFILENAME),
+		CD_ERR_ENTRY(FNERR_BUFFERTOOSMALL),
+
+		CD_ERR_ENTRY(FRERR_FINDREPLACECODES),
+		CD_ERR_ENTRY(FRERR_BUFFERLENGTHZERO),
+
+		CD_ERR_ENTRY(CCERR_CHOOSECOLORCODES),
+	};
+
+#pragma pop_macro("CD_ERR_ENTRY")
+
+	// エラーコードを取得する
+	const auto code = Comdlg32::getInstance()->CommDlgExtendedError();
+	if (!code) {
+		return {};	// エラーコードなし
+	}
+
+	// コードマップから文字列を取得する
+	if (const auto found = codeMap.find(code);
+		found != codeMap.end())
+	{
+		return std::data(found->second);	// 見付かった値を返す
+	}
+
+	throw std::out_of_range{ std::format("CommDlgExtendedError: unknown error code {}", code) };
+}
+
+template <class TFunc>
+bool CallCommDlgFunc(
+	TFunc&& func,
+	LPOPENFILENAMEW pOfn
+)
+{
+	assert(pOfn);
+
+	auto bRet = std::forward<TFunc>(func)();
+	if (!bRet && FNERR_INVALIDFILENAME == Comdlg32::getInstance()->CommDlgExtendedError()) {
+		pOfn->lpstrFile[0] = L'\0';
+		pOfn->lpstrInitialDir = L"";
+		bRet = std::forward<TFunc>(func)();
+	}
+
+	return bRet;
+}
+
+} // namespace apiwrap
+
 struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 {
 	CDlgOpenFile_CommonFileDialog();
@@ -71,23 +174,23 @@ struct CDlgOpenFile_CommonFileDialog final : public IDlgOpenFile
 		const std::vector<LPCWSTR>& vOPENFOLDER
 	) override;
 
-	bool DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFileter ) override;
-	bool DoModal_GetSaveFileName( WCHAR* pszPath ) override;
+	bool DoModal_GetOpenFileName(std::span<WCHAR> szPath, EFilter eAddFileter) override;
+	bool DoModal_GetSaveFileName(std::span<WCHAR> szPath) override;
 	bool DoModalOpenDlg( SLoadInfo* pLoadInfo, std::vector<std::wstring>*, bool bOptions ) override;
 	bool DoModalSaveDlg( SSaveInfo*	pSaveInfo, bool bSimpleMode ) override;
 
-	void DlgOpenFail(void);
+	static void DlgOpenFail(void);
 
-	void InitOfn( OPENFILENAME* ofn );
+	void InitOfn(OPENFILENAME* ofn) const;
 
 	static void InitLayout( HWND hwndOpenDlg, HWND hwndDlg, HWND hwndBaseCtrl );
 	static LRESULT APIENTRY OFNHookProcMain( HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam , UINT_PTR uIdSubclass, DWORD_PTR dwRefData );
 	static UINT_PTR CALLBACK OFNHookProc( HWND hdlg, UINT uiMsg, WPARAM wParam, LPARAM lParam );
 
 	//! リトライ機能付き GetOpenFileName
-	bool _GetOpenFileNameRecover( OPENFILENAME* ofn );
+	bool _GetOpenFileNameRecover(OPENFILENAME* ofn) const;
 	//! リトライ機能付き GetOpenFileName
-	bool GetSaveFileNameRecover( OPENFILENAME* ofn );
+	bool GetSaveFileNameRecover(OPENFILENAME* ofn) const;
 
 	HINSTANCE		m_hInstance = nullptr;	/* アプリケーションインスタンスのハンドル */
 	HWND			m_hwndParent = nullptr;	/* オーナーウィンドウのハンドル */
@@ -134,6 +237,27 @@ public:
 	{}
 };
 
+/*!
+	ファイル名ボックスに入力されたパスの区切りの / を \ に置き換える(Issue #2727)
+
+	「開く」(IDOK)をダイアログが処理する前に呼ぶ。ダイアログは / を区切りとして扱わないため。
+*/
+static void ReplaceSlashInFileNameBox( HWND hwndOpenDlg )
+{
+	HWND hwndFilebox = ::GetDlgItem( hwndOpenDlg, cmb13 );		// ファイル名コンボ（Windows 2000タイプ）
+	if( !::IsWindow( hwndFilebox ) ){
+		hwndFilebox = ::GetDlgItem( hwndOpenDlg, edt1 );		// ファイル名エディット（レガシータイプ）
+		if( !::IsWindow( hwndFilebox ) ){
+			return;
+		}
+	}
+	std::wstring text( ::GetWindowTextLength( hwndFilebox ), L'\0' );
+	::GetWindowText( hwndFilebox, text.data(), int(text.size()) + 1 );
+	if( const auto replaced = ReplaceSlashToYen( text ); replaced != text ){
+		::SetWindowText( hwndFilebox, replaced.c_str() );
+	}
+}
+
 /*
 || 	開くダイアログのサブクラスプロシージャ
 
@@ -164,6 +288,9 @@ LRESULT APIENTRY CDlgOpenFile_CommonFileDialog::OFNHookProcMain( HWND hwnd, UINT
 				break;
 			case chx1:	// The read-only check box
 				pData->m_bViewMode = ( 0 != ::IsDlgButtonChecked( hwnd , chx1 ) );
+				break;
+			case IDOK:
+				ReplaceSlashInFileNameBox( hwnd );
 				break;
 			default:
 				break;
@@ -343,7 +470,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 				i = 0;
 			}
 			CCodeTypesForCombobox cCodeTypes;
-			for( /*i = 0*/; i < int(cCodeTypes.GetCount()); ++i ){
+			for( /*i = 0*/; i < cCodeTypes.GetCount(); ++i ){
 				nIdx = ApiWrap::Combo_AddString( pData->m_hwndComboCODES, cCodeTypes.GetName(i) );
 				ApiWrap::Combo_SetItemData( pData->m_hwndComboCODES, nIdx, cCodeTypes.GetCode(i) );
 				if( cCodeTypes.GetCode(i) == pData->m_nCharCode ){
@@ -416,7 +543,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 									szDefExt[0] = L'\0';
 								break;
 							case 2:		// *.txt
-								::wcsncpy_s(szDefExt, L".txt", _TRUNCATE);
+								::wcscpy(szDefExt, L".txt");
 								break;
 							case 3:		// *.*
 							default:	// 不明
@@ -424,7 +551,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 								break;
 							}
 							::wcsncpy_s(szBuf, pData->m_pOf->lpstrFile, _TRUNCATE);
-							::wcsncat_s(szBuf, szDefExt, _TRUNCATE);
+							::wcscat(szBuf, szDefExt);
 							::wcsncpy_s(pData->m_szPath, szBuf, _TRUNCATE);
 						}
 					}
@@ -433,7 +560,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 					if( IsFileExists(pData->m_szPath, true) ){
 						WCHAR szText[_MAX_PATH + 100];
 						::wcsncpy_s(szText, pData->m_szPath, _TRUNCATE);
-						::wcsncat_s(szText, LS(STR_DLGOPNFL2), _TRUNCATE);
+						::wcscat(szText, LS(STR_DLGOPNFL2));
 						if( IDYES != ::MessageBox( pData->m_hwndOpenDlg, szText, LS(STR_DLGOPNFL3), MB_YESNO | MB_ICONEXCLAMATION) ){
 							::SetWindowLongPtr( hdlg, DWLP_MSGRESULT, TRUE );
 							return TRUE;
@@ -469,7 +596,7 @@ UINT_PTR CALLBACK CDlgOpenFile_CommonFileDialog::OFNHookProc(
 			{
 				wchar_t szFolder[_MAX_PATH];
 				CDlgOpenFileData* pData = (CDlgOpenFileData*)::GetWindowLongPtr(hdlg, DWLP_USER);
-				lRes = CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
+				CommDlg_OpenSave_GetFolderPath( pData->m_hwndOpenDlg, szFolder, int(std::size(szFolder)) );
 			}
 //			MYTRACE( L"\tlRes=%d\pszFolder=[%ls]\n", lRes, szFolder );
 
@@ -650,8 +777,8 @@ CDlgOpenFile_CommonFileDialog::CDlgOpenFile_CommonFileDialog()
 		szFile, int(std::size(szFile))
 	);
 	_wsplitpath_s( szFile, szDrive, std::size(szDrive), szDir, std::size(szDir), nullptr, 0, nullptr, 0 );
-	::wcsncpy_s(m_szInitialDir, szDrive, _TRUNCATE);
-	::wcsncat_s(m_szInitialDir, szDir, _TRUNCATE);
+	wcscpy( m_szInitialDir, szDrive );
+	wcscat( m_szInitialDir, szDir );
 
 	return;
 }
@@ -682,10 +809,10 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		my_splitpath_t( pszDefaultPath, szDrive, szDir, nullptr, nullptr );
 		// 2010.08.28 相対パス解決
 		WCHAR szRelPath[_MAX_PATH];
-		auto_snprintf_s(szRelPath, _TRUNCATE, L"%s%s", szDrive, szDir);
+		auto_sprintf( szRelPath, L"%s%s", szDrive, szDir );
 		const WCHAR* p = szRelPath;
 		if( ! ::GetLongFileName( p, m_szInitialDir ) ){
-			::wcsncpy_s(m_szInitialDir, p, _TRUNCATE);
+			wcscpy(m_szInitialDir, p );
 		}
 	}
 	m_vMRU = vMRU;
@@ -699,8 +826,18 @@ void CDlgOpenFile_CommonFileDialog::Create(
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFilter eAddFilter )
+bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName(
+	std::span<WCHAR> szPath,
+	EFilter eAddFilter
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+	assert(cchPath <= UINT_MAX);
+
+	auto pszPath = std::data(szPath);
+
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
 
@@ -758,16 +895,18 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		}
 		else {
 			WCHAR szRelPath[_MAX_PATH];
-			auto_snprintf_s(szRelPath, _TRUNCATE, L"%s%s%s%s", szDrive, szDir, szName, szExt);
+			auto_sprintf( szRelPath, L"%s%s%s%s", szDrive, szDir, szName, szExt );
 			const WCHAR* p = szRelPath;
-			if( ! ::GetLongFileName( p, std::span{ pszPath, _MAX_PATH } ) ){
-				::wcsncpy_s(pszPath, _MAX_PATH, p, _TRUNCATE);
+			if( ! ::GetLongFileName( p, pszPath ) ){
+				wcscpy( pszPath, p );
 			}
 		}
 	}
 	pData->m_ofn.lpstrFile = pszPath;
 	// To Here Jun. 23, 2002 genta
-	pData->m_ofn.nMaxFile = _MAX_PATH;
+
+	pData->m_ofn.nMaxFile = DWORD(cchPath);
+
 	pData->m_ofn.lpstrInitialDir = m_szInitialDir;
 	pData->m_ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;
 	pData->m_ofn.lpstrDefExt = L""; // 2005/02/20 novice 拡張子を省略したら補完する
@@ -793,8 +932,17 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetOpenFileName( WCHAR* pszPath, EFi
 		拡張子フィルタの管理をCFileExtクラスで行う。
 	@date 2005.02.20 novice 拡張子を省略したら補完する
 */
-bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
+bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName(
+	std::span<WCHAR> szPath
+)
 {
+	const auto cchPath = std::size(szPath);
+
+	assert(_MAX_PATH <= cchPath);
+	assert(cchPath <= UINT_MAX);
+
+	auto pszPath = std::data(szPath);
+
 	//カレントディレクトリを保存。関数から抜けるときに自動でカレントディレクトリは復元される。
 	CCurrentDirectoryBackupPoint cCurDirBackup;
 
@@ -810,7 +958,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 		const WCHAR* pOrg = pszPath;
 		if( ::GetLongFileName( pOrg, szFullPath ) ){
 			// 成功。書き戻す
-			::wcsncpy_s(pszPath, _MAX_PATH, szFullPath, _TRUNCATE);
+			wcscpy( pszPath , szFullPath );
 		}
 	}
 
@@ -823,7 +971,9 @@ bool CDlgOpenFile_CommonFileDialog::DoModal_GetSaveFileName( WCHAR* pszPath )
 	pData->m_ofn.hInstance = CSelectLang::getLangRsrcInstance();
 	pData->m_ofn.lpstrFilter = cFileExt.GetExtFilter();
 	pData->m_ofn.lpstrFile = pszPath; // 2005/02/20 novice デフォルトのファイル名は何も設定しない
-	pData->m_ofn.nMaxFile = _MAX_PATH;
+
+	pData->m_ofn.nMaxFile = DWORD(cchPath);
+
 	pData->m_ofn.lpstrInitialDir = m_szInitialDir;
 	pData->m_ofn.Flags = OFN_CREATEPROMPT | OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;
 
@@ -880,7 +1030,7 @@ bool CDlgOpenFile_CommonFileDialog::DoModalOpenDlg(
 
 	//ファイルパス受け取りバッファ
 	WCHAR* pszPathBuf = new WCHAR[2000];
-	::wcsncpy_s(pszPathBuf, _MAX_PATH, pLoadInfo->cFilePath, _TRUNCATE); // 2013.05.27 デフォルトファイル名を設定する
+	wcscpy(pszPathBuf, pLoadInfo->cFilePath); // 2013.05.27 デフォルトファイル名を設定する
 
 	//OPENFILENAME構造体の初期化
 	InitOfn( &pData->m_ofn );		// 2005.10.29 ryoji
@@ -1054,36 +1204,30 @@ bool CDlgOpenFile_CommonFileDialog::DoModalSaveDlg(
 	@author genta
 	@date 2004.05.29 genta 元々あった部分をまとめた
 */
-void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
+/* static */ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 {
-	const WCHAR*	pszError;
-	DWORD dwError = ::CommDlgExtendedError();
-	if( dwError == 0 ){
+	std::wstring name;
+	try {
+		name = apiwrap::CommDlgExtendedErrorString();
+	}
+	catch (const std::out_of_range&) {
+		name = L"UNKNOWN_ERRORCODE";
+	}
+
+	if (name.empty()) {
 		//	ユーザーキャンセルによる
 		return;
 	}
-	
-	switch( dwError ){
-	case CDERR_DIALOGFAILURE  : pszError = L"CDERR_DIALOGFAILURE  "; break;
-	case CDERR_FINDRESFAILURE : pszError = L"CDERR_FINDRESFAILURE "; break;
-	case CDERR_NOHINSTANCE    : pszError = L"CDERR_NOHINSTANCE    "; break;
-	case CDERR_INITIALIZATION : pszError = L"CDERR_INITIALIZATION "; break;
-	case CDERR_NOHOOK         : pszError = L"CDERR_NOHOOK         "; break;
-	case CDERR_LOCKRESFAILURE : pszError = L"CDERR_LOCKRESFAILURE "; break;
-	case CDERR_NOTEMPLATE     : pszError = L"CDERR_NOTEMPLATE     "; break;
-	case CDERR_LOADRESFAILURE : pszError = L"CDERR_LOADRESFAILURE "; break;
-	case CDERR_STRUCTSIZE     : pszError = L"CDERR_STRUCTSIZE     "; break;
-	case CDERR_LOADSTRFAILURE : pszError = L"CDERR_LOADSTRFAILURE "; break;
-	case FNERR_BUFFERTOOSMALL : pszError = L"FNERR_BUFFERTOOSMALL "; break;
-	case CDERR_MEMALLOCFAILURE: pszError = L"CDERR_MEMALLOCFAILURE"; break;
-	case FNERR_INVALIDFILENAME: pszError = L"FNERR_INVALIDFILENAME"; break;
-	case CDERR_MEMLOCKFAILURE : pszError = L"CDERR_MEMLOCKFAILURE "; break;
-	case FNERR_SUBCLASSFAILURE: pszError = L"FNERR_SUBCLASSFAILURE"; break;
-	default: pszError = L"UNKNOWN_ERRORCODE"; break;
-	}
+
+	const auto formatted = std::format(L"{:<21}", name);
+
+	const auto pszError = std::data(formatted);
 
 	ErrorBeep();
-	TopErrorMessage( m_hwndParent,
+
+	// "ダイアログが開けません。\n\nエラー:%s"
+	TopErrorMessage(
+		nullptr,
 		LS(STR_DLGOPNFL_ERR1),
 		pszError
 	);
@@ -1096,7 +1240,7 @@ void CDlgOpenFile_CommonFileDialog::DlgOpenFail(void)
 	@author ryoji
 	@date 2005.10.29
 */
-void CDlgOpenFile_CommonFileDialog::InitOfn( OPENFILENAME* ofn )
+void CDlgOpenFile_CommonFileDialog::InitOfn(OPENFILENAME* ofn) const
 {
 	memset_raw(ofn, 0, sizeof(*ofn));
 
@@ -1183,38 +1327,27 @@ void CDlgOpenFile_CommonFileDialog::InitLayout( HWND hwndOpenDlg, HWND hwndDlg, 
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover( OPENFILENAME* ofn )
+bool CDlgOpenFile_CommonFileDialog::_GetOpenFileNameRecover(OPENFILENAME* ofn) const
 {
-	BOOL bRet = ::GetOpenFileName( ofn );
-	if( !bRet  ){
-		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			ofn->lpstrFile[0] = L'\0';
-			ofn->lpstrInitialDir = L"";
-			bRet = ::GetOpenFileName( ofn );
-		}
-	}
-	return bRet!=FALSE;
+	return apiwrap::CallCommDlgFunc([ofn] () { return Comdlg32::getInstance()->GetOpenFileNameW(ofn); }, ofn);
 }
 
 /*! リトライ機能付き GetSaveFileName
 	@author Moca
 	@date 2006.09.03 新規作成
 */
-bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover( OPENFILENAME* ofn )
+bool CDlgOpenFile_CommonFileDialog::GetSaveFileNameRecover(OPENFILENAME* ofn) const
 {
-	BOOL bRet = ::GetSaveFileName( ofn );
-	if( !bRet  ){
-		if( FNERR_INVALIDFILENAME == ::CommDlgExtendedError() ){
-			ofn->lpstrFile[0] = L'\0';
-			ofn->lpstrInitialDir = L"";
-			bRet = ::GetSaveFileName( ofn );
-		}
-	}
-	return bRet!=FALSE;
+	return apiwrap::CallCommDlgFunc([ofn] () { return Comdlg32::getInstance()->GetSaveFileNameW(ofn); }, ofn);
 }
 
 std::shared_ptr<IDlgOpenFile> New_CDlgOpenFile_CommonFileDialog()
 {
 	std::shared_ptr<IDlgOpenFile> ret(new CDlgOpenFile_CommonFileDialog());
 	return ret;
+}
+
+void CallDlgOpenFail() //　テスト専用グローバル関数
+{
+	CDlgOpenFile_CommonFileDialog::DlgOpenFail();
 }

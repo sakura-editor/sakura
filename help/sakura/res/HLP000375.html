@@ -24,6 +24,13 @@ ver 2.4.0.0 以降(正確には <a href="https://github.com/sakura-editor/sakura
 <br>
 このページの手順を行った上で <a href="HLP000374.html">こちらの手順</a> で実際に拡張子の関連付けを変更できます。<br>
 
+<h3>レジストリの登録先</h3>
+
+以下の例は、全ユーザーに適用する <code>HKEY_LOCAL_MACHINE</code> への登録です。管理者権限で登録してください。<br>
+標準ユーザーとして登録する場合は、すべての例の <code>HKEY_LOCAL_MACHINE</code> を <code>HKEY_CURRENT_USER</code> に置き換えてください。この場合は実行ユーザーだけに適用されます。<br>
+インストーラも、管理者権限で実行した場合は <code>HKEY_LOCAL_MACHINE</code>、標準ユーザーとして実行した場合は <code>HKEY_CURRENT_USER</code> に登録します。<br>
+<br>
+
 <h3 id="Applications">Applications</h3>
 
 このレジストリキーは ver 2.4.0.0 以前のインストーラでインストールした場合でも書き込み済みですが、<br>

@@ -8,7 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI
 	Copyright (C) 2003, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -18,10 +18,10 @@
 #define SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_
 #pragma once
 
-class CFuncInfo;
-
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
+
+class CFuncInfo;
 
 // CDlgFuncList::SetTree()用 m_Info
 #define FUNCINFO_INFOMASK	0xFFFF
@@ -37,6 +37,14 @@ class CFuncInfo {
 				   const WCHAR* pszFuncName, const WCHAR* pszFileName,
 				   int nInfo );	/* CFuncInfoクラス構築 */
 		~CFuncInfo();	/* CFuncInfoクラス消滅 */
+
+	int GetLineNumber(
+		bool bLineNumIsCRLF
+	) const;
+
+	int GetColumnPosition(
+		bool bLineNumIsCRLF
+	) const;
 
 		//! クリップボードに追加する要素か？
 		//	2003.06.27 Moca
@@ -54,4 +62,5 @@ class CFuncInfo {
 		int			m_nInfo;		/*!< 付加情報 */
 		int			m_nDepth;		/*!< 深さ */
 };
+
 #endif /* SAKURA_CFUNCINFO_9A6DFB84_EFEE_4E20_8E60_9F6F4D83B93C_H_ */

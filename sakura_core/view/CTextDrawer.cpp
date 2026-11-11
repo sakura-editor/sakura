@@ -156,7 +156,7 @@ void CTextDrawer::DispVerticalLines(
 {
 	const CEditView* pView=m_pEditView;
 
-	const STypeConfig&	typeData = GetTypeConfig();
+	const STypeConfig&	typeData = pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	CTypeSupport cVertType(pView,COLORIDX_VERTLINE);
 	CTypeSupport cTextType(pView,COLORIDX_TEXT);
@@ -340,10 +340,10 @@ void CTextDrawer::DispLineNumber(
 ) const
 {
 	//$$ 高速化：SearchLineByLayoutYにキャッシュを持たせる
-	const CLayout*	pcLayout = GetDocument()->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
+	const CLayout*	pcLayout = CEditDoc::GetInstance(0)->m_cLayoutMgr.SearchLineByLayoutY( nLineNum );
 
 	const CEditView* pView=m_pEditView;
-	const STypeConfig* pTypes=&GetTypeConfig();
+	const STypeConfig* pTypes=&pView->m_pcEditDoc->m_cDocType.GetDocumentAttribute();
 
 	int				nLineHeight = pView->GetTextMetrics().GetHankakuDy();
 	int				nCharWidth = pView->GetTextMetrics().GetHankakuDx();
@@ -370,7 +370,7 @@ void CTextDrawer::DispLineNumber(
 	if( pcLayout ){
 		pCDocLine = pcLayout->GetDocLineRef();
 
-		if( GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
+		if( pView->GetDocument()->m_cDocEditor.IsModified() && CModifyVisitor().IsLineModified(pCDocLine, pView->GetDocument()->m_cDocEditor.m_cOpeBuf.GetNoModifiedSeq()) ){		/* 変更フラグ */
 			if( CTypeSupport(pView,COLORIDX_GYOU_MOD).IsDisp() ){	// 2006.12.12 ryoji
 				nColorIndex = COLORIDX_GYOU_MOD;	/* 行番号（変更行） */
 				bGyouMod = true;
@@ -465,15 +465,15 @@ void CTextDrawer::DispLineNumber(
 			if( pTypes->m_bLineNumIsCRLF ){
 				/* 論理行番号表示モード */
 				if( nullptr == pcLayout || 0 != pcLayout->GetLogicOffset() ){ //折り返しレイアウト行
-					::wcsncpy_s(szLineNum, L" ", _TRUNCATE);
+					wcscpy( szLineNum, L" " );
 				}else{
-					::_itow_s(pcLayout->GetLogicLineNo() + 1, szLineNum, 10);	/* 対応する論理行番号 */
+					_itow( pcLayout->GetLogicLineNo() + 1, szLineNum, 10 );	/* 対応する論理行番号 */
 //###デバッグ用
-//					::_itow_s(CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10);	// 行の変更番号
+//					_itow( CModifyVisitor().GetLineModifiedSeq(pCDocLine), szLineNum, 10 );	// 行の変更番号
 				}
 			}else{
 				/* 物理行（レイアウト行）番号表示モード */
-				::_itow_s((Int)nLineNum + 1, szLineNum, 10);
+				_itow( (Int)nLineNum + 1, szLineNum, 10 );
 			}
 			nLineCols = int(wcslen( szLineNum ));
 			nLineNumCols = nLineCols; // 2010.08.17 Moca 位置決定に行番号区切りは含めない
@@ -481,7 +481,7 @@ void CTextDrawer::DispLineNumber(
 			/* 行番号区切り 0=なし 1=縦線 2=任意 */
 			if( 2 == pTypes->m_nLineTermType ){
 				const wchar_t szSeparator[] = { pTypes->m_cLineTermChar, 0 };
-				::wcsncat_s(szLineNum, szSeparator, _TRUNCATE);
+				::wcscat_s(szLineNum, szSeparator);
 			}
 		}
 

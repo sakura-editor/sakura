@@ -7,7 +7,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, asa-o
 	Copyright (C) 2003, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -17,10 +17,13 @@
 #define SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_
 #pragma once
 
-#include <Windows.h>
 #include "dlg/CDialog.h"
-#include "util/container.h"
 #include "mem/CNativeW.h"
+#include "util/container.h"
+
+#include <memory>
+
+#include <Windows.h>
 
 /*! @brief キーワード補完
 
@@ -28,15 +31,28 @@
 */
 class CHokanMgr final : public CDialog
 {
+private:
+	using Base = CDialog;
+	using Me = CHokanMgr;
+
+	// 親クラスのメソッドを隠す
+	using Base::DoModeless;
+
+	static constexpr auto handled = -1;	//!< KeyProcがメッセージを処理した
+
 public:
+	static bool EatMessage(const MSG& msg);
+
 	/*
 	||  Constructors
 	*/
 	CHokanMgr();
-	~CHokanMgr();
+	~CHokanMgr() override;
 
 	HWND DoModeless(HINSTANCE hInstance, HWND hwndParent, LPARAM lParam);/* モードレスダイアログの表示 */
-	void Hide( void );
+
+	void Hide();
+
 	/* 初期化 */
 	size_t Search(
 		POINT*			ppoWin,
@@ -55,38 +71,38 @@ public:
 		bool 			bHokanLoHiCase,
 		vector_ex<std::wstring>& 	vKouho
 	);
-//	void SetCurKouhoStr( void );
+
 	BOOL DoHokan(int nVKey);
 	void ChangeView(LPARAM pcEditView);/* モードレス時：対象となるビューの変更 */
 
 	INT_PTR DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM lParam ) override;
+
 	BOOL OnInitDialog( HWND, WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnDestroy( void ) override;
 	BOOL OnSize( WPARAM wParam, LPARAM lParam ) override;
 	BOOL OnLbnSelChange( HWND hwndCtl, int wID ) override;
 
-	int KeyProc(WPARAM wParam, LPARAM lParam);
+	int KeyProc(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 //	2001/06/18 asa-o
 	void ShowTip();	// 補完ウィンドウで選択中の単語にキーワードヘルプの表示
 
 	static bool AddKouhoUnique(vector_ex<std::wstring>&, const std::wstring&);
 
-	CNativeW		m_cmemCurWord;
-	vector_ex<std::wstring>	m_vKouho;
-	int				m_nKouhoNum;
-
-	int				m_nCurKouhoIdx;
-
-	POINT			m_poWin;
-	int				m_nWinHeight;
-	int				m_nColumnWidth;
-	int				m_bTimerFlag;
-
-protected:
 	/*
 	||  実装ヘルパ関数
 	*/
 	LPVOID GetHelpIdTable(void) override;	//@@@ 2002.01.18 add
+
+	CNativeW		m_cmemCurWord{ L"" };
+	vector_ex<std::wstring>	m_vKouho;
+
+	int				m_nCurKouhoIdx = -1;
+
+	POINT			m_poWin{};
+	int				m_nWinHeight = 0;
+	int				m_nColumnWidth = 0;
+	int				m_bTimerFlag = TRUE;
 };
+
 #endif /* SAKURA_CHOKANMGR_0CB0AF1A_1F22_482E_9221_B9FAE4F0D8A0_H_ */

@@ -10,7 +10,7 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -154,13 +154,10 @@ public:
 			}
 			if(pscripterror->GetSourcePosition(&Context, &Line, &Pos) == S_OK)
 			{
-				const auto cchMsg = SysStringLen(Info.bstrDescription) + 128;
-				auto Message = new wchar_t[cchMsg];
 				//	Nov. 10, 2003 FILE Win9Xでは、[wsprintfW]が無効のため、[auto_sprintf]に修正
-				const wchar_t* szDesc=Info.bstrDescription;
-				auto_snprintf_s(Message, cchMsg, _TRUNCATE, L"[Line %d] %ls", Line + 1, szDesc);
-				SysReAllocString(&Info.bstrDescription, Message);
-				delete[] Message;
+				const auto pszDesc = Info.bstrDescription;
+				const auto msg = strprintf(L"[Line %d] %s", Line + 1, pszDesc);
+				::SysReAllocString(&Info.bstrDescription, msg.c_str());
 			}
 			m_Client->Error(Info.bstrDescription, Info.bstrSource);
 			SysFreeString(Info.bstrSource);
@@ -188,7 +185,7 @@ public:
 	HRESULT STDMETHODCALLTYPE GetWindow(
 	    /* [out] */ HWND *phwnd) override
 	{
-		*phwnd = GetEditWnd().m_cSplitterWnd.GetHwnd();
+		*phwnd = CEditWnd::getInstance()->m_cSplitterWnd.GetHwnd();
 		return S_OK;
 	}
 
@@ -269,11 +266,11 @@ static unsigned __stdcall AbortMacroProc( LPVOID lpParameter )
 
 		MSG msg;
 		CDlgCancel cDlgCancel;
-		HWND hwndDlg = cDlgCancel.DoModeless(GetAppInstance(), nullptr, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
+		HWND hwndDlg = cDlgCancel.DoModeless(G_AppInstance(), nullptr, IDD_MACRORUNNING);	// エディタビジーでも表示できるよう、親を指定しない
 		// ダイアログタイトルとファイル名を設定
 		::SendMessage(hwndDlg, WM_SETTEXT, 0, (LPARAM)GSTR_APPNAME);
 		::SendMessage(GetDlgItem(hwndDlg, IDC_STATIC_CMD),
-			WM_SETTEXT, 0, (LPARAM)GetDocument()->m_cDocFile.GetFilePath());
+			WM_SETTEXT, 0, (LPARAM)pParam->view->GetDocument()->m_cDocFile.GetFilePath());
 		
 		bool bCanceled = false;
 		for(;;){

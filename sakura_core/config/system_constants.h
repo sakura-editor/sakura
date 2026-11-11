@@ -11,7 +11,7 @@
 */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -544,12 +544,15 @@
 	Version 181:
 	m_hAccel削除
 
+	Version 183:
+	CommonSetting_Search::m_bGrepExceptFileRegexp 追加
+
 	-- 統合されたので元に戻す（1000～1023が使用済み） 	2008.11.16 nasukoji
 	-- Version 1000:
 	-- バージョン1000以降を本家統合までの間、使わせてください。かなり頻繁に構成が変更されると思われるので。by kobake 2008.03.02
 
 */
-#define N_SHAREDATA_VERSION		181
+#define N_SHAREDATA_VERSION		183
 #define STR_SHAREDATA_VERSION	NUM_TO_STR(N_SHAREDATA_VERSION)
 #define	GSTR_SHAREDATA	(L"SakuraShareData" _T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_) _T(STR_SHAREDATA_VERSION))
 
@@ -584,6 +587,12 @@
 
 //! 初期化完了イベント
 #define	GSTR_EVENT_SAKURA_CP_INITIALIZED	(L"EventSakuraEditorCPInitialized"	_T(CON_SKR_MACHINE_SUFFIX_) _T(_CODE_SUFFIX_) _T(_DEBUG_SUFFIX_)	_T(STR_SHAREDATA_VERSION))
+
+//! 初期化完了イベント
+inline constexpr std::wstring_view GSTR_EVENT_SAKURA_EP_INITIALIZED = L"EventSakuraEditorEPInitialized_{:d}";
+
+//! Grep完了イベント
+inline constexpr std::wstring_view GSTR_EVENT_SAKURA_GREP_COMPLETED = L"EventSakuraEditorGrepCompleted_{:d}";
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                     ウィンドウクラス                        //

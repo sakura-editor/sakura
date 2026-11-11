@@ -1,0 +1,6 @@
+ppa_stub provides a CMake package target:
+
+  find_package(ppa_stub CONFIG REQUIRED)
+
+The DLL is available at:
+  ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin/ppa_stub.dll

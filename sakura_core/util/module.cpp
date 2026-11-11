@@ -12,36 +12,26 @@
 #include "util/file.h"
 #include <Shlwapi.h>	// 2006.06.17 ryoji
 
-/*! 
-	カレントディレクトリを実行ファイルの場所に移動
-	@date 2010.08.28 Moca 新規作成
-*/
+/*!
+ * @brief カレントディレクトリを実行ファイルの場所に移動
+ *
+ * @date 2010.08.28 Moca 新規作成
+ */
 void ChangeCurrentDirectoryToExeDir()
 {
-	WCHAR szExeDir[_MAX_PATH];
-	szExeDir[0] = L'\0';
-	GetExedir(szExeDir);
-	if( szExeDir[0] ){
-		::SetCurrentDirectory( szExeDir );
-	}else{
-		// 移動できないときはSYSTEM32(9xではSYSTEM)に移動
-		szExeDir[0] = L'\0';
-		int n = ::GetSystemDirectory( szExeDir, _MAX_PATH );
-		if( n && n < _MAX_PATH ){
-			::SetCurrentDirectory( szExeDir );
-		}
-	}
-}
+	try {
+		// 実行ファイルのあるディレクトリパスを取得する
+		const auto exeDir = GetExeFileName().parent_path().native();
 
-/*! 
-	@date 2010.08.28 Moca 新規作成
-*/
-HMODULE LoadLibraryExedir(LPCWSTR pszDll)
-{
-	CCurrentDirectoryBackupPoint dirBack;
-	// DLL インジェクション対策としてEXEのフォルダーに移動する
-	ChangeCurrentDirectoryToExeDir();
-	return ::LoadLibrary( pszDll );
+		// カレントディレクトリを移動する
+		cxx::SetCurrentDirectoryW(exeDir);
+	}
+	// 失敗を検出したとき
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+		throw;
+	}
 }
 
 /*!	シェルやコモンコントロール DLL のバージョン番号を取得
@@ -60,7 +50,9 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 	/* For security purposes, LoadLibrary should be provided with a
 	   fully-qualified path to the DLL. The lpszDllName variable should be
 	   tested to ensure that it is a fully qualified path before it is used. */
-	hinstDll = LoadLibraryExedir(lpszDllName);
+	// Comctl32.dll などシステムの DLL を名前のまま読み込む。
+	// カレントディレクトリは wWinMain() の SetDllDirectory(L"") で DLL の検索から外してある。
+	hinstDll = ::LoadLibraryW(lpszDllName);
 
 	if(hinstDll)
 	{
@@ -111,25 +103,23 @@ DWORD GetDllVersion(LPCWSTR lpszDllName)
 	@date 2007.05.20 ryoji iniファイルパスを優先
 	@author genta
 */
-HICON GetAppIcon(HINSTANCE hInst, WORD nResource, std::wstring_view fileName, bool bSmall)
+HICON GetAppIcon( HINSTANCE hInst, int nResource, const WCHAR* szFile, bool bSmall )
 {
-	// ファイルパスはini基準を優先
-	SFilePath szPath;
-	GetInidirOrExedir(szPath, fileName);
+	// サイズの設定
+	int size = GetSystemMetrics( bSmall ? SM_CXSMICON : SM_CXICON );
 
-	// アイコンサイズはシステムから取得する（DPIは考慮しない。）
-	const auto cx = ::GetSystemMetrics(bSmall ? SM_CXSMICON : SM_CXICON);
-	const auto cy = ::GetSystemMetrics(bSmall ? SM_CYSMICON : SM_CYICON);
-
+	WCHAR szPath[_MAX_PATH];
 	HICON hIcon;
 
 	// ファイルからの読み込みをまず試みる
+	GetInidirOrExedir( szPath, szFile );
+
 	hIcon = (HICON)::LoadImage(
 		nullptr,
 		szPath,
 		IMAGE_ICON,
-		cx,
-		cy,
+		size,
+		size,
 		LR_SHARED | LR_LOADFROMFILE
 	);
 	if( hIcon != nullptr ){
@@ -141,8 +131,8 @@ HICON GetAppIcon(HINSTANCE hInst, WORD nResource, std::wstring_view fileName, bo
 		hInst,
 		MAKEINTRESOURCE(nResource),
 		IMAGE_ICON,
-		cx,
-		cy,
+		size,
+		size,
 		LR_SHARED
 	);
 	

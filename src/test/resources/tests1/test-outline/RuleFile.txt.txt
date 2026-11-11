@@ -1,0 +1,7 @@
+﻿通常ルールの対象外
+  CHAPTER はじめに
+	SECTION 概要
+　SECTION 全角空白付き
+SKIP 表示しない項目
+CHAPTER 次の章
+SECTION 詳細

@@ -280,7 +280,8 @@ INT_PTR CPropKeybind::DispatchEvent(
 				// Oct. 2, 2001 genta
 				// 2007.11.02 ryoji F_DISABLEなら未割当
 				if( nFuncCode == F_DISABLE ){
-					::wcsncpy_s(pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), _TRUNCATE);
+					wcsncpy( pszLabel, LS(STR_PROPCOMKEYBIND_UNASSIGN), int(std::size(pszLabel)) - 1 );
+					pszLabel[std::size(pszLabel) - 1] = L'\0';
 				}else{
 					m_cLookup.Funccode2Name( nFuncCode, pszLabel, 255 );
 				}
@@ -300,7 +301,7 @@ INT_PTR CPropKeybind::DispatchEvent(
 				/* 機能に対応するキー名の取得(複数) */
 				CNativeW**	ppcAssignedKeyList;
 				nAssignedKeyNum = CKeyBind::GetKeyStrList(	/* 機能に対応するキー名の取得(複数) */
-					GetAppInstance(), m_Common.m_sKeyBind.m_nKeyNameArrNum, (KEYDATA*)m_Common.m_sKeyBind.m_pKeyNameArr,
+					G_AppInstance(), m_Common.m_sKeyBind.m_nKeyNameArrNum, (KEYDATA*)m_Common.m_sKeyBind.m_pKeyNameArr,
 					&ppcAssignedKeyList, nFuncCode,
 					FALSE	// 2007.02.22 ryoji デフォルト機能は取得しない
 				);	
@@ -471,22 +472,22 @@ void CPropKeybind::ChangeKeyList( HWND hwndDlg){
 	i = 0;
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_SHIFT ) ){
 		i |= _SHIFT;
-		::wcsncat_s(szKeyState, L"Shift+", _TRUNCATE);
+		wcscat( szKeyState, L"Shift+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_CTRL ) ){
 		i |= _CTRL;
-		::wcsncat_s(szKeyState, L"Ctrl+", _TRUNCATE);
+		wcscat( szKeyState, L"Ctrl+" );
 	}
 	if( ::IsDlgButtonChecked( hwndDlg, IDC_CHECK_ALT ) ){
 		i |= _ALT;
-		::wcsncat_s(szKeyState, L"Alt+", _TRUNCATE);
+		wcscat( szKeyState, L"Alt+" );
 	}
 	::SendMessage( hwndKeyList, WM_SETREDRAW, FALSE, 0 );
 	/* キー一覧に文字列をセット（リストボックス）*/
 	ApiWrap::List_ResetContent( hwndKeyList );
 	for( i = 0; i < m_Common.m_sKeyBind.m_nKeyNameArrNum; ++i ){
 		WCHAR	pszLabel[256];
-		auto_snprintf_s(pszLabel, _TRUNCATE, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName);
+		auto_sprintf( pszLabel, L"%ls%s", szKeyState, m_Common.m_sKeyBind.m_pKeyNameArr[i].m_szKeyName );
 		ApiWrap::List_AddString( hwndKeyList, pszLabel );
 	}
 	ApiWrap::List_SetCurSel( hwndKeyList, nIndex );
@@ -501,7 +502,7 @@ void CPropKeybind::Import( HWND hwndDlg )
 	CImpExpKeybind	cImpExpKeybind( m_Common );
 
 	// インポート
-	if (!cImpExpKeybind.ImportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpKeybind.ImportUI( G_AppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -522,7 +523,7 @@ void CPropKeybind::Export( HWND hwndDlg )
 	CImpExpKeybind	cImpExpKeybind( m_Common );
 
 	// エクスポート
-	if (!cImpExpKeybind.ExportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpKeybind.ExportUI( G_AppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}

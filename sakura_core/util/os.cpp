@@ -1,16 +1,50 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "os.h"
+#include "util/os.h"
+
 #include "util/module.h"
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
+#include "cxx/com_pointer.hpp"
+#include "debug/Debug1.h"
+#include "util/file.h"
+#include "util/file/FileMapping.hpp"
+#include "util/file/NamedFilePointer.hpp"
+#include "util/os/Kernel32.hpp"
+#include "util/os/make_system_error.hpp"
+
+#include <cstdint>
+#include <format>
+#include <stdexcept>
+#include <string>
+
 #pragma comment(lib, "UxTheme.lib")
+
+/*!
+ * @brief 超長いパスの最大文字値
+ *
+ * _MAX_PATH (=260) と似た感じに使う。
+ *
+ * とりあえずの暫定値。必要に応じて変更する。
+ *
+ * @sa SFilePath
+ */
+constexpr auto MAX_SUPER_LONG_PATH = 4096;
+
+/*!
+ * @brief 超長いパス
+ *
+ * _MAX_PATHを超えるパスを扱うための文字列バッファ型。
+ *
+ * アプリ共通の定義とはしたくないため、あえて実装側に定義する。
+ */
+using SSuperLongFilePath = StaticString<MAX_SUPER_LONG_PATH, false>;
 
 /*!	Comctl32.dll のバージョン番号を取得
 
@@ -184,6 +218,35 @@ bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 	return cClipboard.SetText(pszText, nLength, false, false);
 }
 
+std::set<CLIPFORMAT> GetAvailableClipFormats(
+	LPDATAOBJECT pDataObject
+)
+{
+	if (!pDataObject) throw std::invalid_argument("pDataObject is required");
+
+	// クリップフォーマットを列挙
+	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
+	if (FAILED(pDataObject->EnumFormatEtc(DATADIR_GET, &pEnumFormatEtc))) return {};
+
+	// 配列に格納して返す
+	std::set<CLIPFORMAT> formats;
+	FORMATETC format = {};
+	for(;;)
+	{
+		ULONG fetched = 0;
+		if (const auto hr = pEnumFormatEtc->Next( 1, &format, &fetched );
+			S_OK != hr ||
+			1 != fetched)
+		{
+			break;
+		}
+
+		formats.emplace(format.cfFormat);
+	}
+
+	return formats;
+}
+
 /*
 	@date 2006.01.16 Moca 他のTYMEDが利用可能でも、取得できるように変更。
 	@note IDataObject::GetData() で tymed = TYMED_HGLOBAL を指定すること。
@@ -257,24 +320,61 @@ BOOL IsWow64()
 //                        便利クラス                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-//コンストラクタでカレントディレクトリを保存し、デストラクタでカレントディレクトリを復元するモノ。
-
+/*!
+ * @brief コンストラクター
+ *
+ * カレントディレクトリを取得してメンバー変数に保存します。
+ */
 CCurrentDirectoryBackupPoint::CCurrentDirectoryBackupPoint()
 {
-	int n = ::GetCurrentDirectory(int(std::size(m_szCurDir)),m_szCurDir);
-	if(n>0 && n<int(std::size(m_szCurDir))){
-		//ok
+	// カレントディレクトリの取得を試みる
+	try {
+		const auto curDir = cxx::GetCurrentDirectoryW();
+
+		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
+		if (const auto maxLength = decltype(m_szCurDir)::size();
+			maxLength <= curDir.length())
+		{
+			throw std::system_error(
+				std::make_error_code(std::errc::filename_too_long),
+				std::format("current path is too long. (length: {}, allowed: {})", curDir.length(), maxLength - 1)
+			);
+		}
+
+		m_szCurDir = curDir;
 	}
-	else{
-		//ng
-		m_szCurDir[0] = L'\0';
+	// 失敗を検出したとき
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+
+		// 例外を再スローする
+		throw;
 	}
 }
 
-CCurrentDirectoryBackupPoint::~CCurrentDirectoryBackupPoint()
+/*!
+ * @brief クリーンアップ関数
+ * 
+ * 保存したカレントディレクトリの復元を試みます。
+ */
+/* static */ void CCurrentDirectoryBackupPoint::_CleanUp(
+	const CCurrentDirectoryBackupPoint* pThis
+) noexcept
 {
-	if(m_szCurDir[0]){
-		::SetCurrentDirectory(m_szCurDir);
+	// カレントディレクトリが保存されていないとき
+	if (pThis->m_szCurDir.empty()) {
+		return;	// 何もせず抜ける
+	}
+
+	// カレントディレクトリの復元を試みる
+	try {
+		cxx::SetCurrentDirectoryW(pThis->m_szCurDir.str());
+	}
+	// 失敗を検出したとき
+	catch (const std::system_error& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
 	}
 }
 
@@ -346,3 +446,378 @@ BOOL ImeSetOpen(HWND hWnd, BOOL bOpen, BOOL* pBackup)
 	bRet &= ImmReleaseContext(hWnd, hIMC);
 	return bRet;
 }
+
+namespace cxx {
+
+	GlobalDropFiles MakeDropFiles(std::span<const std::filesystem::path> files)
+{
+	assert(!files.empty());
+
+	auto strFiles = std::accumulate(files.begin() + 1, files.end(), std::wstring(files.front()), [](const std::wstring& a, const std::filesystem::path& b) { return a + L'\0' + b.native(); }) + L'\0' + L'\0';
+
+	const size_t allocSize = sizeof(DROPFILES) + std::size(strFiles) * sizeof(WCHAR);
+	GlobalDropFiles drop(allocSize);
+	drop.Lock([strFiles](DROPFILES* p) {
+		p->pFiles = DWORD(sizeof(DROPFILES));
+		p->fWide = TRUE;
+		std::ranges::copy(strFiles, LPWSTR(LPBYTE(p) + p->pFiles));
+	});
+	return drop;
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalWString::GlobalWString(std::wstring_view text)
+	: GlobalWString(text.size())
+{
+	SetText(text);
+}
+
+//文字列を指定して更新する
+void GlobalWString::SetText(std::wstring_view text) const
+{
+	Lock([text](LPWSTR pStr, size_t cbSize) {
+		if (cbSize / sizeof(WCHAR) <= std::size(text)) throw std::length_error("text length is too long.");
+		std::ranges::copy(text, pStr);
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::wstring GlobalWString::wstring() const & {
+	return Lock([](LPCWSTR pStr, size_t cbSize) {
+		return std::wstring(pStr, ::wcsnlen(pStr, cbSize / sizeof(WCHAR)));
+	});
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalString::GlobalString(std::string_view text)
+	: GlobalString(text.size())
+{
+	SetText(text);
+}
+
+//文字列を指定して更新する
+void GlobalString::SetText(std::string_view text) const
+{
+	Lock([text](LPSTR pStr, size_t cbSize) {
+		if (cbSize <= std::size(text)) throw std::length_error("text length is too long.");
+		std::ranges::copy(text, pStr);
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::string GlobalString::string() const & {
+	return Lock([](LPCSTR pStr, size_t cbSize) {
+		return std::string(pStr, ::strnlen(pStr, cbSize));
+	});
+}
+
+//格納されているデータのコピーを取得する
+std::vector<std::filesystem::path> GlobalDropFiles::data() const & {
+	const auto hDrop = static_cast<HDROP>(get());
+	return Lock([hDrop](const DROPFILES* p [[maybe_unused]], size_t cbSize [[maybe_unused]]) {
+		std::vector<std::filesystem::path> files;
+		std::wstring buffer(_MAX_PATH, L'\0');
+		const auto uFiles = ::DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+		for (UINT i = 0; i < uFiles; ++i) {
+			// 必要サイズを取得する
+			const auto required = ::DragQueryFileW(hDrop, i, nullptr, 0);
+
+			// バッファを確保して取得する
+			buffer.resize(required);
+			::DragQueryFileW(hDrop, i, std::data(buffer), UINT(std::size(buffer) + 1));
+
+			// パスリストに追加する
+			files.emplace_back(buffer);
+		}
+
+		return files;
+	});
+}
+
+namespace {
+//! SAKURAClipW形式の先頭に置く文字数フィールドの型。
+//! 定義を分散させると異なるビルド間でレイアウトがずれるので、CClipboard の定義を唯一の正とする。(issue #2325)
+using size_type = CClipboard::SAKURAClipW_LengthFieldType;
+} // end of anonymous namespace
+
+//文字列を指定して必要サイズを計算する
+/* static */ size_t GlobalSakura::CalcSize(std::wstring_view text) noexcept
+{
+	return sizeof(size_type) + (std::size(text) + 1) * sizeof(WCHAR);
+}
+
+//文字列を指定して構築（指定した文字列を確保したメモリにコピーする）
+GlobalSakura::GlobalSakura(std::wstring_view text)
+	: GlobalMemory(CalcSize(text))
+{
+	SetText(text);
+}
+
+// 文字列を指定して更新する
+void GlobalSakura::SetText(std::wstring_view text) const
+{
+	Lock([text](LPWSTR pStr, size_t cbSize) {
+		if (cbSize < CalcSize(text)) throw std::length_error("text length is too long.");
+		// 64bitビルドでは文字数フィールドで表せない長さの文字列がありうる
+		if (std::size(text) > size_t(std::numeric_limits<size_type>::max())) throw std::length_error("text length is too long.");
+		*(size_type*)pStr = size_type(std::size(text));
+		std::ranges::copy(text, LPWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)));
+		return true;
+	});
+}
+
+//格納されている文字列データのコピーを取得する
+std::wstring GlobalSakura::wstring() const & {
+	return Lock([](LPCWSTR pStr, size_t cbSize) -> std::wstring {
+		if (cbSize < sizeof(size_type) + sizeof(WCHAR)) return L"";
+		const auto length = *(const size_type*)pStr;
+		if (cbSize < sizeof(size_type) + (length + 1) * sizeof(WCHAR)) return L"";
+		return std::wstring(LPCWSTR(pStr + sizeof(size_type) / sizeof(WCHAR)), length);
+	});
+}
+
+/*!
+ * @brief カレントディレクトリのパスを取得する
+ *
+ * @return カレントディレクトリのパス
+ */
+std::wstring GetCurrentDirectoryW()
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetCurrentDirectoryW(DWORD(std::size(buf)), buf.data());
+
+	if (!ret) {
+		throw cxx::make_system_error("GetCurrentDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// カレントディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("current path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief モジュールのファイルパスを取得する
+ *
+ * @param[in, opt] hModule 対象モジュール。nullptrの場合は現在の実行可能ファイル
+ * @return モジュールのファイルパス
+ */
+std::wstring GetModuleFileNameW(
+	_In_opt_ HMODULE hModule
+)
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetModuleFileNameW(hModule, buf.data(), DWORD(std::size(buf)));
+
+	if (!ret) {
+		throw cxx::make_system_error("GetModuleFileNameW() failed");
+	}
+
+	if (std::size(buf) <= ret) {
+		// モジュールのファイルパスが長過ぎる場合、例外を投げる
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("module file path is too long. (length: at least {}, allowed: {})", ret, std::size(buf) - 1)
+		);
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief システムディレクトリのパスを取得する
+ *
+ * @return システムディレクトリのパス
+ */
+std::wstring GetSystemDirectoryW()
+{
+	SSuperLongFilePath buf;
+
+	const auto ret = Kernel32::getInstance()->GetSystemDirectoryW(buf.data(), UINT(std::size(buf)));
+
+	if (!ret) {
+		throw cxx::make_system_error("GetSystemDirectoryW() failed");
+	}
+
+	if (std::size(buf) < ret) {
+		// システムディレクトリのパスが長過ぎる場合、例外を投げる
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("system directory path is too long. (length: {}, allowed: {})", ret - 1, std::size(buf) - 1)
+		);
+	}
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief 一時フォルダのパスを取得する
+ *
+ * @return 一時フォルダのパス
+ */
+std::wstring GetTempPath2W()
+{
+	// Kernel32.DLLのハンドルを取得する
+	const auto kernel32 = ::GetModuleHandleW(L"KERNEL32.DLL");
+
+	if (!kernel32) throw cxx::make_system_error("Kernel32.DLL was not found.");	// このthrowは呼ばれない
+
+	// GetTempPath2の関数ポインタを取得する
+	decltype(&::GetTempPath2W) pfnGetTempPath = nullptr;
+
+	pfnGetTempPath = std::bit_cast<decltype(pfnGetTempPath)>(Kernel32::getInstance()->GetProcAddress(kernel32, "GetTempPath2W"));
+
+	// Windows 10 1607より古いと見付からない可能性がある
+	if (!pfnGetTempPath) pfnGetTempPath = &::GetTempPathW;
+
+	SSuperLongFilePath buf;
+
+	// 戻り値は 0～261 の範囲に収まる仕様。
+	const auto ret = pfnGetTempPath(DWORD(std::size(buf)), std::data(buf));
+
+	if (!ret) throw cxx::make_system_error("GetTempPath2() failed");	// このthrowは呼ばれない
+
+	return std::wstring(buf.c_str(), ret);
+}
+
+/*!
+ * @brief DLLを読み込む
+ */
+HMODULE LoadLibraryExW(
+	std::wstring_view fileName,
+	_Reserved_ HANDLE hFile,
+	_In_ DWORD dwFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> _FileName{ fileName };
+
+	// NUL終端文字列を取り出す
+	const auto lpFileName = _FileName.c_str();
+
+	// パラメーターチェック
+	if (!lpFileName || !lpFileName[0]) {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		throw std::invalid_argument("fileName is required.");
+	}
+
+	const auto hModule = Kernel32::getInstance()->LoadLibraryExW(
+		lpFileName,
+		hFile,
+		dwFlags
+	);
+
+	if (!hModule) {
+		throw cxx::make_system_error("LoadLibraryExW() failed");
+	}
+
+	return hModule;
+}
+
+/*!
+ * @brief 指定したファイルを別ファイルで置換する
+ *
+ * 同名APIを呼び出すラッパー関数。
+ * 使い勝手を上げるため、一部の引数を省略可能にしている。
+ *
+ * optBackupFileNameに指定したファイルは問答無用で上書きされることに注意。
+ *
+ * @param[in] replacedFileName 置換されるファイルのフルパス
+ * @param[in] replacementFileName 置換するファイルのパス
+ * @param[in, opt] optBackupFileName バックアップファイルのファイル名
+ * @param[in, opt] dwReplaceFlags 置換フラグ
+ */
+void ReplaceFileW(
+	std::wstring_view replacedFileName,
+	std::wstring_view replacementFileName,
+	const std::optional<std::wstring>& optBackupFileName,
+	_In_ DWORD dwReplaceFlags
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> destination{ replacedFileName };
+	cxx::NullTerminatedString<WCHAR> source{ replacementFileName };
+
+	const auto path1 = std::filesystem::path{ destination.str() };
+	if (!path1.is_absolute())
+	{
+		throw std::invalid_argument("replacedFileName must be absolute path.");
+	}
+
+	if (!fexist(path1))
+	{
+		throw std::invalid_argument("replacedFileName must exist.");
+	}
+
+	if (const auto path2 = std::filesystem::path{ source.str() };
+		!fexist(path2))
+	{
+		throw std::invalid_argument("replacementFileName must exist.");
+	}
+
+	auto backupFileName = optBackupFileName.value_or(L"");
+
+	if (std::wstring::npos != backupFileName.find_first_of(LR"(/\)"))
+	{
+		throw std::invalid_argument("backupFileName must not contain path separators.");
+	}
+
+	LPCWSTR lpBackupFileName = nullptr;
+
+	if (!backupFileName.empty())
+	{
+		// フルパスにする
+		backupFileName = path1.parent_path() / backupFileName;
+
+		// APIに渡すためにNUL終端文字列を取り出す
+		lpBackupFileName = backupFileName.c_str();
+	}
+
+	const auto notImplemented = nullptr;
+	const auto reserved = nullptr;
+
+	// ファイルを置換する
+	if (const auto ret = Kernel32::getInstance()->ReplaceFileW(
+		destination.c_str(),
+		source.c_str(),
+		lpBackupFileName,
+		dwReplaceFlags,
+		notImplemented,
+		reserved
+	);
+		!ret)
+	{
+		throw cxx::make_system_error("ReplaceFileW() failed");
+	}
+}
+
+/*!
+ * @brief カレントディレクトリを変更する
+ *
+ * @param[in] newPath 新しいディレクトリ
+ */
+void SetCurrentDirectoryW(
+	std::wstring_view newPath
+)
+{
+	// 引数はNUL終端文字列として扱う
+	cxx::NullTerminatedString<WCHAR> path{ newPath };
+
+	// カレントディレクトリを変更する
+	if (const auto ret = Kernel32::getInstance()->SetCurrentDirectoryW(path.c_str());
+		!ret)
+	{
+		throw cxx::make_system_error("SetCurrentDirectoryW() failed");
+	}
+}
+
+} // namespace cxx

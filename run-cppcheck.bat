@@ -3,9 +3,13 @@ set platform=%1
 @rem doesn't use
 set configuration=%2
 
+set CPPCHECK_PARAMS=
+
 if "%platform%" == "Win32" (
+	set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -U_WIN64 -D_M_IX86 -U_M_X64
 	@rem OK
 ) else if "%platform%" == "x64" (
+	set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -D_WIN64 -U_M_IX86 -D_M_X64
 	@rem OK
 ) else (
 	call :showhelp %0
@@ -13,8 +17,10 @@ if "%platform%" == "Win32" (
 )
 
 if "%configuration%" == "Release" (
+	set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -U_DEBUG
 	@rem OK
 ) else if "%configuration%" == "Debug" (
+	set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -D_DEBUG
 	@rem OK
 ) else (
 	call :showhelp %0
@@ -48,15 +54,14 @@ if exist "%CPPCHECK_LOG%" (
 	del %CPPCHECK_LOG%
 )
 
-set CPPCHECK_PARAMS=
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --force
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --enable=all
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --xml
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --platform=%CPPCHECK_PLATFORM%
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --output-file=%CPPCHECK_OUT%
 set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -j %NUMBER_OF_PROCESSORS%
-set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% -I %~dp0sakura_core
-set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% %~dp0sakura_core
+set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% --project=sakura_core\sakura.vcxproj
+set CPPCHECK_PARAMS=%CPPCHECK_PARAMS% "--project-configuration=%configuration%|%platform%"
 
 set ERROR_RESULT=0
 if exist "%CMD_CPPCHECK%" (

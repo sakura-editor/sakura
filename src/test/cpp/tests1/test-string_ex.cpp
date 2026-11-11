@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -13,24 +13,138 @@
 #include "basis/primitive.h"
 #include "util/string_ex.h"
 
+#include "testing/MsvcInvalidParameterHandlerDisabler.hpp"
+#include "testing/MsvcReportMode.hpp"
+
+using namespace std::literals::string_literals;
+using namespace std::literals::string_view_literals;
+
+using namespace cxx;
+using namespace testing;
+
+// CStrictIntegerっぽい型を検出するコンセプトのテスト
+static_assert(!cxx::StrictIntegerLike<int>);
+
+constexpr bool FixedArrayWcscpyUsesSafeOverload()
+{
+	WCHAR buffer[4]{};
+	LPCWSTR source = L"abc";
+
+	wcscpy(buffer, source);
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+constexpr bool FixedArrayWcscatUsesSafeOverload()
+{
+	WCHAR buffer[7] = L"abc";
+	LPCWSTR source = L"DEF";
+
+	wcscat(buffer, source);
+
+	return std::wstring_view(buffer) == L"abcDEF";
+}
+
+constexpr bool FixedArrayWcsncpyAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8]{};
+
+	wcsncpy(buffer, L"abc", std::size(buffer));
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+constexpr bool FixedArrayWcsncatAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8] = L"a";
+
+	wcsncat(buffer, L"bc", std::size(buffer) - 2);
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+static_assert(FixedArrayWcscpyUsesSafeOverload());
+static_assert(FixedArrayWcscatUsesSafeOverload());
+static_assert(FixedArrayWcsncpyAcceptsCountLargerThanSource());
+static_assert(FixedArrayWcsncatAcceptsCountLargerThanSource());
+
+TEST(string_ex, FixedArrayWcscpyTruncates)
+{
+	WCHAR buffer[4]{};
+
+	EXPECT_THAT(wcscpy(buffer, L"abcdef"), Eq(buffer));
+	EXPECT_THAT(buffer, StrEq(L"abc"));
+}
+
+TEST(string_ex, FixedArrayWcscatTruncates)
+{
+	WCHAR buffer[5] = L"ab";
+
+	EXPECT_THAT(wcscat(buffer, L"cdef"), Eq(buffer));
+	EXPECT_THAT(buffer, StrEq(L"abcd"));
+}
+
+TEST(string_ex, FixedArraySwprintfTruncates)
+{
+	WCHAR buffer[4]{};
+
+	EXPECT_THAT(_swprintf(buffer, L"%s", L"abcdef"), Lt(0));
+	EXPECT_THAT(buffer, StrEq(L"abc"));
+}
+
+#ifdef USE_STRICT_INT
+
+static_assert(cxx::StrictIntegerLike<CLayoutInt>);
+static_assert(cxx::StrictIntegerLike<CLogicInt>);
+
+#else
+
+static_assert(!cxx::StrictIntegerLike<CLayoutInt>);
+static_assert(!cxx::StrictIntegerLike<CLogicInt>);
+
+#endif // ifdef USE_STRICT_INT
+
+
 /*!
 	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は strnlen か std::char_traits<char>::length です。
+
+	strlenに渡す文字列ポインタが以下を満たすなら「危険」でもないです。
+	・非NULLであること
+	・I/FのNUL終端を確約できること
  */
 TEST(string_ex, auto_strlenA)
 {
-	ASSERT_EQ(3, auto_strlen("abc"));
+	constexpr auto& text = "abc";
+	ASSERT_THAT(auto_strlen(text), Eq(3));
 }
 
 /*!
 	@brief 旧コード互換用。可能であれば使わないでください。
 
 	代替関数は wcsnlen か std::char_traits<wchar_t>::length です。
+
+	wcslenに渡す文字列ポインタが以下を満たすなら「危険」でもないです。
+	・非NULLであること
+	・I/FのNUL終端を確約できること
  */
 TEST(string_ex, auto_strlenW)
 {
-	ASSERT_EQ(3, auto_strlen(L"abc"));
+	constexpr auto& text = L"abc";
+	ASSERT_THAT(auto_strlen(text), Eq(3));
+}
+
+TEST(string_ex, auto_strnlenA)
+{
+	constexpr auto& text = "abc";
+	ASSERT_THAT(auto_strnlen(text, std::size(text)), Eq(3));
+}
+
+TEST(string_ex, auto_strnlenW)
+{
+	constexpr auto& text = L"abc";
+	ASSERT_THAT(auto_strnlen(text, std::size(text)), Eq(3));
 }
 
 /*!
@@ -58,26 +172,88 @@ TEST(string_ex, auto_strchrW)
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は snprintf_s か auto_snprintf_s です。
-	可能であれば 非Unicodeな文字列 を扱うコードを書かないでください。
+	代替関数は strprintf か auto_sprintf_s です。
  */
 TEST(string_ex, auto_sprintfA)
 {
 	char szText[_MAX_PATH];
-	auto_snprintf_s(szText, _TRUNCATE, "%s-%d", "test", 101);
+	auto_sprintf(szText, "%s-%d", "test", 101);
 	ASSERT_STREQ("test-101", szText);
 }
 
 /*!
 	@brief 旧コード互換用。使わないでください。
 
-	代替関数は strprintf か _swnprintf_s か auto_snprintf_s です。
+	代替関数は strprintf か auto_sprintf_s です。
  */
 TEST(string_ex, auto_sprintfW)
 {
 	wchar_t szText[_MAX_PATH];
-	auto_snprintf_s(szText, _TRUNCATE, L"%s-%d", L"test", 101);
+	auto_sprintf(szText, L"%s-%d", L"test", 101);
 	ASSERT_STREQ(L"test-101", szText);
+}
+
+/*!
+ * @brief 旧コード互換用。使わないでください。
+ *
+ * サクラエディタ独自関数です。
+ *
+ * 第1引数には出力先の固定長バッファを指定します。
+ *
+ * 固定長バッファとして扱えるなら生配列でもstd::arrayでもstd::vectorでも構いません。
+ *
+ * バッファ変数の宣言を変更できる場合、 strprintf への移行を検討してください。
+ *
+ * 書式文字列ごと変更できる場合、 std::format への移行を検討してください。
+ */
+TEST(string_ex, auto_sprintf_sA)
+{
+	std::array<char, _MAX_PATH> szText{};
+	EXPECT_THAT(auto_sprintf_s(szText, "%s-%d", "test", 101), 8);
+	ASSERT_THAT(std::data(szText), StrEq("test-101"));
+}
+
+TEST(string_ex, auto_sprintf_sW)
+{
+	SFilePath szText;
+	EXPECT_THAT(auto_sprintf_s(szText, L"%s-%d", L"test", 101), 8);
+	ASSERT_THAT(szText, StrEq(L"test-101"));
+}
+
+TEST(string_ex, ConvertPrintfArgReturnsSourcePointerA)
+{
+	const auto source = "test"s;
+
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(source)),
+		Eq(source.c_str())
+	);
+}
+
+TEST(string_ex, ConvertPrintfArgReturnsSourcePointerW)
+{
+	const auto source = L"test"s;
+
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(source)),
+		Eq(source.c_str())
+	);
+}
+
+TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferA)
+{
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1("test data"sv.substr(0, 4))),
+		StrEq("test")
+	);
+}
+
+TEST(string_ex, ConvertPrintfArgRejectsTemporaryBufferW)
+{
+	EXPECT_THAT(
+		PrintfArg::ConvertArgPhase2(PrintfArg::ConvertArgPhase1(L"test data"sv.substr(0, 4))),
+		StrEq(L"test")
+	);
 }
 
 /*!
@@ -125,6 +301,16 @@ TEST(string_ex, strprintfEmpty)
 }
 
 /*!
+	@brief 独自定義のフォーマット関数(CLayoutInt出力テスト)。
+ */
+TEST(string_ex, strprintfCLayoutInt)
+{
+	CLayoutInt value{ 25 };
+	std::wstring text = strprintf(L"いちご%d%%", value);
+	EXPECT_THAT(text, StrEq(L"いちご25%"));
+}
+
+/*!
 	@brief 独自定義のフォーマット関数(C-Style風)。
 
 	バッファが極端に小さい場合の確認。
@@ -132,7 +318,7 @@ TEST(string_ex, strprintfEmpty)
  */
 TEST(string_ex, strprintfW_small_output)
 {
-	std::wstring text = strprintf(L"");
+	std::wstring text;
 	EXPECT_STREQ(L"", text.c_str());
 
 	text = strprintf(L"%d", 1);
@@ -165,7 +351,7 @@ TEST(string_ex, strprintfW_small_output)
  */
 TEST(string_ex, strprintfA_small_output)
 {
-	std::string text = strprintf("");
+	std::string text;
 	EXPECT_STREQ("", text.c_str());
 
 	text = strprintf("%d", 1);
@@ -217,28 +403,77 @@ TEST(string_ex, strprintfA_small_output)
 	EXPECT_STREQ("1234567890123456", text.c_str());
 }
 
-/*!
-	@brief 標準文字列をu8文字列に変換する。
- */
-TEST(string_ex, wcstou8s)
-{
-	// wcs→u8変換ができること
-	ASSERT_STREQ(wcstou8s(L"This is 運命").data(), (LPCSTR)u8"This is 運命");
+#if defined(_MSC_VER) && defined(_DEBUG)
 
-	// 空文字列も問題なく変換できること
-	ASSERT_STREQ(wcstou8s(L"").data(), (LPCSTR)u8"");
+TEST(string_ex, strprintfA101)
+{
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
+
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	LPCSTR format = nullptr;
+	const auto ret = strprintf(format, "arg");
+	EXPECT_THAT(errno, Eq(EINVAL));
+	EXPECT_THAT(ret, StrEq(""));
 }
 
-/*!
-	@brief u8文字列を標準文字列に変換する。
- */
-TEST(string_ex, u8stowcs)
+TEST(string_ex, strprintfW101)
 {
-	// u8→wcs変換ができること
-	ASSERT_STREQ(u8stowcs((LPCSTR)u8"This is 運命").data(), L"This is 運命");
+	MsvcInvalidParameterHandlerDisabler disabler{};	// 無効なパラメーターハンドラーを無効化
 
-	// 空文字列も問題なく変換できること
-	ASSERT_STREQ(u8stowcs((LPCSTR)u8"").data(), L"");
+	MsvcReportMode reportMode{}; // アサーションダイアログを抑制
+
+	// formatは必須。省略したらクラッシュする
+	LPCWSTR format = nullptr;
+	const auto ret = strprintf(format, L"arg");
+	EXPECT_THAT(errno, Eq(EINVAL));
+	EXPECT_THAT(ret, StrEq(L""));
+}
+
+#endif // defined(_MSC_VER) && defined(_DEBUG)
+
+TEST(string_ex, strprintfA102)
+{
+	// formatが空なら呼び出す意味はない。
+	auto ret = strprintf("", nullptr);
+	EXPECT_THAT(ret, StrEq(""));
+
+	ACHAR buf[50]{};
+	::sprintf_s(buf, "", nullptr);
+	EXPECT_THAT((LPCSTR)buf, StrEq(""));
+
+	LPCSTR format = "%s";
+	ret = strprintf(format, (LPCSTR)nullptr);
+	EXPECT_THAT(ret, StrEq("(null)"));
+	::sprintf_s(buf, format, (LPCSTR)nullptr);
+	EXPECT_THAT(buf, StartsWith("(null)"));
+}
+
+TEST(string_ex, strprintfW102)
+{
+	// formatが空なら呼び出す意味はない。
+	auto ret = strprintf(L"", nullptr);
+	EXPECT_THAT(ret, StrEq(L""));
+
+	WCHAR buf[50]{};
+	::swprintf_s(buf, L"", nullptr);
+	EXPECT_THAT((LPCWSTR)buf, StrEq(L""));
+
+	LPCWSTR format = L"%s";
+	ret = strprintf(format, (LPCWSTR)nullptr);
+	EXPECT_THAT(ret, StrEq(L"(null)"));
+	::swprintf_s(buf, format, (LPCWSTR)nullptr);
+	EXPECT_THAT(buf, StartsWith(L"(null)"));
+}
+
+TEST(string_ex, strprintfW103)
+{
+	// 書式化パラメータには部分文字列を指定できるようにした
+	EXPECT_THAT(
+		strprintf(L"%s", L"test data"sv.substr(0, 4)),
+		StrEq(L"test")
+	);
 }
 
 /*!
@@ -291,4 +526,43 @@ TEST(string_ex, wcsnicmp_literal)
 	ASSERT_EQ(0, wcsnicmp_literal(test_data1, test_data2));
 	ASSERT_GT(0, wcsnicmp_literal(test_data1, test_data3));
 	ASSERT_LT(0, wcsnicmp_literal(test_data3, test_data1));
+}
+
+/*!
+	@brief skr_towupper は 256 未満の文字を "English"(Windows-1252) の表で大文字にする
+
+	U+0080～U+009F(制御文字)は変えない。U+00FF は U+0178 にする。
+	空白(U+0020)と U+00E0 を同じ文字にしない(BugReport/64)。
+	表を使うのは MSVC のときだけ(ほかのコンパイラーでは実行時ライブラリの towupper に任せる)なので、表の値は MSVC のときだけ確かめる。
+ */
+TEST(string_ex, skr_towupper)
+{
+	EXPECT_THAT(skr_towupper(L'a'), Eq(L'A'));
+	EXPECT_THAT(skr_towupper(L'Z'), Eq(L'Z'));
+	EXPECT_THAT(skr_towupper(L' '), Eq(L' '));
+#ifdef _MSC_VER
+	EXPECT_THAT(skr_towupper(0x009A), Eq(0x009A));
+	EXPECT_THAT(skr_towupper(0x00E0), Eq(0x00C0));
+	EXPECT_THAT(skr_towupper(0x00FE), Eq(0x00DE));
+	EXPECT_THAT(skr_towupper(0x00FF), Eq(0x0178));
+#endif // ifdef _MSC_VER
+}
+
+/*!
+	@brief skr_towlower は 256 未満の文字を "English"(Windows-1252) の表で小文字にする
+
+	U+0080～U+009F(制御文字)は変えない。
+	表を使うのは MSVC のときだけ(ほかのコンパイラーでは実行時ライブラリの towlower に任せる)なので、表の値は MSVC のときだけ確かめる。
+ */
+TEST(string_ex, skr_towlower)
+{
+	EXPECT_THAT(skr_towlower(L'A'), Eq(L'a'));
+	EXPECT_THAT(skr_towlower(L'z'), Eq(L'z'));
+	EXPECT_THAT(skr_towlower(L' '), Eq(L' '));
+#ifdef _MSC_VER
+	EXPECT_THAT(skr_towlower(0x008A), Eq(0x008A));
+	EXPECT_THAT(skr_towlower(0x00C0), Eq(0x00E0));
+	EXPECT_THAT(skr_towlower(0x00DE), Eq(0x00FE));
+	EXPECT_THAT(skr_towlower(0x00FF), Eq(0x00FF));
+#endif // ifdef _MSC_VER
 }

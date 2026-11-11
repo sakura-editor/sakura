@@ -9,15 +9,19 @@
 	Copyright (C) 2004, genta
 	Copyright (C) 2005, FILE, zenryaku
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 
 #include "StdAfx.h"
-#include <memory>
 #include "macro/CWSHIfObj.h"
+
 #include "macro/CSMacroMgr.h" // MacroFuncInfo
+
+#include <memory>
+#include <ranges>
+
 #include "Funccode_enum.h" // EFunctionCode::FA_FROMMACRO
 
 //コマンド・関数を準備する
@@ -35,46 +39,26 @@ void CWSHIfObj::ReadyMethods( CEditView* pView, int flags )
 
 	@date 2007.07.20 genta flags追加．flagはコマンド登録段階で混ぜておく．
 */
-void CWSHIfObj::ReadyCommands(MacroFuncInfo *Info, int flags)
+void CWSHIfObj::ReadyCommands(
+	MacroFuncInfo *Info,
+	int flags
+)
 {
 	while(Info->m_nFuncID != -1)	// Aug. 29, 2002 genta 番人の値が変更されたのでここも変更
 	{
-		wchar_t FuncName[256];
-		::wcsncpy_s(FuncName, Info->m_pszFuncName, _TRUNCATE);
+		const auto found = std::ranges::find_if(Info->m_varArguments, [] (const auto &varType) { return varType == VT_EMPTY; });
+		const auto ArgCount = std::distance(Info->m_varArguments.begin(), found);
 
-		int ArgCount = 0;
-		if( Info->m_pData ){
-			ArgCount = Info->m_pData->m_nArgMinSize;
-		}else{
-			for(int i = 0; i < 4; ++i){
-				if(Info->m_varArguments[i] != VT_EMPTY) 
-					++ArgCount;
-			}
-		}
-		VARTYPE* varArgTmp = nullptr;
-		VARTYPE* varArg = Info->m_varArguments;
-		if( 4 < ArgCount ){
-			varArgTmp = varArg = new VARTYPE[ArgCount];
-			for( int i = 0; i < ArgCount; i++ ){
-				if( i < 4 ){
-					varArg[i] = Info->m_varArguments[i];
-				}else{
-					varArg[i] = Info->m_pData->m_pVarArgEx[i-4];
-				}
-			}
-		}
-		//	2007.07.21 genta : flagを加えた値を登録する
-		this->AddMethod(
-			FuncName,
+		AddMethod(
+			Info->m_pszFuncName,
 			(Info->m_nFuncID | flags),
-			varArg,
-			ArgCount,
+			Info->m_varArguments.data(),
+			static_cast<int>(ArgCount),
 			Info->m_varResult,
 			reinterpret_cast<CIfObjMethod>(&CWSHIfObj::MacroCommand)
 			/* CWSHIfObjを継承したサブクラスからReadyCommandsを呼び出した場合、
 			 * サブクラスのMacroCommandが呼び出される。 */
 		);
-		delete [] varArgTmp;
 		++Info;
 	}
 }

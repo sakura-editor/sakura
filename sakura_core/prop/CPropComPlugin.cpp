@@ -162,12 +162,12 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 			case IDC_PLUGIN_INST_ZIP:		// ZIPプラグインを追加
 				{
 					static std::wstring	sTrgDir;
-					CDlgOpenFile	cDlgOpenFile;
+					auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 					WCHAR			szPath[_MAX_PATH + 1];
-					::wcsncpy_s(szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()), _TRUNCATE);
+					wcscpy( szPath, (sTrgDir.empty() ? CPluginManager::getInstance()->GetBaseDir().c_str() : sTrgDir.c_str()));
 					// ファイルオープンダイアログの初期化
 					cDlgOpenFile.Create(
-						GetAppInstance(),
+						G_AppInstance(),
 						hwndDlg,
 						L"*.zip",
 						szPath
@@ -213,7 +213,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 						std::wstring sDirName = plugin->GetFolderName();
 						if( plugin && 0 == wmemicmp(sDirName.c_str(), m_Common.m_sPlugin.m_PluginTable[sel].m_szName ) ){
 							CDlgPluginOption cDlgPluginOption;
-							cDlgPluginOption.DoModal( GetAppInstance(), hwndDlg, this, sel );
+							cDlgPluginOption.DoModal( ::GetModuleHandle(nullptr), hwndDlg, this, sel );
 						}else{
 							WarningMessage( hwndDlg, LS(STR_PROPCOMPLG_ERR1) );
 						}
@@ -235,7 +235,7 @@ INT_PTR CPropPlugin::DispatchEvent( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
 				{
 					HWND hListView = ::GetDlgItem( hwndDlg, IDC_PLUGINLIST );
 					int sel = ListView_GetNextItem( hListView, -1, LVNI_SELECTED );
-					std::wstring sName = m_Common.m_sPlugin.m_PluginTable[sel].m_szName;	// 個別フォルダー名
+					std::wstring sName{ m_Common.m_sPlugin.m_PluginTable[sel].m_szName.str() };	// 個別フォルダー名
 					std::wstring sReadMeName = GetReadMeFile(sName);
 					if (!sReadMeName.empty()) {
 						if (!BrowseReadMe(sReadMeName)) {
@@ -350,7 +350,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 		sItem.mask = LVIF_TEXT | LVIF_PARAM;
 		sItem.iItem = index;
 		sItem.iSubItem = 0;
-		::_itow_s(index, buf, 10);
+		_itow( index, buf, 10 );
 		sItem.pszText = buf;
 		sItem.lParam = index;
 		ListView_InsertItem( hListView, &sItem );
@@ -408,7 +408,7 @@ void CPropPlugin::SetData_LIST( HWND hwndDlg )
 				sDirName = plugin->GetFolderName();
 				sItem.pszText = const_cast<LPWSTR>( sDirName.c_str() );
 			}else{
-				sItem.pszText = const_cast<LPWSTR>( plugin_table[index].m_szName );
+				sItem.pszText = plugin_table[index].m_szName.data();
 			}
 			break;
 		default:
@@ -510,8 +510,12 @@ void CPropPlugin::EnablePluginPropInput(HWND hwndDlg)
 }
 
 //	Readme ファイルの取得	2011/11/2 Uchi
-std::wstring CPropPlugin::GetReadMeFile(const std::wstring& sName)
+std::wstring CPropPlugin::GetReadMeFile(
+	std::wstring_view pluginName
+)
 {
+	std::wstring sName{ pluginName };
+
 	std::wstring sReadMeName = CPluginManager::getInstance()->GetBaseDir()
 		+ sName + L"\\ReadMe.txt";
 	CFile* fl = new CFile(sReadMeName.c_str());
@@ -557,18 +561,18 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	//アプリケーションパス
 	WCHAR szExePath[MAX_PATH + 1];
 	::GetModuleFileName( nullptr, szExePath, int(std::size(szExePath)) );
-	cCmdLineBuf.Append(std::format(LR"("{}")", szExePath));
+	cCmdLineBuf.AppendF( L"\"%s\"", szExePath );
 
 	// ファイル名
-	cCmdLineBuf.Append(std::format(LR"( "{}")", sReadMeName));
+	cCmdLineBuf.AppendF( L" \"%s\"", sReadMeName.c_str() );
 
 	// コマンドラインオプション
-	cCmdLineBuf.Append(L" -R -CODE=99");
+	cCmdLineBuf.AppendF(L" -R -CODE=99");
 
 	// グループID
 	int nGroup = GetDllShareData().m_sNodes.m_nGroupSequences;
 	if( nGroup > 0 ){
-		cCmdLineBuf.Append(std::format(L" -GROUP={}", nGroup + 1));
+		cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup+1 );
 	}
 
 	//CreateProcessに渡すSTARTUPINFOを作成
@@ -579,7 +583,7 @@ bool CPropPlugin::BrowseReadMe(const std::wstring& sReadMeName)
 	ZeroMemory( &pi, sizeof(pi) );
 
 	WCHAR	szCmdLine[1024];
-	::wcsncpy_s(szCmdLine, cCmdLineBuf.c_str(), _TRUNCATE);
+	wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
 	//リソースリーク対策
 	BOOL bRet = ::CreateProcess( nullptr, szCmdLine, nullptr, nullptr, TRUE,
 		CREATE_NEW_CONSOLE, nullptr, nullptr, &sui, &pi );

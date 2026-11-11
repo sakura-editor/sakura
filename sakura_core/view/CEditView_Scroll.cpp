@@ -31,6 +31,7 @@
 #include "types/CTypeSupport.h"
 #include <limits.h>
 #include "config/app_constants.h"
+#include "apiwrap/DarkMode.h"
 
 /*! スクロールバー作成
 	@date 2006.12.19 ryoji 新規作成（CEditView::Createから分離）
@@ -51,7 +52,7 @@ BOOL CEditView::CreateScrollBar()
 		CW_USEDEFAULT,						/* default height */
 		GetHwnd(),								/* handle of main window */
 		(HMENU) nullptr,						/* no menu for a scroll bar */
-		GetAppInstance(),						/* instance owning this window */
+		G_AppInstance(),						/* instance owning this window */
 		(LPVOID) nullptr						/* pointer not needed */
 	);
 	si.cbSize = sizeof( si );
@@ -78,7 +79,7 @@ BOOL CEditView::CreateScrollBar()
 			CW_USEDEFAULT,						/* default height */
 			GetHwnd(),								/* handle of main window */
 			(HMENU) nullptr,						/* no menu for a scroll bar */
-			GetAppInstance(),						/* instance owning this window */
+			G_AppInstance(),						/* instance owning this window */
 			(LPVOID) nullptr						/* pointer not needed */
 		);
 		si.cbSize = sizeof( si );
@@ -100,6 +101,9 @@ BOOL CEditView::CreateScrollBar()
 		::ShowWindow( m_hwndSizeBox, SW_HIDE );
 		::ShowWindow( m_hwndSizeBoxPlaceholder, SW_SHOW );
 	}
+
+	DarkMode::setChildCtrlsTheme(GetHwnd());
+
 	return TRUE;
 }
 

@@ -61,13 +61,13 @@ void CDocEditor::OnBeforeLoad([[maybe_unused]] SLoadInfo* sLoadInfo)
 void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 {
 	CEditDoc* pcDoc = GetListeningDoc();
-	const STypeConfig& type = GetTypeConfig();
+	const STypeConfig& type = pcDoc->m_cDocType.GetDocumentAttribute();
 
 	if (type.m_bDetectIndentationStyleOnFileLoad) {
 		// インデントスタイル検出
 		// 現時点の実装ではレイアウトには影響しないのでここで実行する
 		IndentationStyle indentStyle{};
-		DetectIndentationStyle(pcDoc, 256, indentStyle);
+		DetectIndentationStyle(pcDoc->m_cDocFile.GetFilePathClass(), pcDoc->m_cDocLineMgr, 256, indentStyle);
 		auto& bInsSpace = pcDoc->m_cDocType.GetDocumentAttributeWrite().m_bInsSpace;
 		auto setTemporaryTabSpaceKetas = [&]() {
 			// タブ幅を一時的に設定
@@ -113,10 +113,10 @@ void CDocEditor::OnAfterLoad(const SLoadInfo& sLoadInfo)
 
 	//	Nov. 20, 2000 genta
 	//	IME状態の設定
-	this->SetImeMode( GetTypeConfig().m_nImeState );
+	this->SetImeMode( pcDoc->m_cDocType.GetDocumentAttribute().m_nImeState );
 
 	// カレントディレクトリの変更
-	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
+	cxx::SetCurrentDirectoryW(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath());
 
 	CAppMode::getInstance()->SetViewMode(sLoadInfo.bViewMode);		// ビューモード	##ここも、アリかな
 }
@@ -131,7 +131,7 @@ void CDocEditor::OnAfterSave([[maybe_unused]] const SSaveInfo& sSaveInfo)
 	this->m_cOpeBuf.SetNoModified();
 
 	// カレントディレクトリの変更
-	::SetCurrentDirectory( pcDoc->m_cDocFile.GetFilePathClass().GetDirPath().c_str() );
+	cxx::SetCurrentDirectoryW(pcDoc->m_cDocFile.GetFilePathClass().GetDirPath());
 }
 
 //	From Here Nov. 20, 2000 genta

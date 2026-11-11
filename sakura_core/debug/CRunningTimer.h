@@ -18,7 +18,9 @@
 #define SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_
 #pragma once
 
+#include "debug/Debug1.h"
 #include "util/string_ex.h"
+
 #include <string>
 #include <string_view>
 #include <chrono>
@@ -99,15 +101,19 @@ public:
 
 	/*!
 		現在の経過時間でログを書き込む
-		@param[in]	fmt		sprintfスタイルの書式文字列
-		@param[in]	...		書式文字列に対応する引数
+		@param[in]	fmt		書式文字列
+		@param[in]	args	書式文字列に対応する引数
 	*/
-	template <typename... T> requires (... && !is_strict_integer_v<T>)
-	void WriteTraceFormat( std::wstring_view fmt, T... args )
+	template <typename... T>
+	void WriteTraceFormat(
+		_In_z_ _Printf_format_string_ LPCWSTR fmt,
+		const T&... args
+	)
 	{
 		auto currentTime = GetTime();
-		std::wstring msg;
-		strprintf( msg, fmt.data(), args... );
+
+		const auto msg = strprintf(fmt, std::as_const(args)...);
+
 		WriteTraceInternal( currentTime, TraceType::Normal, msg );
 	}
 
@@ -136,11 +142,16 @@ protected:
 	void OutputHeader() const;
 	void OutputFooter() const;
 	void OutputTrace( TimePoint currentTime, TraceType traceType, std::wstring_view msg ) const;
-	void Output(const std::wstring& text) const;
 
-	template <typename... Params>
-	void Output(std::wformat_string<Params...> _Fmt, Params&&... params ) const {
-		Output(std::vformat(_Fmt.get(), std::make_wformat_args(params...)));
+	template <typename... Args>
+	void Output(
+		_In_z_ _Printf_format_string_ LPCWSTR format,
+		const Args&... args
+	) const
+	{
+		const auto msg = strprintf(format, std::as_const(args)...);
+
+		cxx::OutputDebugStringW(msg);
 	}
 
 private:
@@ -153,4 +164,5 @@ private:
 	size_t			m_nNameOutputWidth = 40;	// タイマー名出力幅(文字数)(初期値は最小幅)
 	std::vector<TraceEntry> m_pendingTraces;	// 出力保留中の情報
 };
+
 #endif /* SAKURA_CRUNNINGTIMER_B4A1B7C4_EA83_41F2_9132_21DE3A57470D_H_ */

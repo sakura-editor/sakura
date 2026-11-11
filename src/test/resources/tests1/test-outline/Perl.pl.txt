@@ -1,0 +1,18 @@
+use strict;
+use warnings;
+
+sub greet {
+    my ($name) = @_;
+    print "Hello, $name!\n";
+}
+
+    sub indented_subroutine {
+        return 42;
+    }
+
+sub Sample::Package::qualified_name {
+    return 'qualified';
+}
+
+# sub commented_out is not at the beginning of a declaration.
+greet('world');

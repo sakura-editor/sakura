@@ -9,7 +9,19 @@
 #define SAKURA_CCLIPBOARD_4E783022_214C_4E51_A2E0_54EC343500F6_H_
 #pragma once
 
+#include <cstdint>
+#include <limits>
+
 #include "mem/CNativeW.h"
+
+/*!
+ * @brief クリップボードの形式を指定するための定数
+ *
+ * 対応フォーマット全部、の意。
+ *
+ * クリップボードフォーマット識別子は 16bit 値なので、有効値と被ることはない。
+ */
+constexpr auto CF_ANY = static_cast<UINT>(-1);
 
 class CEol;
 class CStringRef;
@@ -48,11 +60,12 @@ struct StdWStringBuffer : public IWBuffer {
 
 //!サクラエディタ用クリップボードクラス。後々はこの中で全てのクリップボードAPIを呼ばせたい。
 class CClipboard{
+private:
 	using Me = CClipboard;
 
 public:
 	//コンストラクタ・デストラクタ
-	CClipboard(HWND hwnd); //!< コンストラクタ内でクリップボードが開かれる
+	explicit CClipboard(HWND hwnd); //!< コンストラクタ内でクリップボードが開かれる
 	CClipboard(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CClipboard(Me&&) noexcept = delete;
@@ -60,19 +73,22 @@ public:
 	virtual ~CClipboard(); //!< デストラクタ内でCloseが呼ばれる
 
 	//インターフェース
-	void Empty(); //!< クリップボードを空にする
-	void Close(); //!< クリップボードを閉じる
-	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = (UINT)-1);   //!< テキストを設定する
+	bool	Open(HWND hWndOwner);
+	void	Close(); //!< クリップボードを閉じる
+
+	void Empty() const; //!< クリップボードを空にする
+	bool SetText(const wchar_t* pData, size_t nDataLen, bool bColumnSelect, bool bLineSelect, UINT uFormat = CF_ANY);   //!< テキストを設定する
 	bool SetHtmlText(const CNativeW& cmemBUf);
-	bool GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
-	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = (UINT)-1); //!< テキストを取得する
+	bool GetText(IWBuffer* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
+	bool GetText(CNativeW* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
+	bool GetText(std::wstring* cmemBuf, bool* pbColumnSelect, bool* pbLineSelect, const CEol& cEol, UINT uGetFormat = CF_ANY); //!< テキストを取得する
 	bool IsIncludeClipboardFormat(const wchar_t* pFormatName);
 	bool SetClipboardByFormat(const CStringRef& cstr, const wchar_t* pFormatName, int nMode, int nEndMode);
 	bool GetClipboardByFormat(CNativeW& mem, const wchar_t* pFormatName, int nMode, int nEndMode, const CEol& cEol);
 
 	//演算子
-	operator bool() const{ return m_bOpenResult!=FALSE; } //!< クリップボードを開けたならtrue
+	explicit operator bool() const noexcept { return m_bOpenResult != FALSE; } //!< クリップボードを開けたならtrue
+
 
 	int GetDataType() const; //!< クリップボードデータ形式(CF_UNICODETEXT等)の取得
 
@@ -81,16 +97,30 @@ public:
 	static constexpr int CLIPBOARD_RETRY_DELAY_MS = 10;
 
 private:
-	HWND m_hwnd;
-	BOOL m_bOpenResult;
+	HWND m_hwnd = nullptr;
+	BOOL m_bOpenResult = FALSE;
 
 	// Helper method for OpenClipboard with retry
-	BOOL OpenClipboardWithRetry(HWND hwnd);
+	bool	OpenClipboardWithRetry(HWND hWndOwner) const;
 
 	// -- -- staticインターフェース -- -- //
 public:
 	static bool HasValidData();    //!< クリップボード内に、サクラエディタで扱えるデータがあればtrue
 	static CLIPFORMAT GetSakuraFormat(); //!< サクラエディタ独自のクリップボードデータ形式
+
+	//! サクラエディタ独自形式(SAKURAClipW)の先頭に置く文字数フィールドの型
+	//!
+	//! Win32/x64/ARM64 の各ビルド間、及び過去バージョンとの間でクリップボードを
+	//! やり取りするため、ポインタ幅に依存しない32bit固定でなければならない。
+	//! size_t にするとx64/ARM64でデータのレイアウトが変わり、
+	//! 他ビルドで貼り付けたときに文字化けやクラッシュを起こす。(issue #2325)
+	using SAKURAClipW_LengthFieldType = int32_t;
+
+	//! サクラエディタ独自形式(SAKURAClipW)で扱える最大文字数
+	//!
+	//! これを超える長さのテキストは独自形式では受け渡しできないため、
+	//! CF_UNICODETEXT のみで受け渡す。
+	static constexpr size_t SAKURAClipW_MaxLength = std::numeric_limits<SAKURAClipW_LengthFieldType>::max();
 
 protected:
 	// 単体テスト用コンストラクタ
@@ -98,6 +128,10 @@ protected:
 
 	// 同名の Windows API に引数を転送する仮想メンバ関数。
 	// 単体テスト内でオーバーライドすることで副作用のないテストを実施するのが目的。
+	virtual BOOL OpenClipboard(
+		_In_opt_ HWND hWndNewOwner
+	) const;
+	virtual BOOL CloseClipboard() const;
 	virtual HANDLE SetClipboardData(UINT uFormat, HANDLE hMem) const;
 	virtual HANDLE GetClipboardData(UINT uFormat) const;
 	virtual BOOL EmptyClipboard() const;

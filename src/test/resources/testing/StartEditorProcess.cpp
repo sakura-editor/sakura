@@ -6,139 +6,94 @@
  */
 
 #include "pch.h"
-
 #include "testing/StartEditorProcess.hpp"
 
+#include "_main/CProcess.h"
+#include "util/debug/StackTraceWriter.hpp"
 #include "util/StaticType.h"
 #include "util/tchar_convert.h"
 #include "env/CDataProfile.h" // StringBufferW
 
-// MSVCデバッグビルド専用コードを隔離するためのCマクロ
-#if defined(_MSC_VER) && defined(_DEBUG) && (defined(_M_AMD64) || defined(_M_IX86))
-#define USE_STACK_TRACE
-#endif
-
-#ifdef USE_STACK_TRACE
-
 // デバッグ出力の独自関数を使う
 #include "debug/Debug1.h"	// DebugOutW, TRACEマクロ等
 
-// Windows SDKのデバッグヘルパーとリンクする
+// Windows SDKのデバッグヘルパーを参照する
 #include <DbgHelp.h>
-#pragma comment(lib, "dbghelp.lib")
 
-#endif
+// Windows SDKのデバッグヘルパーとリンクする
+#pragma comment(lib, "dbghelp.lib")
 
 namespace testing {
 
-#ifdef USE_STACK_TRACE
+using namespace cxx;
 
-#ifdef _M_AMD64
-	constexpr auto machineType = IMAGE_FILE_MACHINE_AMD64;
-#elif defined(_M_ARM64)
-	constexpr auto machineType = IMAGE_FILE_MACHINE_ARM64;
-#elif defined(_M_IX86)
-	constexpr auto machineType = IMAGE_FILE_MACHINE_I386;
-#endif
-
-void PrintStackTrace(
-	[[maybe_unused]] int nExceptionCode,
-	CONTEXT&             context
-)
+// SEH例外コードを人間が読める文字列に変換する
+std::string_view SehExceptionCodeName(NTSTATUS code) noexcept
 {
-    const auto process = ::GetCurrentProcess();
-    const auto thread  = ::GetCurrentThread();
-
-    // Dbghelp.dll
-    // プロセスのシンボル ハンドラーを初期化します。
-    PCSTR UserSearchPath = nullptr;
-    BOOL  fInvadeProcess = TRUE;
-    ::SymInitialize(process, UserSearchPath, fInvadeProcess);
-
-    STACKFRAME64 stack     = {};
-    stack.AddrPC.Mode      = AddrModeFlat;
-    stack.AddrFrame.Mode   = AddrModeFlat;
-    stack.AddrStack.Mode   = AddrModeFlat;
-
-#ifdef _M_AMD64
-    stack.AddrPC.Offset    = context.Rip;
-    stack.AddrFrame.Offset = context.Rbp;
-    stack.AddrStack.Offset = context.Rsp;
-#else // _M_IX86
-    stack.AddrPC.Offset    = context.Eip;
-    stack.AddrFrame.Offset = context.Ebp;
-    stack.AddrStack.Offset = context.Esp;
-#endif
-
-	std::array<BYTE, sizeof(SYMBOL_INFO) + (MAX_SYM_NAME + 1) * sizeof(TCHAR) - 1> buffer = {};
-
-    auto symbol          = PSYMBOL_INFO(buffer.data());
-    symbol->SizeOfStruct = sizeof(*symbol);
-    symbol->MaxNameLen   = MAX_SYM_NAME;
-
-	std::wcout << L"PrintStackTrace()";
-
-    // Dbghelp.dll
-    // スタック トレースを取得します。
-    while (::StackWalk64(
-        machineType,
-        process,
-        thread,
-        &stack,
-        &context,
-        nullptr,
-        ::SymFunctionTableAccess64,
-        ::SymGetModuleBase64,
-        nullptr))
-    {
-        if (const auto address = stack.AddrPC.Offset;
-            ::SymFromAddr(process, address, nullptr, symbol))
-		{
-			std::wcout << std::format(L"\tat {} in {}", cxx::to_wstring(symbol->Name), symbol->Address) << std::endl;
-		}
-    }
-
-	std::wcout << std::endl;
-
-	// Dbghelp.dll
-    // プロセス ハンドルに関連付けられているすべてのリソースの割り当てを解除します。
-    SymCleanup(process);
+	switch (code) {
+	case EXCEPTION_ACCESS_VIOLATION:         return "access violation (seg fault)";
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:    return "array bounds exceeded";
+	case EXCEPTION_DATATYPE_MISALIGNMENT:    return "datatype misalignment";
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:       return "float: divide by zero";
+	case EXCEPTION_FLT_OVERFLOW:             return "float: overflow";
+	case EXCEPTION_FLT_STACK_CHECK:          return "float: stack check";
+	case EXCEPTION_FLT_UNDERFLOW:            return "float: underflow";
+	case EXCEPTION_ILLEGAL_INSTRUCTION:      return "illegal instruction";
+	case EXCEPTION_IN_PAGE_ERROR:            return "in-page error";
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "integer: divide by zero";
+	case EXCEPTION_INT_OVERFLOW:             return "integer: overflow";
+	case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "non-continuable exception";
+	case EXCEPTION_PRIV_INSTRUCTION:         return "privileged instruction";
+	case EXCEPTION_STACK_OVERFLOW:           return "stack overflow";
+	default:                                 return {};
+	}
 }
 
-LONG CALLBACK MyUnhandledExceptionFilter(
-    int                 nExceptionCode,
-    EXCEPTION_POINTERS* pExceptionInfo)
+void DumpSehException(EXCEPTION_POINTERS* ep)
 {
-	auto& context = *pExceptionInfo->ContextRecord;
+	if (!ep || !ep->ExceptionRecord) {
+		std::cerr << "no SEH exception info\n";
+		return;
+	}
 
-    PrintStackTrace(nExceptionCode, context);
-
-    return EXCEPTION_EXECUTE_HANDLER;
+	const auto code = ep->ExceptionRecord->ExceptionCode;
+	if (const auto name = SehExceptionCodeName(code); !name.empty()) {
+		std::cerr << "SEH exception: " << name << "\n";
+	}
+	std::cerr << "SEH code: 0x"
+		<< std::hex << code << std::dec << "\n";
+	std::cerr << "SEH address: 0x"
+		<< std::hex
+		<< uint64_t(ep->ExceptionRecord->ExceptionAddress)
+		<< std::dec << "\n";
 }
 
-#endif
+// 未処理例外フィルター: SEH例外またはC++例外をダンプし、スタックトレースを出力
+// コンパイルオプション(/EHaなど)によってはC++例外もこのフィルターで捕捉される
+LONG OnUnhandledException(EXCEPTION_POINTERS* ep)
+{
+	DumpSehException(ep);
+	if (ep && ep->ContextRecord) {
+		CProcess::WriteStackTraceIgnoringExceptions(
+			*ep->ContextRecord,
+			&std::cerr
+		);
+	}
+	return EXCEPTION_EXECUTE_HANDLER;
+}
 
 int CallWinMain(
-	std::span<WCHAR> cmdLine
+	std::wstring& cmdLine
 )
 {
-#ifdef USE_STACK_TRACE
-	__try
-    {
-#endif
+	// 実行中モジュールのインスタンスハンドルを取得する
+	const auto hInstance = G_AppInstance();
 
-		// 実行中モジュールのインスタンスハンドルを取得する
-		const auto hInstance = GetAppInstance();
+	// wWinMainには書き込み可能なコマンドライン文字列を渡す
+	LPWSTR lpCmdLine = cmdLine.data();
 
-		return wWinMain(hInstance, nullptr, std::data(cmdLine), SW_SHOWDEFAULT);
-
-#ifdef USE_STACK_TRACE
-    }
-    __except (MyUnhandledExceptionFilter(GetExceptionCode(),  GetExceptionInformation()))
-    {
-        return 1;
-    }
-#endif
+	// wWinMainを呼び出す
+	return wWinMain(hInstance, nullptr, lpCmdLine, SW_SHOWDEFAULT);
 }
 
 /*!
@@ -166,7 +121,7 @@ int StartEditorProcess(const std::wstring& command)
 	if (!std::regex_search(command, std::wregex(LR"(-CODE\b)", std::wregex::icase)) &&
 		!std::regex_search(command, std::wregex(LR"(-NOWIN\b)", std::wregex::icase)))
 	{
-		buffer += L" -CODE=99"; // 指定しないとファイル名から文字コードを判定する仕様によりJIS指定になってしまう。
+		buffer += std::format(LR"( -CODE={})", static_cast<int>(CODE_AUTODETECT)); // 指定しないとファイル名から文字コードを判定する仕様によりJIS指定になってしまう。
 	}
 
 	// wWinMainを起動する(戻り値は0が正常)

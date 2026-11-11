@@ -191,21 +191,19 @@ EConvertResult CUtf8::_UnicodeToUTF8( const CNativeW& cSrc, CMemory* pDstMem, bo
 }
 
 // 文字コード表示用	UNICODE → Hex 変換	2008/6/21 Uchi
-EConvertResult CUtf8::_UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
+EConvertResult CUtf8::_UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar, const bool bCESUMode)
 {
 	CNativeW		cBuff;
 	EConvertResult	res;
+	int				i;
+	WCHAR*			pd;
 	unsigned char*	ps;
 	bool			bbinary=false;
 
 	if (psStatusbar->m_bDispUtf8Codepoint) {
 		// Unicodeで表示
-		return CCodeBase::UnicodeToHex(src, dst, psStatusbar);
+		return CCodeBase::UnicodeToHex(cSrc, iSLen, pDst, psStatusbar);
 	}
-
-	const auto cSrc = std::data(src);
-	const auto iSLen = int(std::size(src));
-
 	cBuff.AllocStringBuffer(4);
 	// 1文字データバッファ
 	if (IsUTF16High(cSrc[0]) && iSLen >= 2 && IsUTF16Low(cSrc[1])) {
@@ -234,13 +232,13 @@ EConvertResult CUtf8::_UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst,
 
 	// Hex変換
 	ps = reinterpret_cast<unsigned char*>( cBuff._GetMemory()->GetRawPtr() );
+	pd = pDst;
 	if( bbinary == false ){
-		for (auto i = cBuff._GetMemory()->GetRawLength(); i >0; --i, ++ps) {
-			auto_snprintf_s(dst, _TRUNCATE, L"%02X", *ps);
-			dst = dst.subspan(2);
+		for (i = cBuff._GetMemory()->GetRawLength(); i >0; i--, ps ++, pd += 2) {
+			auto_sprintf( pd, L"%02X", *ps);
 		}
 	}else{
-		auto_snprintf_s(dst, _TRUNCATE, L"?%02X", *ps);
+		auto_sprintf( pd, L"?%02X", *ps );
 	}
 
 	return RESULT_COMPLETE;

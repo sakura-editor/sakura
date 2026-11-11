@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,6 +11,8 @@
 #include "_main/global.h"	//SSearchOption
 #include "charset/charcode.h"	//ECodeType
 #include "mem/CNativeW.h"	//CNativeW
+
+#include <string>
 
 /*!
  * Grep 検索オプション
@@ -39,8 +41,18 @@ struct GrepInfo {
 	bool			bGrepReplace = false;			//!< Grep置換
 	bool			bGrepPaste = false;				//!< クリップボードから貼り付け
 	bool			bGrepBackup = false;			//!< 置換でバックアップを保存
+	bool			bGrepExceptFileRegexp = false;	//!< 除外ファイルを正規表現で指定する
 
 	// コンストラクタ
 	GrepInfo() noexcept;
+
+	//! 出力・置換の挙動が矛盾しないよう補正した複製を返す
+	GrepInfo Normalized() const;
+
+	//! Grep を新しいウィンドウで実行するためのコマンドラインを作る(CCommandLine::ParseCommandLine() の逆)
+	std::wstring MakeCommandLine() const;
+
+	//! -GOPT に指定する文字列を作る
+	std::wstring MakeCommandLineOptions() const;
 };
 #endif /* SAKURA_GREPINFO_9A59ABAF_04F9_4D29_B216_0B0784DD2290_H_ */

@@ -88,6 +88,9 @@ public:
 	int GetHankakuDy() const;
 	int GetHankakuHeight() const;
 
+	//ドキュメントのインスタンスを求める
+	const CEditDoc* GetDocument() const{ return m_pEditDoc; }
+
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         実装補助                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -201,7 +204,7 @@ private:
 
 	//アンダーライン
 public:
-	mutable CCaretUnderLine m_cUnderLine;
+	CCaretUnderLine m_cUnderLine;
 	
 	bool			m_bClearStatus = true;
 };

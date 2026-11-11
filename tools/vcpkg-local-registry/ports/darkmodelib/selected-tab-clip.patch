@@ -1,0 +1,71 @@
+diff --git a/src/DmlibSubclassControl.cpp b/src/DmlibSubclassControl.cpp
+--- a/src/DmlibSubclassControl.cpp
++++ b/src/DmlibSubclassControl.cpp
+@@ -1460,6 +1460,14 @@
+ 		iTab = nTabs - 1;
+ 	}
+ 
++	// Do not carry the frame-only exclusion into tab item drawing.
++	auto holdClip = ::CreateRectRgn(0, 0, 0, 0);
++	if (::GetClipRgn(hdc, holdClip) != 1)
++	{
++		::DeleteObject(holdClip);
++		holdClip = nullptr;
++	}
++
+ 	RECT rcSelTab{};
+ 	TabCtrl_GetItemRect(hWnd, iTab, &rcSelTab);
+ 
+@@ -1473,13 +1481,6 @@
+ 	const auto hPen = dmlib_paint::GdiObject{ hdc, dmlib::getEdgePen(), true };
+ 	const auto hFont = dmlib_paint::GdiObject{ hdc, hWnd };
+ 
+-	auto holdClip = ::CreateRectRgn(0, 0, 0, 0);
+-	if (::GetClipRgn(hdc, holdClip) != 1)
+-	{
+-		::DeleteObject(holdClip);
+-		holdClip = nullptr;
+-	}
+-
+ 	POINT ptCursor{};
+ 	::GetCursorPos(&ptCursor);
+ 	::ScreenToClient(hWnd, &ptCursor);
+@@ -1487,9 +1488,26 @@
+ 	::SetBkMode(hdc, TRANSPARENT);
+ 
+ 	const bool isOwnerDraw = (nStyle & TCS_OWNERDRAWFIXED) != 0;
+-
+-	for (int i = 0; i < nTabs; ++i)
+-	{
++	// Owner-draw handlers can paint beyond item bounds; index order could cover the selected tab.
++	const bool drawSelectedLast = isOwnerDraw
++		&& ((nStyle & TCS_BUTTONS) == 0)
++		&& iSelTab >= 0 && iSelTab < nTabs;
++
++	for (int drawIndex = 0; drawIndex < nTabs; ++drawIndex)
++	{
++		int i = drawIndex;
++		if (drawSelectedLast)
++		{
++			if (drawIndex == nTabs - 1)
++			{
++				i = iSelTab;
++			}
++			else if (drawIndex >= iSelTab)
++			{
++				++i;
++			}
++		}
++
+ 		RECT rcItem{};
+ 		TabCtrl_GetItemRect(hWnd, i, &rcItem);
+ 
+@@ -1507,6 +1525,8 @@
+ 				, 0
+ 			};
+ 
++			// A parent handler can change the clip, so do not pass its clip to the next item.
++			::SelectClipRgn(hdc, holdClip);
+ 			::SetTextColor(hdc, (iSelTab == i) ? dmlib::getTextColor() : dmlib::getDarkerTextColor());
+ 			::SendMessage(::GetParent(hWnd), WM_DRAWITEM, 0, reinterpret_cast<LPARAM>(&dis));
+ 			continue;

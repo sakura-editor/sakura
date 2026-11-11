@@ -154,16 +154,6 @@ CEditDoc& GetEditDoc()
 	return *doc;
 }
 
-/*!
- * ドキュメントのタイプ別設定を取得する
- *
- * @throws CEditDocが生成されていない
- */
-const STypeConfig& GetTypeConfig()
-{
-	return GetEditDoc().m_cDocType.GetDocumentAttribute();
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -230,6 +220,10 @@ CEditDoc::CEditDoc([[maybe_unused]] CEditApp* pcApp)
 
 CEditDoc::~CEditDoc()
 {
+	CModifyManager::resetInstance();
+	CCodeChecker::resetInstance();
+	CAppMode::resetInstance();
+
 	if( m_hBackImg ){
 		::DeleteObject( m_hBackImg );
 	}
@@ -324,7 +318,7 @@ void CEditDoc::SetBackgroundImage()
 	}
 	if( _IS_REL_PATH(path.c_str()) ){
 		CFilePath fullPath;
-		GetInidirOrExedir(fullPath, path);
+		GetInidirOrExedir( &fullPath[0], &path[0] );
 		path = fullPath;
 	}
 
@@ -497,7 +491,7 @@ void CEditDoc::GetEditInfo(
 ) const
 {
 	//ファイルパス
-	::wcsncpy_s(pfi->m_szPath, m_cDocFile.GetFilePath(), _TRUNCATE);
+	wcscpy(pfi->m_szPath, m_cDocFile.GetFilePath());
 
 	//表示域
 	pfi->m_nViewTopLine = GetEditWnd().GetActiveView().GetTextArea().GetViewTopLine();	/* 表示域の一番上の行(0開始) */
@@ -514,7 +508,7 @@ void CEditDoc::GetEditInfo(
 
 	//GREPモード
 	pfi->m_bIsGrep = CEditApp::getInstance()->m_pcGrepAgent->m_bGrepMode;
-	::wcsncpy_s(pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey, _TRUNCATE);
+	wcscpy( pfi->m_szGrepKey, CAppMode::getInstance()->m_szGrepKey );
 
 	//デバッグモニタ (アウトプットウインドウ) モード
 	pfi->m_bIsDebug = CAppMode::getInstance()->IsDebugMode();
@@ -588,7 +582,7 @@ bool CEditDoc::IsAcceptLoad() const
 	@date 2006.05.19 genta 上位16bitに送信元の識別子が入るように変更
 	@date 2007.06.20 ryoji グループ内で巡回するように変更
 */
-BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
+BOOL CEditDoc::HandleCommand(EFunctionCode nCommand) const
 {
 	//	May. 19, 2006 genta 上位16bitに送信元の識別子が入るように変更したので
 	//	下位16ビットのみを取り出す
@@ -599,7 +593,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 			if( -1 != nPane ){
 				GetEditWnd().SetActivePane( nPane );
 			}else{
-				CControlTray::ActiveNextWindow( GetMainWindow() );
+				CControlTray::ActiveNextWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
@@ -610,7 +604,7 @@ BOOL CEditDoc::HandleCommand( EFunctionCode nCommand )
 				GetEditWnd().SetActivePane( nPane );
 			}
 			else{
-				CControlTray::ActivePrevWindow( GetMainWindow() );
+				CControlTray::ActivePrevWindow( GetEditWnd().GetHwnd() );
 			}
 		}
 		return TRUE;
@@ -634,13 +628,13 @@ void CEditDoc::OnChangeType()
 	OnChangeSetting();
 
 	// 新規で無変更ならデフォルト文字コードを適用する	// 2011.01.24 ryoji
-	if( !m_cDocFile.GetFilePathClass().IsValidPath() ){
-		if( !m_cDocEditor.IsModified() && m_cDocLineMgr.GetLineCount() == 0 ){
+	if (!m_cDocFile.GetFilePathClass().IsValidPath() &&
+		!m_cDocEditor.IsModified() &&
+		0 == m_cDocLineMgr.GetLineCount()) {
 			const STypeConfig& types = m_cDocType.GetDocumentAttribute();
 			m_cDocFile.SetCodeSet( types.m_encoding.m_eDefaultCodetype, types.m_encoding.m_bDefaultBom );
 			m_cDocEditor.m_cNewLineCode = types.m_encoding.m_eDefaultEoltype;
 			GetEditWnd().GetActiveView().GetCaret().ShowCaretPosInfo();
-		}
 	}
 
 	// 2006.09.01 ryoji タイプ変更後自動実行マクロを実行する
@@ -864,8 +858,8 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 	int			nBool;
 
 	//クローズ事前処理
-	ECallbackResult eBeforeCloseResult = NotifyBeforeClose();
-	if(eBeforeCloseResult==CALLBACK_INTERRUPT)return FALSE;
+	if (const auto eBeforeCloseResult = NotifyBeforeClose();
+		CALLBACK_INTERRUPT == eBeforeCloseResult) return FALSE;
 
 	// デバッグモニタモードのときは保存確認しない
 	if(CAppMode::getInstance()->IsDebugMode())return TRUE;
@@ -894,19 +888,19 @@ BOOL CEditDoc::OnFileClose(bool bGrepNoConfirm)
 		int			nLen = (int)wcslen( pszGrepKey );
 		CNativeW	cmemDes;
 		LimitStringLengthW( pszGrepKey , nLen, 64, cmemDes );
-		auto_snprintf_s( szGrepTitle, _TRUNCATE, LS(STR_TITLE_GREP),
+		auto_sprintf( szGrepTitle, LS(STR_TITLE_GREP),
 			cmemDes.GetStringPtr(),
 			( nLen > cmemDes.GetStringLength() ) ? L"..." : L""
 		);
 		pszTitle = szGrepTitle;
 	}
 	if( nullptr == pszTitle ){
-		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( GetMainWindow() );
-		auto_snprintf_s(szGrepTitle, _TRUNCATE, L"%s%d", LS(STR_NO_TITLE1), node->m_nId);	//(無題)
+		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode( CEditWnd::getInstance()->GetHwnd() );
+		auto_sprintf( szGrepTitle, L"%s%d", LS(STR_NO_TITLE1), node->m_nId );	//(無題)
 		pszTitle = szGrepTitle;
 	}
 	/* ウィンドウをアクティブにする */
-	HWND	hwndMainFrame = GetMainWindow();
+	HWND	hwndMainFrame = CEditWnd::getInstance()->GetHwnd();
 	ActivateFrameWindow( hwndMainFrame );
 	if( CAppMode::getInstance()->IsViewMode() ){	/* ビューモード */
 		ConfirmBeep();
@@ -991,28 +985,34 @@ void CEditDoc::RunAutoMacro( int idx, LPCWSTR pszSaveFilePath )
 		return;	// 再入り実行はしない
 
 	bRunning = true;
-	if( CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) ){
-		if( !( ::GetAsyncKeyState(VK_SHIFT) & 0x8000 ) ){	// Shift キーが押されていなければ実行
+	if (CEditApp::getInstance()->m_pcSMacroMgr->IsEnabled(idx) &&
+		!(::GetAsyncKeyState(VK_SHIFT) & 0x8000)) {	// Shift キーが押されていなければ実行
 			if( nullptr != pszSaveFilePath )
 				m_cDocFile.SetSaveFilePath(pszSaveFilePath);
 			//	2007.07.20 genta 自動実行マクロで発行したコマンドはキーマクロに保存しない
 			HandleCommand((EFunctionCode)(( F_USERMACRO_0 + idx ) | FA_NONRECORD) );
 			m_cDocFile.SetSaveFilePath(L"");
-		}
 	}
 	bRunning = false;
 }
 
 /*! (無題)の時のカレントディレクトリを設定する
 */
-void CEditDoc::SetCurDirNotitle()
+void CEditDoc::SetCurDirNotitle() const
 {
 	if( m_cDocFile.GetFilePathClass().IsValidPath() ){
 		return; // ファイルがあるときは何もしない
 	}
-	EOpenDialogDir eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
-	WCHAR szSelDir[_MAX_PATH];
-	const WCHAR* pszDir = nullptr;
+
+	// 設定に従い初期フォルダーを決定する
+	const auto eOpenDialogDir = GetDllShareData().m_Common.m_sEdit.m_eOpenDialogDir;
+
+	// カレントディレクトリの移動先パス（設定されなければ移動しない）
+	LPCWSTR pszDir = nullptr;
+
+	// 指定フォルダーを格納するためのバッファ。
+	SFilePath szSelDir{};
+
 	if( eOpenDialogDir == OPENDIALOGDIR_MRU ){
 		const CMRUFolder cMRU;
 		std::vector<LPCWSTR> vMRU = cMRU.GetPathList();
@@ -1028,7 +1028,89 @@ void CEditDoc::SetCurDirNotitle()
 		CFileNameManager::ExpandMetaToFolder( GetDllShareData().m_Common.m_sEdit.m_OpenDialogSelDir, szSelDir, int(std::size(szSelDir)) );
 		pszDir = szSelDir;
 	}
-	if( pszDir != nullptr ){
-		::SetCurrentDirectory( pszDir );
+
+	// 移動先が設定された場合
+	if (pszDir != nullptr) {
+		cxx::SetCurrentDirectoryW(pszDir);
 	}
+}
+
+namespace cxx {
+
+/*!
+ * @brief 指定したファイルパスのIDataObjectを作成する
+ *
+ * Windowsシステムにファイルパスを表すIDataObjectを作ってもらう。
+ */
+HRESULT MakeDataObject(_Outptr_ LPDATAOBJECT *ppDataObject, const std::filesystem::path& path)
+{
+	// 出力値をクリアする
+	*ppDataObject = nullptr;
+
+	cxx::com_pointer<IShellFolder> pDesktop;
+	if (const auto hr = ::SHGetDesktopFolder(&pDesktop); FAILED(hr)) return hr;
+
+	std::wstring directory{ path.parent_path() };
+
+	const auto unusedArg1 = nullptr;
+
+	LPITEMIDLIST PathID;
+	DWORD Attribs = 0;
+	if (const auto hr = pDesktop->ParseDisplayName(nullptr, nullptr, std::data(directory), unusedArg1, &PathID, &Attribs); FAILED(hr)) return hr;
+
+	cxx::com_pointer<IShellFolder> pFolder;
+	if (const auto hr = pDesktop->BindToObject(PathID, nullptr, IID_PPV_ARGS(&pFolder)); FAILED(hr)) return hr;
+	::CoTaskMemFree(PathID);
+
+	std::wstring title = path.filename();
+	LPITEMIDLIST ItemID = nullptr;
+	if (const auto hr = pFolder->ParseDisplayName(nullptr, nullptr, std::data(title), unusedArg1, &ItemID, &Attribs); FAILED(hr)) return hr;
+
+	std::array idList = {
+		LPCITEMIDLIST(ItemID)
+	};
+
+	// ここで IDataObject を取得する
+	if (const auto hr = pFolder->GetUIObjectOf(nullptr, UINT(std::size(idList)), std::data(idList), IID_IDataObject, nullptr, (void**)ppDataObject); FAILED(hr)) return hr;
+	::CoTaskMemFree(ItemID);
+
+	return S_OK;
+}
+
+} // namespace cxx
+
+/*!
+ * @brief ドキュメントのIDataObjectを取得する
+ *
+ * Windowsシステムからドキュメントのファイルパスを表すIDataObjectを取得する。
+ *
+ * 独自に CF_UNICODETEXT 形式でファイルパスを格納するようになっている。
+ */
+HRESULT CEditDoc::GetDataObject(LPDATAOBJECT *ppDataObject) const
+{
+	// 出力値をクリアする
+	*ppDataObject = nullptr;
+
+	const auto cFilePath = m_cDocFile.GetFilePathClass();
+	if (!cFilePath.IsValidPath()) {
+		return S_FALSE;
+	}
+
+	const auto path = std::filesystem::path(cFilePath);
+	if (const auto hr = cxx::MakeDataObject(ppDataObject, path); FAILED(hr)) return hr;
+
+	// UNICODETEXT 形式のデータを作って追加する
+	cxx::GlobalWString hGlobal{ path.native() };
+
+	FORMATETC format{};
+	format.cfFormat = CF_UNICODETEXT;
+	format.dwAspect = DVASPECT_CONTENT;
+	format.lindex   = -1;
+	format.tymed    = TYMED_HGLOBAL;
+
+	STGMEDIUM medium{};
+	medium.tymed	= TYMED_HGLOBAL;
+	medium.hGlobal	= hGlobal.release();
+
+	return (*ppDataObject)->SetData(&format, &medium, TRUE);
 }

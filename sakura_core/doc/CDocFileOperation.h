@@ -29,7 +29,7 @@ public:
 		const WCHAR*		pszOpenFolder,	//!< [in]  NULL以外を指定すると初期フォルダーを指定できる
 		SLoadInfo*			pLoadInfo,		//!< [in,out] ロード情報
 		std::vector<std::wstring>&	files
-	);
+	) const;
 
 	//ロードフロー
 	bool DoLoadFlow(SLoadInfo* pLoadInfo);
@@ -44,7 +44,7 @@ public:
 	);
 
 	//セーブUI
-	bool SaveFileDialog(SSaveInfo* pSaveInfo);	//!<「ファイル名を付けて保存」ダイアログ
+	bool SaveFileDialog(SSaveInfo* pSaveInfo) const;	//!<「ファイル名を付けて保存」ダイアログ
 	bool SaveFileDialog(LPWSTR szPath);			//!<「ファイル名を付けて保存」ダイアログ
 
 	//セーブフロー

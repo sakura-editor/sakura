@@ -4,21 +4,64 @@
 #   ${7ZIP_EXECUTABLE}
 #   ${ARCH}
 #   ${CMAKE_GENERATOR_PLATFORM}
+#   ${EXE_ARCH}
 
-# Include GoogleTest's targets
-include(${CMAKE_SOURCE_DIR}/src/test/cmake/GoogleTest.cmake)
+# Create a custom command for tests1.exe.manifest generation
+add_custom_command(
+  OUTPUT "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+  COMMAND ${CMAKE_COMMAND} 
+    -DSOURCE_DIR=${CMAKE_SOURCE_DIR}
+    -DEXE_NAME="tests1.exe"
+    -DEXE_ARCH="${EXE_ARCH}"
+    -DOUTPUT_FILE="${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+    -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.cmake"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest.in"
+  COMMENT "Generating tests1.exe.manifest"
+)
+
+# Create a custom target that depends on the generated file
+add_custom_target(generate_tests1_exe_manifest
+  DEPENDS
+    "${CMAKE_BINARY_DIR}/tests1.exe.manifest"
+)
+
+# Find GoogleTest's package(required)
+find_package(GTest CONFIG REQUIRED)
+
+# Find OpenCppCoverage for coverage test
+find_program(OpenCppCoverage_EXECUTABLE OpenCppCoverage
+  PATHS
+    "$ENV{ProgramFiles}/OpenCppCoverage"
+)
+
+if(OpenCppCoverage_EXECUTABLE)
+  message(STATUS "Found OpenCppCoverage: ${OpenCppCoverage_EXECUTABLE}")
+endif()
+
+find_program(UV_EXECUTABLE
+  NAMES uv
+  REQUIRED
+)
 
 set(MINIZ_SOURCE_DIR "${CMAKE_SOURCE_DIR}/externals/miniz-cpp")
 set(MINIZ_INCLUDE_DIR "${CMAKE_BINARY_DIR}/include/miniz-cpp")
+set(MINIZ_FETCH_STAMP "${CMAKE_BINARY_DIR}/miniz-cpp-fetch.stamp")
 
 add_custom_command(
-  OUTPUT "${MINIZ_SOURCE_DIR}/.git"
+  OUTPUT "${MINIZ_FETCH_STAMP}"
   COMMAND ${CMAKE_COMMAND}
     -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
     -DREPO_ROOT:PATH=${CMAKE_SOURCE_DIR}
     -DSUBMODULE_PATH:STRING=externals/miniz-cpp
     -DLOCK_PATH:FILEPATH=${CMAKE_BINARY_DIR}/cmake-submodule-update.lock
     -P ${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch "${MINIZ_FETCH_STAMP}"
+  DEPENDS
+    "${CMAKE_SOURCE_DIR}/.gitmodules"
+    "${CMAKE_SOURCE_DIR}/src/main/cmake/git_submodule_update_locked.cmake"
   WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
   COMMENT "Fetching miniz-cpp's source files"
 )
@@ -27,7 +70,9 @@ add_custom_command(
   OUTPUT "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${MINIZ_INCLUDE_DIR}"
   COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MINIZ_SOURCE_DIR}/zip_file.hpp" "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
-  DEPENDS "${MINIZ_SOURCE_DIR}/.git"
+  DEPENDS
+    "${MINIZ_FETCH_STAMP}"
+    "${MINIZ_SOURCE_DIR}/zip_file.hpp"
   COMMENT "Copying miniz-cpp/zip_file.hpp to include directory"
 )
 
@@ -36,6 +81,12 @@ add_custom_target(generate_miniz ALL
     "${MINIZ_INCLUDE_DIR}/zip_file.hpp"
 )
 
+if(MINGW)
+  set_property(DIRECTORY APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${MINIZ_INCLUDE_DIR}"
+  )
+endif()
+
 # define precompiled headers
 set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 
@@ -43,6 +94,7 @@ set(TESTS1_PCH_HEADER ${CMAKE_SOURCE_DIR}/src/test/resources/pch.h)
 file(GLOB_RECURSE TESTS1_HEADERS
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.h
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.hpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.h
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.hpp
@@ -52,6 +104,7 @@ file(GLOB_RECURSE TESTS1_HEADERS
 # define source files of tests1
 file(GLOB_RECURSE TESTS1_SOURCES
   ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/*.cpp
+  ${CMAKE_SOURCE_DIR}/src/test/cpp/mock/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/cpp/*.cpp
   ${CMAKE_SOURCE_DIR}/src/test/resources/*.cpp
 )
@@ -66,28 +119,196 @@ if(MSVC)
   )
 endif(MSVC)
 
-# coverage.cppをリストから削除
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+if(MINGW)
+  # coverage.cppをリストから削除
   list(REMOVE_ITEM TESTS1_SOURCES ${CMAKE_SOURCE_DIR}/src/test/resources/coverage.cpp)
-endif()
+endif(MINGW)
 
 # define resource files of tests1
-set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/sakura_core/tests1_rc.rc)
+set(TESTS1_RESOURCE_SCRIPTS ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/tests1_rc.rc)
 
-# Convert RC files to UTF-8 for MinGW and clang-cl
-if(MINGW OR (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC"))
+set(TEST_RESOURCE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin")
+set(TEST_RESOURCE_ZIP "${CMAKE_BINARY_DIR}/resources.ja-JP.zip")
+set(TEST_DLLPLUGIN_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-dllplugin")
+set(TEST_DLLPLUGIN_ZIP "${CMAKE_BINARY_DIR}/resources-dllplugin.zip")
+set(TEST_OUTLINE_DIR "${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-outline")
+set(TEST_OUTLINE_ZIP "${CMAKE_BINARY_DIR}/outline.zip")
+set(TESTS1_RESOURCE_STAGE_DIR "${CMAKE_BINARY_DIR}/tests1_resources")
+set(TEST_OUTLINE_STAGE_DIR "${TESTS1_RESOURCE_STAGE_DIR}/outline")
+
+if(MINGW)
+  set_property(DIRECTORY APPEND PROPERTY
+    ADDITIONAL_CLEAN_FILES "${TESTS1_RESOURCE_STAGE_DIR}"
+  )
+endif()
+
+file(GLOB_RECURSE TEST_RESOURCE_FILES CONFIGURE_DEPENDS
+  "${TEST_RESOURCE_DIR}/*"
+)
+file(GLOB_RECURSE TEST_DLLPLUGIN_FILES CONFIGURE_DEPENDS
+  "${TEST_DLLPLUGIN_DIR}/*"
+)
+set(TEST_OUTLINE_FILES
+  "${TEST_OUTLINE_DIR}/Asm.asm.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
+  "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
+  "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
+  "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
+  "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
+  "${TEST_OUTLINE_DIR}/Awk.awk.txt"
+  "${TEST_OUTLINE_DIR}/Csv.csv.txt"
+  "${TEST_OUTLINE_DIR}/Html.html.txt"
+  "${TEST_OUTLINE_DIR}/Java.java.txt"
+  "${TEST_OUTLINE_DIR}/Python.py.txt"
+  "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
+  "${TEST_OUTLINE_DIR}/Tex.tex.txt"
+  "${TEST_OUTLINE_DIR}/Perl.pl.txt"
+  "${TEST_OUTLINE_DIR}/Text.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
+  "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
+)
+
+if(MINGW)
+  # Convert RC files to UTF-8 for MinGW
   convert_rc_files_to_utf8(TESTS1_RESOURCE_SCRIPTS "ja-JP" ${CMAKE_BINARY_DIR})
 endif()
 
-# Create a custom target for test_resource_zip generation
-add_custom_target(test_resource_zip
+# Create a custom command for test_resource_zip generation
+add_custom_command(
+  OUTPUT "${TEST_RESOURCE_ZIP}"
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${TEST_RESOURCE_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_RESOURCE_ZIP}"
   COMMAND ${7ZIP_EXECUTABLE}
     u -tzip -r -mcu=on
-    ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
-    ${CMAKE_SOURCE_DIR}/src/test/resources/tests1/test-plugin
+    "${TEST_RESOURCE_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
     > NUL
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/resources.ja-JP.zip
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-plugin"
+  DEPENDS ${TEST_RESOURCE_FILES}
   COMMENT "Generating resources.ja-JP.zip"
+)
+
+add_custom_target(test_resource_zip
+  DEPENDS "${TEST_RESOURCE_ZIP}"
+)
+
+# Create a custom command for outline.zip generation
+add_custom_command(
+  OUTPUT "${TEST_OUTLINE_ZIP}"
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_OUTLINE_STAGE_DIR}"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Asm.asm.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.asm"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/VisualBasic.bas.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.bas"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/VisualBasic.cls.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cls"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Cobol.cbl.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cbl"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Cpp.cpp.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cpp"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/DosBatch.bat.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.bat"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Awk.awk.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.awk"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Csv.csv.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.csv"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Html.html.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.html"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Java.java.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.java"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Python.py.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.py"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/OraclePLSQL.sql.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.sql"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Tex.tex.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.tex"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Perl.pl.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.pl"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/Text.txt.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.txt"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFile.txt.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cr1"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFile.rule.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/rule.rule"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.txt.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cr2"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFileRegex.rule.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/rule_regex.rule"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.txt.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/test_source.cr3"
+  COMMAND ${CMAKE_COMMAND} -E copy
+    "${TEST_OUTLINE_DIR}/RuleFileRegexReplace.rule.txt"
+    "${TEST_OUTLINE_STAGE_DIR}/rule_regex_replace.rule"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_OUTLINE_ZIP}"
+  COMMAND ${7ZIP_EXECUTABLE}
+    u -tzip -r -mcu=on
+    "${TEST_OUTLINE_ZIP}"
+    "${TEST_OUTLINE_STAGE_DIR}"
+    > NUL
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TEST_OUTLINE_STAGE_DIR}"
+  DEPENDS ${TEST_OUTLINE_FILES}
+  COMMENT "Generating outline.zip"
+)
+
+add_custom_target(test_outline_zip
+  DEPENDS "${TEST_OUTLINE_ZIP}"
+)
+
+# Create a custom command for test_dllplugin_zip generation
+add_custom_command(
+  OUTPUT "${TEST_DLLPLUGIN_ZIP}"
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${TEST_DLLPLUGIN_DIR}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin/dll_plugin1.dll"
+  COMMAND ${CMAKE_COMMAND} -E remove -f "${TEST_DLLPLUGIN_ZIP}"
+  COMMAND ${7ZIP_EXECUTABLE}
+    u -tzip -r -mcu=on
+    "${TEST_DLLPLUGIN_ZIP}"
+    "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+    > NUL
+  COMMAND ${CMAKE_COMMAND} -E remove_directory "${TESTS1_RESOURCE_STAGE_DIR}/test-dllplugin"
+  DEPENDS
+    ${TEST_DLLPLUGIN_FILES}
+    "${OUTPUT_DIRECTORY}/dll_plugin1.dll"
+  COMMENT "Generating resources-dllplugin.zip"
+)
+
+add_custom_target(test_dllplugin_zip
+  DEPENDS "${TEST_DLLPLUGIN_ZIP}"
 )
 
 # define executable
@@ -97,6 +318,15 @@ add_executable(tests1
   ${TESTS1_SOURCES}
   ${TESTS1_RESOURCE_SCRIPTS}
 )
+
+if(MSVC)
+  set_source_files_properties(
+    "${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/test-csakuraenvironment.cpp"
+    "${CMAKE_SOURCE_DIR}/src/test/cpp/tests1/test-window.cpp"
+    PROPERTIES
+      COMPILE_OPTIONS "/bigobj"
+  )
+endif()
 
 # Enable precompiled headers
 target_precompile_headers(tests1 PRIVATE ${TESTS1_PCH_HEADER})
@@ -112,6 +342,7 @@ target_compile_definitions(tests1
 target_include_directories(tests1
   PRIVATE
     ${CMAKE_SOURCE_DIR}/src/test/cpp/tests1
+    ${CMAKE_SOURCE_DIR}/src/test/cpp/mock
     ${CMAKE_SOURCE_DIR}/src/test/resources/tests1
     ${CMAKE_SOURCE_DIR}/src/test/cpp
     ${CMAKE_SOURCE_DIR}/src/test/resources
@@ -121,8 +352,8 @@ target_include_directories(tests1
 target_link_libraries(tests1
   PRIVATE
     sakura_core
-    gmock
-    gtest
+    GTest::gtest
+    GTest::gmock
 )
 
 set_target_properties(tests1
@@ -131,12 +362,40 @@ set_target_properties(tests1
     ARCHIVE_OUTPUT_DIRECTORY "${OUTPUT_DIRECTORY}"
 )
 
+add_custom_command(TARGET tests1 PRE_LINK
+  COMMAND ${CMAKE_COMMAND} -E remove -f $<TARGET_FILE:tests1>
+)
+
 if(MINGW)
+  set(TESTS1_EXE_MANIFEST "${CMAKE_BINARY_DIR}/tests1.exe.manifest")
+  set(TESTS1_MANIFEST_RC "${CMAKE_BINARY_DIR}/tests1_manifest.rc")
+
+  # Create a custom command for tests1_manifest.rc generation
+  add_custom_command(
+    OUTPUT "${TESTS1_MANIFEST_RC}"
+    COMMAND ${CMAKE_COMMAND} 
+      -DSOURCE_DIR="${CMAKE_SOURCE_DIR}"
+      -DOUTPUT_FILE="${TESTS1_MANIFEST_RC}"
+      -DMANIFEST_FILE="${TESTS1_EXE_MANIFEST}"
+      -P ${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake
+    COMMAND ${CMAKE_COMMAND} -E touch "${TESTS1_MANIFEST_RC}"
+    DEPENDS
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.cmake"
+      "${CMAKE_SOURCE_DIR}/src/main/cmake/manifest_resource.in"
+      "${TESTS1_EXE_MANIFEST}"
+    COMMENT "Generating tests1_manifest.rc"
+  )
+
+  target_sources(tests1
+    PRIVATE
+      "${TESTS1_MANIFEST_RC}"
+  )
 
   # Add include directories for tests1
   target_include_directories(tests1
     PRIVATE
       "$<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/tests1_ja-JP>"
+      "$<BUILD_INTERFACE:${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/share/cmigemo>"
   )
   target_link_options(tests1
     PRIVATE
@@ -149,7 +408,10 @@ add_dependencies(tests1
   sakura
   sakura_lang_en_US
   sakura_lang_zh_CN
+  generate_tests1_exe_manifest
   test_resource_zip
-  generate_gtest
+  test_outline_zip
+  test_dllplugin_zip
   generate_miniz
+  ppa_stub
 )

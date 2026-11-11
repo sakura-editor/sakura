@@ -15,7 +15,7 @@
 	Copyright (C) 2005, genta, MIK, novice, aroka, D.S.Koba, かろと, Moca
 	Copyright (C) 2006, Moca, aroka, ryoji, fon, genta
 	Copyright (C) 2007, ryoji, じゅうじ, maru
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -76,7 +76,6 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 		return;
 	}
 
-	CNativeW	cmemCurText;
 	const wchar_t*	pLine;
 	CLogicInt		nLineLen;
 
@@ -151,35 +150,9 @@ void CEditView::OnLBUTTONDOWN( WPARAM fwKeys, int _xPos , int _yPos )
 					}
 					return;
 				}
-				/* 選択範囲のデータを取得 */
-				if( GetSelectedData( &cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy ) ){
-					DWORD dwEffects;
-					DWORD dwEffectsSrc = ( !m_pcEditDoc->IsEditable() )?
-											DROPEFFECT_COPY: DROPEFFECT_COPY | DROPEFFECT_MOVE;
-					int nOpe = m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
-					GetEditWnd().SetDragSourceView( this );
-					CDataObject data( cmemCurText.GetStringPtr(), cmemCurText.GetStringLength(), GetSelectionInfo().IsBoxSelecting() );
-					dwEffects = data.DragDrop( TRUE, dwEffectsSrc );
-					GetEditWnd().SetDragSourceView( nullptr );
-					if( m_pcEditDoc->m_cDocEditor.m_cOpeBuf.GetCurrentPointer() == nOpe ){	// ドキュメント変更なしか？	// 2007.12.09 ryoji
-						GetEditWnd().SetActivePane( m_nMyIndex );
-						if( DROPEFFECT_MOVE == (dwEffectsSrc & dwEffects) ){
-							// 移動範囲を削除する
-							// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
-							// →ドロップ先は外部のウィンドウである
-							if( nullptr == GetOpeBlk() ){
-								SetOpeBlk(new COpeBlk);
-							}
-							GetOpeBlk()->AddRef();
 
-							// 選択範囲を削除
-							DeleteData( true );
+				DragSelection();
 
-							// アンドゥバッファの処理
-							SetUndoBuffer();
-						}
-					}
-				}
 				return;
 			}
 		}
@@ -730,10 +703,10 @@ void CEditView::AutoScrollEnter()
 		return;
 	}
 	m_nAutoScrollMode = 2;
-	m_cAutoScrollWnd.Create(GetAppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
+	m_cAutoScrollWnd.Create(G_AppInstance(), GetHwnd(), m_bAutoScrollVertical, m_bAutoScrollHorizontal, m_cAutoScrollMousePos, this);
 	::SetTimer(GetHwnd(), 2, 200, AutoScrollTimerProc);
 	HCURSOR hCursor;
-	hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
+	hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(IDC_CURSOR_AUTOSCROLL_CENTER));
 	::SetCursor(hCursor);
 }
 
@@ -779,7 +752,7 @@ void CEditView::AutoScrollMove( CMyPoint& point )
 			cursor = IDC_CURSOR_AUTOSCROLL_VERTICAL;
 		}
 	}
-	const HCURSOR hCursor = ::LoadCursor(GetAppInstance(), MAKEINTRESOURCE(cursor));
+	const HCURSOR hCursor = ::LoadCursor(GetModuleHandle(nullptr), MAKEINTRESOURCE(cursor));
 	::SetCursor(hCursor);
 }
 
@@ -1063,7 +1036,7 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 			if( ptMouse.x < GetTextArea().GetAreaLeft() || ptMouse.y < GetTextArea().GetAreaTop() ){	//	2002/2/10 aroka
 				/* 矢印カーソル */
 				if( ptMouse.y >= GetTextArea().GetAreaTop() )
-					::SetCursor( ::LoadCursor( GetAppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
+					::SetCursor( ::LoadCursor( G_AppInstance(), MAKEINTRESOURCE( IDC_CURSOR_RVARROW ) ) );
 				else
 					::SetCursor( ::LoadCursor( nullptr, IDC_ARROW ) );
 			}
@@ -1090,9 +1063,9 @@ void CEditView::OnMOUSEMOVE( [[maybe_unused]] WPARAM fwKeys, int xPos_, int yPos
 				//migemo isearch 2004.10.22
 				if( m_nISearchMode > SEARCH_NONE ){
 					if (m_nISearchDirection == SEARCH_FORWARD){
-						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_F)));
 					}else{
-						::SetCursor( ::LoadCursor( GetAppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
+						::SetCursor( ::LoadCursor( G_AppInstance(),MAKEINTRESOURCE(IDC_CURSOR_ISEARCH_B)));
 					}
 				}else
 				/* アイビーム */
@@ -1689,16 +1662,24 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::DragEnter()\n" );
 	//「OLEによるドラッグ & ドロップを使う」オプションが無効の場合にはドロップを受け付けない
 	if(!GetDllShareData().m_Common.m_sEdit.m_bUseOLE_DragDrop)return E_UNEXPECTED;
 
 	//編集禁止の場合はドロップを受け付けない
-	if(!m_pcEditDoc->IsEditable())return E_UNEXPECTED;
+	if (!GetDocument()->IsEditable()) return E_UNEXPECTED;
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
+	if (!pDataObject)
+		return E_UNEXPECTED;
+
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	m_cfDragData = GetAvailableClipFormat( pDataObject );
@@ -1718,16 +1699,23 @@ STDMETHODIMP CEditView::DragEnter( LPDATAOBJECT pDataObject, DWORD dwKeyState, P
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, (CLIPFORMAT)::RegisterClipboardFormat( L"MSDEVColumnSelect" ) );
+	m_bDragBoxData = IsDataAvailable( pDataObject, CDataObject::cfColumnSelect );
 
 	/* 選択テキストのドラッグ中か */
 	_SetDragMode( TRUE );
 
-	DragOver( dwKeyState, pt, pdwEffect );
-	return S_OK;
+	return DragOver(
+		dwKeyState,
+		pt,
+		pdwEffect
+	);
 }
 
-STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::DragOver()\n" );
 
@@ -1735,7 +1723,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	::ScreenToClient( GetHwnd(), (LPPOINT)&pt );
 	OnMOUSEMOVE( dwKeyState, pt.x , pt.y );
 
-	if ( pdwEffect == nullptr )
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
@@ -1753,7 +1741,7 @@ STDMETHODIMP CEditView::DragOver( DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::DragLeave( void )
+IFACEMETHODIMP CEditView::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 	/* 選択テキストのドラッグ中か */
@@ -1772,7 +1760,12 @@ STDMETHODIMP CEditView::DragLeave( void )
 	return S_OK;
 }
 
-STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect )
+IFACEMETHODIMP CEditView::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
 	BOOL		bBoxData;
@@ -1792,7 +1785,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	if( ::GetActiveWindow() == nullptr )
 		OnKillFocus();
 
-	if( pDataObject == nullptr || pdwEffect == nullptr )
+	if (!pDataObject)
+		return E_UNEXPECTED;
+
+	if (!pdwEffect)
 		return E_INVALIDARG;
 
 	CLIPFORMAT cf;
@@ -1834,9 +1830,12 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 	if( cf == CClipboard::GetSakuraFormat() ){
-		if( nSize > sizeof(size_t) ){
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(size_t));
-			cmemBuf.SetString( pszData, t_min( (SIZE_T)*(size_t*)pData, nSize / sizeof(wchar_t) ) );	// 途中のNUL文字も含める
+		using LengthField = CClipboard::SAKURAClipW_LengthFieldType;
+		if( nSize > sizeof(LengthField) ){
+			const auto nStoredLength = *(LengthField*)pData;
+			const SIZE_T nMaxLength = (nSize - sizeof(LengthField)) / sizeof(wchar_t);
+			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(LengthField));
+			cmemBuf.SetString( pszData, (nStoredLength <= 0)? 0: t_min( (SIZE_T)nStoredLength, nMaxLength ) );	// 途中のNUL文字も含める
 		}
 	}else if( cf == CF_UNICODETEXT ){
 		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
@@ -1848,10 +1847,10 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 	}
 
 	// アンドゥバッファの準備
-	if( nullptr == GetOpeBlk() ){
-		SetOpeBlk(new COpeBlk);
+	if( nullptr == m_cCommander.GetOpeBlk() ){
+		m_cCommander.SetOpeBlk(new COpeBlk);
 	}
-	GetOpeBlk()->AddRef();
+	m_cCommander.GetOpeBlk()->AddRef();
 
 	/* 移動の場合、位置関係を算出 */
 	if( bMove ){
@@ -2029,7 +2028,7 @@ STDMETHODIMP CEditView::Drop( LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL
 				GetSelectionInfo().m_sSelect.GetFrom(),
 				&ptBefore
 			);
-			GetOpeBlk()->AppendOpe(
+			m_cCommander.GetOpeBlk()->AppendOpe(
 				new CMoveCaretOpe(
 					sDelLogic.GetFrom(),
 					GetCaret().GetCaretLogicPos()
@@ -2092,7 +2091,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	if( nTid1 != nTid2 ) ::AttachThreadInput( nTid1, nTid2, TRUE );
 
 	// ダミーの STATIC を作ってフォーカスを当てる（エディタが前面に出ないように）
-	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, GetAppInstance(), nullptr );
+	HWND hwnd = ::CreateWindow(WC_STATIC, L"", 0, 0, 0, 0, 0, nullptr, nullptr, G_AppInstance(), nullptr );
 	::SetFocus(hwnd);
 
 	// メニューを作成する
@@ -2122,7 +2121,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( GetMainWindow(), WM_DROPFILES, (WPARAM)hDrop, 0 );
+		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
 		break;
 
 	case 100:	// パス名を貼り付ける
@@ -2140,7 +2139,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 			if( !::GetLongFileName( szPath, szWork ) )
 				continue;
 			if( nId == 100 ){	// パス名
-				::wcsncpy_s(szPath, szWork, _TRUNCATE);
+				::lstrcpy( szPath, szWork );
 			}else if( nId == 101 ){	// ファイル名
 				_wsplitpath_s( szWork, nullptr, 0, nullptr, 0, szPath, std::size(szPath), szExt, std::size(szExt) );
 				::wcsncat_s(szPath, szExt, _TRUNCATE);
@@ -2241,4 +2240,57 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 bool CEditView::IsDragSource( void )
 {
 	return ( this == GetEditWnd().GetDragSourceView() );
+}
+
+/*!
+ * @brief 選択範囲をドラッグする
+ *
+ * 選択範囲からコピーデータを作成して、ドラッグ＆ドロップを開始する。
+ * 外部ウインドウに切り取りされたら、元の選択範囲を削除する。
+ */
+void CEditView::DragSelection()
+{
+	/* 選択範囲のデータを取得 */
+	CNativeW cmemCurText;
+	if (!GetSelectedData(&cmemCurText, FALSE, nullptr, FALSE, GetDllShareData().m_Common.m_sEdit.m_bAddCRLFWhenCopy)) return;
+
+	// 選択範囲からクリップボードデータを作成する
+	const auto data = CDataObject::make_instance(std::wstring_view(cmemCurText), GetSelectionInfo().IsBoxSelecting());
+
+	// ドラッグ開始前のドキュメント操作番号を記憶する
+	const auto nOpe = GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer();
+
+	// ドラッグ元ビューを設定する
+	GetEditWnd().SetDragSourceView(this);
+
+	// ドロップ効果を定義する
+	DWORD desiredEffects = DROPEFFECT_COPY;	//コピー可能
+	if (GetDocument()->IsEditable()) {
+		desiredEffects |= DROPEFFECT_MOVE;	//ムーブ可能
+	}
+
+	// ドラッグ＆ドロップを開始する
+	const auto actualEffects = CDropSource::DoDragDrop(data, desiredEffects);
+
+	// ドラッグ元ビューの設定を解除する
+	GetEditWnd().SetDragSourceView(nullptr);
+
+	// 切り取りされた場合、元の選択範囲を削除する。（別のエディタに移動したときなど。）
+	if (actualEffects & DROPEFFECT_MOVE && nOpe == GetDocument()->m_cDocEditor.m_cOpeBuf.GetCurrentPointer()) {
+		GetEditWnd().SetActivePane(m_nMyIndex);
+
+		// 移動範囲を削除する
+		// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
+		// →ドロップ先は外部のウィンドウである
+		if (!GetCommander().GetOpeBlk()) {
+			GetCommander().SetOpeBlk(new COpeBlk);
+		}
+		GetCommander().GetOpeBlk()->AddRef();
+
+		// 選択範囲を削除
+		DeleteData(true);
+
+		// アンドゥバッファの処理
+		SetUndoBuffer();
+	}
 }

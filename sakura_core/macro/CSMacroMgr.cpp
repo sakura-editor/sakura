@@ -18,7 +18,7 @@
 	Copyright (C) 2007, ryoji, maru
 	Copyright (C) 2008, nasukoji, ryoji
 	Copyright (C) 2011, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -30,17 +30,9 @@
 #include "macro/CPythonMacroManager.h"
 #include "macro/CMacroFactory.h"
 #include "env/CShareData.h"
+#include "io/CTextStream.h"
 #include "view/CEditView.h"
 #include "debug/CRunningTimer.h"
-
-VARTYPE s_MacroArgEx_i[] = {VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_i = {5, 5, s_MacroArgEx_i};
-VARTYPE s_MacroArgEx_ii[] = {VT_I4, VT_I4};
-MacroFuncInfoEx s_MacroInfoEx_ii = {6, 6, s_MacroArgEx_ii};
-#if 0
-VARTYPE s_MacroArgEx_s[] = {VT_BSTR};
-MacroFuncInfoEx s_MacroInfoEx_s = {5, 5, s_MacroArgEx_s};
-#endif
 
 MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] = 
 {
@@ -270,8 +262,8 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_REPLACE_ALL,				L"ReplaceAll",		{VT_BSTR,  VT_BSTR,  VT_I4,    VT_EMPTY},	VT_EMPTY,	nullptr}, //すべて置換(実行)
 	{F_SEARCH_CLEARMARK,		L"SearchClearMark",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //検索マークのクリア
 	{F_JUMP_SRCHSTARTPOS,		L"SearchStartPos",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //検索開始位置へ戻る			// 02/06/26 ai
-	{F_GREP,					L"Grep",				{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4   },	VT_EMPTY,	&s_MacroInfoEx_i}, //Grep
-	{F_GREP_REPLACE,			L"GrepReplace",		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR },	VT_EMPTY,	&s_MacroInfoEx_ii}, //Grep置換
+	{F_GREP,					L"Grep",			{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_I4,   VT_I4 },		VT_EMPTY }, //Grep
+	{F_GREP_REPLACE,			L"GrepReplace",		{VT_BSTR,  VT_BSTR,  VT_BSTR,  VT_BSTR, VT_I4, VT_I4 },	VT_EMPTY }, //Grep置換
 	{F_JUMP,					L"Jump",				{VT_I4,    VT_I4,    VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //指定行ヘジャンプ
 	{F_OUTLINE,					L"Outline",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //アウトライン解析
 	{F_TAGJUMP,					L"TagJump",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //タグジャンプ機能
@@ -358,6 +350,9 @@ MacroFuncInfo CSMacroMgr::m_MacroFuncInfoCommandArr[] =
 	{F_SPLIT_V,					L"SplitWinV",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //上下に分割	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
 	{F_SPLIT_H,					L"SplitWinH",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //左右に分割	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
 	{F_SPLIT_VH,				L"SplitWinVH",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //縦横に分割	//Sept. 17, 2000 jepro 説明に「に」を追加
+	{F_WINMAXIMIZE,				L"WinMaximize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最大化
+	{F_WINMINIMIZE,				L"WinMinimize",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを最小化
+	{F_WINRESTORE,				L"WinRestore",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを元のサイズに戻す
 	{F_WINCLOSE,				L"WinClose",			{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //ウィンドウを閉じる
 	{F_WIN_CLOSEALL,			L"WinCloseAll",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //すべてのウィンドウを閉じる	//Oct. 17, 2000 JEPRO 名前を変更(F_FILECLOSEALL→F_WIN_CLOSEALL)
 	{F_CASCADE,					L"CascadeWin",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}, //重ねて表示
@@ -505,17 +500,15 @@ CSMacroMgr::CSMacroMgr()
 {
 	MY_RUNNINGTIMER( cRunningTimer, L"CSMacroMgr::CSMacroMgr" );
 	
-	m_pShareData = &GetDllShareData();
-	
 	CPPAMacroMgr::declare();
 	CKeyMacroMgr::declare();
 	CWSHMacroManager::declare();
 	CPythonMacroManager::declare();
 	
-	int i;
-	for ( i = 0 ; i < MAX_CUSTMACRO ; i++ ){
-		m_cSavedKeyMacro[i] = nullptr;
+	for (auto& pSavedKeyMacro : m_cSavedKeyMacro) {
+		pSavedKeyMacro = nullptr;
 	}
+
 	//	Jun. 16, 2002 genta
 	m_pKeyMacro = nullptr;
 	m_pTempMacro = nullptr;
@@ -590,8 +583,10 @@ int CSMacroMgr::Append(
 
 	@date 2007.07.16 genta flags追加
 */
-BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
+EMacroResult CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int flags )
 {
+	using enum EMacroResult;
+
 	if( idx == STAND_KEYMACRO ){
 		//	Jun. 16, 2002 genta
 		//	キーマクロ以外のサポートによりNULLの可能性が出てきたので判定追加
@@ -601,10 +596,10 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			int prevmacro = SetCurrentIdx( idx );
 			m_pKeyMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return TRUE;
+			return Success;
 		}
 		else {
-			return FALSE;
+			return Failure;
 		}
 	}
 	if( idx == TEMP_KEYMACRO ){		// 一時マクロ
@@ -612,14 +607,14 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 			int prevmacro = SetCurrentIdx( idx );
 			m_pTempMacro->ExecKeyMacro2( pcEditView, flags );
 			SetCurrentIdx( prevmacro );
-			return TRUE;
+			return Success;
 		}
 		else {
-			return FALSE;
+			return Failure;
 		}
 	}
 	if( idx < 0 || MAX_CUSTMACRO <= idx )	//	範囲チェック
-		return FALSE;
+		return Failure;
 
 	/* 読み込み前か、毎回読み込む設定の場合は、ファイルを読み込みなおす */
 	//	Apr. 29, 2002 genta
@@ -630,11 +625,11 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 		WCHAR ptr[_MAX_PATH * 2];
 		int n = CShareData::getInstance()->GetMacroFilename( idx, ptr, int(std::size(ptr)) );
 		if ( n <= 0 ){
-			return FALSE;
+			return Failure;
 		}
 
-		if( !Load( idx, hInstance, ptr, nullptr ) )
-			return FALSE;
+		if( const auto eLoadResult = Load( idx, hInstance, ptr, nullptr ); eLoadResult != Success )
+			return eLoadResult;
 	}
 
 	//	Sep. 15, 2005 FILE
@@ -644,7 +639,7 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 	m_cSavedKeyMacro[idx]->ExecKeyMacro2(pcEditView, flags);
 	SetCurrentIdx( prevmacro );
 
-	return TRUE;
+	return Success;
 }
 
 /*! キーボードマクロの読み込み
@@ -658,8 +653,10 @@ BOOL CSMacroMgr::Exec( int idx , HINSTANCE hInstance, CEditView* pcEditView, int
 
 	@author Norio Nakatani, YAZAKI, genta
 */
-BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
+EMacroResult CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType )
 {
+	using enum EMacroResult;
+
 	CMacroManagerBase** ppMacro = Idx2Ptr( idx );
 
 	if( ppMacro == nullptr ){
@@ -692,28 +689,32 @@ BOOL CSMacroMgr::Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const
 	m_sMacroPath.clear();
 	*ppMacro = CMacroFactory::getInstance()->Create(ext);
 	if( *ppMacro == nullptr )
-		return FALSE;
-	BOOL bRet;
-	if( pszType == nullptr ){
-		bRet = (*ppMacro)->LoadKeyMacro(hInstance, pszPath);
-		if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
-			m_sMacroPath = pszPath;
+		return Failure;
+	EMacroResult eResult = Failure;
+	try{
+		if( pszType == nullptr ){
+			eResult = (*ppMacro)->LoadKeyMacro(hInstance, pszPath) ? Success : Failure;
+			if (idx == STAND_KEYMACRO || idx == TEMP_KEYMACRO) {
+				m_sMacroPath = pszPath;
+			}
+		}else{
+			eResult = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath) ? Success : Failure;
 		}
-	}else{
-		bRet = (*ppMacro)->LoadKeyMacroStr(hInstance, pszPath);
+	}
+	catch( const CError_TextEncoding& ){
+		//	マクロファイルの文字コード変換エラー
+		//	例外はここで止め、読み込み失敗時の共通処理で生成途中のオブジェクトを解放する
+		eResult = EncodingError;
 	}
 
 	//	From Here Jun. 16, 2002 genta
 	//	読み込みエラー時はインスタンス削除
-	if( bRet ){
-		return TRUE;
-	}
-	else {
+	if( eResult != Success ){
 		delete *ppMacro;
 		*ppMacro = nullptr;
 	}
 	//	To Here Jun. 16, 2002 genta
-	return FALSE;
+	return eResult;
 }
 
 /** マクロオブジェクトをすべて破棄する(キーボードマクロ以外)
@@ -819,36 +820,33 @@ const MacroFuncInfo* CSMacroMgr::GetFuncInfoByID( int nFuncID )
 	@date 2002.06.16 genta 新設のGetFuncInfoById(int)を内部で使うように．
 	@date 2011.04.10 nasukoji 各国語メッセージリソース対応
 */
-LPWSTR CSMacroMgr::GetFuncInfoByID(
-	int					nFuncID,			//!< [in] 機能番号
-	std::span<WCHAR>	szFuncName,			//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
-	const std::optional<std::span<WCHAR>>& optFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
+WCHAR* CSMacroMgr::GetFuncInfoByID(
+	[[maybe_unused]] HINSTANCE	hInstance,			//!< [in] リソース取得のためのInstance Handle
+	int			nFuncID,			//!< [in] 機能番号
+	WCHAR*		pszFuncName,		//!< [out] 関数名．この先には最長関数名＋1バイトのメモリが必要．
+	WCHAR*		pszFuncNameJapanese	//!< [out] 機能名日本語．NULL許容. この先には256バイトのメモリが必要．
 )
 {
-	const auto MacroInfo = GetFuncInfoByID(nFuncID);
-	if (!MacroInfo) {
-		return nullptr;	//見付からなかった
-	}
-
-	// 見付かった機能名をコピー
-	::wcsncpy_s(std::data(szFuncName), std::size(szFuncName), MacroInfo->m_pszFuncName, _TRUNCATE);
-
-	// 機能名を含む場合、丸括弧の手前までに切り詰める
-	WCHAR *p = std::data(szFuncName);
-	while (*p){
-		if (*p == L'('){
-			*p = L'\0';
-			break;
+	const MacroFuncInfo* MacroInfo = GetFuncInfoByID( nFuncID );
+	if( MacroInfo != nullptr ){
+		if( pszFuncName != nullptr ){
+			wcscpy( pszFuncName, MacroInfo->m_pszFuncName );
+			WCHAR *p = pszFuncName;
+			while (*p){
+				if (*p == L'('){
+					*p = L'\0';
+					break;
+				}
+				p++;
+			}
 		}
-		p++;
+		//	Jun. 16, 2002 genta NULLのときは何もしない．
+		if( pszFuncNameJapanese != nullptr ){
+			wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+		}
+		return pszFuncName;
 	}
-
-	//	Jun. 16, 2002 genta NULLのときは何もしない．
-	if (optFuncNameJapanese.has_value()) {
-		auto& szFuncNameJapanese = optFuncNameJapanese.value();
-		::wcsncpy_s(std::data(szFuncNameJapanese), std::size(szFuncNameJapanese), LS(nFuncID), _TRUNCATE);
-	}
-	return std::data(szFuncName);
+	return nullptr;
 }
 
 /*!
@@ -887,7 +885,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}
@@ -897,7 +896,8 @@ EFunctionCode CSMacroMgr::GetFuncInfoByName(
 		if( 0 == wcscmp( normalizedFuncName, funcInfo.m_pszFuncName )){
 			const auto nFuncID = EFunctionCode(funcInfo.m_nFuncID);
 			if( pszFuncNameJapanese != nullptr ){
-				::wcsncpy_s(pszFuncNameJapanese, 256, LS(nFuncID), _TRUNCATE);
+				wcsncpy( pszFuncNameJapanese, LS( nFuncID ), 255 );
+				pszFuncNameJapanese[255] = L'\0';
 			}
 			return nFuncID;
 		}

@@ -67,7 +67,7 @@ CFuncKeyWnd::CFuncKeyWnd()
 	lf.lfClipPrecision	= 0x2;
 	lf.lfQuality		= 0x1;
 	lf.lfPitchAndFamily	= 0x31;
-	::wcsncpy_s(lf.lfFaceName, L"ＭＳ Ｐゴシック", _TRUNCATE);
+	wcscpy( lf.lfFaceName, L"ＭＳ Ｐゴシック" );
 	m_hFont = ::CreateFontIndirect( &lf );
 
 	return;
@@ -304,8 +304,11 @@ LRESULT CFuncKeyWnd::OnTimer( [[maybe_unused]] HWND hwnd, [[maybe_unused]] UINT 
 		m_nTimerCount = 0;
 		/* 機能が利用可能か調べる */
 		for( i = 0; i < int(std::size(m_szFuncNameArr)); ++i ){
-			const auto enabled = func::isEnabled(m_nFuncCodeArr[i]);
-			::EnableWindow(m_hwndButtonArr[i], enabled);
+			if( IsFuncEnable( (CEditDoc*)m_pcEditDoc, m_pShareData, m_nFuncCodeArr[i]  ) ){
+				::EnableWindow( m_hwndButtonArr[i], TRUE );
+			}else{
+				::EnableWindow( m_hwndButtonArr[i], FALSE );
+			}
 		}
 	}
 	m_nCurrentKeyState = nIdx;

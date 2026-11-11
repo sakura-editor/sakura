@@ -1,0 +1,97 @@
+﻿' ==================================================================***
+' アウトライン解析テスト向け Visual Basic 構文サンプル（VBA7.1相当）
+' アウトラインに現れる代表的な文書構造を示す。
+' ==================================================================***
+'
+'	Copyright (C) 2026, Sakura Editor Organization
+'
+'	SPDX-License-Identifier: Zlib
+'
+
+' コンパイルオプション
+Option Explicit
+Option Compare Text
+Option Base 1
+
+' コンパイラ定数
+#Const USE_NATIVE_API = False
+
+' プログラム定数
+Public Const APPLICATION_NAME As String = "Outline sample"
+Private Const MAX_ITEM_COUNT As Long = 100
+
+' 列挙定数(Enum型)
+Public Enum ProcessingState
+    StateNotStarted = 0
+    StateRunning
+    StateCompleted
+    StateFailed
+End Enum
+
+' プライベートな列挙定数
+Private Enum LogLevel
+    LogDebug
+    LogInformation
+    LogWarning
+    LogError
+End Enum
+
+' ユーザー定義型
+Public Type SampleRecord
+    Name As String
+    Value As Long
+    UpdatedAt As Date
+End Type
+
+' プライベートなユーザー定義型
+Private Type InternalRecord
+    Identifier As Long
+    IsEnabled As Boolean
+End Type
+
+' 条件付きコンパイル構文
+#If VBA7 Then
+Private Declare PtrSafe Function GetTickCount Lib "kernel32" () As Long
+Private Declare PtrSafe Sub Sleep Lib "kernel32" (ByVal milliseconds As LongPtr)
+#Else
+Private Declare Function GetTickCount Lib "kernel32" () As Long
+Private Declare Sub Sleep Lib "kernel32" (ByVal milliseconds As Long)
+#End If
+
+Static Sub CountCalls()
+    Static callCount As Long
+
+    callCount = callCount + 1
+    Debug.Print callCount
+End Sub
+
+Public Function TryFindValue( _
+    ByVal values As Variant, _
+    ByVal expected As String, _
+    ByRef foundIndex As Long _
+) As Boolean
+    Dim index As Long
+
+    TryFindValue = False
+    foundIndex = -1
+
+    For index = LBound(values) To UBound(values)
+        If StrComp(CStr(values(index)), expected, vbTextCompare) = 0 Then
+            foundIndex = index
+            TryFindValue = True
+            Exit Function
+        End If
+    Next index
+End Function
+
+Private Function BuildMessage(ByVal name As String, ParamArray values() As Variant) As String
+    Dim result As String
+    Dim value As Variant
+
+    result = name
+    For Each value In values
+        result = result & ": " & CStr(value)
+    Next value
+
+    BuildMessage = result
+End Function

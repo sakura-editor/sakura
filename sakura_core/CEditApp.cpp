@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2007, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -13,7 +13,6 @@
 #include "agent/CLoadAgent.h"
 #include "agent/CSaveAgent.h"
 #include "uiparts/CVisualProgress.h"
-#include "recent/CMruListener.h"
 #include "macro/CSMacroMgr.h"
 #include "env/CPropertyManager.h"
 #include "agent/CGrepAgent.h"
@@ -22,12 +21,9 @@
 #include "util/module.h"
 #include "util/shell.h"
 
-void CEditApp::Create(HINSTANCE hInst, int nGroupId)
+void CEditApp::Create(HINSTANCE hInst)
 {
 	m_hInst = hInst;
-
-	//ヘルパ作成
-	m_cIcons.Create( m_hInst );	//	CreateImage List
 
 	//ドキュメントの作成
 	m_pcEditDoc = new CEditDoc(this);
@@ -51,25 +47,11 @@ void CEditApp::Create(HINSTANCE hInst, int nGroupId)
 
 	//ウィンドウの作成
 	m_pcEditWnd = new CEditWnd();
-	m_pcEditWnd->Create( m_pcEditDoc, &m_cIcons, nGroupId );
-
-	//MRU管理
-	m_pcMruListener = new CMruListener();
-
-	//プロパティ管理
-	m_pcPropertyManager = new CPropertyManager();
-	m_pcPropertyManager->Create(
-		m_pcEditWnd->GetHwnd(),
-		&GetIcons(),
-		&m_pcEditWnd->GetMenuDrawer()
-	);
 }
 
-CEditApp::~CEditApp()
+CEditApp::~CEditApp() noexcept
 {
 	delete m_pcSMacroMgr;
-	delete m_pcPropertyManager;
-	delete m_pcMruListener;
 	delete m_pcGrepAgent;
 	delete m_pcVisualProgress;
 	delete m_pcSaveAgent;

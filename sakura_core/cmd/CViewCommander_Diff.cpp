@@ -37,14 +37,14 @@
 /*!
 	@return true:正常終了 / false:エラー終了
 */
-static bool Commander_COMPARE_core([[maybe_unused]] CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
+static bool Commander_COMPARE_core(CViewCommander& commander, bool& bDifferent, HWND hwnd, CLogicPoint& poSrc, CLogicPoint& poDes)
 {
 	const wchar_t*	pLineSrc;
 	CLogicInt		nLineLenSrc;
 	const wchar_t*	pLineDes;
 	int			nLineLenDes;
 	int max_size = (int)GetDllShareData().m_sWorkBuffer.GetWorkBufferCount<EDIT_CHAR>();
-	const CDocLineMgr& docMgr = GetDocument()->m_cDocLineMgr;
+	const CDocLineMgr& docMgr = commander.GetDocument()->m_cDocLineMgr;
 
 	bDifferent = true;
 	{
@@ -115,7 +115,7 @@ void CViewCommander::Command_COMPARE( void )
 	/* 比較後、左右に並べて表示 */
 	cDlgCompare.m_bCompareAndTileHorz = GetDllShareData().m_Common.m_sCompare.m_bCompareAndTileHorz;
 	BOOL bDlgCompareResult = cDlgCompare.DoModal(
-		GetAppInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath(),
@@ -278,14 +278,14 @@ void CViewCommander::Command_Diff( const WCHAR* _szDiffFile2, int nFlgOpt )
 		}
 		bTmpFile1 = true;
 	}else{
-		::wcsncpy_s(szTmpFile1, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 
 	bool bTmpFile2 = false;
 	WCHAR	szTmpFile2[_MAX_PATH * 2];
 	bool bTmpFileMode = code2 != saveCode2;
 	if( !bTmpFileMode ){
-		::wcsncpy_s(szTmpFile2, szDiffFile2, _TRUNCATE);
+		wcscpy(szTmpFile2, szDiffFile2);
 	}else if( m_pCommanderView->MakeDiffTmpFile2( szTmpFile2, szDiffFile2, code2, saveCode2 ) ){
 		bTmpFile2 = true;
 	}else{
@@ -322,7 +322,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 
 	//DIFF差分表示ダイアログを表示する
 	int nDiffDlgResult = cDlgDiff.DoModal(
-		GetAppInstance(),
+		G_AppInstance(),
 		m_pCommanderView->GetHwnd(),
 		(LPARAM)GetDocument(),
 		GetDocument()->m_cDocFile.GetFilePath()
@@ -355,7 +355,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 		if( !m_pCommanderView->MakeDiffTmpFile( szTmpFile1, nullptr, saveCode, GetDocument()->GetDocumentBomExist() ) ){ return; }
 		bTmpFile1 = true;
 	}else{
-		::wcsncpy_s(szTmpFile1, GetDocument()->m_cDocFile.GetFilePath(), _TRUNCATE);
+		wcscpy( szTmpFile1, GetDocument()->m_cDocFile.GetFilePath() );
 	}
 		
 	//相手ファイル
@@ -365,7 +365,7 @@ void CViewCommander::Command_Diff_Dialog( void )
 	bool bTmpFileMode = cDlgDiff.m_bIsModifiedDst || code2 != saveCode2 || cDlgDiff.m_szFile2[0] == L'\0';
 	if( !bTmpFileMode ){
 		// 未変更でファイルありでASCII系コードの場合のみ,そのままファイルを利用する
-		::wcsncpy_s(szTmpFile2, cDlgDiff.m_szFile2, _TRUNCATE);
+		wcscpy( szTmpFile2, cDlgDiff.m_szFile2 );
 	}else if( cDlgDiff.m_hWnd_Dst ){
 		// ファイル一覧から選択
 		if( m_pCommanderView->MakeDiffTmpFile( szTmpFile2, cDlgDiff.m_hWnd_Dst, saveCode2, cDlgDiff.m_bBomDst ) ){
@@ -510,6 +510,6 @@ void CViewCommander::Command_Diff_Reset( void )
 	CDiffLineMgr(&GetDocument()->m_cDocLineMgr).ResetAllDiffMark();
 
 	//分割したビューも更新
-	GetEditWnd().Views_Redraw();
+	GetEditWindow()->Views_Redraw();
 	return;
 }

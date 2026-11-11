@@ -82,6 +82,7 @@
 #include <array>
 #include <atomic>
 #include <cassert>
+#include <chrono>
 #include <climits>
 #include <clocale>
 #include <cmath>
@@ -130,42 +131,30 @@
 #include <utility>
 #include <vector>
 
-#ifdef _MSC_VER
-
-#if defined _M_IX86
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
-#elif defined _M_X64
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
-#else
-#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
-#endif
-#endif
-
-// Workaround for PROPSHEETHEADER_V2_SIZE
-#ifdef __MINGW32__
-#include <_mingw.h>
-#ifndef DUMMYUNION5_MEMBER
-#ifndef NONAMELESSUNION
-#define DUMMYUNION5_MEMBER(x) x
-#else /* NONAMELESSUNION */
-#define DUMMYUNION5_MEMBER(x) DUMMYUNIONNAME5.x
-#endif
-#endif
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <wchar.h>
 
+// winnt.hによって不完全なNTSTATUSが定義されるのを防ぐ
+#define WIN32_NO_STATUS
+
 // Windowsヘッダー(他のSDKヘッダーとは別格。)
 #include <Windows.h>
+
+// NTSTATUSが定義される設定に戻す
+#undef WIN32_NO_STATUS
+
+// ntstatus.h (他のSDKヘッダーとは別格。)
+// Windows NTのステータスコードNTSTATUSを定義するヘッダー
+#include <ntstatus.h>
 
 // windowsx.h (他のSDKヘッダーとは別格。)
 #include <windowsx.h>
 
 // その他のWindows SDK ヘッダー（ファイル名は最新に合わせる。追加するときは昇順で。）
+#include <bcrypt.h>
 #include <comdef.h>
 #include <CommCtrl.h>
 #include <HtmlHelp.h>

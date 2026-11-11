@@ -13,51 +13,29 @@
 #include "basis/CEol.h"
 #include "env/CommonSetting.h"
 
-/*!
-	文字コードの16進表示
-
-	ステータスバー表示用に文字を16進表記に変換する
-
-	@param [in] cSrc 変換する文字
-	@param [in] sStatusbar 共通設定 ステータスバー
-	@param [in,opt] bUseFallback cSrcが特定コードで表現できない場合にフォールバックするかどうか
- */
-std::wstring CCodeBase::CodeToHex(const CNativeW& cSrc, const CommonSetting_Statusbar& sStatusbar, bool bUseFallback /* = true */)
-{
-	std::wstring buff(32, L'\0');
-	if (const auto ret = UnicodeToHex(std::wstring_view{ cSrc.GetStringPtr(), size_t(cSrc.GetStringLength()) }, buff, &sStatusbar);
-		ret != RESULT_COMPLETE && bUseFallback) {
-		// うまくコードが取れなかった(Unicodeで表示)
-		return CCodeFactory::CreateCodeBase(CODE_UNICODE)->CodeToHex(cSrc, sStatusbar, false);
-	}
-	return buff;
-}
-
 // 表示用16進表示	UNICODE → Hex 変換	2008/6/9 Uchi
-EConvertResult CCodeBase::UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar)
+EConvertResult CCodeBase::UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar)
 {
-	const auto cSrc = std::data(src);
-
 	// IVS
-	if (const auto iSLen = int(std::size(src)); iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
+	if (iSLen >= 3 && IsVariationSelector(cSrc + 1)) {
 		if (psStatusbar->m_bDispSPCodepoint) {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
+			auto_sprintf(pDst, L"%04X, U+%05X", cSrc[0], ConvertToUtf32(cSrc + 1));
 		}
 		else {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X, %04X%04X", cSrc[0], cSrc[1], cSrc[2]);
+			auto_sprintf(pDst, L"%04X, %04X%04X", cSrc[0], cSrc[1], cSrc[2]);
 		}
 	}
 	// サロゲートペア
 	else if (iSLen >= 2 && IsSurrogatePair(cSrc)) {
 		if (psStatusbar->m_bDispSPCodepoint) {
-			auto_snprintf_s(dst, _TRUNCATE, L"U+%05X", 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
+			auto_sprintf( pDst, L"U+%05X", 0x10000 + ((cSrc[0] & 0x3FF)<<10) + (cSrc[1] & 0x3FF));
 		}
 		else {
-			auto_snprintf_s(dst, _TRUNCATE, L"%04X%04X", cSrc[0], cSrc[1]);
+			auto_sprintf( pDst, L"%04X%04X", cSrc[0], cSrc[1]);
 		}
 	}
 	else {
-		auto_snprintf_s(dst, _TRUNCATE, L"U+%04X", cSrc[0]);
+		auto_sprintf( pDst, L"U+%04X", cSrc[0] );
 	}
 
 	return RESULT_COMPLETE;
@@ -116,92 +94,34 @@ bool CCodeBase::MIMEHeaderDecode( const char* pSrc, const int nSrcLen, CMemory* 
 }
 
 /*!
-	BOMデータ取得
-
-	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
-	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
+ * BOMデータ取得
+ *
+ * ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
+ * マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
  */
-[[nodiscard]] BinarySequence CCodeBase::GetBomDefinition()
+void CCodeBase::GetBom(CMemory* pcmemBom)
 {
-	const CNativeW cBom( L"\xFEFF" );
-
-	bool bComplete = false;
-	auto converted = UnicodeToCode( cBom, &bComplete );
-	if( !bComplete ){
-		converted.clear();
-	}
-
-	return converted;
-}
-
-/*!
-	BOMデータ取得
-
-	ByteOrderMarkに対する特定コードによるバイナリ表現を取得する。
-	マルチバイトなUnicode文字セットのバイト順を識別するのに使う。
- */
-void CCodeBase::GetBom( CMemory* pcmemBom )
-{
-	if( pcmemBom != nullptr ){
-		if( const auto bom = GetBomDefinition(); 0 < bom.length() ){
-			pcmemBom->SetRawData( bom.data(), bom.length() );
-		}else{
-			pcmemBom->Reset();
-		}
+	// ByteOrderMarkを特定コードに変換
+	if (pcmemBom && RESULT_COMPLETE != UnicodeToCode(CNativeW{ &WCODE::BOM, 1 }, pcmemBom)) {
+		// 変換できなかったらリセットする
+		pcmemBom->Reset();
 	}
 }
 
-
 /*!
-	改行データ取得
-
-	各種行終端子に対する特定コードによるバイナリ表現のセットを取得する。
-	特定コードで利用できない行終端子については空のバイナリ表現が返る。
+ * 改行データ取得
+ *
+ * 指定した行終端子に対する特定コードによるバイナリ表現を取得する。
+ * コードポイントとバイナリシーケンスが1対1に対応付けられる文字コードの改行を検出するのに使う。
  */
-[[nodiscard]] std::map<EEolType, BinarySequence> CCodeBase::GetEolDefinitions()
+void CCodeBase::GetEol(CMemory* pcmemEol, EEolType eEolType)
 {
-	constexpr struct {
-		EEolType type;
-		std::wstring_view str;
-	}
-	aEolTable[] = {
-		{ EEolType::cr_and_lf,				L"\x0d\x0a",	},
-		{ EEolType::line_feed,				L"\x0a",		},
-		{ EEolType::carriage_return,		L"\x0d",		},
-		{ EEolType::next_line,				L"\x85",		},
-		{ EEolType::line_separator,			L"\u2028",		},
-		{ EEolType::paragraph_separator,	L"\u2029",		},
-	};
+	// 指定された行終端子を取得
+	const CEol cEol{ eEolType };
 
-	std::map<EEolType, BinarySequence> map;
-	for( auto& eolData : aEolTable ){
-		bool bComplete = false;
-		const auto& str = eolData.str;
-		auto converted = UnicodeToCode( CNativeW( str.data(), str.length() ), &bComplete );
-		if( !bComplete ){
-			converted.clear();
-		}
-		map.try_emplace( eolData.type, std::move(converted) );
-	}
-
-	return map;
-}
-
-/*!
-	改行データ取得
-
-	指定した行終端子に対する特定コードによるバイナリ表現を取得する。
-	コードポイントとバイナリシーケンスが1対1に対応付けられる文字コードの改行を検出するのに使う。
- */
-void CCodeBase::GetEol( CMemory* pcmemEol, EEolType eEolType )
-{
-	if( pcmemEol != nullptr ){
-		const auto map = GetEolDefinitions();
-		if( auto it = map.find( eEolType ); it != map.end() ){
-			const auto& bin = it->second;
-			pcmemEol->SetRawData( bin.data(), bin.length() );
-		}else{
-			pcmemEol->Reset();
-		}
+	// 行終端子（UNICODE文字列）を特定コードに変換
+	if (pcmemEol && 0 < cEol.GetLen() && RESULT_COMPLETE != UnicodeToCode(CNativeW{ cEol.GetValue2(), size_t(cEol.GetLen()) }, pcmemEol)) {
+		// 変換できなかったらリセットする
+		pcmemEol->Reset();
 	}
 }

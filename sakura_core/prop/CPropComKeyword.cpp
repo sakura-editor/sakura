@@ -13,7 +13,7 @@
 	Copyright (C) 2006, ryoji
 	Copyright (C) 2007, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -89,7 +89,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 	static HWND			hwndCOMBO_SET;
 	static HWND			hwndLIST_KEYWORD;
 	RECT				rc;
-	CDlgInput1			cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	wchar_t				szKeyWord[MAX_KEYWORDLEN + 1];
 	LONG_PTR			lStyle;
 	LV_DISPINFO*		plvdi;
@@ -277,7 +277,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					szKeyWord[0] = L'\0';
 					//	Oct. 5, 2002 genta 長さ制限の設定を修正．バッファオーバーランしていた．
 					if( !cDlgInput1.DoModal(
-						GetAppInstance(),
+						G_AppInstance(),
 						hwndDlg,
 						LS(STR_PROPCOMKEYWORD_SETNAME1),
 						LS(STR_PROPCOMKEYWORD_SETNAME2),
@@ -365,10 +365,10 @@ INT_PTR CPropKeyword::DispatchEvent(
 					return TRUE;
 				case IDC_BUTTON_KEYSETRENAME: // キーワードセットの名称変更
 					// モードレスダイアログの表示
-					::wcsncpy_s(szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ), _TRUNCATE);
+					wcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetTypeName( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx ) );
 					{
 						BOOL bDlgInputResult = cDlgInput1.DoModal(
-							GetAppInstance(),
+							G_AppInstance(),
 							hwndDlg,
 							LS(STR_PROPCOMKEYWORD_RENAME1),
 							LS(STR_PROPCOMKEYWORD_RENAME2),
@@ -398,7 +398,7 @@ INT_PTR CPropKeyword::DispatchEvent(
 					}
 					/* モードレスダイアログの表示 */
 					szKeyWord[0] = L'\0';
-					if( !cDlgInput1.DoModal( GetAppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
+					if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYADD1), LS(STR_PROPCOMKEYWORD_KEYADD2), MAX_KEYWORDLEN, szKeyWord ) ){
 						return TRUE;
 					}
 					if( szKeyWord[0] != L'\0' ){
@@ -491,7 +491,7 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	int			nIndex1;
 	LV_ITEM		lvi;
 	wchar_t		szKeyWord[MAX_KEYWORDLEN + 1];
-	CDlgInput1	cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 
 	nIndex1 = ListView_GetNextItem( hwndLIST_KEYWORD, -1, LVNI_ALL | LVNI_SELECTED );
 	if( -1 == nIndex1 ){
@@ -503,10 +503,10 @@ void CPropKeyword::Edit_List_KeyWord( HWND hwndDlg, HWND hwndLIST_KEYWORD )
 	ListView_GetItem( hwndLIST_KEYWORD, &lvi );
 
 	/* ｎ番目のセットのｍ番目のキーワードを返す */
-	::wcsncpy_s(szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ), _TRUNCATE);
+	wcscpy( szKeyWord, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWord( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, lvi.lParam ) );
 
 	/* モードレスダイアログの表示 */
-	if( !cDlgInput1.DoModal( GetAppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYEDIT1), LS(STR_PROPCOMKEYWORD_KEYEDIT2), MAX_KEYWORDLEN, szKeyWord ) ){
+	if( !cDlgInput1.DoModal( G_AppInstance(), hwndDlg, LS(STR_PROPCOMKEYWORD_KEYEDIT1), LS(STR_PROPCOMKEYWORD_KEYEDIT2), MAX_KEYWORDLEN, szKeyWord ) ){
 		return;
 	}
 	if( szKeyWord[0] != L'\0' ){
@@ -558,11 +558,10 @@ void CPropKeyword::Import_List_KeyWord( HWND hwndDlg, [[maybe_unused]] HWND hwnd
 {
 	bool	bCase = false;
 	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
-	m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.SetKeyWordCase( nIdx, bCase );
 	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
 
 	// インポート
-	if (!cImpExpKeyWord.ImportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpKeyWord.ImportUI( G_AppInstance(), hwndDlg )) {
 		// インポートをしていない
 		return;
 	}
@@ -578,11 +577,13 @@ void CPropKeyword::Export_List_KeyWord( HWND hwndDlg, [[maybe_unused]] HWND hwnd
 	/* ダイアログデータの設定 Keyword 指定キーワードセットの設定 */
 	SetKeyWordSet( hwndDlg, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 
-	bool	bCase;
-	CImpExpKeyWord	cImpExpKeyWord( m_Common, m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx, bCase );
+	int		nIdx = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx;
+	// 現在選択されているキーワードセットの英大文字小文字区別設定を取得
+	bool	bCase = m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordCase( nIdx );
+	CImpExpKeyWord	cImpExpKeyWord( m_Common, nIdx, bCase );
 
 	// エクスポート
-	if (!cImpExpKeyWord.ExportUI( GetAppInstance(), hwndDlg )) {
+	if (!cImpExpKeyWord.ExportUI( G_AppInstance(), hwndDlg )) {
 		// エクスポートをしていない
 		return;
 	}
@@ -636,6 +637,7 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 
 	ListView_DeleteAllItems( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ) );
 	if( 0 <= nIdx ){
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), TRUE );
@@ -645,19 +647,26 @@ void CPropKeyword::SetKeyWordSet( HWND hwndDlg, int nIdx )
 		//	なのでここで無効にしておく．
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), TRUE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), TRUE );
 	}else{
 		::CheckDlgButton( hwndDlg, IDC_CHECK_KEYWORDCASE, FALSE );
 
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYSETRENAME ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELSET ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_CHECK_KEYWORDCASE ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_LIST_KEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_ADDKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EDITKEYWORD ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_DELKEYWORD ), FALSE );
+		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_KEYCLEAN ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_IMPORT ), FALSE );
 		::EnableWindow( ::GetDlgItem( hwndDlg, IDC_BUTTON_EXPORT ), FALSE );
+
+		// 無効化時も描画停止を解除して画面を再描画
+		::SendMessage( hwndDlg, WM_SETREDRAW, TRUE, 0 );
+		InvalidateRect( hwndDlg, nullptr, FALSE );
 		return;
 	}
 
@@ -721,6 +730,6 @@ void CPropKeyword::DispKeywordCount( HWND hwndDlg )
 	nAlloc -= m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetKeyWordNum( m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.m_nCurrentKeyWordSetIdx );
 	nAlloc += m_Common.m_sSpecialKeyword.m_CKeyWordSetMgr.GetFreeSize();
 	
-	auto_snprintf_s(szCount, _TRUNCATE, LS(STR_PROPCOMKEYWORD_INFO), MAX_KEYWORDLEN, n, nAlloc);
+	auto_sprintf( szCount, LS(STR_PROPCOMKEYWORD_INFO), MAX_KEYWORDLEN, n, nAlloc );
 	::SetWindowText( ::GetDlgItem( hwndDlg, IDC_STATIC_KEYWORD_COUNT ), szCount );
 }

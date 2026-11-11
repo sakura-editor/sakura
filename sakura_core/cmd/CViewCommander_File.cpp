@@ -12,7 +12,7 @@
 	Copyright (C) 2005, genta
 	Copyright (C) 2006, ryoji, maru
 	Copyright (C) 2007, ryoji, maru, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,7 +21,6 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
-#include <Shlwapi.h>
 #include "_main/CControlTray.h"
 #include "uiparts/CWaitCursor.h"
 #include "dlg/CDlgProperty.h"
@@ -34,6 +33,7 @@
 #include "env/CWriteManager.h"
 #include "CEditApp.h"
 #include "recent/CMRUFile.h"
+#include "util/os/Shell32.hpp"
 #include "util/shell.h"
 #include "util/window.h"
 #include "charset/CCodeFactory.h"
@@ -56,7 +56,7 @@ void CViewCommander::Command_FILENEW( void )
 	sLoadInfo.eCharCode = CODE_NONE;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, nullptr, false, curDir.c_str(), false );
 	return;
 }
 
@@ -69,7 +69,7 @@ void CViewCommander::Command_FILENEW_NEWWINDOW( void )
 	sLoadInfo.eCharCode = CODE_DEFAULT;
 	sLoadInfo.bViewMode = false;
 	std::wstring curDir = CSakuraEnvironment::GetDlgInitialDir();
-	CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
+	CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo,
 		nullptr,
 		false,
 		curDir.c_str(),
@@ -101,7 +101,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			WCHAR szName[_MAX_FNAME];
 			WCHAR szExt  [_MAX_EXT];
 			my_splitpath_t(defName.c_str(), szPath, szDir, szName, szExt);
-			::wcsncat_s(szPath, szDir, _TRUNCATE);
+			wcscat(szPath, szDir);
 			if( 0 == wmemicmp(defName.c_str(), szPath) ){
 				// defNameはフォルダー名だった
 			}else{
@@ -113,7 +113,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			}
 		}
 		bool bDlgResult = GetDocument()->m_cDocFileOperation.OpenFileDialog(
-			GetMainWindow(),	//[in]  オーナーウィンドウ
+			CEditWnd::getInstance()->GetHwnd(),	//[in]  オーナーウィンドウ
 			defName.length()==0 ? nullptr : defName.c_str(),	//[in]  フォルダー
 			&sLoadInfo,							//[out] ロード情報受け取り
 			files								//[out] ファイル名
@@ -123,7 +123,7 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 		for(size_t i = 0; i < files.size(); i++ ){
 			if (files[i].length() >= _MAX_PATH){
 				ErrorMessage(
-					GetMainWindow(),
+					CEditWnd::getInstance()->GetHwnd(),
 					LS(STR_ERR_FILEPATH_TOO_LONG),
 					files[i].c_str()
 				);
@@ -137,8 +137,8 @@ void CViewCommander::Command_FILEOPEN( const WCHAR* filename, ECodeType nCharCod
 			SLoadInfo sFilesLoadInfo = sLoadInfo;
 			sFilesLoadInfo.cFilePath = files[i].c_str();
 			CControlTray::OpenNewEditor(
-				GetAppInstance(),
-				GetMainWindow(),
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
 				sFilesLoadInfo,
 				nullptr,
 				true
@@ -235,7 +235,7 @@ void CViewCommander::Command_FILECLOSE_OPEN( LPCWSTR filename, ECodeType nCharCo
 	GetDocument()->m_cDocFileOperation.FileCloseOpen( SLoadInfo(filename, nCharCode, bViewMode) );
 
 	//プラグイン：DocumentOpenイベント実行
-	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWnd().GetActiveView() );
+	CJackManager::getInstance()->InvokePlugins( PP_DOCUMENT_OPEN, &GetEditWindow()->GetActiveView() );
 }
 
 //! ファイルの再オープン
@@ -271,14 +271,14 @@ void CViewCommander::Command_PRINT( void )
 	Command_PRINT_PREVIEW();
 
 	/* 印刷実行 */
-	GetEditWnd().m_pPrintPreview->OnPrint();
+	GetEditWindow()->m_pPrintPreview->OnPrint();
 }
 
 /* 印刷プレビュー */
 void CViewCommander::Command_PRINT_PREVIEW( void )
 {
 	/* 印刷プレビューモードのオン/オフ */
-	GetEditWnd().PrintPreviewModeONOFF();
+	GetEditWindow()->PrintPreviewModeONOFF();
 	return;
 }
 
@@ -286,7 +286,7 @@ void CViewCommander::Command_PRINT_PREVIEW( void )
 void CViewCommander::Command_PRINT_PAGESETUP( void )
 {
 	/* 印刷ページ設定 */
-	GetEditWnd().OnPrintPageSetting();
+	GetEditWindow()->OnPrintPageSetting();
 	return;
 }
 
@@ -392,9 +392,9 @@ void CViewCommander::Command_PLSQL_COMPILE_ON_SQLPLUS( void )
 		/* ファイルパスに空白が含まれている場合はダブルクォーテーションで囲む */
 		//	2003.10.20 MIK コード簡略化
 		if( wcschr( GetDocument()->m_cDocFile.GetFilePath(), WCODE::SPACE ) ? TRUE : FALSE ){
-			auto_snprintf_s(szPath, _TRUNCATE, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath());
+			auto_sprintf( szPath, L"@\"%s\"\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}else{
-			auto_snprintf_s(szPath, _TRUNCATE, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath());
+			auto_sprintf( szPath, L"@%s\r\n", GetDocument()->m_cDocFile.GetFilePath() );
 		}
 		/* クリップボードにデータを設定 */
 		m_pCommanderView->MySetClipboardData( szPath, wcslen( szPath ), false );
@@ -433,7 +433,7 @@ void CViewCommander::Command_BROWSE( void )
 		return;
 	}
 //	char	szURL[MAX_PATH + 64];
-//	auto_snprintf_s(szURL, _TRUNCATE, L"%ls", GetDocument()->m_cDocFile.GetFilePath());
+//	auto_sprintf( szURL, L"%ls", GetDocument()->m_cDocFile.GetFilePath() );
 	/* URLを開く */
 //	::ShellExecuteEx( NULL, L"open", szURL, NULL, NULL, SW_SHOW );
 
@@ -473,7 +473,7 @@ void CViewCommander::Command_VIEWMODE( void )
 	}
 
 	// 親ウィンドウのタイトルを更新
-	GetEditWnd().UpdateCaption();
+	GetEditWindow()->UpdateCaption();
 }
 
 /* ファイルのプロパティ */
@@ -495,22 +495,25 @@ void CViewCommander::Command_PROPERTY_FILE( void )
 #endif
 
 	CDlgProperty	cDlgProperty;
-//	cDlgProperty.Create( GetAppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
-	cDlgProperty.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
+//	cDlgProperty.Create( G_AppInstance(), m_pCommanderView->GetHwnd(), GetDocument() );
+	cDlgProperty.DoModal( G_AppInstance(), m_pCommanderView->GetHwnd(), (LPARAM)GetDocument() );
 	return;
 }
 
 void CViewCommander::Command_PROFILEMGR( void )
 {
 	CDlgProfileMgr profMgr;
-	if( profMgr.DoModal( GetAppInstance(), m_pCommanderView->GetHwnd(), 0 ) ){
-		WCHAR szOpt[MAX_PATH+10];
-		auto_snprintf_s(szOpt, _TRUNCATE, L"-PROF=\"%s\"", profMgr.m_strProfileName.c_str());
+	if (SProfileName profileName{};
+		profMgr.DoModal(m_pCommanderView->GetHwnd(), profileName))
+	{
+		using SOpts = StaticString<_MAX_PATH + 10>;	// サイズの根拠は不明
+		SOpts szOpt{};
+		swprintf_s(szOpt, LR"(-PROF="%s")", profMgr.m_ProfileName);
 		SLoadInfo sLoadInfo;
 		sLoadInfo.cFilePath = L"";
 		sLoadInfo.eCharCode = CODE_DEFAULT;
 		sLoadInfo.bViewMode = false;
-		CControlTray::OpenNewEditor( GetAppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
+		CControlTray::OpenNewEditor( G_AppInstance(), m_pCommanderView->GetHwnd(), sLoadInfo, szOpt, false, nullptr, false );
 	}
 }
 
@@ -556,21 +559,8 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 
 	std::wstring strFolder(GetDocument()->m_cDocFile.GetFilePathClass().GetDirPath());
 
-	/*
-		以下のコマンドを実行する
-		cmd.exe /k cd /d "<ディレクトリパス>"
-		
-		ShellExecuteW の第四引数に、ディレクトリパスを渡して、引数を空にしても実現できるが
-		その場合、管理者用のコマンドプロンプトに対しては動作しない。
-		
-		/k で cd コマンドを実行する方法なら、管理者用のコマンドプロンプトでも動作する
-	*/
-	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"/k cd /d \"%s\"", strFolder.c_str());
-	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
-
 	/* 環境変数 COMSPEC から cmd.exe のパスを取得する */
-	WCHAR szCmdExePathBuf[MAX_PATH];
+	SFilePath szCmdExePathBuf;
 	if (::GetEnvironmentVariableW(L"COMSPEC", szCmdExePathBuf, int(std::size(szCmdExePathBuf))) == 0) {
 		ErrorBeep();
 		return;
@@ -592,9 +582,16 @@ void CViewCommander::Command_OPEN_COMMAND_PROMPT(BOOL isAdmin)
 	*/
 	CDisableWow64FsRedirect wow64Redirect(TRUE);
 #endif
-	auto hInstance = ::ShellExecuteW(nullptr, pVerb, szCmdExePathBuf, pszcmdExeParam, strFolder.c_str(), SW_SHOWNORMAL);
-	// If the function succeeds, it returns a value greater than 32. 
-	if (hInstance <= (decltype(hInstance))32) {
+
+	SHELLEXECUTEINFOW execInfo{ sizeof(SHELLEXECUTEINFOW) };
+	execInfo.fMask = SEE_MASK_DEFAULT;
+	execInfo.lpVerb = pVerb;
+	execInfo.lpFile = szCmdExePathBuf;
+	execInfo.lpParameters = nullptr;	// 対話モードにするためパラメーターを指定しない
+	execInfo.lpDirectory = std::data(strFolder);
+	execInfo.nShow = SW_SHOWNORMAL;
+
+	if (!Shell32::getInstance()->ShellExecuteExW(&execInfo)) {
 		ErrorBeep();
 		return;
 	}
@@ -616,8 +613,16 @@ void CViewCommander::Command_OPEN_POWERSHELL(BOOL isAdmin)
 		-Command を使用する際は -NoExit を指定して PowerShell が終了しないようにする
 		(-NoExit がない場合は -Command で指定したコマンドレットが終了すると PowerShellも終了する)
 	*/
+
+	// PowerShell の単一引用符文字列内でシングルクォートを '' にエスケープする (OS コマンドインジェクション対策)
+	std::wstring strFolderEscaped = strFolder;
+	for (size_t pos = 0; (pos = strFolderEscaped.find(L'\'', pos)) != std::wstring::npos; pos += 2)
+	{
+		strFolderEscaped.replace(pos, 1, L"''");
+	}
+
 	CNativeW cmdExeParam;
-	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolder.c_str());
+	cmdExeParam.AppendStringF(L"-NoExit -Command \"Set-Location -Path '%s'\"", strFolderEscaped.c_str());
 	LPCWSTR pszcmdExeParam = cmdExeParam.GetStringPtr();
 
 	LPCWSTR pVerb = L"open";
@@ -748,7 +753,14 @@ BOOL CViewCommander::Command_PUTFILE(
 		}
 	}
 	else {	/* ファイル全体を出力 */
-		const auto hwndProgress = GetEditWnd().m_cStatusBar.GetProgressHwnd();
+		HWND		hwndProgress;
+		CEditWnd*	pCEditWnd = GetEditWindow();
+
+		if( nullptr != pCEditWnd ){
+			hwndProgress = pCEditWnd->m_cStatusBar.GetProgressHwnd();
+		}else{
+			hwndProgress = nullptr;
+		}
 		if( nullptr != hwndProgress ){
 			::ShowWindow( hwndProgress, SW_SHOW );
 		}
@@ -839,7 +851,7 @@ BOOL CViewCommander::Command_INSFILE( LPCWSTR filename, ECodeType nCharCode, [[m
 		/* ファイルサイズが65KBを越えたら進捗ダイアログ表示 */
 		if ( 0x10000 < cfl.GetFileSize() ) {
 			pcDlgCancel = new CDlgCancel;
-			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( GetAppInstance(), nullptr, IDD_OPERATIONRUNNING ) ) ){
+			if( nullptr != ( hwndCancel = pcDlgCancel->DoModeless( ::GetModuleHandle( nullptr ), nullptr, IDD_OPERATIONRUNNING ) ) ){
 				hwndProgress = ::GetDlgItem( hwndCancel, IDC_PROGRESS );
 				ApiWrap::Progress_SetRange( hwndProgress, 0, 101 );
 				ApiWrap::Progress_SetPos( hwndProgress, 0);

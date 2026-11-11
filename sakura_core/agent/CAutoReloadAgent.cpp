@@ -67,7 +67,7 @@ bool CAutoReloadAgent::_ToDoChecking() const
 	if(setting.m_nFileShareMode!=SHAREMODE_NOT_EXCLUSIVE)return false; // ファイルの排他制御モード
 	HWND hwndActive = ::GetActiveWindow();
 	if(hwndActive==nullptr)return false;	/* アクティブ？ */
-	if(hwndActive!=GetMainWindow())return false;
+	if(hwndActive!=CEditWnd::getInstance()->GetHwnd())return false;
 	if(!GetListeningDoc()->m_cDocFile.GetFilePathClass().IsValidPath())return false;
 	if(GetListeningDoc()->m_cDocFile.IsFileTimeZero()) return false;	/* 現在編集中のファイルのタイムスタンプ */
 	if(GetEditWnd().m_pPrintPreview ) return false;	// 印刷プレビュー中	2013/5/8 Uchi
@@ -114,7 +114,7 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 			//ファイル更新のお知らせ -> ステータスバー
 			WCHAR szText[40];
 			const CFileTime& ctime = pcDoc->m_cDocFile.GetFileTime();
-			auto_snprintf_s(szText, _TRUNCATE, LS(STR_AUTORELOAD_NOFITY), ctime->wHour, ctime->wMinute, ctime->wSecond);
+			auto_sprintf( szText, LS(STR_AUTORELOAD_NOFITY), ctime->wHour, ctime->wMinute, ctime->wSecond );
 			GetEditWnd().SendStatusMessage( szText );
 		}
 		break;
@@ -136,8 +136,8 @@ void CAutoReloadAgent::CheckFileTimeStamp()
 
 			CDlgFileUpdateQuery dlg( pcDoc->m_cDocFile.GetFilePath(), pcDoc->m_cDocEditor.IsModified() );
 			EFileUpdateQuery result = (EFileUpdateQuery)dlg.DoModal(
-				GetAppInstance(),
-				GetMainWindow(),
+				G_AppInstance(),
+				CEditWnd::getInstance()->GetHwnd(),
 				IDD_FILEUPDATEQUERY,
 				0
 			);

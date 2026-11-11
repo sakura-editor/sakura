@@ -17,14 +17,14 @@
 void CType_Sql::InitTypeConfigImp(STypeConfig* pType)
 {
 	//名前と拡張子
-	::wcsncpy_s(pType->m_szTypeName, L"PL/SQL", _TRUNCATE);
-	::wcsncpy_s(pType->m_szTypeExts, L"sql,plsql", _TRUNCATE);
+	wcscpy( pType->m_szTypeName, L"PL/SQL" );
+	wcscpy( pType->m_szTypeExts, L"sql,plsql" );
 
 	//設定
 	pType->m_cLineComment.CopyTo( 0, L"--", -1 );					/* 行コメントデリミタ */
 	pType->m_cBlockComments[0].SetBlockCommentRule( L"/*", L"*/" );	/* ブロックコメントデリミタ */
 	pType->m_nStringType = STRING_LITERAL_PLSQL;					/* 文字列区切り記号エスケープ方法  0=[\"][\'] 1=[""][''] */
-	::wcsncpy_s(pType->m_szIndentChars, L"|★", _TRUNCATE);						/* その他のインデント対象文字 */
+	wcscpy( pType->m_szIndentChars, L"|★" );						/* その他のインデント対象文字 */
 	pType->m_nKeyWordSetIdx[0] = 2;									/* キーワードセット */
 	pType->m_eDefaultOutline = OUTLINE_PLSQL;						/* アウトライン解析方法 */
 }
@@ -139,7 +139,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							3 == nFuncOrProc ||
 							4 == nFuncOrProc ){
 							++nParseCnt;
-							::wcsncpy_s(szFuncName, szWord, _TRUNCATE);
+							wcscpy( szFuncName, szWord );
 //						}else
 //						if( 3 == nFuncOrProc ){
 						}
@@ -210,7 +210,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 							}
 						}
 					}
-					::wcsncpy_s(szWordPrev, szWord, _TRUNCATE);
+					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
 					szWord[0] = L'\0';
 					nMode = 0;
@@ -239,7 +239,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 					 L'-' == pLine[i] ||
 					 2 == nCharChars
 				){
-					::wcsncpy_s(szWordPrev, szWord, _TRUNCATE);
+					wcscpy( szWordPrev, szWord );
 					nWordIdx = 0;
 					szWord[0] = L'\0';
 					nMode = 0;
@@ -326,7 +326,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 						) )
 					 || 2 == nCharChars
 					){
-						::wcsncpy_s(szWordPrev, szWord, _TRUNCATE);
+						wcscpy( szWordPrev, szWord );
 						nWordIdx = 0;
 
 //						szWord[nWordIdx] = pLine[i];
@@ -337,7 +337,7 @@ void CDocOutline::MakeFuncList_PLSQL( CFuncInfoArr* pcFuncInfoArr )
 
 						nMode = 1;
 					}else{
-						::wcsncpy_s(szWordPrev, szWord, _TRUNCATE);
+						wcscpy( szWordPrev, szWord );
 						nWordIdx = 0;
 //						szWord[nWordIdx] = pLine[i];
 //						szWord[nWordIdx + 1] = '\0';

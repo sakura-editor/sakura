@@ -10,7 +10,7 @@
 	Copyright (C) 2001, YAZAKI, genta
 	Copyright (C) 2002, YAZAKI, Moca
 	Copyright (C) 2003, genta, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -24,11 +24,17 @@ PPA(Poor-Pascal for Application)はDelphi/C++Builder用のPascalインタープ�
 
 #include <ObjIdl.h>  // VARIANT等
 #include <stdio.h>
+
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "macro/CSMacroMgr.h"
 #include "extmodule/CDllHandler.h"
 #include "mem/CNativeA.h"
 
+#include <span>
+
 #define PPADLL_VER 123
+
+class CEditView;
 
 /*
 PPA(Poor-Pascal for Application)はDelphi/C++Builder用の
@@ -44,13 +50,20 @@ Pascalインタープリタコンポーネントです。
 	@date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 */
 class CPPA : public CDllImp {
+private:
+	static bool CallHandleFunction(
+		const int Index,
+		std::span<LPCSTR> Args,
+		VARIANT* Result
+	);
+
 public:
 	CPPA();
-	virtual ~CPPA();
+	~CPPA() override;
 
 	const char* GetVersion(){		//!< DLLのバージョン情報を取得。m_szMsgを壊す
 		if ( IsAvailable() ){
-			auto_snprintf_s(m_szMsg, _TRUNCATE, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
+			auto_sprintf(m_szMsg, "PPA.DLL Version %d.%d", m_fnGetVersion() / 100, m_fnGetVersion() % 100);
 			return m_szMsg;
 		}
 		return "";
@@ -61,10 +74,9 @@ public:
 
 	static std::string GetDeclarations(const MacroFuncInfo& cMacroFuncInfo);
 
-protected:
 	//	Jul. 5, 2001 genta インターフェース変更に伴う引数追加
-public:
 	LPCWSTR GetDllNameImp(int nIndex) override;
+
 protected:
 	bool InitDllImp() override;
 
@@ -157,29 +169,26 @@ private:
 #endif
 
 public:
-	// exported
-	//	2007.07.22 genta : flags追加
-	bool Execute(class CEditView* pcEditView, int flags );
-	void SetSource(const char* ss)
-		{ m_fnSetSource(ss); }
-	void SetDeclare(const char* ss)
-		{ m_fnSetDeclare(ss); }
-	void SetDefProc(const char* ss)
-		{ m_fnSetDefProc(ss); }
-	void SetDefine(const char* ss)
-		{ m_fnSetDefine(ss); }
+	bool	Execute(CEditView* pcEditView, int flags) const;
+
+	void SetSource(const char* ss) const { m_fnSetSource(ss); }
+	void SetDeclare(const char* ss) const { m_fnSetDeclare(ss); }
+	void SetDefProc(const char* ss) const { m_fnSetDefProc(ss); }
+	void SetDefine(const char* ss) const { m_fnSetDefine(ss); }
+
+#if 0
 	void AddIntVar(const char* lpszDef, int nVal, int nCnst)
 		{ m_fnAddIntVar(lpszDef, nVal, nCnst); }
 	void AddStrVar(const char* lpszDef, const char* lpszVal, int nCnst)
 		{ m_fnAddStrVar(lpszDef, lpszVal, nCnst); }
-	void SetIntFunc(void* proc)
-		{ m_fnSetIntFunc(proc); }
-	void SetStrFunc(void* proc)
-		{ m_fnSetStrFunc(proc); }
-	void SetProc(void* proc)
-		{ m_fnSetProc(proc); }
-	void SetErrProc(void* proc)
-		{ m_fnSetErrProc(proc); }
+#endif
+
+	template <class T> void SetIntFunc(T proc) const { m_fnSetIntFunc((void*)proc); }
+	template <class T> void SetStrFunc(T proc) const { m_fnSetStrFunc((void*)proc); }
+	template <class T> void SetProc(T proc) const { m_fnSetProc((void*)proc); }
+	template <class T> void SetErrProc(T proc) const { m_fnSetErrProc((void*)proc); }
+
+#if 0
 	void Abort()
 		{ m_fnAbort(); }
 //	int  GetVersion()
@@ -192,14 +201,20 @@ public:
 		{ return m_fnGetArgStr(index); }
 	char* GetArgBStr(int index)
 		{ return m_fnGetArgBStr(index); }
-	void SetStrObj(void* proc)
-		{ m_fnSetStrObj(proc); }
+#endif
+
+	template <class T> void SetStrObj(T proc) const { m_fnSetStrObj((void*)proc); }
+
+#if 0
 	void SetIntObj(void* proc)
 		{ m_fnSetIntObj(proc); }
 	void AddIntObj(const char* ss, int def, BOOL read, int index)
 		{ m_fnAddIntObj(ss, def, read, index); }
-	void AddStrObj(const char* ss, const char* def, BOOL read, int index)
-		{ m_fnAddStrObj(ss, def, read, index); }
+#endif
+
+	void AddStrObj(const char* ss, const char* def, BOOL read, int index) const { m_fnAddStrObj(ss, def, read, index); }
+
+#if 0
 	int  GetIntVar(const char* ss)
 		{ return m_fnGetIntVar(ss); }
 	char* GetStrVar(const char* ss)
@@ -227,23 +242,25 @@ public:
 	DWORD GetArgReal(int index)
 		{ return m_fnGetArgReal(index); }
 #endif
+#endif
 
 #if PPADLL_VER >= 123
+#if 0
 	BOOL IsRunning()
 		{ return (BOOL)m_fnIsRunning(); }
-	void SetFinishProc(void* proc)	//	2003.06.01 Moca
-		{ m_fnSetFinishProc(proc); }
+#endif
+
+	template <class T> void SetFinishProc(T proc) const { m_fnSetFinishProc((void*)proc); }
 #endif
 
 private:
 	// コールバックプロシージャ群
 	static void __stdcall stdStrObj(const char* ObjName, int Index, BYTE GS_Mode, int* Err_CD, char** Value);	//	2003.06.01 Moca
 
-	static void __stdcall stdProc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD);
+	static void __stdcall stdProc( const char* FuncName, const int Index, const char** Arguments, const int ArgSize, int* Err_CD);
 	static void __stdcall stdIntFunc( const char* FuncName, const int Index,
 		const char* Argument[], const int ArgSize, int* Err_CD, int* ResultValue); // 2002.02.24 Moca
 	static void __stdcall stdStrFunc( const char* FuncName, const int Index, const char* Argument[], const int ArgSize, int* Err_CD, char** ResultValue);
-	static bool CallHandleFunction( const int Index, const char* Arg[], int ArgSize, VARIANT* Result ); // 2002.02.24 Moca
 
 	static void __stdcall stdError( int Err_CD, const char* Err_Mes );	//	2003.06.01 Moca
 	static void __stdcall stdFinishProc();	//	2003.06.01 Moca
@@ -254,10 +271,9 @@ private:
 public:
 	//	2007.07.26 genta : PPAのネストを許容するために，別データ構造とする．
 	
-	struct PpaExecInfo {
+	struct PpaExecInfo final : public env::ShareDataClient {
 		CNativeA		m_cMemRet = "";			//!< コールバックからDLLに渡す文字列を保持
 		CEditView*		m_pcEditView = nullptr;	//	2003.06.01 Moca
-		DLLSHAREDATA*	m_pShareData = nullptr;	//	2003.06.01 Moca
 		bool			m_bError = false;		//!< エラーが2回表示されるのを防ぐ	2003.06.01 Moca
 		CNativeA		m_cMemDebug = "";		//!< デバッグ用変数UserErrorMes 2003.06.01 Moca
 		/** オプションフラグ
@@ -281,6 +297,10 @@ private:
 
 public:
 	static void CallErrorProc(PpaExecInfo& info, int Err_CD, _In_opt_z_ LPCSTR Err_Mes);
+	static int	CallIntFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, int* ResultValue);
+	static int	CallProc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments);
+	static int	CallStrFunc(PpaExecInfo& info, EFunctionCode eFuncCd, std::span<LPCSTR> arguments, LPSTR* ResultValue);
+	static int	CallStrObj(PpaExecInfo& info, int index, bool isSetMode, LPSTR* ResultValue);
 };
 
 #endif /* SAKURA_CPPA_FB41BBAE_DFBC_449D_9342_5D9424CFE086_H_ */

@@ -17,6 +17,7 @@
 #include "window/CSplitBoxWnd.h"
 #include "uiparts/CGraphics.h"
 #include "apiwrap/StdApi.h"
+#include "apiwrap/DarkMode.h"
 #include "config/system_constants.h"
 
 CSplitBoxWnd::CSplitBoxWnd()
@@ -109,38 +110,59 @@ void CSplitBoxWnd::FillSolidRect( HDC hdc, int x, int y, int cx, int cy, COLORRE
 // WM_PAINT
 LRESULT CSplitBoxWnd::OnPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_unused]] WPARAM wParam, [[maybe_unused]] LPARAM lParam )
 {
-	HDC			hdc;
 	PAINTSTRUCT	ps;
-	int			nCyHScroll;
-	int			nCxVScroll;
-	int			nVSplitHeight;	/* 垂直分割ボックスの高さ */
-	int			nHSplitWidth;	/* 水平分割ボックスの幅 */
+	const auto hdc = ::BeginPaint(hwnd, &ps);
 
-	hdc = ::BeginPaint( hwnd, &ps );
+	const auto cxBorder  = ::GetSystemMetrics(SM_CXBORDER);
+	const auto cyBorder  = ::GetSystemMetrics(SM_CYBORDER);
+	const auto cxEdge    = ::GetSystemMetrics(SM_CXEDGE);
+	const auto cyEdge    = ::GetSystemMetrics(SM_CYEDGE);
+	const auto cyHScroll = ::GetSystemMetrics(SM_CYHSCROLL);
+	const auto cxVScroll = ::GetSystemMetrics(SM_CXVSCROLL);
+	const auto cxHSplit  = cxEdge * 2 + cxBorder * 3;	/* 水平分割ボックスの幅 */
+	const auto cyVSplit  = cyEdge * 2 + cyBorder * 3;	/* 垂直分割ボックスの高さ */
 
-	nCyHScroll = ::GetSystemMetrics( SM_CYHSCROLL );
-	nCxVScroll = ::GetSystemMetrics( SM_CXVSCROLL );
+	COLORREF cBTN = ::GetSysColor(COLOR_BTNFACE);
+	COLORREF cBR0 = ::GetSysColor(COLOR_3DSHADOW);
+	COLORREF cBR1 = ::GetSysColor(COLOR_BTNSHADOW);
 
-	nVSplitHeight = 7;	/* 垂直分割ボックスの高さ */
-	nHSplitWidth = 7;	/* 水平分割ボックスの幅 */
+	if (IsDarkModeActive()) {
+		cBTN = DarkMode::getCtrlBackgroundColor();
+		cBR0 = DarkMode::getTextColor();
+		cBR1 = DarkMode::getHotEdgeColor();
+	}
 
-	if( m_bVertical ){
+	RECT rc{};
+
+	if (m_bVertical) {
 		/* 垂直分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nCxVScroll, nVSplitHeight,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
-		Draw3dRect( hdc, 1, 1, nCxVScroll - 2, nVSplitHeight - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		::SetRect(&rc, cxEdge, cyEdge, cxVScroll - cxEdge, cyVSplit - cyEdge);
+		::MyFillRect(hdc, rc, cBTN);
+
+		::SetRect(&rc, cxEdge, cyVSplit - cyEdge, cxVScroll - cxEdge, cyVSplit);
+		::MyFillRect(hdc, rc, cBR0);
+		::SetRect(&rc, cxVScroll - cxEdge, cyEdge, cxVScroll, cyVSplit);
+		::MyFillRect(hdc, rc, cBR1);
+
+		::SetRect(&rc, cxEdge, 0, cxVScroll - cxEdge, cyEdge);
+		::MyFillRect(hdc, rc, cBR0);
+		::SetRect(&rc, 0, 0, cxEdge, cyVSplit - cyEdge);
+		::MyFillRect(hdc, rc, cBR1);
+
 	}else{
 		/* 水平分割ボックスの描画 */
-		Draw3dRect( hdc, 0, 0, nHSplitWidth, nCyHScroll,
-			::GetSysColor( COLOR_3DLIGHT ), ::GetSysColor( COLOR_3DDKSHADOW )
-		 );
+		::SetRect(&rc, cxEdge, cyEdge, cxHSplit - cxEdge, cyHScroll - cyEdge);
+		::MyFillRect(hdc, rc, cBTN);
 
-		Draw3dRect( hdc, 1, 1, nHSplitWidth - 2, nCyHScroll - 2,
-			::GetSysColor( COLOR_3DHILIGHT ), ::GetSysColor( COLOR_3DSHADOW )
-		 );
+		::SetRect(&rc, cxHSplit - cxEdge, cyEdge, cxHSplit, cyHScroll);
+		::MyFillRect(hdc, rc, cBR0);
+		::SetRect(&rc, 0, cyHScroll - cyEdge, cxHSplit - cxEdge, cyHScroll);
+		::MyFillRect(hdc, rc, cBR1);
+
+		::SetRect(&rc, 0, 0, cxEdge, cyHScroll - cyEdge);
+		::MyFillRect(hdc, rc, cBR0);
+		::SetRect(&rc, cxEdge, 0, cxHSplit, cyEdge);
+		::MyFillRect(hdc, rc, cBR1);
 	}
 
 	::EndPaint(hwnd, &ps);

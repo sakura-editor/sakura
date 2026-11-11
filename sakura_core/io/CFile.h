@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -52,12 +52,21 @@ private:
 	EShareMode	m_nFileShareModeOld;		//!< ファイルの排他制御モード
 };
 
-//!一時ファイル
+#ifdef ENABLE_UNUSED_LEGACY_CODES
+
+/*!
+ * @brief Cランタイム「名無しの一時ファイル」
+ *
+ * 名無しの一時ファイルを作るための機構。
+ *
+ * @note C4996警告が出るうえ、TOCTOUの危険性があるので、使わないことにする。
+
+ */
 class CTmpFile{
 	using Me = CTmpFile;
 
 public:
-	CTmpFile() { ::tmpfile_s(&m_fp); }	// ←エラー処理すべき
+	CTmpFile(){ m_fp = tmpfile(); }
 	CTmpFile(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
 	CTmpFile(Me&&) noexcept = delete;
@@ -67,5 +76,7 @@ public:
 private:
 	FILE* m_fp;
 };
+
+#endif // ifdef ENABLE_UNUSED_LEGACY_CODES
 
 #endif /* SAKURA_CFILE_53DA3C63_95C0_49D0_9ED1_1C0131493912_H_ */

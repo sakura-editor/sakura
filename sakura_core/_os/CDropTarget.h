@@ -8,7 +8,7 @@
 	Copyright (C) 2002, aroka
 	Copyright (C) 2008, ryoji
 	Copyright (C) 2009, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -19,90 +19,55 @@
 #pragma once
 
 #include <Unknwn.h>
+
+#include "cxx/TComImpl.hpp"
 #include "util/design_template.h"
+#include "util/os.h"
 
 class CDropTarget;
-class CYbInterfaceBase;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class COleLibrary
-{
-	using Me = COleLibrary;
 
-	friend class CYbInterfaceBase;
-private:
-//	DWORD m_dwCount;	// 2009.01.08 ryoji m_dwCount削除
-	COleLibrary();
-public:
-	COleLibrary(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	COleLibrary(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~COleLibrary();
-private:
-	void Initialize();
-	void UnInitialize();
-};
-
-class CYbInterfaceBase
-{
-	using Me = CYbInterfaceBase;
-
-	static COleLibrary m_olelib;
-protected:
-	CYbInterfaceBase();
-	CYbInterfaceBase(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	CYbInterfaceBase(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CYbInterfaceBase();
-	static HRESULT QueryInterfaceImpl( IUnknown*, REFIID, REFIID, void** );
-};
-
-template<class BASEINTERFACE>
-class CYbInterfaceImpl : public BASEINTERFACE, public CYbInterfaceBase
+/*!
+ * @brief D&Dターゲットクラス
+ *
+ * D&Dターゲット(IDropTarget)の実装です。
+ */
+class CDropTarget : public cxx::TComImpl<IDropTarget>
 {
 private:
-	static REFIID m_owniid;
-public:
-	CYbInterfaceImpl(){AddRef();}
-	STDMETHOD( QueryInterface )( REFIID riid, void** ppvObj )
-	{return QueryInterfaceImpl( this, m_owniid, riid, ppvObj );}
-	STDMETHOD_( ULONG, AddRef )( void )
-	{return 1;}
-	STDMETHOD_( ULONG, Release )( void )
-	{return 0;}
-};
-
-class CDropTarget : public CYbInterfaceImpl<IDropTarget>
-{
+	using Base = cxx::TComImpl<IDropTarget>;
 	using Me = CDropTarget;
 
 public:
+	// 生成関数
+	template<typename T, typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<T, Args...>
+	{
+		return Base::template make_instance<T>(std::forward<Args>(args)...);
+	}
+	
 	/*
 	||  Constructors
 	*/
-	CDropTarget( CEditWnd* );	// 2008.06.20 ryoji
-	CDropTarget( CEditView* );
-	CDropTarget(const Me&) = delete;
-	Me& operator = (const Me&) = delete;
-	CDropTarget(Me&&) noexcept = delete;
-	Me& operator = (Me&&) noexcept = delete;
-	~CDropTarget();
+	explicit CDropTarget(
+		CEditView* pcEditView = nullptr
+	);
+
+	~CDropTarget() override;
+
 	/*
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
-	CEditWnd*		m_pcEditWnd = nullptr;	// 2008.06.20 ryoji
-	HWND			m_hWnd_DropTarget = nullptr;
 	CEditView*		m_pcEditView = nullptr;
+
 public:
-	BOOL			Register_DropTarget(HWND hWnd);
-	BOOL			Revoke_DropTarget( void );
 	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
 	STDMETHODIMP	DragLeave( void ) override;
@@ -113,17 +78,65 @@ protected:
 	*/
 };
 
-class CDropSource : public CYbInterfaceImpl<IDropSource> {
+/*!
+ * @brief 編集ウィンドウのD&Dターゲット実装
+ *
+ * @date 2008/06/20 ryoji 右ボタンドロップ用
+ */
+class CDropTarget_CEditWnd final : public CDropTarget
+{
 private:
-	BOOL m_bLeft;
+	using Base = CDropTarget;
+	using Me = CDropTarget_CEditWnd;
+
 public:
-	CDropSource( BOOL bLeft ):m_bLeft( bLeft ){}
+	CDropTarget_CEditWnd() = default;
+
+	IFACEMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	IFACEMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	IFACEMETHODIMP	DragLeave() override;
+	IFACEMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+};
+
+/*!
+ * @brief D&Dソースクラス
+ *
+ * D&Dソース(IDropSource)の実装です。
+ */
+class CDropSource final : public cxx::TComImpl<IDropSource> {
+private:
+	using Base = cxx::TComImpl<IDropSource>;
+	using Me = CDropSource;
+
+public:
+	static DWORD DoDragDrop(
+		LPDATAOBJECT pDataObject,
+		DWORD dwDesiredEffects,
+		bool bLeft = true
+	);
+
+	explicit CDropSource(
+		bool bLeft
+	)
+		: m_bLeft{ bLeft }
+	{
+	}
 
 	STDMETHOD( QueryContinueDrag )( BOOL bEscapePressed, DWORD dwKeyState );
 	STDMETHOD( GiveFeedback )( DWORD dropEffect );
+
+private:
+	bool m_bLeft;
 };
 
-class CDataObject : public CYbInterfaceImpl<IDataObject> {
+/*!
+ * @brief クリップボードデータクラス
+ *
+ * クリップボードデータ(IDataObject)の実装です。
+ * 「サクラエディタが扱えるクリップボードデータ」です。
+ * SetDataをサポートしない Init Only な実装です。
+ */
+class CDataObject final : public cxx::TComImpl<IDataObject> {
 private:
 	friend class CEnumFORMATETC;	// 2008.03.26 ryoji
 
@@ -137,17 +150,30 @@ private:
 		SIZE_T		size = 0ULL;				//!< データサイズ。バイト単位。
 	};
 
+	using Base = cxx::TComImpl<IDataObject>;
+	using Me = CDataObject;
+
 	int m_nFormat = 0;
 	PDATA m_pData = nullptr;
 
 public:
-	CDataObject (LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect )
+	static CLIPFORMAT cfColumnSelect;
+	static CLIPFORMAT cfLineSelect1;
+	static CLIPFORMAT cfLineSelect2;
+	static CLIPFORMAT cfSakuraClip;
+
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<Me, Args...>
 	{
-		SetText( lpszText, nTextLen, bColumnSelect );
+		return Base::template make_instance<Me>(std::forward<Args>(args)...);
 	}
-	~CDataObject(){SetText( nullptr, 0, FALSE );}
-	void	SetText( LPCWSTR lpszText, size_t nTextLen, BOOL bColumnSelect );
-	DWORD	DragDrop( BOOL bLeft, DWORD dwEffects );
+
+	explicit CDataObject(
+		std::wstring_view text,
+		bool bColumnSelect = false
+	);
 
 	STDMETHOD( GetData )( LPFORMATETC, LPSTGMEDIUM );
 	STDMETHOD( GetDataHere )( LPFORMATETC, LPSTGMEDIUM );
@@ -159,31 +185,47 @@ public:
 	STDMETHOD( DUnadvise )( DWORD );
 	STDMETHOD( EnumDAdvise )( LPENUMSTATDATA* );
 
-	DISALLOW_COPY_AND_ASSIGN(CDataObject);
+	void SetText(
+		std::wstring_view text,
+		bool bColumnSelect = false
+	);
 };
 
-//! CEnumFORMATETC クラス
-//	2008.03.26 ryoji 新規作成
-class CEnumFORMATETC : public CYbInterfaceImpl<IEnumFORMATETC> {
+/*!
+ * @brief データ形式を列挙するクラス
+ *
+ * クリップボードに含まれるデータ形式を列挙する。
+ *
+ * @date 2008/03/26 ryoji 複数フォーマット対応で新規作成
+ */
+class CEnumFORMATETC final : public cxx::TComImpl<IEnumFORMATETC> {
 private:
-	LONG m_lRef = 1;
+	using Base = cxx::TComImpl<IEnumFORMATETC>;
+	using Me = CEnumFORMATETC;
+
 	int m_nIndex = 0;
 	CDataObject* m_pcDataObject;
+
 public:
-	CEnumFORMATETC(CDataObject* pcDataObject) : m_pcDataObject(pcDataObject) {}
-	STDMETHOD_( ULONG, AddRef )( void )
-	{return ::InterlockedIncrement(&m_lRef);}
-	STDMETHOD_( ULONG, Release )( void )
+	// 生成関数
+	template<typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<Me, Args...>
 	{
-		if( ::InterlockedDecrement(&m_lRef) == 0 ){
-			delete this;
-			return 0;	// 削除後なので m_lRef は使わない
-		}
-		return m_lRef;
+		return Base::template make_instance<Me>(std::forward<Args>(args)...);
 	}
+
+	explicit CEnumFORMATETC(
+		CDataObject* pcDataObject
+	)
+		: m_pcDataObject(pcDataObject)
+	{
+	}
+
 	STDMETHOD( Next )(ULONG celt, FORMATETC* rgelt, ULONG* pceltFetched);
 	STDMETHOD( Skip )(ULONG celt);
 	STDMETHOD( Reset )(void);
 	STDMETHOD( Clone )(IEnumFORMATETC** ppenum);
 };
+
 #endif /* SAKURA_CDROPTARGET_365C215D_E844_49BD_8E96_549970AE0A50_H_ */

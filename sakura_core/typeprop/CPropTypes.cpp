@@ -32,6 +32,7 @@
 #include "CSelectLang.h"
 #include "env/DLLSHAREDATA.h"
 #include "sakura_rc.h"
+#include "apiwrap/DarkMode.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      メッセージ処理                         //
@@ -48,6 +49,7 @@ INT_PTR CALLBACK PropTypesCommonProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPA
 	case WM_INITDIALOG:
 		pPsp = (PROPSHEETPAGE*)lParam;
 		pCPropTypes = reinterpret_cast<CPropTypes*>(pPsp->lParam);
+		DarkMode::setDarkWndSafe(hwndDlg);
 		if( nullptr != pCPropTypes ){
 			UpdateDialogFont( hwndDlg );
 			return (pCPropTypes->*pDispatch)( hwndDlg, uMsg, wParam, pPsp->lParam );
@@ -163,8 +165,8 @@ INT_PTR CPropTypes::DoPropertySheet( int nPageNum )
 		p->pfnCallback = nullptr;
 	}
 
-	PROPSHEETHEADER psh = { PROPSHEETHEADER_V2_SIZE };
-	psh.dwSize     = PROPSHEETHEADER_V2_SIZE;
+	PROPSHEETHEADER psh = { sizeof(PROPSHEETHEADER) };
+	psh.dwSize     = sizeof(PROPSHEETHEADER);
 	psh.dwFlags    = PSH_NOAPPLYNOW | PSH_PROPSHEETPAGE | PSH_USEPAGELANG;
 	psh.hwndParent = m_hwndParent;
 	psh.hInstance  = CSelectLang::getLangRsrcInstance();
@@ -283,7 +285,7 @@ HFONT CPropTypes::SetFontLabel( HWND hwndDlg, int idc_static, const LOGFONT& lf,
 		hFont = SetCtrlFont( hwndDlg, idc_static, lfTemp );
 
 		// フォント名の設定
-		auto_snprintf_s( szFontName, _TRUNCATE, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
+		auto_sprintf( szFontName, nps % 10 ? L"%s(%.1fpt)" : L"%s(%.0fpt)",
 			lf.lfFaceName, double(nps)/10 );
 		ApiWrap::DlgItem_SetText( hwndDlg, idc_static, szFontName );
 	}

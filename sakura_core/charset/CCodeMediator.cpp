@@ -30,7 +30,7 @@ ECodeType CCodeMediator::CheckKanjiCode(const char* buff, size_t size) noexcept
 		return m_sEncodingConfig.m_eDefaultCodetype;
 	}
 
-	CharsetDetector csd;
+	static thread_local CharsetDetector csd;
 	if (csd.IsAvailable()) {
 		auto code = csd.Detect(std::string_view(buff, size));
 		if (code != CODE_ERROR) return code;

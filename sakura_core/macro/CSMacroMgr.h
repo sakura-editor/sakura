@@ -9,7 +9,7 @@
 	Copyright (C) 2002, YAZAKI, genta
 	Copyright (C) 2005, FILE
 	Copyright (C) 2007, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -22,6 +22,7 @@
 #include <WTypes.h> //VARTYPE
 
 #include "CMacroManagerBase.h"
+#include "env/CSakuraEnvironment.h"	//env::ShareDataClient
 #include "env/DLLSHAREDATA.h"
 #include "config/maxdata.h"
 #include "util/design_template.h"
@@ -32,22 +33,47 @@ const int STAND_KEYMACRO	= -1;	//!< 標準マクロ(キーマクロ)
 const int TEMP_KEYMACRO		= -2;	//!< 一時マクロ(名前を指定してマクロ実行)
 const int INVALID_MACRO_IDX	= -3;	//!< 無効なマクロのインデックス番号 @date Sep. 15, 2005 FILE
 
-struct MacroFuncInfoEx
-{
-	int			m_nArgMinSize;
-	int			m_nArgMaxSize;
-	VARTYPE*	m_pVarArgEx;
+//! マクロの読み込み・実行結果
+enum class EMacroResult {
+	Success,
+	Failure,
+	EncodingError,
 };
 
 //マクロ関数情報構造体
 //	関数名はCSMacroMgrが持つ
 struct MacroFuncInfo {
-	int				m_nFuncID;
-	const WCHAR*	m_pszFuncName;
-	VARTYPE			m_varArguments[4];	//!< 引数の型の配列
-	VARTYPE			m_varResult;		//!< 戻り値の型 VT_EMPTYならprocedureということで
-	MacroFuncInfoEx*	m_pData;
+	static constexpr auto MaxArgs = 8;
+	using SVarTypeArr = std::array<VARTYPE, MaxArgs>;
+
+	MacroFuncInfo() = default;
+
+	constexpr MacroFuncInfo(
+		int funcID,
+		const WCHAR* funcName,
+		std::initializer_list<VARTYPE> arguments,
+		VARTYPE result,
+		std::nullptr_t = nullptr
+	)
+		: m_nFuncID{ funcID }
+		, m_pszFuncName{ funcName }
+		, m_varResult{ result }
+	{
+		if (std::size(m_varArguments) < arguments.size()) throw std::overflow_error("Too many arguments for MacroFuncInfo");
+
+		std::copy_n(
+			arguments.begin(),
+			std::min(arguments.size(), std::size(m_varArguments)),
+			m_varArguments.begin()
+		);
+	}
+
+	int				m_nFuncID = 0;
+	LPCWSTR			m_pszFuncName = nullptr;
+	SVarTypeArr		m_varArguments{};			//!< 引数型の配列
+	VARTYPE			m_varResult = VT_EMPTY;		//!< 戻り値の型 VT_EMPTYならprocedureということで
 };
+
 //マクロ関数情報構造体配列
 typedef MacroFuncInfo* MacroFuncInfoArray;
 
@@ -56,7 +82,7 @@ typedef MacroFuncInfo* MacroFuncInfoArray;
 
 @date 2002.2.17 YAZAKI CShareDataのインスタンスは、CProcessにひとつあるのみ。
 -----------------------------------------------------------------------*/
-class CSMacroMgr
+class CSMacroMgr final : private env::ShareDataClient
 {
 	//	データの型宣言
 	CMacroManagerBase* m_cSavedKeyMacro[MAX_CUSTMACRO];	//	キーマクロをカスタムメニューの数だけ管理
@@ -82,7 +108,7 @@ public:
 	void ClearAll( void );	/* キーマクロのバッファをクリアする */
 
 	//! キーボードマクロの実行
-	BOOL Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
+	EMacroResult Exec( int idx, HINSTANCE hInstance, CEditView* pcEditView, int flags );
 	
 	//!	実行可能か？CShareDataに問い合わせ
 	bool IsEnabled(int idx) const {
@@ -117,7 +143,8 @@ public:
 	}
 
 	/*! キーボードマクロの読み込み */
-	BOOL Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+	EMacroResult Load( int idx, HINSTANCE hInstance, const WCHAR* pszPath, const WCHAR* pszType );
+
 	BOOL Save( int idx, HINSTANCE hInstance, const WCHAR* pszPath );
 	void UnloadAll(void);
 
@@ -127,7 +154,7 @@ public:
 	/*
 	||  Attributes & Operations
 	*/
-	static LPWSTR GetFuncInfoByID(int nFuncID, std::span<WCHAR> szFuncName, const std::optional<std::span<WCHAR>>& optFuncNameJapanese = std::nullopt);	/* 機能ID→関数名，機能名日本語 */
+	static WCHAR* GetFuncInfoByID( HINSTANCE hInstance, int nFuncID, WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 機能ID→関数名，機能名日本語 */
 	static EFunctionCode GetFuncInfoByName( HINSTANCE hInstance, const WCHAR* pszFuncName, WCHAR* pszFuncNameJapanese );	/* 関数名→機能ID，機能名日本語 */
 	static BOOL CanFuncIsKeyMacro( int nFuncID );	/* キーマクロに記録可能な機能かどうかを調べる */
 	
@@ -150,7 +177,6 @@ public:
 	CMacroManagerBase* SetTempMacro( CMacroManagerBase *newMacro );
 
 private:
-	DLLSHAREDATA*	m_pShareData;
 	CMacroManagerBase** Idx2Ptr(int idx);
 
 	/*!	実行中マクロのインデックス番号 (INVALID_MACRO_IDX:無効)

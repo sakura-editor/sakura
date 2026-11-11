@@ -1,6 +1,6 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -55,31 +55,6 @@ void CNativeA::AppendString( const char* pszData )
 void CNativeA::AppendString( const char* pszData, size_t nLength )
 {
 	AppendRawData( pszData, nLength );
-}
-
-//! バッファの最後にデータを追加する (フォーマット機能付き)
-void CNativeA::AppendStringF(const char* pszData, ...)
-{
-	char buf[2048];
-
-	// 整形
-	va_list v;
-	va_start(v, pszData);
-	int len = _vsnprintf_s(buf, std::size(buf), _TRUNCATE, pszData, v);
-
-#ifdef _DEBUG
-	int e = errno;
-#endif
-
-	va_end(v);
-
-	if (len == -1) {
-		DEBUG_TRACE(L"AppendStringF error. errno = %d", e);
-		throw std::exception();
-	}
-
-	// 追加
-	AppendString( buf, len );
 }
 
 const CNativeA& CNativeA::operator = ( char cChar )

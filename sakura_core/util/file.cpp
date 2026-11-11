@@ -3,7 +3,7 @@
 	Copyright (C) 2002, SUI
 	Copyright (C) 2003, MIK
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,19 +11,21 @@
 #include "StdAfx.h"
 #include "file.h"
 
+#include "_main/CProcessFactory.h"
+
 #include <Shlwapi.h>
 
 #include <regex>
 #include <string_view>
 
 #include "charset/codechecker.h"
+#include "util/file/FileHandle.hpp"
 #include "util/module.h"
+#include "util/os.h"
 #include "util/window.h"
 #include "env/CShareData.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CFileNameManager.h"
-#include "_main/CCommandLine.h"
-#include "_main/CControlProcess.h"
 
 //! ファイル名に使えない文字(ADSを使えるように':'は除外する)
 static constexpr auto& g_InvalidChars = LR"(*?"<>|)";
@@ -41,19 +43,34 @@ bool fexist(const std::filesystem::path& path) noexcept
 
 /*!
  * パスがファイル名に使えない文字を含んでいるかチェックする
- * @param[in] path チェック対象のパス
+ *
+ * @param[in] szPath チェック対象のパス文字列
  * @retval true  パスはファイル名に使えない文字を含んでいる
  * retuval false パスはファイル名に使えない文字を含んでいない
  */
-bool IsInvalidFilenameChars(const std::filesystem::path& path) noexcept
+bool IsInvalidFilenameChars(
+	std::wstring_view szPath
+)
 {
+	// 引数からパスオブジェクトを作成する
+	std::filesystem::path path{ szPath };
+
 	// 文字列中のファイル名を抽出する
 	if (!path.has_filename()) {
 		return false;
 	}
+	
+	// ファイル名を抽出する
+	if (path.has_parent_path()) {
+		// ファイル名のみのパスオブジェクトにする
+		path = path.filename();
+	}
+
+	// パスオブジェクトから文字列を取り出す
+	const auto& filename = path.native();
 
 	// ファイル名に使えない文字が含まれる場合、trueを返す
-	return path.filename().wstring().find_first_of(g_InvalidChars) != std::wstring::npos;
+	return std::wstring::npos != filename.find_first_of(g_InvalidChars);
 }
 
 /*!	ファイル名の切り出し
@@ -181,7 +198,7 @@ bool IsLocalDrive( const WCHAR* pszDrive )
 	long	lngRet;
 
 	if( iswalpha(pszDrive[0]) ){
-		auto_snprintf_s(szDriveType, _TRUNCATE, L"%c:\\", towupper(pszDrive[0]));
+		auto_sprintf(szDriveType, L"%c:\\", towupper(pszDrive[0]));
 		lngRet = GetDriveType( szDriveType );
 		if( lngRet == DRIVE_REMOVABLE || lngRet == DRIVE_CDROM || lngRet == DRIVE_REMOTE )
 		{
@@ -212,6 +229,12 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 	return pszPath;
 }
 
+WCHAR* GetFileTitlePointer(WCHAR* pszPath)
+{
+	const auto p = GetFileTitlePointer(const_cast<const WCHAR*>(pszPath));
+	return pszPath + (p - pszPath);
+}
+
 /*! fnameが相対パスの場合は、実行ファイルのパスからの相対パスとして開く
 	@author Moca
 	@date 2003.06.23
@@ -219,15 +242,12 @@ const WCHAR* GetFileTitlePointer(const WCHAR* pszPath)
 */
 FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 {
-	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		GetExedir( path, fname );
-		::_wfopen_s(&fp, path, mode);
-	} else {
-		::_wfopen_s(&fp, fname, mode);
+		return _wfopen( path, mode );
 	}
-	return fp;
+	return _wfopen( fname, mode );
 }
 
 /*! fnameが相対パスの場合は、INIファイルのパスからの相対パスとして開く
@@ -236,18 +256,15 @@ FILE* _wfopen_absexe(LPCWSTR fname, LPCWSTR mode)
 */
 FILE* _wfopen_absini(LPCWSTR fname, LPCWSTR mode, BOOL bOrExedir/*=TRUE*/ )
 {
-	FILE* fp = nullptr;
 	if( _IS_REL_PATH( fname ) ){
 		WCHAR path[_MAX_PATH];
 		if( bOrExedir )
 			GetInidirOrExedir( path, fname );
 		else
 			GetInidir( path, fname );
-		::_wfopen_s(&fp, path, mode);
-	} else {
-		::_wfopen_s(&fp, fname, mode);
+		return _wfopen( path, mode );
 	}
-	return fp;
+	return _wfopen( fname, mode );
 }
 
 /* フォルダーの最後が半角かつ'\\'の場合は、取り除く "c:\\"等のルートは取り除かない */
@@ -273,27 +290,31 @@ void CutLastYenFromDirectoryPath( WCHAR* pszFolder )
 	return;
 }
 
-void AddLastYenFromDirectoryPath( WCHAR* pszFolder )
+namespace cxx {
+
+void AddLastYenFromDirectoryPath(std::span<WCHAR> folder)
 {
-	if( 3 == wcslen( pszFolder )
-	 && pszFolder[1] == L':'
-	 && pszFolder[2] == L'\\'
-	){
-		/* ドライブ名:\ */
-	}else{
-		/* フォルダーの最後が半角かつ'\\'でない場合は、付加する */
-		int	nFolderLen;
-		nFolderLen = (int)wcslen( pszFolder );
-		if( 0 < nFolderLen ){
-			if( L'\\' == pszFolder[nFolderLen - 1] || L'/' == pszFolder[nFolderLen - 1] ){
-			}else{
-				pszFolder[nFolderLen] = L'\\';
-				pszFolder[nFolderLen + 1] = L'\0';
-			}
-		}
+	const auto cchFolder = std::size(folder);
+
+	auto pszFolder = std::data(folder);
+
+	const auto nFolderLen = static_cast<int>(::wcsnlen(pszFolder, cchFolder));
+
+	if (0 == nFolderLen) {
+		return;
 	}
+
+	/* フォルダー文字列の末尾がフォルダー区切り文字になっていない場合は付加する */
+	if (const auto lastChar = pszFolder[nFolderLen - 1];
+		L'\\' != lastChar && L'/' != lastChar)
+	{
+		::wcscat_s(pszFolder, cchFolder, L"\\");
+	}
+
 	return;
 }
+
+} // namespace cxx
 
 //! パスらしき文字列の末尾に'\\'または'/'がなかったら'\\'を付加する
 std::wstring AddLastYenPath(std::wstring_view path)
@@ -305,6 +326,22 @@ std::wstring AddLastYenPath(std::wstring_view path)
 	if (auto c = ret.back(); !(c == L'\\' || c == L'/')) {
 		ret.append(L"\\");
 	}
+	return ret;
+}
+
+/*!
+	パスの区切りの / を \ に置き換える
+
+	ファイルダイアログの「ファイル名」に / 区切りのパスを入力したときに使う(Issue #2727)。
+	URL(:// を含むもの)は変えない。
+*/
+std::wstring ReplaceSlashToYen(std::wstring_view path)
+{
+	std::wstring ret{ path };
+	if (ret.find(L"://") != std::wstring::npos) {
+		return ret;
+	}
+	std::ranges::replace(ret, L'/', L'\\');
 	return ret;
 }
 
@@ -320,8 +357,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 	int		nCharChars;
 	_wsplitpath_s( pszFilePath, szDrive, szDir, szFname, szExt );
 	if( nullptr != pszFolder ){
-		::wcsncpy_s(pszFolder, _MAX_PATH, szDrive, _TRUNCATE);
-		::wcsncat_s(pszFolder, _MAX_PATH, szDir, _TRUNCATE);
+		wcscpy( pszFolder, szDrive );
+		wcscat( pszFolder, szDir );
 		/* フォルダーの最後が半角かつ'\\'の場合は、取り除く */
 		nFolderLen = (int)wcslen( pszFolder );
 		if( 0 < nFolderLen ){
@@ -332,8 +369,8 @@ void SplitPath_FolderAndFile( const WCHAR* pszFilePath, WCHAR* pszFolder, WCHAR*
 		}
 	}
 	if( nullptr != pszFile ){
-		::wcsncpy_s(pszFile, _MAX_PATH, szFname, _TRUNCATE);
-		::wcsncat_s(pszFile, _MAX_PATH, szExt, _TRUNCATE);
+		wcscpy( pszFile, szFname );
+		wcscat( pszFile, szExt );
 	}
 	return;
 }
@@ -370,21 +407,21 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 	@date Oct. 4, 2005 genta 相対パスが絶対パスに直されなかった
 	@date Oct. 5, 2005 Moca  相対パスを絶対パスに変換するように
 */
-BOOL GetLongFileName(const std::filesystem::path& srcPath, std::span<WCHAR> szDestPath)
+BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes )
 {
 	WCHAR* name;
-	SFilePath szBuf;
-	int len = ::GetFullPathNameW(srcPath.c_str(), DWORD(std::size(szBuf)), szBuf, &name);
+	WCHAR szBuf[_MAX_PATH + 1];
+	int len = ::GetFullPathName( pszFilePathSrc, _MAX_PATH, szBuf, &name );
 	if( len <= 0 || _MAX_PATH <= len ){
-		len = ::GetLongPathNameW(srcPath.c_str(), std::data(szDestPath), int(std::size(szDestPath)));
+		len = ::GetLongPathName( pszFilePathSrc, pszFilePathDes, _MAX_PATH );
 		if( len <= 0 || _MAX_PATH < len ){
 			return FALSE;
 		}
 		return TRUE;
 	}
-	len = ::GetLongPathNameW(szBuf, std::data(szDestPath), int(std::size(szDestPath)));
+	len = ::GetLongPathName( szBuf, pszFilePathDes, _MAX_PATH );
 	if( len <= 0 || _MAX_PATH < len ){
-		::wcsncpy_s(std::data(szDestPath), std::size(szDestPath), szBuf, _TRUNCATE);
+		wcscpy( pszFilePathDes, szBuf );
 	}
 	return TRUE;
 }
@@ -481,13 +518,19 @@ int CalcDirectoryDepth(
  */
 std::filesystem::path GetExeFileName()
 {
-	// メモリ確保
-	constexpr const size_t cchPath = decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT - 1;
-	std::wstring path(cchPath, L'\0');
-
 	// sakura.exe のパスを取得して返却
-	::GetModuleFileName(nullptr, path.data(), (DWORD)path.capacity());
-	return path.data();
+	const auto path = cxx::GetModuleFileNameW(nullptr);
+	if (const auto cchMaxPath = decltype(DLLSHAREDATA::m_szIniFile)::size();
+		cchMaxPath <= path.length())
+	{
+		// EXEパスが長過ぎる場合、例外を投げる
+		throw std::system_error(
+			std::make_error_code(std::errc::filename_too_long),
+			std::format("exe path is too long. (length: at least {}, allowed: {})", path.length(), cchMaxPath - 1)
+		);
+	}
+
+	return path;
 }
 
 /*!
@@ -499,18 +542,24 @@ std::filesystem::path GetExeFileName()
 	@date 2008.05.05 novice GetModuleHandle(NULL)→NULLに変更
 */
 void GetExedir(
-	std::span<WCHAR>							szExeDir,	//!< [out]		EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	const std::optional<std::filesystem::path>& optFileName	//!< [in, opt]	ディレクトリ名に結合するファイル名．
+	LPWSTR	pDir,	//!< [out] EXEファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCWSTR	szFile	//!< [in]  ディレクトリ名に結合するファイル名．
 )
 {
-	// exeフォルダーのフルパス、またはexe基準のファイルパスを取得
-	auto exePath = GetExeFileName().remove_filename();
-	if (optFileName.has_value()) {
-		if (const auto& fileName = optFileName.value(); !fileName.empty()) {
-			exePath /= fileName;
-		}
+	if( pDir == nullptr )
+		return;
+
+	std::wstring partialPath;
+	if (szFile != nullptr) {
+		partialPath = szFile;
 	}
-	::wcsncpy_s(std::data(szExeDir), std::size(szExeDir), exePath.c_str(), _TRUNCATE);
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
+	}
+
+	// exeフォルダーのフルパス、またはexe基準のファイルパスを取得
+	auto path = GetExeFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -531,18 +580,24 @@ std::filesystem::path GetIniFileName()
 	@date 2007.05.19 新規作成（GetExedirベース）
 */
 void GetInidir(
-	std::span<WCHAR> szIniDir,								//!< [out]		INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
-	const std::optional<std::filesystem::path>& optFileName	//!< [in, opt]	ディレクトリ名に結合するファイル名．
+	LPWSTR	pDir,				//!< [out] INIファイルのあるディレクトリを返す場所．予め_MAX_PATHのバッファを用意しておくこと．
+	LPCWSTR szFile	/*=NULL*/	//!< [in] ディレクトリ名に結合するファイル名．
 )
 {
-	// 設定フォルダーのフルパス、またはini基準のファイルパスを取得
-	auto iniPath = GetIniFileName().remove_filename();
-	if (optFileName.has_value()) {
-		if (const auto& fileName = optFileName.value(); !fileName.empty()) {
-			iniPath /= fileName;
-		}
+	if( pDir == nullptr )
+		return;
+	
+	std::wstring partialPath;
+	if (szFile != nullptr) {
+		partialPath = szFile;
 	}
-	::wcsncpy_s(std::data(szIniDir), std::size(szIniDir), iniPath.c_str(), _TRUNCATE);
+	if (partialPath.empty() || partialPath[0] != L'\\') {
+		partialPath.insert(partialPath.cbegin(), L'\\');
+	}
+
+	// 設定フォルダーのフルパス、またはini基準のファイルパスを取得
+	auto path = GetIniFileName().parent_path().concat(partialPath);
+	::wcsncpy_s(pDir, decltype(DLLSHAREDATA::m_szPrivateIniFile)::BUFFER_COUNT, path.c_str(), _TRUNCATE);
 }
 
 /*!
@@ -552,32 +607,36 @@ void GetInidir(
 	@date 2007.05.22 新規作成
 */
 void GetInidirOrExedir(
-	std::span<WCHAR> szIniOrExeDir,						//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
-														//         予め_MAX_PATHのバッファを用意しておくこと．
-	const std::optional<std::wstring_view>& optFileName	//!< [in] ディレクトリ名に結合するファイル名．
+	LPWSTR	pDir,								//!< [out] INIファイルまたはEXEファイルのあるディレクトリを返す場所．
+												//         予め_MAX_PATHのバッファを用意しておくこと．
+	LPCWSTR	szFile					/*=NULL*/,	//!< [in] ディレクトリ名に結合するファイル名．
+	BOOL	bRetExedirIfFileEmpty	/*=FALSE*/	//!< [in] ファイル名の指定が空の場合はEXEファイルのフルパスを返す．
 )
 {
-	assert(_MAX_PATH <= std::size(szIniOrExeDir));
+	WCHAR	szInidir[_MAX_PATH];
+	WCHAR	szExedir[_MAX_PATH];
 
-	SFilePath szInidir;
-	SFilePath szExedir;
+	// ファイル名の指定が空の場合はEXEファイルのフルパスを返す（オプション）
+	if( bRetExedirIfFileEmpty && (szFile == nullptr || szFile[0] == L'\0') ){
+		GetExedir( pDir );
+		return;
+	}
 
 	// INI基準のフルパスが実在すればそのパスを返す
-	GetInidir(szInidir, optFileName);
-	if (fexist(szInidir)) {
-		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szInidir, _TRUNCATE);
+	GetInidir( szInidir, szFile );
+	if( fexist(szInidir) ){
+		::lstrcpy( pDir, szInidir );
 		return;
 	}
 
 	// EXE基準のフルパスが実在すればそのパスを返す
-	GetExedir(szExedir, optFileName);
-	if (fexist(szExedir)) {
-		::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szExedir, _TRUNCATE);
+	if( GetExedir( szExedir, szFile ); fexist(szExedir) ){
+		::wcsncpy_s( pDir, _MAX_PATH - 1, szExedir, _TRUNCATE );
 		return;
 	}
 
 	// どちらにも実在しなければINI基準のフルパスを返す
-	::wcsncpy_s(std::data(szIniOrExeDir), std::size(szIniOrExeDir), szInidir, _TRUNCATE);
+	::lstrcpy( pDir, szInidir );
 }
 
 /*!
@@ -615,6 +674,7 @@ LPCWSTR GetRelPath( LPCWSTR pszPath )
  * @param [in] prefix ファイル名の前に付ける3文字の接頭辞。
  * @param [in, opt] optTempDir 一時フォルダーのパス。指定しない場合はシステムの一時フォルダーを使う。
  */
+// TODO: いつか廃止する
 std::filesystem::path GetTempFilePath(
 	std::wstring_view prefix,
 	const std::optional<std::filesystem::path>& optTempDir
@@ -719,35 +779,36 @@ bool IsDirectory(LPCWSTR pszPath)
 	return false;
 }
 
-/*!	ファイルの更新日時を取得
-
-	@return true: 成功, false: 失敗
-*/
-bool GetLastWriteTimestamp(
-	const WCHAR*	pszFileName,	//!< [in]  ファイルのパス
-	CFileTime*		pcFileTime		//!< [out] 更新日時を返す場所
+/*!
+ * @brief ファイルの更新日時を取得
+ *
+ * @param[in] filename ファイルのパス
+ * @returns ファイルの更新日時
+ */
+FILETIME GetLastWriteTime(
+	std::wstring_view	fileName	//!< [in]  ファイルのパス
 )
 {
+	using namespace cxx;
+
 	// dwDesiredAccess に 0 を指定する事で読み取りアクセスが拒否されてしまうような場合でも、
 	// ファイル自体にはアクセスせずにメタデータの読み取りが可能
 	// https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew
 	// If this parameter is zero, the application can query certain metadata such as file, directory, or device attributes without accessing that file or device, even if GENERIC_READ access would have been denied.
-	HANDLE hFile = ::CreateFile(pszFileName, 0, 0, nullptr, OPEN_EXISTING, 0, nullptr);
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	FILETIME ftLastWrite;
-	BOOL ret = ::GetFileTime(hFile, nullptr, nullptr, &ftLastWrite);
-	::CloseHandle(hFile);
-	if (ret == 0)
-	{
-		pcFileTime->ClearFILETIME();
-		return false;
-	}
-	pcFileTime->SetFILETIME(ftLastWrite);
-	return true;
+	const auto hFile = FileHandle::OpenExisting(
+		fileName,
+		0,
+		0
+	);
+
+	FILETIME ftLastWrite{};
+	hFile.GetFileTime(
+		nullptr,
+		nullptr,
+		&ftLastWrite
+	);
+
+	return ftLastWrite;
 }
 
 // -----------------------------------------------------------------------------
@@ -956,12 +1017,14 @@ void my_splitpath_w (
 			pe = wcsrchr(pf,L'.');		/* 最末尾の '.' を探す。 */
 			if( pe != nullptr ){					/* 見つかった(pe = L'.'の位置)*/
 				if( ext != nullptr ){	/* 拡張子を返値として書き込む。 */
-					::wcsncpy_s(ext, _MAX_EXT, pe, _TRUNCATE);
+					wcsncpy(ext,pe,_MAX_EXT-1);
+					ext[_MAX_EXT -1] = L'\0';
 				}
 				*pe = L'\0';	/* 区切り位置を文字列終端にする。pe = 拡張子名の先頭位置。 */
 			}
 			if( fnm != nullptr ){	/* ファイル名を返値として書き込む。 */
-				::wcsncpy_s(fnm, _MAX_FNAME, pf, _TRUNCATE);
+				wcsncpy(fnm,pf,_MAX_FNAME-1);
+				fnm[_MAX_FNAME -1] = L'\0';
 			}
 			*pf = L'\0';	/* ファイル名の先頭位置を文字列終端にする。 */
 		}
@@ -979,11 +1042,13 @@ void my_splitpath_w (
 			}
 
 			/* ディレクトリ名を返値として書き込む。 */
-			::wcsncpy_s(dir, _MAX_DIR, pd, _TRUNCATE);
+			wcsncpy(dir,pd,_MAX_DIR -1);
+			dir[_MAX_DIR -1] = L'\0';
 		}
 		*pd = L'\0';		/* ディレクトリ名の先頭位置を文字列終端にする。 */
 		if( drv != nullptr ){	/* ドライブレターを返値として書き込む。 */
-			::wcsncpy_s(drv, _MAX_DRIVE, ppp, _TRUNCATE);
+			wcsncpy(drv,ppp,_MAX_DRIVE -1);
+			drv[_MAX_DRIVE -1] = L'\0';
 		}
 	}
 	return;
@@ -1103,7 +1168,7 @@ void GetStrTrancateWidth( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, in
 		if( nPxWidth < calc.GetTextWidth(strTemp2.c_str()) ){
 			// 入りきらなかったので1文字前までをコピー
 			wcsncpy_s(dest, t_max(0, nSize - 3), strTempOld.c_str(), _TRUNCATE);
-			::wcsncat_s(dest, nSize, L"...", _TRUNCATE);
+			wcscat_s(dest, nSize, L"...");
 			return;
 		}
 		strTempOld = strTemp;
@@ -1244,7 +1309,7 @@ void GetShortViewPath( WCHAR* dest, int nSize, const WCHAR* path, HDC hDC, int n
 				strLeftFile += strFile; // C:\...\longfilename
 				int nExtLen = nPathLen - nExtPos;
 				GetStrTrancateWidth(dest, t_max(0, nSize - nExtLen), strLeftFile.c_str(), hDC, nPxWidth - nExtWidth);
-				::wcsncat_s(dest, nSize, &path[nExtPos+1], _TRUNCATE); // 拡張子連結 C:\...\longf...ext
+				wcscat_s(dest, nSize, &path[nExtPos+1]); // 拡張子連結 C:\...\longf...ext
 			}else{
 				// ファイル名が置けないくらい拡張子か左側が長い。パスの左側を優先して残す
 				GetStrTrancateWidth(dest, nSize, strTemp.c_str(), hDC, nPxWidth);

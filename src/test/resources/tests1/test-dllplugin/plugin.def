@@ -1,0 +1,26 @@
+[Plugin]
+Id=TestDllPlugin
+Name=Test DLL Plugin
+Description=dummy DLL plugin for tests1.exe
+Type=dll
+Author=Sakura Editor Organization
+Version=1.0.0
+Url=
+
+[Dll]
+Name=dll_plugin1.dll
+
+[Plug]
+EditorStart=TestDllEditorStart
+EditorStart.Label=No-op on editor start (DLL)
+
+[Option]
+O[1].Section=Noop
+O[1].Key=EnableFeature
+O[1].Label=Enable Feature
+O[1].Type=bool
+O[1].Default=1
+
+[Command]
+C[1]=TestDllCommand
+C[1].Label=No-op command (DLL)

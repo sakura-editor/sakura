@@ -5,7 +5,7 @@
 */
 /*
 	Copyright (C) 2010-2012 Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,7 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <span>
 #include "CShiftJis.h"
 
 enum EEncodingTrait
@@ -41,7 +42,7 @@ public:
 	//CCodeBaseインターフェース
 	EConvertResult CodeToUnicode(const CMemory& cSrc, CNativeW* pDst) override{ return CPToUnicode(cSrc, pDst, m_nCodePageEx); }	//!< 特定コード → UNICODE    変換
 	EConvertResult UnicodeToCode(const CNativeW& cSrc, CMemory* pDst) override{ return UnicodeToCP(cSrc, pDst, m_nCodePageEx); }	//!< UNICODE    → 特定コード 変換
-	EConvertResult UnicodeToHex(std::wstring_view src, std::span<WCHAR> dst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
+	EConvertResult UnicodeToHex(const wchar_t* cSrc, const int iSLen, WCHAR* pDst, const CommonSetting_Statusbar* psStatusbar) override;			//!< UNICODE → Hex 変換
 
 public:
 	//実装
@@ -52,10 +53,11 @@ public:
 	
 	//GUI用補助関数
 	static CCodePage::CodePageList& GetCodePageList();
-	static int GetNameNormal(std::span<WCHAR> outName, int charcodeEx);
-	static int GetNameShort(std::span<WCHAR> outName, int charcodeEx);
-	static int GetNameLong(std::span<WCHAR> outName, int charcodeEx);
+	static int GetNameNormal(LPWSTR outName, int charcodeEx);
+	static int GetNameShort(LPWSTR outName, int charcodeEx);
+	static int GetNameLong(LPWSTR outName, int charcodeEx);
 	static int GetNameBracket(std::span<WCHAR> outName, int charcodeEx);
+	static std::wstring GetNameBracket(int charcodeEx);
 	static int AddComboCodePages(HWND hwnd, HWND combo, int nSelCode);
 	
 	//CP補助情報

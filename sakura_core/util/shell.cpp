@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2025, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,10 +11,14 @@
 #include <ShlObj.h>
 #include <shellapi.h>
 #include <CdErr.h> // Nov. 3, 2005 genta	//CDERR_FINDRESFAILURE等
+
+#include "debug/Debug1.h"
 #include "util/shell.h"
 #include "util/string_ex2.h"
 #include "util/file.h"
 #include "util/os.h"
+#include "util/os/Comdlg32.hpp"
+#include "util/os/User32.hpp"
 #include "util/module.h"
 #include "util/window.h"
 #include "env/CShareData.h"
@@ -22,19 +26,17 @@
 #include "config/app_constants.h"
 #include "cxx/com_pointer.hpp"
 #include "cxx/ResourceHolder.hpp"
+#include "apiwrap/DarkMode.h"
 
 #pragma comment(lib, "htmlhelp.lib") 
 
-BOOL SelectDir(HWND hWnd, const std::wstring& title, const std::filesystem::path& initialDirectory, WCHAR* strFolderName, size_t nMaxCount)
-{
-	return SelectDir(hWnd, title, initialDirectory, std::span(strFolderName, nMaxCount));
-}
+namespace cxx {
 
 /* フォルダー選択ダイアログ */
 BOOL SelectDir(
-	HWND hWnd,
-	const std::wstring& title,
-	const std::filesystem::path& initialDirectory,
+	_In_opt_ HWND hWnd,
+	_In_z_ LPCWSTR title,
+	_In_z_ LPCWSTR initialDirectory,
 	std::span<WCHAR> buffer
 )
 {
@@ -69,13 +71,13 @@ BOOL SelectDir(
 
 	// 初期フォルダーを設定
 	cxx::com_pointer<IShellItem> psiFolder;
-	hres = SHCreateItemFromParsingName(initialDirectory.c_str(), nullptr, IID_PPV_ARGS(&psiFolder));
+	hres = SHCreateItemFromParsingName(initialDirectory, nullptr, IID_PPV_ARGS(&psiFolder));
 	if ( SUCCEEDED(hres) ) {
 		pDialog->SetFolder(psiFolder);
 	}
 
 	// タイトル文字列を設定
-	hres = pDialog->SetTitle( title.c_str() );
+	hres = pDialog->SetTitle(title);
 	if ( FAILED(hres) ) {
 		return FALSE;
 	}
@@ -110,6 +112,14 @@ BOOL SelectDir(
 
 	return bRet;
 }
+
+} // namespace cxx
+
+namespace apiwrap {
+
+std::wstring CommDlgExtendedErrorString();
+
+}	// namespace apiwrap
 
 ///////////////////////////////////////////////////////////////////////
 // From Here 2007.05.25 ryoji 独自拡張のプロパティシート関数群
@@ -242,11 +252,13 @@ static int CALLBACK PropSheetProc( HWND hwndDlg, UINT uMsg, [[maybe_unused]] LPA
 		if( CShareData::getInstance()->IsPrivateSettings() ){
 			// 個人設定フォルダーを使用するときは「設定フォルダー」ボタンを追加する
 			::SetWindowSubclass(hwndDlg, &PropSheetWndProc, 0, 0);
-			HINSTANCE hInstance = (HINSTANCE)GetAppInstance();
+			HINSTANCE hInstance = (HINSTANCE)::GetModuleHandle( nullptr );
 			HWND hwndBtn = ::CreateWindowEx( 0, WC_BUTTON, LS(STR_SHELL_INIFOLDER), BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 0, 0, 140, 20, hwndDlg, (HMENU)0x02000, hInstance, nullptr );
 			::SendMessage( hwndBtn, WM_SETFONT, (WPARAM)hFont, MAKELPARAM( FALSE, 0 ) );
 			::SetWindowPos( hwndBtn, ::GetDlgItem( hwndDlg, IDHELP), 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE );
 		}
+
+		DarkMode::setDarkWndSafe(hwndDlg);
 	}
 	return 0;
 }
@@ -389,7 +401,7 @@ BOOL ResolveShortcutLink( HWND hwnd, LPCWSTR lpszLinkFile, LPWSTR lpszPath )
 						if( SUCCEEDED(hRes = pIShellLink->GetDescription(szDescription, MAX_PATH ) ) ){
 							if( L'\0' != szGotPath[0] ){
 								/* 正常終了 */
-								::wcsncpy_s(lpszPath, _MAX_PATH, szGotPath, _TRUNCATE);
+								wcscpy_s( lpszPath, _MAX_PATH, szGotPath );
 								bRes = TRUE;
 							}
 						}
@@ -440,6 +452,9 @@ static LPCWSTR GetHelpFilePath()
 */
 BOOL MyWinHelp(HWND hwndCaller, UINT uCommand, DWORD_PTR dwData)
 {
+	// MyWinHelpの呼出をテストできるようにするため、モック可能なメソッド呼出を挟む。
+	if (User32::getInstance()->WinHelpW(hwndCaller, nullptr, uCommand, dwData)) return TRUE;
+
 	UINT uCommandOrg = uCommand;	// WinHelp のコマンド
 	bool bDesktop = false;	// デスクトップを親にしてヘルプ画面を出すかどうか
 	HH_POPUP hp;	// ポップアップヘルプ用の構造体
@@ -557,32 +572,25 @@ BOOL MySelectFont( LOGFONT* plf, INT* piPointSize, HWND hwndDlgOwner, bool Fixed
 	cf.lStructSize = sizeof( cf );
 	cf.hwndOwner = hwndDlgOwner;
 	cf.hDC = nullptr;
-	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT;
+	cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_EFFECTS | CF_ENABLEHOOK;
 	if( FixedFontOnly ){
 		//FIXEDフォント
 		cf.Flags |= CF_FIXEDPITCHONLY;
 	}
 	cf.lpLogFont = plf;
-	if( !ChooseFont( &cf ) ){
+	cf.lpfnHook = static_cast<LPCFHOOKPROC>(DarkMode::HookDlgProc);
+	cf.hInstance = GetModuleHandleW(nullptr);
+	if (!Comdlg32::getInstance()->ChooseFontW(&cf)) {
 #ifdef _DEBUG
-		DWORD nErr;
-		nErr = CommDlgExtendedError();
-		switch( nErr ){
-		case CDERR_FINDRESFAILURE:	MYTRACE( L"CDERR_FINDRESFAILURE \n" );	break;
-		case CDERR_INITIALIZATION:	MYTRACE( L"CDERR_INITIALIZATION \n" );	break;
-		case CDERR_LOCKRESFAILURE:	MYTRACE( L"CDERR_LOCKRESFAILURE \n" );	break;
-		case CDERR_LOADRESFAILURE:	MYTRACE( L"CDERR_LOADRESFAILURE \n" );	break;
-		case CDERR_LOADSTRFAILURE:	MYTRACE( L"CDERR_LOADSTRFAILURE \n" );	break;
-		case CDERR_MEMALLOCFAILURE:	MYTRACE( L"CDERR_MEMALLOCFAILURE\n" );	break;
-		case CDERR_MEMLOCKFAILURE:	MYTRACE( L"CDERR_MEMLOCKFAILURE \n" );	break;
-		case CDERR_NOHINSTANCE:		MYTRACE( L"CDERR_NOHINSTANCE \n" );		break;
-		case CDERR_NOHOOK:			MYTRACE( L"CDERR_NOHOOK \n" );			break;
-		case CDERR_NOTEMPLATE:		MYTRACE( L"CDERR_NOTEMPLATE \n" );		break;
-		case CDERR_STRUCTSIZE:		MYTRACE( L"CDERR_STRUCTSIZE \n" );		break;
-		case CFERR_MAXLESSTHANMIN:	MYTRACE( L"CFERR_MAXLESSTHANMIN \n" );	break;
-		case CFERR_NOFONTS:			MYTRACE( L"CFERR_NOFONTS \n" );			break;
-		default:
-			break;
+		std::wstring name;
+		try {
+			name = apiwrap::CommDlgExtendedErrorString();
+		}
+		catch (const std::out_of_range&) {
+			// 不明なエラー
+		}
+		if (!name.empty()) {
+			TRACE("%s \n", std::data(name));
 		}
 #endif
 		return FALSE;

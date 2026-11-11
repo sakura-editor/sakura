@@ -1,0 +1,49 @@
+﻿/*! @file */
+/*
+	Copyright (C) 2026, Sakura Editor Organization
+
+	SPDX-License-Identifier: Zlib
+ */
+#pragma once
+
+#include "env/ShareDataTestSuite.hpp"
+#include "window/UiaTestSuite.hpp"
+
+#include "_main/CCommandLine.h"
+#include "doc/CEditDoc.h"
+#include "window/CEditWnd.h"
+
+#include "CEditApp.h"
+
+#include "agent/CGrepAgent.h"
+#include "agent/CLoadAgent.h"
+#include "agent/CSaveAgent.h"
+#include "macro/CSMacroMgr.h"
+#include "uiparts/CVisualProgress.h"
+
+namespace window {
+
+struct EditorTestSuite : public env::ShareDataTestSuite
+{
+	static constexpr HINSTANCE unusedArg1 = nullptr;
+
+	static inline std::filesystem::path dmpPath{};
+	static inline std::filesystem::path iniBkPath{};
+	static inline std::filesystem::path profIniPath{};
+
+	static inline std::unique_ptr<CCommandLine> pCommandLine = nullptr;
+
+	static inline std::unique_ptr<CEditDoc> pcEditDoc = nullptr;
+	static inline std::unique_ptr<CEditWnd> pcEditWnd = nullptr;
+	static inline std::unique_ptr<CSMacroMgr> pcSMacroMgr = nullptr;
+
+	static inline std::unique_ptr<CLoadAgent> pcLoadAgent = nullptr;
+	static inline std::unique_ptr<CSaveAgent> pcSaveAgent = nullptr;
+	static inline std::unique_ptr<CVisualProgress> pcVisualProgress = nullptr;
+	static inline std::unique_ptr<CGrepAgent> pcGrepAgent = nullptr;
+
+	static void SetUpEditor();
+	static void TearDownEditor();
+};
+
+} // namespace env

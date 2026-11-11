@@ -15,7 +15,7 @@
 	Copyright (C) 2008, syat
 	Copyright (C) 2009, syat
 	Copyright (C) 2010, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holders to use this code for other purpose.
@@ -31,26 +31,80 @@
 #include "env/CShareData.h"
 #include "config/system_constants.h"
 
-/* 上下に分割 */	//Sept. 17, 2000 jepro 説明の「縦」を「上下に」に変更
-void CViewCommander::Command_SPLIT_V( void )
+namespace cmd::window {
+
+/*!
+ * @brief 編集ウインドウのウインドウハンドルを取得する
+ *
+ * @throws 編集ウインドウが未作成のとき
+ */
+_Ret_maybenull_
+HWND GetMainWindow()
+{
+	return GetEditWnd().GetHwnd();
+}
+
+/*!
+ * @brief 上下に分割
+ *
+ * @date 2000/09/17 jepro 説明の「縦」を「上下に」に変更
+ */
+void Command_SPLIT_V( void )
 {
 	GetEditWnd().m_cSplitterWnd.VSplitOnOff();
 	return;
 }
 
-/* 左右に分割 */	//Sept. 17, 2000 jepro 説明の「横」を「左右に」に変更
-void CViewCommander::Command_SPLIT_H( void )
+/*!
+ * @brief 左右に分割
+ *
+ * @date 2000/09/17 jepro 説明の「横」を「左右に」に変更
+ */
+void Command_SPLIT_H( void )
 {
 	GetEditWnd().m_cSplitterWnd.HSplitOnOff();
 	return;
 }
 
-/* 縦横に分割 */	//Sept. 17, 2000 jepro 説明に「に」を追加
-void CViewCommander::Command_SPLIT_VH( void )
+/*!
+ * @brief 縦横に分割
+ *
+ * @date 2000/09/17 jepro 説明に「に」を追加
+ */
+void Command_SPLIT_VH( void )
 {
 	GetEditWnd().m_cSplitterWnd.VHSplitOnOff();
 	return;
 }
+
+/* 編集ウィンドウを最大化 */
+void Command_WINMAXIMIZE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_MAXIMIZE);
+	}
+	return;
+}
+
+/* 編集ウィンドウを最小化 */
+void Command_WINMINIMIZE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_MINIMIZE);
+	}
+	return;
+}
+
+/* 編集ウィンドウを元のサイズに戻す */
+void Command_WINRESTORE()
+{
+	if (const auto hEditWnd = GetMainWindow()) {
+		::ShowWindow(hEditWnd, SW_RESTORE);
+	}
+	return;
+}
+
+} // namespace cmd::window
 
 /* ウィンドウを閉じる */
 void CViewCommander::Command_WINCLOSE( void )
@@ -101,7 +155,7 @@ void CViewCommander::Command_TAB_CLOSEOTHER( void )
 void CViewCommander::Command_WINLIST( int nCommandFrom )
 {
 	//ウィンドウ一覧をポップアップ表示する
-	GetEditWnd().PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
+	GetEditWindow()->PopupWinList(( nCommandFrom & FA_FROMKEYBOARD ) != FA_FROMKEYBOARD );
 	// 2007.02.27 ryoji アクセラレータキーからでなければマウス位置に
 }
 
@@ -159,7 +213,7 @@ void CViewCommander::Command_CASCADE( void )
 			}
 			//	Mar. 20, 2004 genta
 			//	現在のウィンドウを末尾に持っていくためここではスキップ
-			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				current_win_index = i;
 				continue;
 			}
@@ -290,9 +344,9 @@ void CViewCommander::Command_TILE_V( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetMainWindow();
+				phwndArr[0] = CEditWnd::getInstance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -349,9 +403,9 @@ void CViewCommander::Command_TILE_H( void )
 			}
 			//	From Here Jul. 28, 2002 genta
 			//	現在のウィンドウを先頭に持ってくる
-			if( pEditNodeArr[i].GetHwnd() == GetMainWindow() ){
+			if( pEditNodeArr[i].GetHwnd() == CEditWnd::getInstance()->GetHwnd() ){
 				phwndArr[count] = phwndArr[0];
-				phwndArr[0] = GetMainWindow();
+				phwndArr[0] = CEditWnd::getInstance()->GetHwnd();
 			}
 			else {
 				phwndArr[count] = pEditNodeArr[i].GetHwnd();
@@ -388,7 +442,7 @@ void CViewCommander::Command_TILE_H( void )
 */
 void CViewCommander::Command_WINTOPMOST( LPARAM lparam )
 {
-	GetEditWnd().WindowTopMost( int(lparam) );
+	GetEditWindow()->WindowTopMost( int(lparam) );
 }
 
 //Start 2004.07.14 Kazika 追加
@@ -411,8 +465,8 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		// まとめるときは WS_EX_TOPMOST 状態を同期する	// 2007.05.18 ryoji
 		if( !GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin )
 		{
-			GetEditWnd().WindowTopMost(
-				( (DWORD)::GetWindowLongPtr( GetMainWindow(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
+			GetEditWindow()->WindowTopMost(
+				( (DWORD)::GetWindowLongPtr( GetEditWindow()->GetHwnd(), GWL_EXSTYLE ) & WS_EX_TOPMOST )? 1: 2
 			);
 		}
 
@@ -422,7 +476,7 @@ void CViewCommander::Command_BIND_WINDOW( void )
 		CAppNodeGroupHandle(0).PostMessageToAllEditors(
 			MYWM_TAB_WINDOW_NOTIFY,						//タブウィンドウイベント
 			(WPARAM)((GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin) ? TWNT_MODE_DISABLE : TWNT_MODE_ENABLE),//タブモード有効/無効化イベント
-			(LPARAM)GetMainWindow(),	//CEditWndのウィンドウハンドル
+			(LPARAM)GetEditWindow()->GetHwnd(),	//CEditWndのウィンドウハンドル
 			m_pCommanderView->GetHwnd());									//自分自身
 		//End 2004.08.27 Kazika
 	}
@@ -442,7 +496,7 @@ void CViewCommander::Command_GROUPCLOSE( void )
 /* 次のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_NEXTGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->NextGroup();
@@ -451,7 +505,7 @@ void CViewCommander::Command_NEXTGROUP( void )
 /* 前のグループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_PREVGROUP( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->PrevGroup();
@@ -460,7 +514,7 @@ void CViewCommander::Command_PREVGROUP( void )
 /* タブを右に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVERIGHT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveRight();
@@ -469,7 +523,7 @@ void CViewCommander::Command_TAB_MOVERIGHT( void )
 /* タブを左に移動 */		// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_MOVELEFT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->MoveLeft();
@@ -478,7 +532,7 @@ void CViewCommander::Command_TAB_MOVELEFT( void )
 /* 新規グループ */			// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_SEPARATE( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->Separate();
@@ -487,7 +541,7 @@ void CViewCommander::Command_TAB_SEPARATE( void )
 /* 次のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTNEXT( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinNext();
@@ -496,7 +550,7 @@ void CViewCommander::Command_TAB_JOINTNEXT( void )
 /* 前のグループに移動 */	// 2007.06.20 ryoji
 void CViewCommander::Command_TAB_JOINTPREV( void )
 {
-	CTabWnd* pcTabWnd = &GetEditWnd().m_cTabWnd;
+	CTabWnd* pcTabWnd = &GetEditWindow()->m_cTabWnd;
 	if( pcTabWnd->GetHwnd() == nullptr )
 		return;
 	pcTabWnd->JoinPrev();

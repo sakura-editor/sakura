@@ -6,7 +6,8 @@
 */
 #pragma once
 
-class CEditDoc;
+class CDocLineMgr;
+class CFilePath;
 
 struct IndentationStyle
 {
@@ -19,5 +20,5 @@ struct IndentationStyle
 	int tabSpace = -1;
 };
 
-void DetectIndentationStyle(const CEditDoc* pcDoc, size_t nMaxLinesToCheck, IndentationStyle& style);
+void DetectIndentationStyle(const CFilePath& cFilePath, const CDocLineMgr& cDocLineMgr, size_t nMaxLinesToCheck, IndentationStyle& style);
 

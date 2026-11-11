@@ -17,6 +17,7 @@
 
 #include "StdAfx.h"
 #include "debug/CRunningTimer.h"
+#include <stdarg.h>
 
 int CRunningTimer::m_nNestCount = 0;
 CRunningTimer::TimePoint CRunningTimer::m_initialTime = std::chrono::high_resolution_clock::now();
@@ -47,8 +48,19 @@ CRunningTimer::CRunningTimer( std::wstring_view name, OutputMode mode, OutputSty
 
 CRunningTimer::~CRunningTimer()
 {
+	// デストラクタに例外を投げ得る処理を書いてはならない
+	try {
+
 	WriteTraceInternal( GetTime(), TraceType::ExitScope );
 	FlushPendingTraces();
+
+	}
+	// エラーが発生した場合
+	catch(const std::exception& e) {
+		// ログを出力する
+		TRACE("fail: %hs", e.what());
+	}
+
 	if( m_nDepth == 0 ){
 		OutputFooter();
 	}
@@ -73,15 +85,12 @@ uint32_t CRunningTimer::Read() const
 */
 void CRunningTimer::WriteTrace( std::wstring_view msg )
 {
-	const auto currentTime = GetTime();
-	WriteTraceInternal(currentTime, TraceType::Normal, msg);
+	WriteTraceFormat( L"%s", msg.data() );
 }
 
 void CRunningTimer::WriteTrace( int32_t n )
 {
-	const auto currentTime = GetTime();
-	const auto msg = std::format(L"{}", n);
-	WriteTraceInternal(currentTime, TraceType::Normal, msg);
+	WriteTraceFormat( L"%d", n );
 }
 
 CRunningTimer::TimePoint CRunningTimer::GetTime()
@@ -118,8 +127,8 @@ void CRunningTimer::FlushPendingTraces()
 void CRunningTimer::OutputHeader() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output(L"| timestamp (s) | {:<{}} | time (ms) | diff (ms) | message\n", L"name", m_nNameOutputWidth);
-		Output(L"|--------------:|-{:-<{}}-|----------:|----------:|--------\n", L"", m_nNameOutputWidth);
+		Output( L"| timestamp (s) | %-*s | time (ms) | diff (ms) | message\n", m_nNameOutputWidth, L"name" );
+		Output( L"|--------------:|-%.*s-|----------:|----------:|--------\n", m_nNameOutputWidth, L"----------------------------------------------------------------------------------------------------" );
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -128,7 +137,7 @@ void CRunningTimer::OutputHeader() const
 void CRunningTimer::OutputFooter() const
 {
 	if( m_outputStyle == OutputStyle::Markdown ){
-		Output(L"\n");
+		cxx::OutputDebugStringW( L"\n" );
 	}else{
 		// 従来形式では出力するものなし
 	}
@@ -145,13 +154,12 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 			//msg = msg
 		}
 
-		Output(L"| {:13.6f} | {:.{}}{:<{}} | {:9.3f} | {:9.3f} | {}\n",
+		Output( L"| %13.6f | %.*s%-*s | %9.3f | %9.3f | %s\n",
 			GetElapsedTimeInSeconds( CRunningTimer::m_initialTime, currentTime ),
-			L"_ _ _ _ _ _ _ _ _ _ ", m_nDepth * 2, m_timerName, (m_nNameOutputWidth - (m_nDepth * 2)),
+			m_nDepth * 2, L"_ _ _ _ _ _ _ _ _ _ ", (m_nNameOutputWidth - (m_nDepth * 2)), m_timerName.c_str(),
 			GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0,
 			GetElapsedTimeInSeconds( m_lastTime, currentTime ) * 1000.0,
-			msg
-		);
+			msg.data() );
 	}else{
 		if( traceType == TraceType::Enter ){
 			msg = L"Enter";
@@ -162,23 +170,16 @@ void CRunningTimer::OutputTrace( TimePoint currentTime, TraceType traceType, std
 		}
 
 		if( traceType == TraceType::Enter ){
-			Output(L"{:3d}:\"{}\" : {}\n",
+			Output( L"%3d:\"%s\" : %s\n",
 				m_nDepth,
-				m_timerName,
-				msg
-			);
+				m_timerName.c_str(),
+				msg.data() );
 		}else{
-			Output(L"{:3d}:\"{}\", {}㍉秒 : {}\n",
+			Output( L"%3d:\"%s\", %d㍉秒 : %s\n",
 				m_nDepth,
-				m_timerName,
+				m_timerName.c_str(),
 				(int)(GetElapsedTimeInSeconds( m_startTime, currentTime ) * 1000.0),
-				msg
-			);
+				msg.data() );
 		}
 	}
-}
-
-void CRunningTimer::Output(const std::wstring& text) const
-{
-	::OutputDebugStringW(text.c_str());
 }

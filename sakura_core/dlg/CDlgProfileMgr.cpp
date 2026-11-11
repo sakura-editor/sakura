@@ -6,12 +6,15 @@
 */
 /*
 	Copyright (C) 2013, Moca
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
 #include "dlg/CDlgProfileMgr.h"
+
+#include "_main/CCommandLine.h"
+
 #include "dlg/CDlgInput1.h"
 #include "env/CDataProfile.h"
 #include "util/file.h"
@@ -52,7 +55,7 @@ bool CDlgProfileMgr::TrySelectProfile( CCommandLine* pcCommandLine ) noexcept
 		bDialog = false;
 	}else if( 0 < settings.m_nDefaultIndex && settings.m_nDefaultIndex <= static_cast<int>(settings.m_vProfList.size()) ){
 		// プロファイル設定のデフォルトインデックス値から該当のプロファイル名が指定されたものとして動作する
-		pcCommandLine->SetProfileName( settings.m_vProfList[settings.m_nDefaultIndex - 1].c_str() );
+		pcCommandLine->SetProfileName(settings.m_vProfList[settings.m_nDefaultIndex - 1]);
 		bDialog = false;
 	}else{
 		// プロファイル設定のデフォルトインデックス値が不正なのでプロファイルマネージャを表示して設定更新を促す
@@ -74,9 +77,21 @@ CDlgProfileMgr::CDlgProfileMgr()
 }
 
 /*! モーダルダイアログの表示 */
-int CDlgProfileMgr::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
+int CDlgProfileMgr::DoModal(
+	HWND hWndParent,
+	SProfileName& profileName
+)
 {
-	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_PROFILEMGR, lParam );
+	const HINSTANCE unusedArg = nullptr;
+
+	const auto ret = (int)CDialog::DoModal(unusedArg, hWndParent, IDD_PROFILEMGR, 0L);
+
+	if (ret)
+	{
+		profileName = m_ProfileName;
+	}
+
+	return ret;
 }
 
 /*!
@@ -181,9 +196,9 @@ int CDlgProfileMgr::GetData(bool bStart)
 	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	MyList_GetText( hwndList, nCurIndex, szText );
-	m_strProfileName = szText;
-	if( m_strProfileName == L"(default)" ){
-		m_strProfileName.clear();
+	m_ProfileName = szText;
+	if( m_ProfileName == L"(default)" ){
+		m_ProfileName = L"";
 	}
 	bool bDefaultSelect = IsDlgButtonCheckedBool( GetHwnd(), IDC_CHECK_PROF_DEFSTART );
 	SProfileSettings settings;
@@ -329,13 +344,13 @@ static bool IsProfileDuplicate(HWND hwndList, LPCWSTR szProfName, int skipIndex)
 
 void CDlgProfileMgr::CreateProf()
 {
-	CDlgInput1 cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	int max_size = _MAX_PATH;
 	WCHAR szText[_MAX_PATH];
 	std::wstring strTitle = LS(STR_DLGPROFILE_NEW_PROF_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_NEW_PROF_MSG);
 	szText[0] = L'\0';
-	if( !cDlgInput1.DoModal(GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(nullptr), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
@@ -385,16 +400,16 @@ void CDlgProfileMgr::DeleteProf()
 void CDlgProfileMgr::RenameProf()
 {
 	HWND hwndList = GetItemHwnd( IDC_LIST_PROFILE );
-	CDlgInput1 cDlgInput1;
+	auto& cDlgInput1 = *CDlgInput1::getInstance();
 	int nCurIndex = ApiWrap::List_GetCurSel(hwndList);
 	WCHAR szText[_MAX_PATH];
 	bool bDefault = MyList_GetText( hwndList, nCurIndex, szText );
 	WCHAR szTextOld[_MAX_PATH];
-	::wcsncpy_s(szTextOld, szText, _TRUNCATE);
+	wcscpy( szTextOld, szText );
 	std::wstring strTitle = LS(STR_DLGPROFILE_RENAME_TITLE);
 	std::wstring strMessage = LS(STR_DLGPROFILE_RENAME_MSG);
 	int max_size = _MAX_PATH;
-	if( !cDlgInput1.DoModal(GetAppInstance(), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
+	if( !cDlgInput1.DoModal(::GetModuleHandle(nullptr), GetHwnd(), strTitle.c_str(), strMessage.c_str(), max_size - 1, szText) ){
 		return;
 	}
 	if( szText[0] == L'\0' ){
@@ -437,7 +452,7 @@ void CDlgProfileMgr::RenameProf()
 		}
 	}
 	if( bDefault ){
-		::wcsncat_s(szText, L"*", _TRUNCATE);
+		wcscat(szText, L"*");
 	}
 	ApiWrap::List_DeleteString( hwndList, nCurIndex );
 	ApiWrap::List_InsertString( hwndList, nCurIndex, szText );
@@ -452,7 +467,7 @@ void CDlgProfileMgr::SetDefaultProf(int index)
 	WCHAR szProfileName[_MAX_PATH];
 	MyList_GetText( hwndList, index, szProfileName );
 	ApiWrap::List_DeleteString( hwndList, index );
-	::wcsncat_s(szProfileName, L"*", _TRUNCATE);
+	wcscat( szProfileName, L"*" );
 	ApiWrap::List_InsertString( hwndList, index, szProfileName );
 }
 
@@ -489,7 +504,7 @@ static bool IOProfSettings( SProfileSettings& settings, bool bWrite )
 	for(int i = 0; i < nCount; i++){
 		wchar_t szKey[64];
 		std::wstring strProfName;
-		::_snwprintf_s(szKey, _TRUNCATE, L"P[%d]", i + 1); // 1開始
+		_swprintf( szKey, L"P[%d]", i + 1 ); // 1開始
 		if( bWrite ){
 			strProfName = settings.m_vProfList[i];
 			cProf.IOProfileData( pSection, szKey, strProfName );

@@ -63,7 +63,7 @@ static const int codeTable2[] = { 0x00, 0x10, 0x100 };
 int CDlgExec::DoModal( HINSTANCE hInstance, HWND hwndParent, LPARAM lParam )
 {
 	m_szCommand[0] = L'\0';	/* コマンドライン */
-	m_bEditable = GetDocument()->IsEditable();
+	m_bEditable = CEditDoc::GetInstance(0)->IsEditable();
 	return (int)CDialog::DoModal( hInstance, hwndParent, IDD_EXEC, lParam );
 }
 
@@ -136,7 +136,7 @@ void CDlgExec::SetData( void )
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCommandsCount = m_pShareData->m_sHistory.m_aCommands.size();
 	if( 0 < nCommandsCount ){
-		::wcsncpy_s(m_szCommand, m_pShareData->m_sHistory.m_aCommands[0], _TRUNCATE);
+		wcscpy( m_szCommand, m_pShareData->m_sHistory.m_aCommands[0] );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCommand );
 		for( i = 0; i < nCommandsCount; ++i ){
 			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCommands[i] );
@@ -148,7 +148,7 @@ void CDlgExec::SetData( void )
 	ApiWrap::Combo_ResetContent( hwndCombo );
 	const int nCurDirsCount = m_pShareData->m_sHistory.m_aCurDirs.size();
 	if( 0 < nCurDirsCount ){
-		::wcsncpy_s(m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0], _TRUNCATE);
+		wcscpy( m_szCurDir, m_pShareData->m_sHistory.m_aCurDirs[0] );
 		ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_TEXT, m_szCurDir );
 		for( i = 0; i < nCurDirsCount; ++i ){
 			ApiWrap::Combo_AddString( hwndCombo, m_pShareData->m_sHistory.m_aCurDirs[i] );
@@ -239,7 +239,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 	//From Here Mar. 28, 2001 JEPRO
 	case IDC_BUTTON_REFERENCE:	/* ファイル名の「参照...」ボタン */
 		{
-			CDlgOpenFile	cDlgOpenFile;
+			auto& cDlgOpenFile = *CDlgOpenFile::getInstance();
 			WCHAR			szPath[_MAX_PATH + 1];
 			wcsncpy_s(szPath, m_szCommand, _TRUNCATE);
 			/* ファイルオープンダイアログの初期化 */
@@ -250,7 +250,7 @@ BOOL CDlgExec::OnBnClicked( int wID )
 				m_szCommand
 			);
 			if( cDlgOpenFile.DoModal_GetOpenFileName( szPath ) ){
-				::wcsncpy_s(m_szCommand, szPath, _TRUNCATE);
+				wcscpy( m_szCommand, szPath );
 				ApiWrap::DlgItem_SetText( GetHwnd(), IDC_COMBO_m_szCommand, m_szCommand );
 			}
 		}

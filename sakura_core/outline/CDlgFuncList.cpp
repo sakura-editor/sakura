@@ -34,6 +34,7 @@
 #include "uiparts/CGraphics.h"
 #include "util/shell.h"
 #include "util/os.h"
+#include "util/os/User32.hpp"
 #include "util/input.h"
 #include "util/window.h"
 #include "env/CAppNodeManager.h"
@@ -54,6 +55,7 @@
 #include "sakura.hh"
 #include "config/system_constants.h"
 #include "config/app_constants.h"
+#include "apiwrap/DarkMode.h"
 
 // 画面ドッキング用の定義	// 2010.06.05 ryoji
 #define DEFINE_SYNCCOLOR
@@ -202,7 +204,7 @@ HINSTANCE CDlgFuncList::m_lastRcInstance = nullptr;
 CDlgFuncList::CDlgFuncList() : CDialog(true)
 {
 	/* サイズ変更時に位置を制御するコントロール数 */
-	static_assert( std::size(anchorList) == std::extent_v<decltype(m_rcItems)> );
+	static_assert( int(std::size(anchorList)) == int(std::size(m_rcItems)) );
 
 	m_pcFuncInfoArr = nullptr;		/* 関数情報配列 */
 	m_nCurLine = CLayoutInt(0);				/* 現在行 */
@@ -246,7 +248,7 @@ INT_PTR CDlgFuncList::DispatchEvent( HWND hWnd, UINT wMsg, WPARAM wParam, LPARAM
 		// それでは都合が悪いので，特別に以下の処理を行って他と同様な挙動が得られるようにする．
 		if( (BOOL)wParam ){
 			if( ::GetActiveWindow() == GetHwnd() ){
-				::SetActiveWindow( GetMainWindow() );
+				::SetActiveWindow( GetEditWnd().GetHwnd() );
 				BlockingHook( nullptr );	// キュー内に溜まっているメッセージを処理
 				::SetActiveWindow( GetHwnd() );
 				return 0L;
@@ -355,7 +357,7 @@ HWND CDlgFuncList::DoModeless(
 	m_nOutlineType = nOutlineType;		/* アウトライン解析の種別 */
 	m_nListType = nListType;			/* 一覧の種類 */
 	m_bLineNumIsCRLF = bLineNumIsCRLF;	/* 行番号の表示 false=折り返し単位／true=改行単位 */
-	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	m_nSortCol = m_type.m_nOutlineSortCol;
 	m_nSortColOld = m_nSortCol;
@@ -571,11 +573,12 @@ void CDlgFuncList::SetData()
 
 			//	From Here Apr. 23, 2005 genta 行番号を左端へ
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
-			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT | LVIF_PARAM;
 			item.pszText = szText;
 			item.iItem = i;
@@ -585,11 +588,12 @@ void CDlgFuncList::SetData()
 
 			// 2010.03.17 syat 桁追加
 			/* 行番号の表示 false=折り返し単位／true=改行単位 */
-			if(m_bLineNumIsCRLF ){
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
-			}else{
-				auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
-			}
+			auto_sprintf_s(
+				szText,
+				L"%d",
+				pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+			);
+
 			item.mask = LVIF_TEXT;
 			item.pszText = szText;
 			item.iItem = i;
@@ -626,12 +630,12 @@ void CDlgFuncList::SetData()
 			/* クリップボードにコピーするテキストを編集 */
 			if(item.pszText[0] != L'\0'){
 				// 検出結果の種類(関数,,,)があるとき
-				auto_snprintf_s(
-					szText, _TRUNCATE,
+				auto_sprintf(
+					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				// "%s(%s)\r\n"
@@ -641,12 +645,12 @@ void CDlgFuncList::SetData()
 				m_cmemClipText.AppendString(L")\r\n");
 			}else{
 				// 検出結果の種類(関数,,,)がないとき
-				auto_snprintf_s(
-					szText, _TRUNCATE,
+				auto_sprintf(
+					szText,
 					L"%s(%d,%d): ",
 					m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-					int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-					int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+					pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+					pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 				);
 				m_cmemClipText.AppendString(szText);
 				m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
@@ -702,7 +706,8 @@ void CDlgFuncList::SetData()
 	}
 	// 2002/11/1 frozen 項目のソート基準を設定するコンボボックスはブックマーク一覧の以外の時に表示する
 	// Nov. 5, 2002 genta ツリー表示の時だけソート基準コンボボックスを表示
-	int nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	CEditView* pcEditView = (CEditView*)m_lParam;
+	int nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	if( nDocType != m_nDocType ){
 		// 以前とはドキュメントタイプが変わったので初期化する
 		m_nDocType = nDocType;
@@ -896,6 +901,8 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 	int				bSelected;
 	CLayoutInt		nFuncLineOld;
 	CLayoutInt		nFuncColOld;
+	CLayoutInt		nFuncLineTop(INT_MAX);
+	CLayoutInt		nFuncColTop(INT_MAX);
 	TV_INSERTSTRUCT	tvis;
 	const WCHAR*	pPos;
 	HTREEITEM		htiGlobal = nullptr;	// Jan. 04, 2001 genta C++と統合
@@ -1047,11 +1054,11 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 					{
 						if( pcFuncInfo->m_nInfo == FL_OBJ_NAMESPACE )
 						{
-							//::wcsncat_s(pClassName, L" 名前空間", _TRUNCATE);
+							//wcscat( pClassName, L" 名前空間" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_NAMESPACE);
 						}
 						else
-							//::wcsncat_s(pClassName, L" クラス", _TRUNCATE);
+							//wcscat( pClassName, L" クラス" );
 							strClassName += m_pcFuncInfoArr->GetAppendText(FL_OBJ_CLASS);
 					}
 					tvis.hParent = htiParent;
@@ -1128,12 +1135,12 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 
 		/* クリップボードにコピーするテキストを編集 */
 		WCHAR szText[2048];
-		auto_snprintf_s(
-			szText, _TRUNCATE,
+		auto_sprintf(
+			szText,
 			L"%s(%d,%d): ",
 			m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-			int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-			int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+			pcFuncInfo->m_nFuncLineCRLF,		/* 検出行番号 */
+			pcFuncInfo->m_nFuncColCRLF		/* 検出桁番号 */
 		);
 		m_cmemClipText.AppendString( szText ); /* クリップボードコピー用テキスト */
 		// "%s%ls\r\n"
@@ -1167,40 +1174,67 @@ void CDlgFuncList::SetTreeJava( [[maybe_unused]] HWND hwndDlg, HTREEITEM hInsert
 */
 void CDlgFuncList::SetListVB (void)
 {
-	int				i;
-	WCHAR			szType[64];
-	WCHAR			szOption[64];
 	LV_ITEM			item;
-	HWND			hwndList;
 
 	::EnableWindow( GetItemHwnd( IDC_BUTTON_COPY ), TRUE );
 
-	hwndList = GetItemHwnd( IDC_LIST_FL );
+	const auto hwndList = GetItemHwnd( IDC_LIST_FL );
 
-	m_cmemClipText.SetString( L"" );
+	// バッファをクリアして再確保効率を上げる
+	m_cmemClipText.Clear();
+
+	// リストに登録する件数
+	const int nNum = m_pcFuncInfoArr->GetNum();
+
 	{
-		const int nBuffLenTag = int(17 + wcslen(m_pcFuncInfoArr->m_szFilePath));
-		const int nNum = m_pcFuncInfoArr->GetNum();
-		int nBuffLen = 0;
-		for( int i2 = 0; i2 < nNum; i2++ ){
-			const auto pcFuncInfo = m_pcFuncInfoArr->GetAt(i2);
-			nBuffLen += pcFuncInfo->m_cmemFuncName.GetStringLength();
+		// 謎の定数（おそらく、ヘッダーとして定型出力する文字数）
+		const auto nBuffLenTag = m_pcFuncInfoArr->m_szFilePath.length() + 17;
+
+		// 含まれる関数名の長さの和を求める
+		size_t nBuffLen = 0;
+		for (const auto pcFuncInfo : *m_pcFuncInfoArr) {
+			nBuffLen += pcFuncInfo->m_cmemFuncName.length();
 		}
-		m_cmemClipText.AllocStringBuffer( nBuffLen + nBuffLenTag * nNum );
+
+		// 確保サイズを概算する
+		const auto nAllocSize =
+			+ nBuffLenTag
+			+ nBuffLen			// 関数名の文字数合計
+			* nNum;				// 1関数ごとに区切るから件数
+
+		// メモリ確保
+		m_cmemClipText.AllocStringBuffer(nAllocSize);
 	}
 
-	WCHAR			szText[2048];
-	for( i = 0; i < m_pcFuncInfoArr->GetNum(); ++i ){
+	// 項目別バッファ
+	StaticString<64>	szOption;
+	StaticString<64>	szType;
+	StaticString<256>	szTypeOption;
+
+	// 使い回しバッファ
+	StaticString<2048>	szText;
+
+	for (int i = 0; i < nNum; ++i) {
+		// 2001/06/23 N.Nakatani for Visual Basic
+		//	Jun. 26, 2001 genta 半角かな→全角に
+
 		/* 現在の解析結果要素 */
 		const auto pcFuncInfo = m_pcFuncInfoArr->GetAt( i );
 
+		szOption = L"";
+		szType = L"";
+		szTypeOption = L"";
+
+		szText = L"";
+
 		//	From Here Apr. 23, 2005 genta 行番号を左端へ
 		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineCRLF));
-		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncLineLAYOUT));
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetLineNumber(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT | LVIF_PARAM;
 		item.pszText = szText;
 		item.iItem = i;
@@ -1209,12 +1243,12 @@ void CDlgFuncList::SetListVB (void)
 		ListView_InsertItem( hwndList, &item);
 
 		// 2010.03.17 syat 桁追加
-		/* 行番号の表示 false=折り返し単位／true=改行単位 */
-		if(m_bLineNumIsCRLF ){
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColCRLF));
-		}else{
-			auto_snprintf_s(szText, _TRUNCATE, L"%d", int(pcFuncInfo->m_nFuncColLAYOUT));
-		}
+		auto_sprintf_s(
+			szText,
+			L"%d",
+			pcFuncInfo->GetColumnPosition(m_bLineNumIsCRLF)
+		);
+
 		item.mask = LVIF_TEXT;
 		item.pszText = szText;
 		item.iItem = i;
@@ -1228,122 +1262,103 @@ void CDlgFuncList::SetListVB (void)
 		ListView_SetItem( hwndList, &item);
 		//	To Here Apr. 23, 2005 genta 行番号を左端へ
 
-		item.mask = LVIF_TEXT;
-
-		// 2001/06/23 N.Nakatani for Visual Basic
-		//	Jun. 26, 2001 genta 半角かな→全角に
-		wmemset(szText, L'\0', int(std::size(szText)));
-		wmemset(szType, L'\0', int(std::size(szType)));
-		wmemset(szOption, L'\0', int(std::size(szOption)));
-		if( 1 == ((pcFuncInfo->m_nInfo >> 8) & 0x01) ){
+		if (const auto vbStaticFlag = (pcFuncInfo->m_nInfo >> 8) & 0x01;
+			vbStaticFlag)
+		{
 			// スタティック宣言(Static)
 			// 2006.12.12 Moca 末尾にスペース追加
-			::wcsncpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC), _TRUNCATE);
+			auto_strcpy_s(szOption, LS(STR_DLGFNCLST_VB_STATIC));
 		}
-		switch ((pcFuncInfo->m_nInfo >> 4) & 0x0f) {
-			case 2  :	// プライベート(Private)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_PRIVATE), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
-				break;
 
-			case 3  :	// フレンド(Friend)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_FRIEND), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
-				break;
+		// VBアクセス識別子のIDを取り出す
+		const auto vbAccessModifierId = (pcFuncInfo->m_nInfo >> 4) & 0x0f;
 
-			default :	// パブリック(Public)
-				::wcsncat_s(szOption, std::size(szOption) - ::wcslen(szOption), LS(STR_DLGFNCLST_VB_PUBLIC), _TRUNCATE); //	2006.12.17 genta サイズ誤り修正
-		}
+		// VBアクセス識別子のIDとラベルのマップ
+		const std::map<int, std::wstring_view> vbAccessModifiers{
+			{ 1, LS(STR_DLGFNCLST_VB_PUBLIC) },		// パブリック(Public)
+			{ 2, LS(STR_DLGFNCLST_VB_PRIVATE) },	// プライベート(Private)
+			{ 3, LS(STR_DLGFNCLST_VB_FRIEND) },		// フレンド(Friend)
+		};
+
+		// VBアクセス識別子のラベルを探す
+		const auto foundVbAccessModifier = vbAccessModifiers.find(vbAccessModifierId);
+
+		// 見つからなかった場合はデフォルトのパブリック(Public)を使用
+		const auto& vbAccessModifier = foundVbAccessModifier != vbAccessModifiers.end()
+			? foundVbAccessModifier->second
+			: vbAccessModifiers.at(1);
+
+		// szOptionに追加。（リソース文字列なので演算子は使わない）
+		auto_strcat_s(szOption, vbAccessModifier);
+
+		// VBタイプ識別子のIDを取り出す
 		int nInfo = pcFuncInfo->m_nInfo;
-		switch (nInfo & 0x0f) {
-			case 1:		// 関数(Function)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_FUNCTION), _TRUNCATE);
-				break;
 
-			// 2006.12.12 Moca ステータス→プロシージャに変更
-			case 2:		// プロシージャ(Sub)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROC), _TRUNCATE);
-				break;
+		// VBタイプ識別子のIDとラベルのマップ
+		std::map<int, std::wstring_view> vbTypes{
+			{ 1, LS(STR_DLGFNCLST_VB_FUNCTION) },	// 関数(Function)
+			{ 2, LS(STR_DLGFNCLST_VB_PROC) },		// プロシージャ(Sub)
+			{ 3, LS(STR_DLGFNCLST_VB_PROPGET) },	// プロパティ 取得(Property Get)
+			{ 4, LS(STR_DLGFNCLST_VB_PROPLET) },	// プロパティ 設定(Property Let)
+			{ 5, LS(STR_DLGFNCLST_VB_PROPSET) },	// プロパティ 参照(Property Set)
+			{ 6, LS(STR_DLGFNCLST_VB_CONST) },		// 定数(Const)
+			{ 7, LS(STR_DLGFNCLST_VB_ENUM) },		// 列挙型(Enum)
+			{ 8, LS(STR_DLGFNCLST_VB_TYPE) },		// ユーザ定義型(Type)
+			{ 9, LS(STR_DLGFNCLST_VB_EVENT) },		// イベント(Event)
+		};
 
-			case 3:		// プロパティ 取得(Property Get)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPGET), _TRUNCATE);
-				break;
-
-			case 4:		// プロパティ 設定(Property Let)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPLET), _TRUNCATE);
-				break;
-
-			case 5:		// プロパティ 参照(Property Set)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_PROPSET), _TRUNCATE);
-				break;
-
-			case 6:		// 定数(Const)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_CONST), _TRUNCATE);
-				break;
-
-			case 7:		// 列挙型(Enum)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_ENUM), _TRUNCATE);
-				break;
-
-			case 8:		// ユーザ定義型(Type)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_TYPE), _TRUNCATE);
-				break;
-
-			case 9:		// イベント(Event)
-				::wcsncpy_s(szType, LS(STR_DLGFNCLST_VB_EVENT), _TRUNCATE);
-				break;
-
-			default:	// 未定義なのでクリア
+		// VBタイプ識別子のラベルを探す
+		if (const auto foundVbType = vbTypes.find(nInfo & 0x0f);
+			foundVbType != vbTypes.end())
+		{
+			// 見付かったラベルをszTypeに追加。（リソース文字列なので演算子は使わない）
+			auto_strcpy_s(szType, foundVbType->second);
+		}
+		// 見付からなかった場合
+		else {
+			// 未定義なのでクリア
 				nInfo	= 0;
 		}
-		if ( 2 == ((nInfo >> 8) & 0x02) ) {
+
+		if (const auto vbDeclareFlag = (nInfo >> 8) & 0x02;
+			vbDeclareFlag)
+		{
 			// 宣言(Declareなど)
-			::wcsncat_s(szType, std::size(szType) - ::wcslen(szType), LS(STR_DLGFNCLST_VB_DECL), _TRUNCATE);
+			auto_strcat_s(szType, LS(STR_DLGFNCLST_VB_DECL));
 		}
 
-		WCHAR szTypeOption[256]; // 2006.12.12 Moca auto_sprintfの入出力で同一変数を使わないための作業領域追加
 		if ( 0 == nInfo ) {
 			szTypeOption[0] = L'\0';	//	2006.12.17 genta 全体を0で埋める必要はない
-		} else
-		if ( szOption[0] == L'\0' ) {
-			auto_snprintf_s(szTypeOption, _TRUNCATE, L"%s", szType);
 		} else {
-			auto_snprintf_s(szTypeOption, _TRUNCATE, L"%s（%s）", szType, szOption);
+			auto_sprintf_s(szTypeOption, L"%s", szType);
+
+			if (!szOption.empty()) {
+				auto_strcat_s(szTypeOption, strprintf(L"（%s）", szOption));
+			}
 		}
-		item.pszText = szTypeOption;
+
+		item.mask = LVIF_TEXT;
+		item.pszText = szTypeOption.data();
 		item.iItem = i;
 		item.iSubItem = FL_COL_REMARK;
 		ListView_SetItem( hwndList, &item);
 
 		/* クリップボードにコピーするテキストを編集 */
-		if(item.pszText[0] != L'\0'){
-			// 検出結果の種類(関数,,,)があるとき
-			// 2006.12.12 Moca szText を自分自身にコピーしていたバグを修正
-			auto_snprintf_s(
-				szText, _TRUNCATE,
-				L"%s(%d,%d): ",
-				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
+		m_cmemClipText.AppendStringF(
+			L"%s(%d,%d): %s",
+			m_pcFuncInfoArr->m_szFilePath,	// 解析対象ファイル名
+			pcFuncInfo->m_nFuncLineCRLF,	// 検出行番号
+			pcFuncInfo->m_nFuncColCRLF,		// 検出桁番号
+			pcFuncInfo->m_cmemFuncName		// 関数名
+		);
+		// 検出結果の種類(関数,,,)があるとき
+		if (!szTypeOption.empty()) {
+			m_cmemClipText.AppendStringF(
+				L"(%s)",
+				szTypeOption
 			);
-			m_cmemClipText.AppendString(szText);
-			// "%s(%s)\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-			m_cmemClipText.AppendString(L"(");
-			m_cmemClipText.AppendString(item.pszText);
-			m_cmemClipText.AppendString(L")\r\n");
-		}else{
-			// 検出結果の種類(関数,,,)がないとき
-			auto_snprintf_s(
-				szText, _TRUNCATE,
-				L"%s(%d,%d): ",
-				m_pcFuncInfoArr->m_szFilePath.c_str(),		/* 解析対象ファイル名 */
-				int(pcFuncInfo->m_nFuncLineCRLF),		/* 検出行番号 */
-				int(pcFuncInfo->m_nFuncColCRLF)		/* 検出桁番号 */
-			);
-			m_cmemClipText.AppendString(szText);
-			// "%s\r\n"
-			m_cmemClipText.AppendNativeData(pcFuncInfo->m_cmemFuncName);
-			m_cmemClipText.AppendString(L"\r\n");
 		}
+		m_cmemClipText.AppendString(L"\r\n");
 	}
 
 	//2002.02.08 hor Listは列幅調整とかを実行する前に表示しとかないと変になる
@@ -1460,9 +1475,9 @@ void CDlgFuncList::SetTree(HTREEITEM hInsertAfter, bool tagjump, bool nolabel)
 				
 				if( 0 < pcFuncInfo->m_nFuncLineCRLF ){
 					WCHAR linenum[32];
-					auto_snprintf_s( linenum, _TRUNCATE, L"(%d,%d): ",
-						int(pcFuncInfo->m_nFuncLineCRLF),				/* 検出行番号 */
-						int(pcFuncInfo->m_nFuncColCRLF)					/* 検出桁番号 */
+					auto_sprintf( linenum, L"(%d,%d): ",
+						pcFuncInfo->m_nFuncLineCRLF,				/* 検出行番号 */
+						pcFuncInfo->m_nFuncColCRLF					/* 検出桁番号 */
 					);
 					text.AppendString( linenum );
 				}
@@ -1496,7 +1511,8 @@ void CDlgFuncList::SetDocLineFuncList()
 	if( m_nOutlineType == OUTLINE_FILETREE ){
 		return;
 	}
-	CDocLineMgr* pcDocLineMgr = &GetDocument()->m_cDocLineMgr;
+	CEditView* pcEditView=(CEditView*)m_lParam;
+	CDocLineMgr* pcDocLineMgr = &pcEditView->GetDocument()->m_cDocLineMgr;
 	
 	CFuncListManager().ResetAllFucListMark(pcDocLineMgr, false);
 	int i;
@@ -1532,7 +1548,7 @@ void CDlgFuncList::SetTreeFile()
 		const SFileTreeItem& item = m_fileTreeSetting.m_aItems[i];
 		// item.m_szTargetPath => szPath メタ文字の展開
 		if( !CFileNameManager::ExpandMetaToFolder(item.m_szTargetPath, szPath, int(std::size(szPath))) ){
-			::wcsncpy_s(szPath, L"<Error:Long Path>", _TRUNCATE);
+			wcscpy_s(szPath, std::size(szPath), L"<Error:Long Path>");
 		}
 		// szPath => szPath2 <iniroot>展開
 		const WCHAR* pszFrom = szPath;
@@ -1540,18 +1556,18 @@ void CDlgFuncList::SetTreeFile()
 			CNativeW strTemp(pszFrom);
 			strTemp.Replace(L"<iniroot>", IniDirPath.c_str());
 			if( int(std::size(szPath2)) <= strTemp.GetStringLength() ){
-				::wcsncpy_s(szPath2, std::size(szPath), L"<Error:Long Path>", _TRUNCATE);
+				wcscpy_s(szPath2, std::size(szPath), L"<Error:Long Path>");
 			}else{
-				::wcsncpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr(), _TRUNCATE);
+				wcscpy_s(szPath2, std::size(szPath), strTemp.GetStringPtr());
 			}
 		}else{
-			::wcsncpy_s(szPath2, pszFrom, _TRUNCATE);
+			wcscpy(szPath2, pszFrom);
 		}
 		// szPath2 => szPath 「.」やショートパス等の展開
 		pszFrom = szPath2;
 		if( ::GetLongFileName(pszFrom, szPath) ){
 		}else{
-			::wcsncpy_s(szPath, pszFrom, _TRUNCATE);
+			wcscpy(szPath, pszFrom);
 		}
 		while( item.m_nDepth < (int)hParentTree.size() - 1 ){
 			hParentTree.resize(hParentTree.size() - 1);
@@ -1737,7 +1753,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 			WINDOWPLACEMENT cWindowPlacement;
 			cWindowPlacement.length = sizeof( cWindowPlacement );
-			if (::GetWindowPlacement( GetMainWindow(), &cWindowPlacement )){
+			if (::GetWindowPlacement( GetEditWnd().GetHwnd(), &cWindowPlacement )){
 				/* ウィンドウ位置・サイズを-1以外の値にしておくと、CDialogで使用される． */
 				m_xPos = m_pShareData->m_Common.m_sOutline.m_xOutlineWindowPos + cWindowPlacement.rcNormalPosition.left;
 				m_yPos = m_pShareData->m_Common.m_sOutline.m_yOutlineWindowPos + cWindowPlacement.rcNormalPosition.top;
@@ -1783,7 +1799,7 @@ BOOL CDlgFuncList::OnInitDialog( HWND hwndDlg, WPARAM wParam, LPARAM lParam )
 		}
 		// 他ウィンドウに変更を通知する
 		if( ProfDockSync() ){
-			HWND hwndEdit = GetMainWindow();
+			HWND hwndEdit = GetEditWnd().GetHwnd();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 	}
@@ -1935,7 +1951,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 			CEditView* pcEditView=(CEditView*)m_lParam;
 			pcEditView->GetCommander().HandleCommand( F_BOOKMARK_VIEW, true, TRUE, 0, 0, 0 );
 			m_nCurLine=pcEditView->GetCaret().GetCaretLayoutPos().GetY2() + CLayoutInt(1);
-			CDocTypeManager().GetTypeConfig(GetDocument()->m_cDocType.GetDocumentType(), m_type);
+			CDocTypeManager().GetTypeConfig(pcEditView->GetDocument()->m_cDocType.GetDocumentType(), m_type);
 			SetData();
 		}else
 		if(m_nViewType == VIEWTYPE_TREE){
@@ -1947,7 +1963,7 @@ BOOL CDlgFuncList::OnBnClicked( int wID )
 	case IDC_BUTTON_SETTING:
 		{
 			CDlgFileTree cDlgFileTree;
-			int nRet = cDlgFileTree.DoModal( GetAppInstance(), GetHwnd(), (LPARAM)this );
+			int nRet = cDlgFileTree.DoModal( G_AppInstance(), GetHwnd(), (LPARAM)this );
 			if( nRet == TRUE ){
 				EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
 				CEditView* pcEditView = (CEditView*)m_lParam;
@@ -2071,7 +2087,7 @@ BOOL CDlgFuncList::OnNotify(NMHDR* pNMHDR)
 					break;
 				case CDDS_ITEMPREPAINT:
 					{	// 選択アイテムを反転表示にする
-						const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
+						const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 						COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 						COLORREF clrTextBk = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 						if( hwndList == pNMHDR->hwndFrom ){
@@ -2282,7 +2298,7 @@ BOOL CDlgFuncList::OnDestroy( void )
 
 	/* アウトライン ■位置とサイズを記憶する */ // 20060201 aroka
 	// 前提条件：m_lParam が CDialog::OnDestroy でクリアされないこと
-	HWND hwndEdit = GetMainWindow();
+	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( !IsDocking() && m_pShareData->m_Common.m_sOutline.m_bRememberOutlineWindowPos ){
 		/* 親のウィンドウ位置・サイズを記憶 */
 		WINDOWPLACEMENT cWindowPlacement;
@@ -2419,11 +2435,11 @@ bool CDlgFuncList::TagJumpTimer( const WCHAR* pFile, CMyPoint point, bool bCheck
 	CEditView* pcView = reinterpret_cast<CEditView*>(m_lParam);
 
 	// ファイルを開いていない場合は自分で開く
-	if( GetDocument()->IsAcceptLoad() ){
+	if( pcView->GetDocument()->IsAcceptLoad() ){
 		std::wstring strFile = pFile;
 		pcView->GetCommander().Command_FILEOPEN( strFile.c_str(), CODE_AUTODETECT, CAppMode::getInstance()->IsViewMode(), nullptr );
 		if( point.y != -1 ){
-			if( GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
+			if( pcView->GetDocument()->m_cDocFile.GetFilePathClass().IsValidPath() ){
 				CLogicPoint pt;
 				pt.x = CLogicInt(point.GetX() - 1);
 				pt.y = CLogicInt(point.GetY() - 1);
@@ -2487,7 +2503,7 @@ BOOL CDlgFuncList::OnJump( bool bCheckAutoClose, bool bFileJump )	//2002.02.08 h
 				m_pShareData->m_sWorkBuffer.m_LogicPoint = poCaret;
 
 				//	2006.07.09 genta 移動時に選択状態を保持するように
-				::SendMessageAny( GetMainWindow(),
+				::SendMessageAny( GetEditWnd().GetHwnd(),
 					MYWM_SETCARETPOS, 0, PM_SETCARETPOS_KEEPSELECT );
 			}
 			if( bCheckAutoClose && bFileJumpSelf ){
@@ -2560,7 +2576,8 @@ void CDlgFuncList::Key2Command(WORD KeyCode)
 */
 void CDlgFuncList::Redraw( int nOutLineType, int nListType, CFuncInfoArr* pcFuncInfoArr, CLayoutInt nCurLine, CLayoutInt nCurCol )
 {
-	m_nDocType = GetDocument()->m_cDocType.GetDocumentType().GetIndex();
+	CEditView* pcEditView = (CEditView*)m_lParam;
+	m_nDocType = pcEditView->GetDocument()->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig(CTypeConfig(m_nDocType), m_type);
 	SyncColor();
 
@@ -2597,7 +2614,8 @@ void CDlgFuncList::SyncColor( void )
 		return;
 #ifdef DEFINE_SYNCCOLOR
 	// テキスト色・背景色をビューと同色にする
-	const STypeConfig	*TypeDataPtr = &(GetTypeConfig());
+	CEditView* pcEditView = (CEditView*)m_lParam;
+	const STypeConfig	*TypeDataPtr = &(pcEditView->m_pcEditDoc->m_cDocType.GetDocumentAttribute());
 	COLORREF clrText = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cTEXT;
 	COLORREF clrBack = TypeDataPtr->m_ColorInfoArr[COLORIDX_TEXT].m_sColorAttr.m_cBACK;
 
@@ -3057,7 +3075,7 @@ INT_PTR CDlgFuncList::OnLButtonUp( [[maybe_unused]] HWND hwnd, [[maybe_unused]] 
 
 		if( ProfDockSync() ){
 			// 他ウィンドウに変更を通知する
-			HWND hwndEdit = GetMainWindow();
+			HWND hwndEdit = GetEditWnd().GetHwnd();
 			PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)hwndEdit );
 		}
 		return 1L;
@@ -3116,33 +3134,28 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	default:
 		break;
 	}
-	::MyFillRect( gr, rcWk, COLOR_3DFACE );
+	//::MyFillRect( gr, rcWk, COLOR_3DFACE );
+	::MyFillRect(gr, rcWk, DarkMode::getBackgroundColor());
 	::DrawEdge( gr, &rcWk, EDGE_ETCHED, BF_TOPLEFT );
 
 	// タイトルを描画する
 	BOOL bThemeActive = ::IsThemeActive();
-	BOOL bGradient = FALSE;
-	::SystemParametersInfo( SPI_GETGRADIENTCAPTIONS, 0, &bGradient, 0 );
-	if( !bThemeActive ) bGradient = FALSE;	// 適当に調整
 	HWND hwndFocus = ::GetFocus();
 	BOOL bActive = (GetHwnd() == hwndFocus || ::IsChild(GetHwnd(), hwndFocus));
 	RECT rcCaption;
 	GetCaptionRect( &rcCaption );
 	::OffsetRect( &rcCaption, -rcScr.left, -rcScr.top );
 	rcWk = rcCaption;
-	rcWk.top += 1;
-	rcWk.right -= DOCK_BUTTON_NUM * (::GetSystemMetrics( SM_CXSMSIZE ));
 	// ↓DrawCaption() に DC_SMALLCAP を指定してはいけないっぽい
 	// ↓DC_SMALLCAP 指定のものを Win7(64bit版) で動かしてみたら描画位置が下にずれて上半分しか見えなかった（x86ビルド/x64ビルドのどちらも NG）
-	::DrawCaption( hwnd, gr, &rcWk, DC_TEXT | (bGradient? DC_GRADIENT: 0) /*| DC_SMALLCAP*/ | (bActive? DC_ACTIVE: 0) );
-	rcWk.left = rcCaption.right;
-	int nClrCaption;
-	if( bGradient )
-		nClrCaption = ( bActive? COLOR_GRADIENTACTIVECAPTION: COLOR_GRADIENTINACTIVECAPTION );
-	else
-		nClrCaption = ( bActive? COLOR_ACTIVECAPTION: COLOR_INACTIVECAPTION );
-	::MyFillRect( gr, rcWk, nClrCaption );
+	gr.SetTextForeColor(DarkMode::getTextColor());
+	gr.SetTextBackColor(DarkMode::getBackgroundColor());
+	wchar_t buff[256];
+	::GetWindowText(GetHwnd(), buff, 256);
+	COLORREF clrCaption = bActive ? DarkMode::getHotBackgroundColor() : DarkMode::getBackgroundColor();
+	::MyFillRect( gr, rcWk, clrCaption );
 	::DrawEdge( gr, &rcCaption, BDR_SUNKENOUTER, BF_TOP );
+	::DrawText(gr, buff, -1, &rcCaption, DT_TOP|DT_LEFT);
 
 	// タイトル上のボタンを描画する
 	NONCLIENTMETRICS ncm;
@@ -3152,9 +3165,9 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 	memset( &lf, 0, sizeof(LOGFONT) );
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfHeight = ncm.lfCaptionFont.lfHeight;
-	::wcsncpy_s(lf.lfFaceName, L"Marlett", _TRUNCATE);
+	::lstrcpy( lf.lfFaceName, L"Marlett" );
 	HFONT hFont = ::CreateFontIndirect( &lf );
-	::wcsncpy_s(lf.lfFaceName, L"Webdings", _TRUNCATE);
+	::lstrcpy( lf.lfFaceName, L"Webdings" );
 	HFONT hFont2 = ::CreateFontIndirect( &lf );
 	gr.SetTextBackTransparent( true );
 
@@ -3172,8 +3185,8 @@ INT_PTR CDlgFuncList::OnNcPaint( HWND hwnd, [[maybe_unused]] UINT uMsg, [[maybe_
 		int nClrCaptionText;
 		// マウスカーソルがボタン上にあればハイライト
 		if( ::PtInRect( &rcBtn, pt ) ){
-			::MyFillRect( gr, rcBtn, (bGradient && !bActive)? COLOR_INACTIVECAPTION: COLOR_ACTIVECAPTION );
-			nClrCaptionText = ( (bGradient && !bActive)? COLOR_INACTIVECAPTIONTEXT: COLOR_CAPTIONTEXT );
+			::MyFillRect( gr, rcBtn, COLOR_ACTIVECAPTION );
+			nClrCaptionText = COLOR_CAPTIONTEXT;
 		}else{
 			nClrCaptionText = ( bActive? COLOR_CAPTIONTEXT: COLOR_INACTIVECAPTIONTEXT );
 		}
@@ -3268,7 +3281,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 	// メニューを表示する
 	RECT rcWork;
 	GetMonitorWorkRect( pt, &rcWork );	// モニタのワークエリア
-	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
+	int nId = User32::getInstance()->TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
 								( pt.x > rcWork.left )? pt.x: rcWork.left,
 								( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
 								0, GetHwnd(), nullptr);
@@ -3276,7 +3289,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 
 	// メニュー選択された状態に切り替える
 	EFunctionCode nFuncCode = GetFuncCodeRedraw(m_nOutlineType);
-	HWND hwndEdit = GetMainWindow();
+	HWND hwndEdit = GetEditWnd().GetHwnd();
 	if( nId == 450 ){	// 更新
 		pcEditView->GetCommander().HandleCommand( nFuncCode, true, SHOW_RELOAD, 0, 0, 0 );
 	}
@@ -3301,7 +3314,7 @@ void CDlgFuncList::DoMenu( POINT pt, HWND hwndFrom )
 			ListView_GetItem(hwndList, &item);
 			const CFuncInfo* pFuncInfo = m_pcFuncInfoArr->GetAt(item.lParam);
 			// FIXME: 行番号があってるとは限らない
-			CDocLine* pCDocLine = GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
+			CDocLine* pCDocLine = pcEditView->GetDocument()->m_cDocLineMgr.GetLine(pFuncInfo->m_nFuncLineCRLF - 1);
 			if( pCDocLine ){
 				CBookmarkSetter cBookmark(pCDocLine);
 				cBookmark.SetBookmark(false);
@@ -3441,7 +3454,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 		bool* m_pbSwitch;
 	} SAutoSwitch( &m_bInChangeLayout );	// 処理中は m_bInChangeLayout フラグを ON にしておく
 
-	CEditDoc* pDoc = GetDocument();	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
+	CEditDoc* pDoc = CEditDoc::GetInstance(0);	// 今は非表示かもしれないので (CEditView*)m_lParam は使えない
 	m_nDocType = pDoc->m_cDocType.GetDocumentType().GetIndex();
 	CDocTypeManager().GetTypeConfig( CTypeConfig(m_nDocType), m_type );
 
@@ -3456,7 +3469,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
 			CEditView* pcEditView = &GetEditWnd().GetActiveView();
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3468,7 +3481,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);	// ブックマークかアウトライン解析かは最後に開いていた時の状態を引き継ぐ（初期状態はアウトライン解析）
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
 			return true;	// 解析した
 		}
 	}else{	// 現在は表示
@@ -3493,7 +3506,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 				if( nId == OUTLINE_LAYOUT_FILECHANGED ) return false;	// ファイル切替ではフローティングは開かない（従来互換）
 			}
 			// ※ 裏では一時的に Disable 化しておいて開く（タブモードでの不正な画面切り替え抑止）
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), FALSE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), FALSE );
 			if( m_nOutlineType == OUTLINE_DEFAULT ){
 				bool bType = (ProfDockSet() != 0);
 				if( bType ){
@@ -3505,7 +3518,7 @@ bool CDlgFuncList::ChangeLayout( int nId )
 			}
 			EOutlineType nOutlineType = GetOutlineTypeRedraw(m_nOutlineType);
 			pcEditView->GetCommander().Command_FUNCLIST( SHOW_NORMAL, nOutlineType );	// 開く	※ HandleCommand(F_OUTLINE,...) だと印刷プレビュー状態で実行されないので Command_FUNCLIST()
-			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetMainWindow(), TRUE );
+			if( nId == OUTLINE_LAYOUT_BACKGROUND ) ::EnableWindow( GetEditWnd().GetHwnd(), TRUE );
 			return true;	// 解析した
 		}
 
@@ -3566,7 +3579,7 @@ void CDlgFuncList::OnOutlineNotify( WPARAM wParam, LPARAM lParam )
 {
 	switch( wParam ){
 	case 0:	// 設定変更通知（ドッキングモード or サイズ）, lParam: 通知元の HWND
-		if( (HWND)lParam == GetMainWindow() )
+		if( (HWND)lParam == GetEditWnd().GetHwnd() )
 			return;	// 自分からの通知は無視
 		ChangeLayout( OUTLINE_LAYOUT_BACKGROUND );	// アウトライン画面を再配置
 		break;
@@ -3817,7 +3830,7 @@ BOOL CDlgFuncList::Track( POINT ptDrag )
 					::MoveWindow( GetHwnd(), rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE );
 				}
 				if( ProfDockSync() ){
-					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetMainWindow() );	// 他ウィンドウにドッキング配置変更を通知する
+					PostOutlineNotifyToAllEditors( (WPARAM)0, (LPARAM)GetEditWnd().GetHwnd() );	// 他ウィンドウにドッキング配置変更を通知する
 				}
 				return TRUE;
 			}
@@ -3892,7 +3905,7 @@ void CDlgFuncList::LoadFileTreeSetting( CFileTreeSetting& data, SFilePath& IniDi
 		// 各フォルダーのプロジェクトファイル読み込み
 		WCHAR szPath[_MAX_PATH];
 		::GetLongFileName( L".", szPath );
-		::wcsncat_s(szPath, L"\\", _TRUNCATE);
+		wcscat( szPath, L"\\" );
 		int maxDir = CDlgTagJumpList::CalcMaxUpDirectory( szPath );
 		for( int i = 0; i <= maxDir; i++ ){
 			CDataProfile cProfile;

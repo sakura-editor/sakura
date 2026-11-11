@@ -1,13 +1,13 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CCodeFactory.h"
-#include "CCodeMediator.h"
-#include "CCodePage.h"
+#include "charset/CCodeFactory.h"
+
+#include "charset/CCodePage.h"
 
 // move start	from CCodeMediator.h	2012/12/02 Uchi
 #include "CEuc.h"
@@ -46,4 +46,46 @@ CCodeBase* CCodeFactory::CreateCodeBase(
 		assert_warning(0);
 	}
 	return nullptr;
+}
+
+/*!
+ * バイト列から文字列を読み込む。
+ *
+ * @param [in] code 読み込み元のバイト列。
+ * @returns A→W変換結果。
+ */
+SLoadFromCodeResult CCodeFactory::LoadFromCode(ECodeType eCodeType, std::string_view code)
+{
+	// 入力データを準備する
+	CMemory cmemSrc{ code.data(), code.size() };
+	CNativeW cDest;
+
+	// 変換を実行する
+	const auto result = CreateCodeBase(eCodeType)->CodeToUnicode(cmemSrc, &cDest);
+
+	// 読み込まれたデータを回収する
+	std::wstring loaded{ cDest.GetStringPtr(), size_t(cDest.GetStringLength()) };
+
+	return SLoadFromCodeResult{ result, code, std::size(code), std::move(loaded) };
+}
+
+/*!
+ * 文字列をバイト列に書き込む。
+ *
+ * @param [in] wide 書き込み対象の文字列。
+ * @returns W→A変換結果。
+ */
+SConvertToCodeResult CCodeFactory::ConvertToCode(ECodeType eCodeType, std::wstring_view wide)
+{
+	// 入力データを準備する
+	CNativeW cSrc{ wide.data(), wide.size() };
+	CMemory cDest;
+
+	// 変換を実行する
+	const auto result = CreateCodeBase(eCodeType)->UnicodeToCode(cSrc, &cDest);
+
+	// 書き込まれたデータを回収する
+	std::string loaded{ LPCSTR(cDest.GetRawPtr()), size_t(cDest.GetRawLength()) };
+
+	return SConvertToCodeResult{ result, wide, std::size(wide), std::move(loaded) };
 }

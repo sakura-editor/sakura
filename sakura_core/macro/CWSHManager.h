@@ -13,7 +13,7 @@
 */
 /*
 	Copyright (C) 2002, 鬼, genta
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -36,13 +36,22 @@ typedef void (*EngineCallback)(wchar_t *Ext, char *EngineName);
 class CWSHMacroManager final : public CMacroManagerBase
 {
 public:
-	CWSHMacroManager(std::wstring const AEngineName);
-	virtual ~CWSHMacroManager();
+	explicit CWSHMacroManager(std::wstring const AEngineName);
+
+	~CWSHMacroManager() override;
 
 	//	2007.07.20 genta : flags追加
 	bool ExecKeyMacro(CEditView *EditView, int flags) const override;
-	BOOL LoadKeyMacro(HINSTANCE hInstance, const WCHAR* pszPath) override;
-	BOOL LoadKeyMacroStr(HINSTANCE hInstance, const WCHAR* pszCode) override;
+
+	BOOL LoadKeyMacro(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszPath
+	) override;
+
+	BOOL LoadKeyMacroStr(
+		HINSTANCE hInstance [[maybe_unused]],
+		const WCHAR* pszCode
+	) override;
 
 	static CMacroManagerBase* Creator(const WCHAR* FileExt);
 	static void declare();
@@ -50,6 +59,7 @@ public:
 	void AddParam( CWSHIfObj* param );				//インターフェースオブジェクトを追加する
 	void AddParam( CWSHIfObj::List& params );		//インターフェースオブジェクト達を追加する
 	void ClearParam();								//インターフェースオブジェクトを削除する
+
 protected:
 	std::wstring m_Source;
 	std::wstring m_EngineName;
@@ -58,4 +68,5 @@ protected:
 	////	2007.07.20 genta : flags追加
 	//static void ReadyCommands(CIfObj *Object, MacroFuncInfo *Info, int flags);
 };
+
 #endif /* SAKURA_CWSHMANAGER_35D4F066_36AC_4CE5_910E_D705F0D814E2_H_ */
