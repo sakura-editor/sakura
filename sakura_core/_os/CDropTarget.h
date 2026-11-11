@@ -157,6 +157,11 @@ private:
 	PDATA m_pData = nullptr;
 
 public:
+	static CLIPFORMAT cfColumnSelect;
+	static CLIPFORMAT cfLineSelect1;
+	static CLIPFORMAT cfLineSelect2;
+	static CLIPFORMAT cfSakuraClip;
+
 	// 生成関数
 	template<typename... Args>
 	static com_pointer_type make_instance(Args&&... args)

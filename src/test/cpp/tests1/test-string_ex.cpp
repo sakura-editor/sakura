@@ -25,6 +25,73 @@ using namespace testing;
 // CStrictIntegerっぽい型を検出するコンセプトのテスト
 static_assert(!cxx::StrictIntegerLike<int>);
 
+constexpr bool FixedArrayWcscpyUsesSafeOverload()
+{
+	WCHAR buffer[4]{};
+	LPCWSTR source = L"abc";
+
+	wcscpy(buffer, source);
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+constexpr bool FixedArrayWcscatUsesSafeOverload()
+{
+	WCHAR buffer[7] = L"abc";
+	LPCWSTR source = L"DEF";
+
+	wcscat(buffer, source);
+
+	return std::wstring_view(buffer) == L"abcDEF";
+}
+
+constexpr bool FixedArrayWcsncpyAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8]{};
+
+	wcsncpy(buffer, L"abc", std::size(buffer));
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+constexpr bool FixedArrayWcsncatAcceptsCountLargerThanSource()
+{
+	WCHAR buffer[8] = L"a";
+
+	wcsncat(buffer, L"bc", std::size(buffer) - 2);
+
+	return std::wstring_view(buffer) == L"abc";
+}
+
+static_assert(FixedArrayWcscpyUsesSafeOverload());
+static_assert(FixedArrayWcscatUsesSafeOverload());
+static_assert(FixedArrayWcsncpyAcceptsCountLargerThanSource());
+static_assert(FixedArrayWcsncatAcceptsCountLargerThanSource());
+
+TEST(string_ex, FixedArrayWcscpyTruncates)
+{
+	WCHAR buffer[4]{};
+
+	EXPECT_THAT(wcscpy(buffer, L"abcdef"), Eq(buffer));
+	EXPECT_THAT(buffer, StrEq(L"abc"));
+}
+
+TEST(string_ex, FixedArrayWcscatTruncates)
+{
+	WCHAR buffer[5] = L"ab";
+
+	EXPECT_THAT(wcscat(buffer, L"cdef"), Eq(buffer));
+	EXPECT_THAT(buffer, StrEq(L"abcd"));
+}
+
+TEST(string_ex, FixedArraySwprintfTruncates)
+{
+	WCHAR buffer[4]{};
+
+	EXPECT_THAT(_swprintf(buffer, L"%s", L"abcdef"), Lt(0));
+	EXPECT_THAT(buffer, StrEq(L"abc"));
+}
+
 #ifdef USE_STRICT_INT
 
 static_assert(cxx::StrictIntegerLike<CLayoutInt>);

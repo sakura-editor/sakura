@@ -92,6 +92,7 @@ void Concat_FolderAndFile( const WCHAR* pszDir, const WCHAR* pszTitle, WCHAR* ps
 BOOL GetLongFileName( const WCHAR* pszFilePathSrc, WCHAR* pszFilePathDes );					/* ロングファイル名を取得する */
 BOOL CheckEXT( const WCHAR* pszPath, const WCHAR* pszExt );					/* 拡張子を調べる */
 const WCHAR* GetFileTitlePointer(const WCHAR* pszPath);							//!< ファイルフルパス内のファイル名を指すポインタを取得。2007.09.20 kobake 作成
+WCHAR* GetFileTitlePointer(WCHAR* pszPath);
 bool _IS_REL_PATH(const WCHAR* path);											//!< 相対パスか判定する。2003.06.23 Moca
 
 std::filesystem::path GetExeFileName();

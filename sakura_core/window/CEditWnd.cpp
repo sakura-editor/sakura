@@ -1063,8 +1063,8 @@ void CEditWnd::LayoutTabBar( void )
 	if( m_pShareData->m_Common.m_sTabBar.m_bDispTabWnd ){	/* タブバーを表示する */
 		if( nullptr == m_cTabWnd.GetHwnd() ){
 			m_cTabWnd.Open( G_AppInstance(), GetHwnd() );
-			// タブバーが後から作成された場合、ダークモードのテーマを適用する
-			if( IsDarkModeActive() ){
+			// darkmodelibはライトモードでもタブを独自描画するため、ダーク時だけの登録にはしない
+			if( m_cTabWnd.GetHwnd() ){
 				DarkMode::setChildCtrlsSubclassAndTheme( m_cTabWnd.GetHwnd() );
 			}
 		}else{

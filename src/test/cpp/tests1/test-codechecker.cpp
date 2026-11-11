@@ -48,3 +48,25 @@ TEST(IsVariationSelector, VariationSelectorCheck)
 	const auto& notvs4 = L"\U000E01F0";
 	EXPECT_FALSE(IsVariationSelector(notvs4));
 }
+
+TEST(IsUtf7SetD, ClassifiesAsciiCharacters)
+{
+	EXPECT_TRUE(IsUtf7SetD('\t'));
+	EXPECT_TRUE(IsUtf7SetD('A'));
+	EXPECT_TRUE(IsUtf7SetD('9'));
+	EXPECT_TRUE(IsUtf7SetD('?'));
+
+	EXPECT_FALSE(IsUtf7SetD('+'));
+	EXPECT_FALSE(IsUtf7SetD('!'));
+	EXPECT_FALSE(IsUtf7SetD('\0'));
+	EXPECT_FALSE(IsUtf7SetD('\x7f'));
+}
+
+TEST(IsUtf7SetD, RejectsValuesOutsideAscii)
+{
+	EXPECT_FALSE(IsUtf7SetD(static_cast<char>(0x80)));
+	EXPECT_FALSE(IsUtf7SetD(static_cast<char>(0xff)));
+	EXPECT_FALSE(IsUtf7SetD(L'\x0080'));
+	EXPECT_FALSE(IsUtf7SetD(L'\x0141'));
+	EXPECT_TRUE(IsUtf7SetD(L'A'));
+}
