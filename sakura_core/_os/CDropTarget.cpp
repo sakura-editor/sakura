@@ -40,6 +40,21 @@ void CEditView::EnterDragMode()
 	_SetDragMode(true);
 }
 
+bool CEditView::IsDragFile() const
+{
+	return
+		!IsDragText() &&
+		m_Formats.contains(CF_HDROP);
+}
+
+bool CEditView::IsDragText() const
+{
+	return
+		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
+		m_Formats.contains(CF_UNICODETEXT) ||
+		m_Formats.contains(CF_TEXT);
+}
+
 IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
