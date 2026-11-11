@@ -1776,14 +1776,6 @@ IFACEMETHODIMP CEditView::Drop(
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
 
-	BOOL		bMoveToPrev = FALSE;
-	RECT		rcSel;
-	CNativeW	cmemBuf;
-	bool		bBeginBoxSelect_Old = false;
-
-	CLayoutRange sSelectBgn_Old;
-	CLayoutRange sSelect_Old;
-
 	// ドラッグモードを終了する
 	LeaveDragMode();
 
@@ -1807,12 +1799,8 @@ IFACEMETHODIMP CEditView::Drop(
 	bool bMove = false;
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	const auto pcDragSourceView = GetDragSourceView();
-
-	if (pcDragSourceView)
+	if (const auto pcDragSourceView = GetDragSourceView())
 	{
-		bMove = (DROPEFFECT_MOVE == *pdwEffect);
-
 		// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
 		if (!pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
 			// DragEnter時のカーソル位置を復元
@@ -1821,9 +1809,30 @@ IFACEMETHODIMP CEditView::Drop(
 
 			return DragLeave();
 		}
+
+		bMove = (DROPEFFECT_MOVE == *pdwEffect);
 	}
 
-	bool bBoxData = m_bDragBoxData;
+	return InsertDroppedText(
+		pDataObject,
+		bMove
+	);
+}
+
+HRESULT CEditView::InsertDroppedText(
+	LPDATAOBJECT pDataObject,
+	bool bMove
+)
+{
+	BOOL		bMoveToPrev = FALSE;
+	RECT		rcSel;
+	CNativeW	cmemBuf;
+	bool		bBeginBoxSelect_Old = false;
+
+	CLayoutRange sSelectBgn_Old;
+	CLayoutRange sSelect_Old;
+
+	const auto formats = GetAvailableClipFormats(pDataObject);
 
 	// ドロップデータの取得
 	std::wstring text;
@@ -1839,7 +1848,7 @@ IFACEMETHODIMP CEditView::Drop(
 		fe.tymed = TYMED_HGLOBAL;
 
 		fe.cfFormat = CDataObject::cfSakuraClip;
-		if (m_Formats.contains(CDataObject::cfSakuraClip) &&
+		if (formats.contains(CDataObject::cfSakuraClip) &&
 			SUCCEEDED(pDataObject->QueryGetData(&fe)) &&
 			SUCCEEDED(pDataObject->GetData(&fe, &me)))
 		{
@@ -1867,6 +1876,11 @@ IFACEMETHODIMP CEditView::Drop(
 	while (0);
 
 	cmemBuf.SetString(text.c_str(), text.size());
+
+	// ドラッグデータは矩形か
+	const auto bBoxData = formats.contains(CDataObject::cfColumnSelect);
+
+	auto pcDragSourceView = GetDragSourceView();
 
 	// アンドゥバッファの準備
 	if( nullptr == m_cCommander.GetOpeBlk() ){
