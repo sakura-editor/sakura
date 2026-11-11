@@ -1816,11 +1816,8 @@ IFACEMETHODIMP CEditView::Drop(
 		// DragEnter時のカーソル位置を復元
 		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
 		*pdwEffect = DROPEFFECT_NONE;
-		GetCaret().MoveCursor( m_ptCaretPos_DragEnter, false );
-		GetCaret().m_nCaretPosX_Prev = m_nCaretPosX_Prev_DragEnter;
-		if( !IsDragSource() )	// ドラッグ元の場合はここでは再描画不要（DragDrop後処理のSetActivePaneで再描画される）
-			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
-		return S_OK;
+
+		return DragLeave();
 	}
 
 	// ドロップデータの取得
