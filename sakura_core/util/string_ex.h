@@ -354,6 +354,9 @@ constexpr WCHAR* dispatch_wcsncpy(
 		// 引数はNUL終端文字列として扱う
 		cxx::NullTerminatedString<WCHAR> _Src{ src };
 
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!dst) throw std::invalid_argument("dst is required.");
+
 		// Cランタイム関数を呼び出す
 		return ::wcsncpy(std::forward<A1>(dst), _Src.c_str(), count);
 	}
@@ -390,6 +393,9 @@ constexpr WCHAR* dispatch_wcsncat(
 		// 引数はNUL終端文字列として扱う
 		cxx::NullTerminatedString<WCHAR> _Src{ src };
 
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!dst) throw std::invalid_argument("dst is required.");
+
 		// Cランタイム関数を呼び出す
 		return ::wcsncat(std::forward<A1>(dst), _Src.c_str(), count);
 	}
@@ -424,6 +430,9 @@ constexpr WCHAR* dispatch_wcscpy(
 		// 引数はNUL終端文字列として扱う
 		cxx::NullTerminatedString<WCHAR> _Src{ src };
 
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!dst) throw std::invalid_argument("dst is required.");
+
 		// Cランタイム関数を呼び出す
 		return ::wcscpy(std::forward<A1>(dst), _Src.c_str());
 	}
@@ -457,6 +466,9 @@ constexpr WCHAR* dispatch_wcscat(
 	else {
 		// 引数はNUL終端文字列として扱う
 		cxx::NullTerminatedString<WCHAR> _Src{ src };
+
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!dst) throw std::invalid_argument("dst is required.");
 
 		// Cランタイム関数を呼び出す
 		return ::wcscat(std::forward<A1>(dst), _Src.c_str());

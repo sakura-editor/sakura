@@ -396,6 +396,9 @@ int dispatch_swprintf(
 		);
 	}
 	else {
+		// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+		if (!buf) throw std::invalid_argument("buf is required.");
+
 		// Cランタイム関数を呼び出す
 		return ::_swprintf(
 			std::forward<A>(buf),
