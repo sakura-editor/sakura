@@ -11,7 +11,6 @@
 #include "basis/CMyString.h"
 #include "_os/CClipboard.h"
 
-#include "cxx/com_pointer.hpp"
 #include "debug/Debug1.h"
 #include "util/file.h"
 #include "util/file/FileMapping.hpp"
@@ -216,35 +215,6 @@ bool SetClipboardText( HWND hwnd, const WCHAR* pszText, int nLength )
 	}
 	cClipboard.Empty();
 	return cClipboard.SetText(pszText, nLength, false, false);
-}
-
-std::set<CLIPFORMAT> GetAvailableClipFormats(
-	LPDATAOBJECT pDataObject
-)
-{
-	if (!pDataObject) throw std::invalid_argument("pDataObject is required");
-
-	// クリップフォーマットを列挙
-	cxx::com_pointer<IEnumFORMATETC> pEnumFormatEtc = nullptr;
-	if (FAILED(pDataObject->EnumFormatEtc(DATADIR_GET, &pEnumFormatEtc))) return {};
-
-	// 配列に格納して返す
-	std::set<CLIPFORMAT> formats;
-	FORMATETC format = {};
-	for(;;)
-	{
-		ULONG fetched = 0;
-		if (const auto hr = pEnumFormatEtc->Next( 1, &format, &fetched );
-			S_OK != hr ||
-			1 != fetched)
-		{
-			break;
-		}
-
-		formats.emplace(format.cfFormat);
-	}
-
-	return formats;
 }
 
 /*

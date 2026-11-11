@@ -35,44 +35,39 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
-void CDropTarget::EnterDragMode()
+IFACEMETHODIMP CDropTarget::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	m_pcEditView->_SetDragMode(true);
+	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
+	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
-CCaret& CDropTarget::GetCaret()
+IFACEMETHODIMP CDropTarget::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	return m_pcEditView->GetCaret();
+	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
 }
 
-bool CDropTarget::IsDragSource() const
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
-	return m_pcEditView->IsDragSource();
+	return m_pcEditView->DragLeave();
 }
 
-bool CDropTarget::IsDragFile() const
+IFACEMETHODIMP CDropTarget::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	return
-		!IsDragText() &&
-		m_Formats.contains(CF_HDROP);
-}
-
-bool CDropTarget::IsDragText() const
-{
-	return
-		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
-		m_Formats.contains(CF_UNICODETEXT) ||
-		m_Formats.contains(CF_TEXT);
-}
-
-void CDropTarget::LeaveDragMode()
-{
-	m_pcEditView->_SetDragMode(false);
-
-	// 非アクティブ時は表示状態を非アクティブに戻す
-	if (!::GetActiveWindow()) {
-		m_pcEditView->OnKillFocus();
-	}
+	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
 /* static */ DWORD CDropSource::DoDragDrop(
@@ -120,8 +115,6 @@ IFACEMETHODIMP CDropSource::GiveFeedback(
 {
 	return DRAGDROP_S_USEDEFAULTCURSORS;
 }
-
-/* static */ CLIPFORMAT CDataObject::cfColumn		= (CLIPFORMAT)::RegisterClipboardFormatW(L"MSDEVColumnSelect");
 
 CDataObject::CDataObject(
 	std::wstring_view text,

@@ -24,11 +24,7 @@
 #include "util/design_template.h"
 #include "util/os.h"
 
-#include <set>
-
 class CDropTarget;
-
-class CCaret;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
@@ -65,32 +61,21 @@ public:
 
 	~CDropTarget() override;
 
-	void EnterDragMode();
-	CCaret& GetCaret();
-	bool IsDragSource() const;
-	bool IsDragFile() const;
-	bool IsDragText() const;
-	void LeaveDragMode();
-	DWORD TranslateDropEffect(
-		DWORD dwKeyState,
-		DWORD dwEffect
-	) const;
-
-	IFACEMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-	IFACEMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-	IFACEMETHODIMP	DragLeave() override;
-	IFACEMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-
 	/*
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
 	CEditView*		m_pcEditView = nullptr;
 
-	using SCfArray = std::set<CLIPFORMAT>;
-	SCfArray		m_Formats{};						/* ドラッグデータのクリップ形式 */
-	CLayoutPoint	m_ptCaretPos_DragEnter;				/* ドラッグ開始時のカーソル位置 */
-	CLayoutInt		m_nCaretPosX_Prev_DragEnter{ 0 };	/* ドラッグ開始時のX座標記憶 */
+public:
+	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragLeave( void ) override;
+	STDMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+protected:
+	/*
+	||  実装ヘルパ関数
+	*/
 };
 
 /*!
@@ -172,8 +157,6 @@ private:
 	PDATA m_pData = nullptr;
 
 public:
-	static CLIPFORMAT cfColumn;
-
 	// 生成関数
 	template<typename... Args>
 	static com_pointer_type make_instance(Args&&... args)
