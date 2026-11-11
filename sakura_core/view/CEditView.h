@@ -365,7 +365,7 @@ public: /* テスト用にアクセス属性を変更 */
 	void OnMyDropFiles( HDROP hDrop );								/* 独自ドロップファイルメッセージ処理 */	// 2008.06.20 ryoji
 	CLIPFORMAT GetAvailableClipFormat( LPDATAOBJECT pDataObject );
 	DWORD TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, POINTL pt, DWORD dwEffect );
-	bool IsDragSource( void );
+	bool IsDragSource() const;
 
 	void EnterDragMode();
 	void LeaveDragMode();
