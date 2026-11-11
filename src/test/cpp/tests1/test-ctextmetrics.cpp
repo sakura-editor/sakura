@@ -13,7 +13,7 @@ class CTextMetricsWithGDI : public testing::Test {
 protected:
 	CTextMetricsWithGDI() {
 		lf1.lfCharSet = DEFAULT_CHARSET;
-		std::wcscpy(lf1.lfFaceName, L"MS Gothic");
+		(std::wcscpy)(lf1.lfFaceName, L"MS Gothic");
 
 		dc = GetDC(nullptr);
 		font = CreateFontIndirect(&lf1);

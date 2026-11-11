@@ -52,7 +52,8 @@ namespace ApiWrap
 	//                      Up-Down コントロール                   //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	// 利用箇所がテスト不可領域なので削除できない。
-	[[deprecated("use apiwrap::GetUpDownPos instead.")]]
+	//TODO: いつかコメントアウトを外す
+	//[[deprecated("use apiwrap::GetUpDownPos instead.")]]
 	inline LRESULT UpDown_GetPos(HWND hwndCtl)							{ return (LRESULT)(ULONG_PTR)::SendMessage(hwndCtl, UDM_GETPOS, 0L, 0L); }
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
