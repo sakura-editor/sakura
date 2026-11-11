@@ -1669,7 +1669,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-IFACEMETHODIMP CEditView::DragEnter(
+IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1721,7 +1721,7 @@ IFACEMETHODIMP CEditView::DragEnter(
 	);
 }
 
-IFACEMETHODIMP CEditView::DragOver(
+IFACEMETHODIMP CDropTarget::DragOver(
 	DWORD dwKeyState,
 	POINTL pt,
 	LPDWORD pdwEffect
@@ -1751,7 +1751,7 @@ IFACEMETHODIMP CEditView::DragOver(
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::DragLeave()
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 
@@ -1767,7 +1767,7 @@ IFACEMETHODIMP CEditView::DragLeave()
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::Drop(
+IFACEMETHODIMP CDropTarget::Drop(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1813,7 +1813,7 @@ IFACEMETHODIMP CEditView::Drop(
 		bMove = (DROPEFFECT_MOVE == *pdwEffect);
 	}
 
-	return InsertDroppedText(
+	return m_pcEditView->InsertDroppedText(
 		pDataObject,
 		bMove
 	);
@@ -2237,7 +2237,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::GlobalFree( hDrop );
 }
 
-DWORD CEditView::TranslateDropEffect(
+DWORD CDropTarget::TranslateDropEffect(
 	DWORD dwKeyState,
 	DWORD dwEffect
 ) const

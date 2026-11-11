@@ -26,6 +26,8 @@
 
 CDropTarget::CDropTarget(CEditView* pCEditView)
 	: m_pcEditView{ pCEditView }
+	, m_nMyIndex{ pCEditView ? pCEditView->m_nMyIndex : dummyInt }
+	, m_bDragBoxData{ pCEditView ? pCEditView->m_bDragBoxData : dummyFlag }
 {
 	return;
 }
@@ -35,19 +37,34 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
-void CEditView::EnterDragMode()
+void CDropTarget::EnterDragMode()
 {
-	_SetDragMode(true);
+	m_pcEditView->_SetDragMode(true);
 }
 
-bool CEditView::IsDragFile() const
+CCaret& CDropTarget::GetCaret()
+{
+	return m_pcEditView->GetCaret();
+}
+
+HWND CDropTarget::GetHwnd() const
+{
+	return m_pcEditView->GetHwnd();
+}
+
+bool CDropTarget::IsDragFile() const
 {
 	return
 		!IsDragText() &&
 		m_Formats.contains(CF_HDROP);
 }
 
-bool CEditView::IsDragText() const
+bool CDropTarget::IsDragSource() const
+{
+	return m_pcEditView->IsDragSource();
+}
+
+bool CDropTarget::IsDragText() const
 {
 	return
 		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
@@ -55,49 +72,33 @@ bool CEditView::IsDragText() const
 		m_Formats.contains(CF_TEXT);
 }
 
-IFACEMETHODIMP CDropTarget::DragEnter(
-	LPDATAOBJECT pDataObject,
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
+void CDropTarget::LeaveDragMode()
 {
-	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
-	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
-}
-
-IFACEMETHODIMP CDropTarget::DragOver(
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
-{
-	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
-}
-
-IFACEMETHODIMP CDropTarget::DragLeave()
-{
-	return m_pcEditView->DragLeave();
-}
-
-IFACEMETHODIMP CDropTarget::Drop(
-	LPDATAOBJECT pDataObject,
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
-{
-	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
-}
-
-void CEditView::LeaveDragMode()
-{
-	_SetDragMode(false);
+	m_pcEditView->_SetDragMode(false);
 
 	// 非アクティブ時は表示状態を非アクティブに戻す
 	if (!::GetActiveWindow()) {
-		OnKillFocus();
+		m_pcEditView->OnKillFocus();
 	}
+}
+
+void CDropTarget::OnMOUSEMOVE(UINT wParam, int x, int y) const
+{
+	return m_pcEditView->OnMOUSEMOVE(wParam, x, y);
+}
+
+HRESULT CDropTarget::PostMyDropFiles(
+	LPDATAOBJECT pDataObject
+)
+{
+	return m_pcEditView->PostMyDropFiles(
+		pDataObject
+	);
+}
+
+void CDropTarget::RedrawAll()
+{
+	return m_pcEditView->RedrawAll();
 }
 
 /* static */ DWORD CDropSource::DoDragDrop(
