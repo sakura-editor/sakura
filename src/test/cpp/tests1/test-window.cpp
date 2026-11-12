@@ -2293,6 +2293,16 @@ TEST_F(EditWndTest, Command_PROFILEMGR101)
 }
 
 /*!
+ * コマンド：キーマクロの記録開始／終了
+ */
+TEST_F(EditWndTest, Command_RECKEYMACRO101)
+{
+	const auto hWnd = pcEditWnd->GetHwnd();
+	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
  * コマンド：タグジャンプ
  */
 TEST_F(EditWndTest, Command_TAGJUMP001)
