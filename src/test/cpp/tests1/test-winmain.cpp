@@ -1279,19 +1279,16 @@ TEST_F(WinMainFuncTest, CreateControlProcess106)
 	);
 }
 
+#if defined(_MSC_VER)
+
 /*!
  * @brief wWinMainで SEH例外 を検知するパターンのテスト
  */
-TEST_F(WinMainFuncTest, DISABLED_CreateControlProcess107)	// GitHub Actionsで動かないので無効化しておく
+TEST_F(WinMainFuncTest, CreateControlProcess107)	// GitHub Actionsで動かないので無効化しておく
 {
 	constexpr auto expectedExitCode =
-#if defined(_MSC_VER) &&  defined(_DEBUG)
 		// MSVC版は「SEH例外でクラッシュしたこと」を検知する
 		EAppExitCode::Crashed
-#else
-		// MSVC以外は SEH例外 を検知できないので「予期せぬエラーが発生したこと」を検知する
-		EAppExitCode::UnExpected
-#endif // if defined(_MSC_VER) &&  defined(_DEBUG)
 		;
 
 	EXPECT_EXIT({
@@ -1337,6 +1334,8 @@ TEST_F(WinMainFuncTest, DISABLED_CreateControlProcess107)	// GitHub Actionsで�
 		".*"
 	);
 }
+
+#endif // if defined(_MSC_VER)
 
 /*!
  * @brief 1つ目のミューテックス作成に失敗するパターンのテスト
