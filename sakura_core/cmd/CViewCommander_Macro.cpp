@@ -36,32 +36,43 @@
 /* キーマクロの記録開始／終了 */
 void CViewCommander::Command_RECKEYMACRO( void )
 {
-	if( GetDllShareData().m_sFlags.m_bRecordingKeyMacro ){									/* キーボードマクロの記録中 */
-		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = FALSE;
-		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = nullptr;							/* キーボードマクロを記録中のウィンドウ */
+	auto& sFlags = GetDllShareData().m_sFlags;
+	auto& sMacro = GetDllShareData().m_Common.m_sMacro;
+
+	if (sFlags.m_bRecordingKeyMacro) {									/* キーボードマクロの記録中 */
+		sFlags.m_bRecordingKeyMacro = FALSE;
+		sFlags.m_hwndRecordingKeyMacro = nullptr;							/* キーボードマクロを記録中のウィンドウ */
+
 		//@@@ 2002.1.24 YAZAKI キーマクロをマクロ用フォルダーに「RecKey.mac」という名で保存
-		WCHAR szInitDir[MAX_PATH];
-		int nRet;
+		SFilePath szInitDir{};
 		// 2003.06.23 Moca 記録用キーマクロのフルパスをCShareData経由で取得
-		nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
-		if( nRet <= 0 ){
+		if (const auto nRet = CShareData::getInstance()->GetMacroFilename( -1, szInitDir, MAX_PATH ); 
+			nRet <= 0)
+		{
+			// L"マクロファイルを作成できませんでした。\nファイル名の取得エラー nRet=%d"
 			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD24), nRet );
 			return;
-		}else{
-			wcscpy( GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName, szInitDir );
 		}
+		else {
+			wcscpy_s(sMacro.m_szKeyMacroFileName, szInitDir);
+		}
+
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-		int nSaveResult = m_pcSMacroMgr->Save(
+		if (const auto nSaveResult = m_pcSMacroMgr->Save(
 			STAND_KEYMACRO,
 			G_AppInstance(),
-			GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName
+			sMacro.m_szKeyMacroFileName
 		);
-		if ( !nSaveResult ){
-			ErrorMessage(	m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD25), GetDllShareData().m_Common.m_sMacro.m_szKeyMacroFileName );
+			!nSaveResult)
+		{
+			// L"マクロファイルを作成できませんでした。\n\n%s"
+			ErrorMessage( m_pCommanderView->GetHwnd(), LS(STR_ERR_CEDITVIEW_CMD25), sMacro.m_szKeyMacroFileName );
 		}
-	}else{
-		GetDllShareData().m_sFlags.m_bRecordingKeyMacro = TRUE;
-		GetDllShareData().m_sFlags.m_hwndRecordingKeyMacro = GetMainWindow();	/* キーボードマクロを記録中のウィンドウ */
+	}
+	else {
+		sFlags.m_bRecordingKeyMacro = TRUE;
+		sFlags.m_hwndRecordingKeyMacro = GetMainWindow();	/* キーボードマクロを記録中のウィンドウ */
+
 		/* キーマクロのバッファをクリアする */
 		//@@@ 2002.1.24 m_CKeyMacroMgrをCEditDocへ移動
 		//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
@@ -69,8 +80,9 @@ void CViewCommander::Command_RECKEYMACRO( void )
 //		GetDocument()->m_CKeyMacroMgr.ClearAll();
 //		GetDllShareData().m_CKeyMacroMgr.Clear();
 	}
+
 	/* 親ウィンドウのタイトルを更新 */
-	GetEditWindow()->UpdateCaption();
+	GetEditWnd().UpdateCaption();
 
 	/* キャレットの行桁位置を表示する */
 	GetCaret().ShowCaretPosInfo();
