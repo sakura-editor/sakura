@@ -12,6 +12,7 @@
 #include "grep/CGrepExceptFileRegexps.h"
 #include "grep/CGrepEnumFilterFolders.h"
 #include "agent/CSearchAgent.h"
+#include "cmd/CViewCommander_inline.h"	//GetOpeBlk
 #include "dlg/CDlgCancel.h"
 #include "_main/CAppMode.h"
 #include "_main/CMutex.h"
