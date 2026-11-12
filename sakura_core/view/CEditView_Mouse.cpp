@@ -1702,13 +1702,16 @@ IFACEMETHODIMP CEditView::DragEnter(
 	if (!pdwEffect)
 		return E_INVALIDARG;
 
-	m_cfDragData = GetAvailableClipFormat( pDataObject );
-	if( m_cfDragData == 0 )
+	m_Formats = GetAvailableClipFormats(pDataObject);
+
+	if (m_Formats.empty())
 		return E_INVALIDARG;
-	else if( m_cfDragData == CF_HDROP ){
-		// 右ボタンで入ってきたときだけファイルをビューで取り扱う
-		if( !(MK_RBUTTON & dwKeyState) )
-			return E_INVALIDARG;
+
+	// ファイルを受け付けるのは右ボタンで入ってきたときだけ
+	if (IsDragFile() &&
+		!(dwKeyState & MK_RBUTTON))
+	{
+		return E_INVALIDARG;
 	}
 
 	/* 自分をアクティブペインにする */
@@ -1719,7 +1722,7 @@ IFACEMETHODIMP CEditView::DragEnter(
 	m_nCaretPosX_Prev_DragEnter = GetCaret().m_nCaretPosX_Prev;
 
 	// ドラッグデータは矩形か
-	m_bDragBoxData = IsDataAvailable( pDataObject, CDataObject::cfColumnSelect );
+	m_bDragBoxData = m_Formats.contains(CDataObject::cfColumnSelect);
 
 	// ドラッグモードを開始する
 	EnterDragMode();
@@ -1746,7 +1749,7 @@ IFACEMETHODIMP CEditView::DragOver(
 	if (!pdwEffect)
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
+	*pdwEffect = TranslateDropEffect(dwKeyState, *pdwEffect);
 
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
@@ -1805,17 +1808,16 @@ IFACEMETHODIMP CEditView::Drop(
 	if (!pdwEffect)
 		return E_INVALIDARG;
 
-	CLIPFORMAT cf;
-	cf = GetAvailableClipFormat( pDataObject );
-	if( cf == 0 )
+	if (m_Formats.empty())
 		return E_INVALIDARG;
 
-	*pdwEffect = TranslateDropEffect( cf, dwKeyState, pt, *pdwEffect );
-	if( *pdwEffect == DROPEFFECT_NONE )
+	*pdwEffect = TranslateDropEffect(dwKeyState, *pdwEffect);
+
+	if (DROPEFFECT_NONE == *pdwEffect)
 		return E_INVALIDARG;
 
 	// ファイルドロップは PostMyDropFiles() で処理する
-	if( cf == CF_HDROP )
+	if (IsDragFile())
 		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
@@ -1834,6 +1836,12 @@ IFACEMETHODIMP CEditView::Drop(
 	}
 
 	bBoxData = m_bDragBoxData;
+
+	CLIPFORMAT cf = 0;
+
+	if (m_Formats.contains(CDataObject::cfSakuraClip)) cf = CDataObject::cfSakuraClip;
+	if (0 == cf && m_Formats.contains(CF_UNICODETEXT)) cf = CF_UNICODETEXT;
+	if (0 == cf && m_Formats.contains(CF_TEXT)) cf = CF_TEXT;
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
@@ -2206,26 +2214,12 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::GlobalFree( hDrop );
 }
 
-CLIPFORMAT CEditView::GetAvailableClipFormat( LPDATAOBJECT pDataObject )
+DWORD CEditView::TranslateDropEffect(
+	DWORD dwKeyState,
+	DWORD dwEffect
+) const
 {
-	CLIPFORMAT cf = 0;
-	CLIPFORMAT cfSAKURAClip = CClipboard::GetSakuraFormat();
-
-	if( IsDataAvailable(pDataObject, cfSAKURAClip) )
-		cf = cfSAKURAClip;
-	else if( IsDataAvailable(pDataObject, CF_UNICODETEXT) )
-		cf = CF_UNICODETEXT;
-	else if( IsDataAvailable(pDataObject, CF_TEXT) )
-		cf = CF_TEXT;
-	else if( IsDataAvailable(pDataObject, CF_HDROP) )	// 2008.06.20 ryoji
-		cf = CF_HDROP;
-
-	return cf;
-}
-
-DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_unused]] POINTL pt, DWORD dwEffect )
-{
-	if( cf == CF_HDROP )	// 2008.06.20 ryoji
+	if (IsDragFile())
 		return DROPEFFECT_LINK;
 
 	// 2008.06.21 ryoji
@@ -2249,9 +2243,24 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 	return dwEffect;
 }
 
+bool CEditView::IsDragFile() const
+{
+	return
+		!IsDragText() &&
+		m_Formats.contains(CF_HDROP);
+}
+
 bool CEditView::IsDragSource() const
 {
 	return this == GetDragSourceView();
+}
+
+bool CEditView::IsDragText() const
+{
+	return
+		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
+		m_Formats.contains(CF_UNICODETEXT) ||
+		m_Formats.contains(CF_TEXT);
 }
 
 /*!
