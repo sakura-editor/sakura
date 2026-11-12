@@ -47,6 +47,11 @@
 #include "sakura_rc.h"
 #include "config/system_constants.h"
 
+auto GetDragSourceView()
+{
+	return GetEditWnd().GetDragSourceView();
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -1728,11 +1733,11 @@ IFACEMETHODIMP CEditView::DragOver(
 
 	*pdwEffect = TranslateDropEffect( m_cfDragData, dwKeyState, pt, *pdwEffect );
 
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
-
 	// ドラッグ元が他ビューで、このビューのカーソルがドラッグ元の選択範囲内の場合は禁止マークにする
 	// ※自ビューのときは禁止マークにしない（他アプリでも多くはそうなっている模様）	// 2009.06.09 ryoji
-	if( pcDragSourceView && !IsDragSource() &&
+	if (auto pcDragSourceView = GetDragSourceView();
+		pcDragSourceView &&
+		IsDragSource() &&
 		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
 	){
 		*pdwEffect = DROPEFFECT_NONE;
@@ -1805,9 +1810,8 @@ IFACEMETHODIMP CEditView::Drop(
 		return PostMyDropFiles( pDataObject );
 
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
+	const auto pcDragSourceView = GetDragSourceView();
 	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
-	bBoxData = m_bDragBoxData;
 
 	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
 	if( pcDragSourceView &&
@@ -1822,6 +1826,8 @@ IFACEMETHODIMP CEditView::Drop(
 			RedrawAll();	// ←主に以後の非アクティブ化に伴うアンダーライン消しのために一度更新して整合をとる
 		return S_OK;
 	}
+
+	bBoxData = m_bDragBoxData;
 
 	// ドロップデータの取得
 	HGLOBAL hData = GetGlobalData( pDataObject, cf );
@@ -2216,15 +2222,15 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 	if( cf == CF_HDROP )	// 2008.06.20 ryoji
 		return DROPEFFECT_LINK;
 
-	CEditView* pcDragSourceView = GetEditWnd().GetDragSourceView();
-
 	// 2008.06.21 ryoji
 	// Win 98/Me 環境では外部からのドラッグ時に GetKeyState() ではキー状態を正しく取得できないため、
 	// Drag & Drop インターフェースで渡される dwKeyState を用いて判定する。
 #if 1
 	// ドラッグ元が外部ウィンドウかどうかによって受け方を変える
 	// ※汎用テキストエディタではこちらが主流っぽい
-	if( pcDragSourceView ){
+	if (const auto pcDragSourceView = GetDragSourceView();
+		pcDragSourceView)
+	{
 #else
 	// ドラッグ元が移動を許すかどうかによって受け方を変える
 	// ※MS 製品（MS Office, Visual Studioなど）ではこちらが主流っぽい
@@ -2237,9 +2243,9 @@ DWORD CEditView::TranslateDropEffect( CLIPFORMAT cf, DWORD dwKeyState, [[maybe_u
 	return dwEffect;
 }
 
-bool CEditView::IsDragSource( void )
+bool CEditView::IsDragSource() const
 {
-	return ( this == GetEditWnd().GetDragSourceView() );
+	return this == GetDragSourceView();
 }
 
 /*!
