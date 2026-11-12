@@ -103,10 +103,11 @@ bool CShareData_IO::ShareData_IO_2( bool bRead )
 	if( bRead ){
 		if( !cProfile.ReadProfile( szIniFileName ) ){
 			/* 設定ファイルが存在しない */
-			LANGID langId = GetUserDefaultUILanguage();
 			// Windowsの表示言語が日本語でない場合は言語設定を英語にする
-			if (langId != MAKELANGID( LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN )) {
-				wcscpy(pShareData->m_Common.m_sWindow.m_szLanguageDll, L"sakura_lang_en_US.dll");
+			if (const auto langId = GetUserDefaultUILanguage();
+				langId != MAKELANGID(LANG_JAPANESE, SUBLANG_JAPANESE_JAPAN))
+			{
+				pShareData->m_Common.m_sWindow.m_szLanguageDll = L"sakura_lang_en_US.dll";
 				cProfile.IOProfileData(L"Common", L"szLanguageDll", StringBufferW(pShareData->m_Common.m_sWindow.m_szLanguageDll));
 				std::vector<std::wstring> values;
 				pcShare->ConvertLangValues( values, true );
