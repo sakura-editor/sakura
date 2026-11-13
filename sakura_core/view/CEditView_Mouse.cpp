@@ -1791,15 +1791,6 @@ IFACEMETHODIMP CEditView::Drop(
 )
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
-	BOOL		bBoxData;
-	BOOL		bMove;
-	BOOL		bMoveToPrev = FALSE;
-	RECT		rcSel;
-	CNativeW	cmemBuf;
-	bool		bBeginBoxSelect_Old = false;
-
-	CLayoutRange sSelectBgn_Old;
-	CLayoutRange sSelect_Old;
 
 	// ドラッグモードを終了する
 	LeaveDragMode();
@@ -1822,22 +1813,43 @@ IFACEMETHODIMP CEditView::Drop(
 	if (IsDragFile())
 		return PostMyDropFiles( pDataObject );
 
+	bool bMove = false;
+
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	const auto pcDragSourceView = GetDragSourceView();
-	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
+	if (const auto pcDragSourceView = GetDragSourceView())
+	{
+		// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
+		if (!pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
+			// DragEnter時のカーソル位置を復元
+			// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
+			*pdwEffect = DROPEFFECT_NONE;
 
-	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
-	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
-	){
-		// DragEnter時のカーソル位置を復元
-		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
-		*pdwEffect = DROPEFFECT_NONE;
+			return DragLeave();
+		}
 
-		return DragLeave();
+		bMove = (DROPEFFECT_MOVE == *pdwEffect);
 	}
 
-	bBoxData = m_bDragBoxData;
+	return InsertDroppedText(
+		pDataObject,
+		bMove
+	);
+}
+
+HRESULT CEditView::InsertDroppedText(
+	LPDATAOBJECT pDataObject,
+	bool bMove
+)
+{
+	BOOL		bMoveToPrev = FALSE;
+	RECT		rcSel;
+	CNativeW	cmemBuf;
+	bool		bBeginBoxSelect_Old = false;
+
+	CLayoutRange sSelectBgn_Old;
+	CLayoutRange sSelect_Old;
+
+	const auto formats = GetAvailableClipFormats(pDataObject);
 
 	// ドロップデータの取得
 	std::wstring text;
@@ -1853,7 +1865,7 @@ IFACEMETHODIMP CEditView::Drop(
 		fe.tymed = TYMED_HGLOBAL;
 
 		fe.cfFormat = CDataObject::cfSakuraClip;
-		if (m_Formats.contains(CDataObject::cfSakuraClip) &&
+		if (formats.contains(CDataObject::cfSakuraClip) &&
 			SUCCEEDED(pDataObject->QueryGetData(&fe)) &&
 			SUCCEEDED(pDataObject->GetData(&fe, &me)))
 		{
@@ -1881,6 +1893,11 @@ IFACEMETHODIMP CEditView::Drop(
 	while (false);
 
 	cmemBuf.SetString(text.c_str(), text.size());
+
+	// ドラッグデータは矩形か
+	const auto bBoxData = formats.contains(CDataObject::cfColumnSelect);
+
+	auto pcDragSourceView = GetDragSourceView();
 
 	// アンドゥバッファの準備
 	if( nullptr == m_cCommander.GetOpeBlk() ){
