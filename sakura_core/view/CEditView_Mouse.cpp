@@ -1669,21 +1669,6 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CDropTarget::EnterDragMode()
-{
-	m_pcEditView->_SetDragMode(true);
-}
-
-void CDropTarget::LeaveDragMode()
-{
-	m_pcEditView->_SetDragMode(false);
-
-	// 非アクティブ時は表示状態を非アクティブに戻す
-	if (!::GetActiveWindow()) {
-		m_pcEditView->OnKillFocus();
-	}
-}
-
 IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
@@ -2283,58 +2268,9 @@ DWORD CDropTarget::TranslateDropEffect(
 	return dwEffect;
 }
 
-bool CDropTarget::IsDragFile() const
-{
-	return
-		!IsDragText() &&
-		m_Formats.contains(CF_HDROP);
-}
-
-bool CDropTarget::IsDragSource() const
-{
-	return m_pcEditView->IsDragSource();
-}
-
 bool CEditView::IsDragSource() const
 {
 	return this == GetDragSourceView();
-}
-
-bool CDropTarget::IsDragText() const
-{
-	return
-		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
-		m_Formats.contains(CF_UNICODETEXT) ||
-		m_Formats.contains(CF_TEXT);
-}
-
-CCaret& CDropTarget::GetCaret()
-{
-	return m_pcEditView->GetCaret();
-}
-
-HWND CDropTarget::GetHwnd() const
-{
-	return m_pcEditView->GetHwnd();
-}
-
-void CDropTarget::OnMOUSEMOVE(UINT wParam, int x, int y) const
-{
-	return m_pcEditView->OnMOUSEMOVE(wParam, x, y);
-}
-
-HRESULT CDropTarget::PostMyDropFiles(
-	LPDATAOBJECT pDataObject
-)
-{
-	return m_pcEditView->PostMyDropFiles(
-		pDataObject
-	);
-}
-
-void CDropTarget::RedrawAll()
-{
-	return m_pcEditView->RedrawAll();
 }
 
 /*!
