@@ -15,6 +15,8 @@
 
 #include "macro/CWSHIfObj.h"
 
+#include <array>
+
 // スマートインデント用WSHオブジェクト
 class CSmartIndentIfObj final : public CWSHIfObj
 {
@@ -37,23 +39,15 @@ public:
 	~CSmartIndentIfObj() override = default;
 
 	// 実装
-	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const override{
-		static MacroFuncInfo macroFuncInfoArr[] = {
-			//	終端
-			{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-		};
-		return macroFuncInfoArr;
-	}
 	//関数情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const override{
-		static MacroFuncInfo macroFuncInfoNotCommandArr[] = {
-			//ID									関数名							引数										戻り値の型	m_pszData
-			{EFunctionCode(F_SI_GETCHAR),			L"GetChar",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //押下したキーを取得する
+		static std::array<MacroFuncInfo, 2> macroFuncInfoNotCommandArr = {
+			//ID								関数名					引数										戻り値の型	
+			MacroFuncInfo{F_SI_GETCHAR,			L"GetChar",				{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	}, //押下したキーを取得する
 			//	終端
-			{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
 		};
-		return macroFuncInfoNotCommandArr;
+		return macroFuncInfoNotCommandArr.data();
 	}
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override

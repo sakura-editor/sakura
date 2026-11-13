@@ -44,14 +44,6 @@ public:
 
 	// 実装
 public:
-	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const override {
-		static std::array<MacroFuncInfo, 1> macroFuncInfoArr = {
-			//	終端
-			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-		};
-		return macroFuncInfoArr.data();
-	}
 	//関数情報を取得する
 	MacroFuncInfoArray GetMacroFuncInfo() const override {
 		static std::array<MacroFuncInfo, 4> macroFuncInfoNotCommandArr = 

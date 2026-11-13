@@ -65,14 +65,6 @@ public:
 		};
 		return macroFuncInfoArr.data();
 	}
-	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const override {
-		static std::array<MacroFuncInfo, 1> macroFuncInfoNotCommandArr = {
-			//	終端
-			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-		};
-		return macroFuncInfoNotCommandArr.data();
-	}
 
 	//コマンドを処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize) override
