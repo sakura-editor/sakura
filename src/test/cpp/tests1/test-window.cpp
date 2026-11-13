@@ -76,6 +76,8 @@ using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
+void MacroError(BSTR Description, BSTR Source, void *Data);
+
 namespace cxx {
 
 HRESULT MakeDataObject(
