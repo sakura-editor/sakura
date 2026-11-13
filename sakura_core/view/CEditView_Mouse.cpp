@@ -1669,22 +1669,22 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CEditView::EnterDragMode()
+void CDropTarget::EnterDragMode()
 {
-	_SetDragMode(true);
+	m_pcEditView->_SetDragMode(true);
 }
 
-void CEditView::LeaveDragMode()
+void CDropTarget::LeaveDragMode()
 {
-	_SetDragMode(false);
+	m_pcEditView->_SetDragMode(false);
 
 	// 非アクティブ時は表示状態を非アクティブに戻す
 	if (!::GetActiveWindow()) {
-		OnKillFocus();
+		m_pcEditView->OnKillFocus();
 	}
 }
 
-IFACEMETHODIMP CEditView::DragEnter(
+IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1736,7 +1736,7 @@ IFACEMETHODIMP CEditView::DragEnter(
 	);
 }
 
-IFACEMETHODIMP CEditView::DragOver(
+IFACEMETHODIMP CDropTarget::DragOver(
 	DWORD dwKeyState,
 	POINTL pt,
 	LPDWORD pdwEffect
@@ -1766,7 +1766,7 @@ IFACEMETHODIMP CEditView::DragOver(
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::DragLeave()
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 
@@ -1783,7 +1783,7 @@ IFACEMETHODIMP CEditView::DragLeave()
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::Drop(
+IFACEMETHODIMP CDropTarget::Drop(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1830,7 +1830,7 @@ IFACEMETHODIMP CEditView::Drop(
 		bMove = (DROPEFFECT_MOVE == *pdwEffect);
 	}
 
-	return InsertDroppedText(
+	return m_pcEditView->InsertDroppedText(
 		pDataObject,
 		bMove
 	);
@@ -2254,7 +2254,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::GlobalFree( hDrop );
 }
 
-DWORD CEditView::TranslateDropEffect(
+DWORD CDropTarget::TranslateDropEffect(
 	DWORD dwKeyState,
 	DWORD dwEffect
 ) const
@@ -2283,11 +2283,16 @@ DWORD CEditView::TranslateDropEffect(
 	return dwEffect;
 }
 
-bool CEditView::IsDragFile() const
+bool CDropTarget::IsDragFile() const
 {
 	return
 		!IsDragText() &&
 		m_Formats.contains(CF_HDROP);
+}
+
+bool CDropTarget::IsDragSource() const
+{
+	return m_pcEditView->IsDragSource();
 }
 
 bool CEditView::IsDragSource() const
@@ -2295,12 +2300,41 @@ bool CEditView::IsDragSource() const
 	return this == GetDragSourceView();
 }
 
-bool CEditView::IsDragText() const
+bool CDropTarget::IsDragText() const
 {
 	return
 		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
 		m_Formats.contains(CF_UNICODETEXT) ||
 		m_Formats.contains(CF_TEXT);
+}
+
+CCaret& CDropTarget::GetCaret()
+{
+	return m_pcEditView->GetCaret();
+}
+
+HWND CDropTarget::GetHwnd() const
+{
+	return m_pcEditView->GetHwnd();
+}
+
+void CDropTarget::OnMOUSEMOVE(UINT wParam, int x, int y) const
+{
+	return m_pcEditView->OnMOUSEMOVE(wParam, x, y);
+}
+
+HRESULT CDropTarget::PostMyDropFiles(
+	LPDATAOBJECT pDataObject
+)
+{
+	return m_pcEditView->PostMyDropFiles(
+		pDataObject
+	);
+}
+
+void CDropTarget::RedrawAll()
+{
+	return m_pcEditView->RedrawAll();
 }
 
 /*!

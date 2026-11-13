@@ -26,6 +26,8 @@
 
 CDropTarget::CDropTarget(CEditView* pCEditView)
 	: m_pcEditView{ pCEditView }
+	, m_nMyIndex{ pCEditView ? pCEditView->m_nMyIndex : dummyInt }
+	, m_bDragBoxData{ pCEditView ? pCEditView->m_bDragBoxData : dummyFlag }
 {
 	return;
 }
@@ -33,41 +35,6 @@ CDropTarget::CDropTarget(CEditView* pCEditView)
 CDropTarget::~CDropTarget()
 {
 	return;
-}
-
-IFACEMETHODIMP CDropTarget::DragEnter(
-	LPDATAOBJECT pDataObject,
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
-{
-	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
-	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
-}
-
-IFACEMETHODIMP CDropTarget::DragOver(
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
-{
-	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
-}
-
-IFACEMETHODIMP CDropTarget::DragLeave()
-{
-	return m_pcEditView->DragLeave();
-}
-
-IFACEMETHODIMP CDropTarget::Drop(
-	LPDATAOBJECT pDataObject,
-	DWORD dwKeyState,
-	POINTL pt,
-	LPDWORD pdwEffect
-)
-{
-	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
 /* static */ DWORD CDropSource::DoDragDrop(
