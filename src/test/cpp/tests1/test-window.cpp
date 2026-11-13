@@ -2363,6 +2363,21 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
+auto SetUpIfObj(LPDISPATCH disp)
+{
+	auto EditView = &GetEditWnd().GetActiveView();
+
+	auto Engine = std::make_unique<CWSHClient>(L"Js", MacroError, EditView);
+
+	//インターフェースオブジェクトの登録
+	auto obj = reinterpret_cast<CWSHIfObj*>(disp);
+	auto flags = 0;
+	obj->ReadyMethods( EditView, flags );
+	Engine->AddInterfaceObject(obj);
+
+	return Engine;
+}
+
 TEST_F(EditWndTest, CComplementIfObj001)
 {
 	// とりあえずインスタンス化するだけ
@@ -2370,6 +2385,13 @@ TEST_F(EditWndTest, CComplementIfObj001)
 	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
 	int option = 0;
 	auto disp = CIfObj::make_instance<CComplementIfObj>(curWord, &cHokanMgr, option);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(3, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
 }
 
 TEST_F(EditWndTest, COutlineIfObj001)
@@ -2377,18 +2399,46 @@ TEST_F(EditWndTest, COutlineIfObj001)
 	// とりあえずインスタンス化するだけ
 	CFuncInfoArr cFuncInfoArr{};
 	auto disp = CIfObj::make_instance<COutlineIfObj>(cFuncInfoArr);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(7, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
 }
 
 TEST_F(EditWndTest, CPluginIfObj001)
 {
 	CWSHPlugin cPlugin{ GetExeFileName().parent_path().native() };
 	auto disp = CIfObj::make_instance<CPluginIfObj>(cPlugin);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(7, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
+
+	// AddCommandでジャックに登録されたプラグが
+	// cPluginの破棄後にダングリングポインタとして残らないよう登録解除する
+	// （一応、そういう実装仕様。なのだけど、仕様バグ、でもある。）
+	for (const auto* plug : cPlugin.GetPlugs()) {
+		CJackManager::getInstance()->UnRegisterPlug(PP_COMMAND_STR, plug);
+	}
 }
 
 TEST_F(EditWndTest, CSmartIndentIfObj001)
 {
 	// とりあえずインスタンス化するだけ
 	auto disp = CIfObj::make_instance<CSmartIndentIfObj>(L'\t');
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(1, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
 }
 
 /*!
