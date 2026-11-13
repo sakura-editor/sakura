@@ -15,51 +15,66 @@
 #include "plugin/CPlugin.h"
 #include "macro/CWSHManager.h"
 
+#include <string>
+#include <string_view>
+
 #define PII_WSH						L"Wsh"			//WSHセクション
 #define PII_WSH_USECACHE			L"UseCache"		//読み込んだスクリプトを再利用する
 
-class CWSHPlug final :
-	public CPlug
+class CWSHPlug final : public CPlug
 {
 	using Me = CWSHPlug;
 
 public:
-	CWSHPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel ) :
-		CPlug( plugin, id, sJack, sHandler, sLabel )
+	CWSHPlug(
+		CPlugin& plugin,
+		PlugId id,
+		std::wstring_view sJack,
+		std::wstring_view sHandler,
+		std::wstring_view sLabel
+	)
+		: CPlug( plugin, id, sJack, sHandler, sLabel )
 	{
-		m_Wsh = nullptr;
 	}
+
 	CWSHPlug(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
+
 	CWSHPlug(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
-	virtual ~CWSHPlug() {
+
+	~CWSHPlug() override {
 		if( m_Wsh ){
 			delete m_Wsh;
 			m_Wsh = nullptr;
 		}
 	}
-	CWSHMacroManager* m_Wsh;
+
+	CWSHMacroManager* m_Wsh = nullptr;
 };
 
-class CWSHPlugin final :
-	public CPlugin
+class CWSHPlugin final : public CPlugin
 {
 	using Me = CWSHPlugin;
 
 	//コンストラクタ
 public:
-	CWSHPlugin( const std::wstring& sBaseDir ) : CPlugin( sBaseDir ) {
-		m_bUseCache = false;
+	explicit CWSHPlugin(
+		std::wstring_view sBaseDir
+	)
+		: CPlugin( sBaseDir )
+	{
 	}
+
 	CWSHPlugin(const Me&) = delete;
 	Me& operator = (const Me&) = delete;
+
 	CWSHPlugin(Me&&) noexcept = delete;
 	Me& operator = (Me&&) noexcept = delete;
 
 	//デストラクタ
 public:
-	~CWSHPlugin(void);
+	~CWSHPlugin() override;
 
 	//操作
 	//CPlugインスタンスの作成。ReadPluginDefPlug/Command から呼ばれる。
@@ -79,6 +94,7 @@ public:
 
 	//メンバ変数
 private:
-	bool m_bUseCache;
+	bool m_bUseCache = false;
 };
+
 #endif /* SAKURA_CWSHPLUGIN_C424AA2D_B0A3_4170_9566_7F316368EDAF_H_ */

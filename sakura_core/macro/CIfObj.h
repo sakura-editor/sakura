@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,9 @@
 
 #include "_os/OleTypes.h"
 #include "cxx/TComImpl.hpp"
+
+#include <string>
+#include <string_view>
 
 class CEditView;
 

@@ -38,15 +38,17 @@ class CPluginIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	CPluginIfObj( CPlugin& cPlugin )
+	explicit CPluginIfObj(
+		CPlugin& cPlugin
+	)
 		: CWSHIfObj( L"Plugin", false )
-		, m_cPlugin( cPlugin )
+		, m_cPlugin{ cPlugin }
 	{
 	}
 
 	// デストラクタ
 public:
-	~CPluginIfObj(){}
+	~CPluginIfObj() override = default;
 
 	// 操作
 public:
@@ -189,10 +191,9 @@ public:
 	}
 
 	// メンバ変数
-public:
 private:
 	CPlugin& m_cPlugin;
-	int m_nPlugIndex;	//実行中プラグの番号
+	int m_nPlugIndex = 0;	//実行中プラグの番号
 };
 
 #endif /* SAKURA_CPLUGINIFOBJ_F083BB50_2D36_44C9_8F2B_6F2D3BA7AAF9_H_ */

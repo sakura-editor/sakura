@@ -33,16 +33,17 @@ class COutlineIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	COutlineIfObj( CFuncInfoArr& cFuncInfoArr )
+	explicit COutlineIfObj(
+		CFuncInfoArr& cFuncInfoArr
+	)
 		: CWSHIfObj( L"Outline", false )
-		, m_nListType( OUTLINE_PLUGIN )
 		, m_cFuncInfoArr( cFuncInfoArr )
 	{
 	}
 
 	// デストラクタ
 public:
-	~COutlineIfObj(){}
+	~COutlineIfObj() override = default;
 
 	// 実装
 public:
@@ -131,7 +132,8 @@ public:
 	// メンバ変数
 public:
 	std::wstring m_sOutlineTitle;
-	EOutlineType m_nListType;
+	EOutlineType m_nListType = OUTLINE_PLUGIN;
+
 private:
 	CFuncInfoArr& m_cFuncInfoArr;
 };

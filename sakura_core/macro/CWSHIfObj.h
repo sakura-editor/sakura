@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -21,6 +21,7 @@
 #include "macro/CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
 
 #include <array>
+#include <list>
 
 #include <ActivScp.h>
 

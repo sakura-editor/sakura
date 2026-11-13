@@ -29,9 +29,11 @@ class CSmartIndentIfObj final : public CWSHIfObj
 
 	// コンストラクタ
 public:
-	explicit CSmartIndentIfObj(wchar_t ch)
+	explicit CSmartIndentIfObj(
+		wchar_t ch
+	)
 		: CWSHIfObj( L"Indent", false )
-		, m_wcChar(ch)
+		, m_wcChar{ ch }
 	{
 	}
 

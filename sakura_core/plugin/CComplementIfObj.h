@@ -17,6 +17,10 @@
 #include "util/ole_convert.h"
 
 #include <array>
+#include <string>
+#include <string_view>
+
+class CHokanMgr;
 
 class CComplementIfObj : public CWSHIfObj {
 	// 型定義
@@ -30,7 +34,11 @@ class CComplementIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	CComplementIfObj( std::wstring& curWord, CHokanMgr* pMgr, int option )
+	CComplementIfObj(
+		std::wstring_view curWord,
+		CHokanMgr* pMgr,
+		int option
+	)
 		: CWSHIfObj( L"Complement", false )
 		, m_sCurrentWord( curWord )
 		, m_pHokanMgr( pMgr )
@@ -40,7 +48,7 @@ public:
 
 	// デストラクタ
 public:
-	~CComplementIfObj(){}
+	~CComplementIfObj() override = default;
 
 	// 実装
 public:
