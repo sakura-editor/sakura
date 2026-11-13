@@ -15,6 +15,8 @@
 #include "macro/CWSHIfObj.h"
 #include "outline/CFuncInfo.h"	// FUNCINFO_INFOMASK
 
+#include <array>
+
 class COutlineIfObj : public CWSHIfObj {
 	// 型定義
 	enum FuncId {
@@ -45,9 +47,32 @@ public:
 	// 実装
 public:
 	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
+	MacroFuncInfoArray GetMacroCommandInfo() const override{
+		//コマンド情報
+		static std::array<MacroFuncInfo, 8> macroFuncInfoArr =
+		{
+			//				ID					関数名						引数										戻り値の型	m_pszData
+			MacroFuncInfo{F_OL_ADDFUNCINFO,		L"AddFuncInfo",				{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY }, //アウトライン解析に追加する
+			MacroFuncInfo{F_OL_ADDFUNCINFO2,	L"AddFuncInfo2",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY }, //アウトライン解析に追加する（深さ指定）
+			MacroFuncInfo{F_OL_SETTITLE,		L"SetTitle",				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY },	//アウトラインダイアログタイトルを指定
+			MacroFuncInfo{F_OL_SETLISTTYPE,		L"SetListType",				{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY }, //アウトラインリスト種別を指定
+			MacroFuncInfo{F_OL_SETLABEL,		L"SetLabel",				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY }, //ラベル文字列を指定
+			MacroFuncInfo{F_OL_ADDFUNCINFO3,	L"AddFuncInfo3",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名）
+			MacroFuncInfo{F_OL_ADDFUNCINFO4,	L"AddFuncInfo4",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名、深さ指定）
+
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoArr.data();
+	}
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; }
+	MacroFuncInfoArray GetMacroFuncInfo() const override {
+		static std::array<MacroFuncInfo, 1> macroFuncInfoNotCommandArr = {
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoNotCommandArr.data();
+	}
 
 	//コマンドを処理する
 	bool HandleCommand(CEditView* View, EFunctionCode ID, LPCWSTR* Arguments, const int* ArgLengths, const int ArgSize) override
@@ -117,31 +142,6 @@ public:
 	EOutlineType m_nListType;
 private:
 	CFuncInfoArr& m_cFuncInfoArr;
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
 };
 
-//コマンド情報
-MacroFuncInfo COutlineIfObj::m_MacroFuncInfoCommandArr[] = 
-{
-	//ID									関数名							引数										戻り値の型	m_pszData
-	{EFunctionCode(F_OL_ADDFUNCINFO),		L"AddFuncInfo",				{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する
-	{EFunctionCode(F_OL_ADDFUNCINFO2),		L"AddFuncInfo2",			{VT_I4, VT_I4, VT_BSTR, VT_I4},				VT_EMPTY,	nullptr }, //アウトライン解析に追加する（深さ指定）
-	{EFunctionCode(F_OL_SETTITLE),			L"SetTitle",				{VT_BSTR, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr },	//アウトラインダイアログタイトルを指定
-	{EFunctionCode(F_OL_SETLISTTYPE),		L"SetListType",				{VT_I4, VT_EMPTY, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //アウトラインリスト種別を指定
-	{EFunctionCode(F_OL_SETLABEL),			L"SetLabel",				{VT_I4, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_EMPTY,	nullptr }, //ラベル文字列を指定
-	{EFunctionCode(F_OL_ADDFUNCINFO3),		L"AddFuncInfo3",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名）
-	{EFunctionCode(F_OL_ADDFUNCINFO4),		L"AddFuncInfo4",			{VT_I4, VT_I4, VT_BSTR, VT_I4, VT_BSTR},	VT_EMPTY }, //アウトライン解析に追加する（ファイル名、深さ指定）
-
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
-
-//関数情報
-MacroFuncInfo COutlineIfObj::m_MacroFuncInfoArr[] = 
-{
-	//ID									関数名							引数										戻り値の型	m_pszData
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
 #endif /* SAKURA_COUTLINEIFOBJ_F8D635A3_FB5F_4619_95B8_BE6A557A518C_H_ */
