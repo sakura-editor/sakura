@@ -51,6 +51,13 @@
 #include "util/os/MockComdlg32.hpp"
 #include "util/os/MockShell32.hpp"
 
+#include "outline/CFuncInfoArr.h"
+#include "plugin/CComplementIfObj.h"
+#include "plugin/COutlineIfObj.h"
+#include "plugin/CPluginIfObj.h"
+#include "plugin/CSmartIndentIfObj.h"
+#include "plugin/CWSHPlugin.h"
+
 #include <fstream>
 #include <gtest/gtest-spi.h>
 
@@ -2352,6 +2359,34 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 
 	// ビューモードを解除する
 	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+TEST_F(EditWndTest, CComplementIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	std::wstring curWord{ L"word" };
+	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
+	int option = 0;
+	auto disp = CIfObj::make_instance<CComplementIfObj>(curWord, &cHokanMgr, option);
+}
+
+TEST_F(EditWndTest, COutlineIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	CFuncInfoArr cFuncInfoArr{};
+	auto disp = CIfObj::make_instance<COutlineIfObj>(cFuncInfoArr);
+}
+
+TEST_F(EditWndTest, CPluginIfObj001)
+{
+	CWSHPlugin cPlugin{ GetExeFileName().parent_path().native() };
+	auto disp = CIfObj::make_instance<CPluginIfObj>(cPlugin);
+}
+
+TEST_F(EditWndTest, CSmartIndentIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	auto disp = CIfObj::make_instance<CSmartIndentIfObj>(L'\t');
 }
 
 /*!
