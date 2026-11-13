@@ -356,23 +356,13 @@ public:
 	//                           D&D                               //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public: /* テスト用にアクセス属性を変更 */
-	/* IDropTarget実装 */
-	STDMETHODIMP DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP DragLeave( void );
-	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
+	HRESULT InsertDroppedText(
+		LPDATAOBJECT pDataObject,
+		bool bMove
+	);
 	STDMETHODIMP PostMyDropFiles( LPDATAOBJECT pDataObject );		/* 独自ドロップファイルメッセージをポストする */	// 2008.06.20 ryoji
 	void OnMyDropFiles( HDROP hDrop );								/* 独自ドロップファイルメッセージ処理 */	// 2008.06.20 ryoji
-
-	void EnterDragMode();
-	bool IsDragFile() const;
 	bool IsDragSource() const;
-	bool IsDragText() const;
-	void LeaveDragMode();
-	DWORD TranslateDropEffect(
-		DWORD dwKeyState,
-		DWORD dwEffect
-	) const;
 
 	void _SetDragMode(BOOL b)
 	{
@@ -696,12 +686,7 @@ public:
 	DropTargetWndHolder	m_DropTargetWnd = std::make_unique<CDropTargetWnd>();
 	BOOL			m_bDragMode = FALSE;	/* 選択テキストのドラッグ中か */
 
-	using SCfArray = std::set<CLIPFORMAT>;
-	SCfArray		m_Formats{};						/* ドラッグデータのクリップ形式 */
-
 	BOOL			m_bDragBoxData = FALSE;	/* ドラッグデータは矩形か */
-	CLayoutPoint	m_ptCaretPos_DragEnter;			/* ドラッグ開始時のカーソル位置 */	// 2007.12.09 ryoji
-	CLayoutInt		m_nCaretPosX_Prev_DragEnter = CLayoutInt(0);	/* ドラッグ開始時のX座標記憶 */	// 2007.12.09 ryoji
 
 	//括弧
 	CLogicPoint		m_ptBracketCaretPos_PHY;	// 前カーソル位置の括弧の位置 (改行単位行先頭からのバイト数(0開始), 改行単位行の行番号(0開始))
