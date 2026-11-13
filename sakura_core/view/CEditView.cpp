@@ -154,7 +154,7 @@ BOOL CEditView::Create(
 	m_cRegexKeyword = nullptr;				// 2007.04.08 ryoji
 
 	SetDrawSwitch(true);
-
+	_SetDragMode(FALSE);					/* 選択テキストのドラッグ中か */
 	m_bCurSrchKeyMark = false;				/* 検索文字列 */
 	//	Jun. 27, 2001 genta
 	m_strCurSearchKey.clear();

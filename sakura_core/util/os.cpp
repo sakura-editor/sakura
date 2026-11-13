@@ -266,6 +266,42 @@ BOOL IsDataAvailable( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
 	return S_OK == pDataObject->QueryGetData( &fe );
 }
 
+HGLOBAL GetGlobalData( LPDATAOBJECT pDataObject, CLIPFORMAT cfFormat )
+{
+	FORMATETC fe;
+	fe.cfFormat = cfFormat;
+	fe.ptd = nullptr;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	// 2006.01.16 Moca fe.tymed = -1からTYMED_HGLOBALに変更。
+	fe.tymed = TYMED_HGLOBAL;
+
+	HGLOBAL hDest = nullptr;
+	STGMEDIUM stgMedium;
+	// 2006.03.16 Moca SUCCEEDEDマクロではS_FALSEのとき困るので、S_OKに変更
+	if( S_OK == pDataObject->GetData( &fe, &stgMedium ) ){
+		if( stgMedium.pUnkForRelease == nullptr ){
+			if( stgMedium.tymed == TYMED_HGLOBAL )
+				hDest = stgMedium.hGlobal;
+		}else{
+			if( stgMedium.tymed == TYMED_HGLOBAL ){
+				const auto nSize = ::GlobalSize( stgMedium.hGlobal );
+				hDest = ::GlobalAlloc( GMEM_SHARE|GMEM_MOVEABLE, nSize );
+				if( hDest != nullptr ){
+					// copy the bits
+					LPVOID lpSource = ::GlobalLock( stgMedium.hGlobal );
+					LPVOID lpDest = ::GlobalLock( hDest );
+					memcpy_raw( lpDest, lpSource, nSize );
+					::GlobalUnlock( hDest );
+					::GlobalUnlock( stgMedium.hGlobal );
+				}
+			}
+			::ReleaseStgMedium( &stgMedium );
+		}
+	}
+	return hDest;
+}
+
 /*
 	https://docs.microsoft.com/en-us/windows/desktop/api/wow64apiset/nf-wow64apiset-iswow64process
 */

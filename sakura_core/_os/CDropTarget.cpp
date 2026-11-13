@@ -26,8 +26,6 @@
 
 CDropTarget::CDropTarget(CEditView* pCEditView)
 	: m_pcEditView{ pCEditView }
-	, m_nMyIndex{ pCEditView ? pCEditView->m_nMyIndex : dummyInt }
-	, m_bDragBoxData{ pCEditView ? pCEditView->m_bDragBoxData : dummyFlag }
 {
 	return;
 }
@@ -37,68 +35,39 @@ CDropTarget::~CDropTarget()
 	return;
 }
 
-void CDropTarget::EnterDragMode()
-{
-	m_pcEditView->_SetDragMode(true);
-}
-
-CCaret& CDropTarget::GetCaret()
-{
-	return m_pcEditView->GetCaret();
-}
-
-HWND CDropTarget::GetHwnd() const
-{
-	return m_pcEditView->GetHwnd();
-}
-
-bool CDropTarget::IsDragFile() const
-{
-	return
-		!IsDragText() &&
-		m_Formats.contains(CF_HDROP);
-}
-
-bool CDropTarget::IsDragSource() const
-{
-	return m_pcEditView->IsDragSource();
-}
-
-bool CDropTarget::IsDragText() const
-{
-	return
-		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
-		m_Formats.contains(CF_UNICODETEXT) ||
-		m_Formats.contains(CF_TEXT);
-}
-
-void CDropTarget::LeaveDragMode()
-{
-	m_pcEditView->_SetDragMode(false);
-
-	// 非アクティブ時は表示状態を非アクティブに戻す
-	if (!::GetActiveWindow()) {
-		m_pcEditView->OnKillFocus();
-	}
-}
-
-void CDropTarget::OnMOUSEMOVE(UINT wParam, int x, int y) const
-{
-	return m_pcEditView->OnMOUSEMOVE(wParam, x, y);
-}
-
-HRESULT CDropTarget::PostMyDropFiles(
-	LPDATAOBJECT pDataObject
+IFACEMETHODIMP CDropTarget::DragEnter(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
 )
 {
-	return m_pcEditView->PostMyDropFiles(
-		pDataObject
-	);
+	DEBUG_TRACE( L"CDropTarget::DragEnter()\n" );
+	return m_pcEditView->DragEnter( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
-void CDropTarget::RedrawAll()
+IFACEMETHODIMP CDropTarget::DragOver(
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
 {
-	return m_pcEditView->RedrawAll();
+	return m_pcEditView->DragOver( dwKeyState, pt, pdwEffect );
+}
+
+IFACEMETHODIMP CDropTarget::DragLeave()
+{
+	return m_pcEditView->DragLeave();
+}
+
+IFACEMETHODIMP CDropTarget::Drop(
+	LPDATAOBJECT pDataObject,
+	DWORD dwKeyState,
+	POINTL pt,
+	LPDWORD pdwEffect
+)
+{
+	return m_pcEditView->Drop( pDataObject, dwKeyState, pt, pdwEffect );
 }
 
 /* static */ DWORD CDropSource::DoDragDrop(

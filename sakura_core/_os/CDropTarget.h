@@ -24,11 +24,7 @@
 #include "util/design_template.h"
 #include "util/os.h"
 
-#include <set>
-
 class CDropTarget;
-
-class CCaret;
 class CEditWnd;	// 2008.06.20 ryoji
 class CEditView;// 2002/2/3 aroka ヘッダー軽量化
 
@@ -46,9 +42,6 @@ class CDropTarget : public cxx::TComImpl<IDropTarget>
 private:
 	using Base = cxx::TComImpl<IDropTarget>;
 	using Me = CDropTarget;
-
-	static inline int dummyInt = 0;
-	static inline BOOL dummyFlag = false;
 
 public:
 	// 生成関数
@@ -68,41 +61,21 @@ public:
 
 	~CDropTarget() override;
 
-	void EnterDragMode();
-	CCaret& GetCaret();
-	HWND GetHwnd() const;
-	bool IsDragSource() const;
-	bool IsDragFile() const;
-	bool IsDragText() const;
-	void LeaveDragMode();
-	void OnMOUSEMOVE(UINT wParam, int x, int y) const;
-	HRESULT PostMyDropFiles(
-		LPDATAOBJECT pDataObject
-	);
-	void RedrawAll();
-	DWORD TranslateDropEffect(
-		DWORD dwKeyState,
-		DWORD dwEffect
-	) const;
-
-	IFACEMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-	IFACEMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-	IFACEMETHODIMP	DragLeave() override;
-	IFACEMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
-
 	/*
 	||  Attributes & Operations
 	*/
 private: // 2002/2/10 aroka アクセス権変更
 	CEditView*		m_pcEditView = nullptr;
-	int&			m_nMyIndex = dummyInt;
 
-	using SCfArray = std::set<CLIPFORMAT>;
-	SCfArray		m_Formats{};						/* ドラッグデータのクリップ形式 */
-
-	BOOL&			m_bDragBoxData = dummyFlag;
-	CLayoutPoint	m_ptCaretPos_DragEnter;				/* ドラッグ開始時のカーソル位置 */
-	CLayoutInt		m_nCaretPosX_Prev_DragEnter{ 0 };	/* ドラッグ開始時のX座標記憶 */
+public:
+	STDMETHODIMP	DragEnter(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+	STDMETHODIMP	DragLeave( void ) override;
+	STDMETHODIMP	Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect) override;
+protected:
+	/*
+	||  実装ヘルパ関数
+	*/
 };
 
 /*!
