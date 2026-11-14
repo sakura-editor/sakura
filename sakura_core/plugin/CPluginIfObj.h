@@ -20,6 +20,8 @@
 #include "window/CEditWnd.h"
 #include "view/CEditView.h"
 
+#include <array>
+
 class CPluginIfObj : public CWSHIfObj {
 	// 型定義
 	enum FuncId {
@@ -36,15 +38,17 @@ class CPluginIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	CPluginIfObj( CPlugin& cPlugin )
+	explicit CPluginIfObj(
+		CPlugin& cPlugin
+	)
 		: CWSHIfObj( L"Plugin", false )
-		, m_cPlugin( cPlugin )
+		, m_cPlugin{ cPlugin }
 	{
 	}
 
 	// デストラクタ
 public:
-	~CPluginIfObj(){}
+	~CPluginIfObj() override = default;
 
 	// 操作
 public:
@@ -52,15 +56,31 @@ public:
 	// 実装
 public:
 	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const
-	{
-		return m_MacroFuncInfoCommandArr;
+	MacroFuncInfoArray GetMacroCommandInfo() const override {
+		static std::array<MacroFuncInfo, 3> macroFuncInfoArr = {
+			//ID									関数名					引数										戻り値の型	
+			MacroFuncInfo{F_PL_SETOPTION,			L"SetOption",			{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	}, //オプションファイルに値を書く
+			MacroFuncInfo{F_PL_ADDCOMMAND,			L"AddCommand",			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	}, //コマンドを追加する
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoArr.data();
 	}
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const
-	{
-		return m_MacroFuncInfoArr;
+	MacroFuncInfoArray GetMacroFuncInfo() const override{
+		static std::array<MacroFuncInfo, 6> macroFuncInfoNotCommandArr = {
+			//			  ID					関数名					引数										戻り値の型	
+			MacroFuncInfo{F_PL_GETPLUGINDIR,	L"GetPluginDir",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	}, //プラグインフォルダーパスを取得する
+			MacroFuncInfo{F_PL_GETDEF,			L"GetDef",				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	}, //設定ファイルから値を読む
+			MacroFuncInfo{F_PL_GETOPTION,		L"GetOption",			{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	}, //オプションファイルから値を読む
+			MacroFuncInfo{F_PL_GETCOMMANDNO,	L"GetCommandNo",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		}, //オプションファイルから値を読む
+			MacroFuncInfo{F_PL_GETSTRING,		L"GetString",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	}, //設定ファイルから文字列を読む
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoNotCommandArr.data();
 	}
+
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
 	{
@@ -171,34 +191,9 @@ public:
 	}
 
 	// メンバ変数
-public:
 private:
 	CPlugin& m_cPlugin;
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
-	int m_nPlugIndex;	//実行中プラグの番号
+	int m_nPlugIndex = 0;	//実行中プラグの番号
 };
 
-//コマンド情報
-MacroFuncInfo CPluginIfObj::m_MacroFuncInfoCommandArr[] = 
-{
-	//ID									関数名					引数										戻り値の型	m_pszData
-	{EFunctionCode(F_PL_SETOPTION),			L"SetOption",			{VT_BSTR, VT_BSTR, VT_VARIANT, VT_EMPTY},	VT_EMPTY,	nullptr }, //オプションファイルに値を書く
-	{EFunctionCode(F_PL_ADDCOMMAND),		L"AddCommand",			{VT_BSTR, VT_BSTR, VT_BSTR, VT_EMPTY},		VT_EMPTY,	nullptr }, //コマンドを追加する
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
-
-//関数情報
-MacroFuncInfo CPluginIfObj::m_MacroFuncInfoArr[] = 
-{
-	//ID									関数名					引数										戻り値の型	m_pszData
-	{EFunctionCode(F_PL_GETPLUGINDIR),		L"GetPluginDir",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //プラグインフォルダーパスを取得する
-	{EFunctionCode(F_PL_GETDEF),			L"GetDef",				{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //設定ファイルから値を読む
-	{EFunctionCode(F_PL_GETOPTION),			L"GetOption",			{VT_BSTR, VT_BSTR, VT_EMPTY, VT_EMPTY},		VT_BSTR,	nullptr }, //オプションファイルから値を読む
-	{EFunctionCode(F_PL_GETCOMMANDNO),		L"GetCommandNo",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //オプションファイルから値を読む
-	{EFunctionCode(F_PL_GETSTRING),			L"GetString",			{VT_I4,    VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //設定ファイルから文字列を読む
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
 #endif /* SAKURA_CPLUGINIFOBJ_F083BB50_2D36_44C9_8F2B_6F2D3BA7AAF9_H_ */

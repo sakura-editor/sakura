@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,6 +19,9 @@
 #include "macro/CIfObj.h"
 #include "macro/CWSH.h" // CWSHClient::List, ListIter
 #include "macro/CSMacroMgr.h" // MacroFuncInfo, MacroFuncInfoArray
+
+#include <array>
+#include <list>
 
 #include <ActivScp.h>
 
@@ -32,8 +35,7 @@ class CEditView;
  *   3. 新しいIfObjを作る時はCWSHIfObjを継承し、以下の4つをオーバーライドすること。
  *      GetMacroCommandInfo, GetMacroFuncInfo, HandleCommand, HandleFunction
  */
-class CWSHIfObj
-: public CIfObj
+class CWSHIfObj : public CIfObj
 {
 public:
 	// 型定義
@@ -53,9 +55,22 @@ protected:
 
 	HRESULT MacroCommand(int ID, DISPPARAMS *Arguments, VARIANT* Result, void *Data);
 
-	// 非実装提供
-	virtual MacroFuncInfoArray GetMacroCommandInfo() const = 0;	//コマンド情報を取得する
-	virtual MacroFuncInfoArray GetMacroFuncInfo() const = 0;	//関数情報を取得する
+	//コマンド情報を取得する
+	virtual MacroFuncInfoArray GetMacroCommandInfo() const {
+		static std::array<MacroFuncInfo, 1> macroFuncInfoArr = {
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoArr.data();
+	}
+	//関数情報を取得する
+	virtual MacroFuncInfoArray GetMacroFuncInfo() const {
+		static std::array<MacroFuncInfo, 1> macroFuncInfoNotCommandArr = {
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoNotCommandArr.data();
+	}
 
 	//関数を処理する
 	virtual bool HandleFunction([[maybe_unused]] CEditView* View, [[maybe_unused]] EFunctionCode ID, [[maybe_unused]] VARIANT *Arguments, [[maybe_unused]] const int ArgSize, [[maybe_unused]] VARIANT &Result)

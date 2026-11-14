@@ -51,6 +51,13 @@
 #include "util/os/MockComdlg32.hpp"
 #include "util/os/MockShell32.hpp"
 
+#include "outline/CFuncInfoArr.h"
+#include "plugin/CComplementIfObj.h"
+#include "plugin/COutlineIfObj.h"
+#include "plugin/CPluginIfObj.h"
+#include "plugin/CSmartIndentIfObj.h"
+#include "plugin/CWSHPlugin.h"
+
 #include <fstream>
 #include <gtest/gtest-spi.h>
 
@@ -68,6 +75,8 @@ using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
+
+void MacroError(BSTR Description, BSTR Source, void *Data);
 
 namespace cxx {
 
@@ -2352,6 +2361,128 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 
 	// ビューモードを解除する
 	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+template <typename ...Args>
+auto InvokeDispMethod(
+	LPDISPATCH disp,
+	DISPID dispid,
+	Args&&... args
+)
+{
+	std::vector<_variant_t> varArgs{ std::forward<Args>(args)... };
+
+	DISPPARAMS params{};
+	params.cArgs = static_cast<UINT>(varArgs.size());
+	params.rgvarg = varArgs.data();
+
+	_variant_t result{};
+	_com_util::CheckError(disp->Invoke(dispid, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr));
+
+	return result;
+}
+
+auto SetUpIfObj(LPDISPATCH disp)
+{
+	auto EditView = &GetEditWnd().GetActiveView();
+
+	auto Engine = std::make_unique<CWSHClient>(L"Js", MacroError, EditView);
+
+	//インターフェースオブジェクトの登録
+	auto obj = reinterpret_cast<CWSHIfObj*>(disp);
+	auto flags = 0;
+	obj->ReadyMethods( EditView, flags );
+	Engine->AddInterfaceObject(obj);
+
+	return Engine;
+}
+
+TEST_F(EditWndTest, CComplementIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	std::wstring curWord{ L"word" };
+	auto& cHokanMgr = pcEditWnd->m_cHokanMgr;
+	int option = 3;
+	auto disp = CIfObj::make_instance<CComplementIfObj>(curWord, &cHokanMgr, option);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(3, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
+
+	EXPECT_THAT(InvokeDispMethod(disp, 0).bstrVal, StrEq(curWord));
+
+	EXPECT_THAT(InvokeDispMethod(disp, 1).intVal, Eq(option));
+
+	EXPECT_THAT(InvokeDispMethod(disp, 2, L"keyword").intVal, Eq<int>(1));
+}
+
+TEST_F(EditWndTest, COutlineIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	CFuncInfoArr cFuncInfoArr{};
+	auto disp = CIfObj::make_instance<COutlineIfObj>(cFuncInfoArr);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(7, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
+
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 0));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 1));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 2));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 3));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 4));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 5));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 6));
+}
+
+TEST_F(EditWndTest, CPluginIfObj001)
+{
+	auto pluginDir = GetExeFileName().parent_path().native();
+	CWSHPlugin cPlugin{ pluginDir };
+	auto disp = CIfObj::make_instance<CPluginIfObj>(cPlugin);
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(7, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
+
+	EXPECT_ANY_THROW(InvokeDispMethod(disp, 0, L"section", L"key", L"value"));
+	EXPECT_NO_THROW(InvokeDispMethod(disp, 1));
+	EXPECT_THAT(InvokeDispMethod(disp, 2).bstrVal, StrEq(pluginDir));
+	EXPECT_THAT(InvokeDispMethod(disp, 3, L"section", L"key").bstrVal, StrEq(L""));
+	EXPECT_THAT(InvokeDispMethod(disp, 4, L"section", L"key").bstrVal, StrEq(L""));
+	EXPECT_THAT(InvokeDispMethod(disp, 5).intVal, Eq(0));
+	EXPECT_THAT(InvokeDispMethod(disp, 6, 0).bstrVal, StrEq(L""));
+
+	// AddCommandでジャックに登録されたプラグが
+	// cPluginの破棄後にダングリングポインタとして残らないよう登録解除する
+	// （一応、そういう実装仕様。なのだけど、仕様バグ、でもある。）
+	for (const auto* plug : cPlugin.GetPlugs()) {
+		CJackManager::getInstance()->UnRegisterPlug(PP_COMMAND_STR, plug);
+	}
+}
+
+TEST_F(EditWndTest, CSmartIndentIfObj001)
+{
+	// とりあえずインスタンス化するだけ
+	auto disp = CIfObj::make_instance<CSmartIndentIfObj>(L'\t');
+
+	DISPPARAMS params{ nullptr, nullptr, 0, 0 };
+	_variant_t result;
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 未セットアップ
+
+	auto Engine = SetUpIfObj(disp);
+	EXPECT_HRESULT_EQ(disp->Invoke(1, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
+
+	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), S_OK);
 }
 
 /*!

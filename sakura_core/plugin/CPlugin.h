@@ -12,10 +12,13 @@
 #define SAKURA_CPLUGIN_9E2D4124_CD2F_46B4_BEFA_4887FCCB2D0A_H_
 #pragma once
 
-#include <algorithm>
 #include "macro/CWSHIfObj.h"
 #include "env/CDataProfile.h"
 #include "util/string_ex.h"
+
+#include <algorithm>
+#include <string>
+#include <string_view>
 
 //! プラグインの管理番号index
 typedef int PluginId;
@@ -64,7 +67,13 @@ public:
 
 	//コンストラクタ
 public:
-	CPlug( CPlugin& plugin, PlugId id, std::wstring sJack, std::wstring sHandler, std::wstring sLabel )
+	CPlug(
+		CPlugin& plugin,
+		PlugId id,
+		std::wstring_view sJack,
+		std::wstring_view sHandler,
+		std::wstring_view sLabel
+	)
 		: m_id( id )
 		, m_sJack( sJack )
 		, m_sHandler( sHandler )
@@ -72,9 +81,10 @@ public:
 		, m_cPlugin( plugin )
 	{
 	}
+
 	//デストラクタ
 public:
-	virtual ~CPlug() {}
+	virtual ~CPlug() = default;
 
 	//操作
 public:

@@ -16,6 +16,12 @@
 #include "macro/CWSHIfObj.h"
 #include "util/ole_convert.h"
 
+#include <array>
+#include <string>
+#include <string_view>
+
+class CHokanMgr;
+
 class CComplementIfObj : public CWSHIfObj {
 	// 型定義
 	enum FuncId {
@@ -28,7 +34,11 @@ class CComplementIfObj : public CWSHIfObj {
 
 	// コンストラクタ
 public:
-	CComplementIfObj( std::wstring& curWord, CHokanMgr* pMgr, int option )
+	CComplementIfObj(
+		std::wstring_view curWord,
+		CHokanMgr* pMgr,
+		int option
+	)
 		: CWSHIfObj( L"Complement", false )
 		, m_sCurrentWord( curWord )
 		, m_pHokanMgr( pMgr )
@@ -38,14 +48,23 @@ public:
 
 	// デストラクタ
 public:
-	~CComplementIfObj(){}
+	~CComplementIfObj() override = default;
 
 	// 実装
 public:
-	//コマンド情報を取得する
-	MacroFuncInfoArray GetMacroCommandInfo() const{ return m_MacroFuncInfoCommandArr; }
 	//関数情報を取得する
-	MacroFuncInfoArray GetMacroFuncInfo() const{ return m_MacroFuncInfoArr; };
+	MacroFuncInfoArray GetMacroFuncInfo() const override {
+		static std::array<MacroFuncInfo, 4> macroFuncInfoNotCommandArr = 
+		{
+			//			  ID					関数名				引数										戻り値の型	
+			MacroFuncInfo{F_CM_GETCURRENTWORD,	L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	}, //補完対象の文字列を取得
+			MacroFuncInfo{F_CM_GETOPTION,		L"GetOption",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		}, //補完対象の文字列を取得
+			MacroFuncInfo{F_CM_ADDLIST,			L"AddList",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		}, //候補に追加する
+			//	終端
+			MacroFuncInfo{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
+		};
+		return macroFuncInfoNotCommandArr.data();
+	}
 
 	//関数を処理する
 	bool HandleFunction(CEditView* View, EFunctionCode ID, VARIANT *Arguments, const int ArgSize, VARIANT &Result) override
@@ -93,28 +112,6 @@ private:
 	std::wstring m_sCurrentWord;
 	CHokanMgr* m_pHokanMgr;
 	int m_nOption; // 0x01 == IgnoreCase
-
-private:
-	static MacroFuncInfo m_MacroFuncInfoCommandArr[];	// コマンド情報(戻り値なし)
-	static MacroFuncInfo m_MacroFuncInfoArr[];	// 関数情報(戻り値あり)
 };
 
-//コマンド情報
-MacroFuncInfo CComplementIfObj::m_MacroFuncInfoCommandArr[] = 
-{
-	//ID									関数名							引数										戻り値の型	m_pszData
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
-
-//関数情報
-MacroFuncInfo CComplementIfObj::m_MacroFuncInfoArr[] = 
-{
-	//ID								関数名				引数										戻り値の型	m_pszData
-	{EFunctionCode(F_CM_GETCURRENTWORD),L"GetCurrentWord",	{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_BSTR,	nullptr }, //補完対象の文字列を取得
-	{EFunctionCode(F_CM_GETOPTION),		L"GetOption",		{VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //補完対象の文字列を取得
-	{EFunctionCode(F_CM_ADDLIST),		L"AddList",			{VT_BSTR,  VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_I4,		nullptr }, //候補に追加する
-	//	終端
-	{F_INVALID,	nullptr, {VT_EMPTY, VT_EMPTY, VT_EMPTY, VT_EMPTY},	VT_EMPTY,	nullptr}
-};
 #endif /* SAKURA_CCOMPLEMENTIFOBJ_674B3C16_A1FD_4FE6_B3F5_054A5D1C71DB_H_ */

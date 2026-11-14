@@ -23,7 +23,7 @@
 #include "util/os.h"
 #include "macro/CMacroFactory.h"
 
-static void MacroError(BSTR Description, BSTR Source, void *Data)
+void MacroError(BSTR Description, BSTR Source, void *Data)
 {
 	CEditView *View = reinterpret_cast<CEditView*>(Data);
 	MessageBox(View->GetHwnd(), Description, Source, MB_ICONERROR);

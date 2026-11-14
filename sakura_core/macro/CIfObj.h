@@ -7,7 +7,7 @@
 /*
 	Copyright (C) 2002, 鬼, genta
 	Copyright (C) 2009, syat
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -17,6 +17,9 @@
 
 #include "_os/OleTypes.h"
 #include "cxx/TComImpl.hpp"
+
+#include <string>
+#include <string_view>
 
 class CEditView;
 
@@ -36,6 +39,10 @@ public:
 
 class CIfObj : public cxx::TComImpl<IDispatch>
 {
+private:
+	using Base = cxx::TComImpl<IDispatch>;
+	using Me = CIfObj;
+
 public:
 	// 型定義
 	struct CMethodInfo
@@ -48,6 +55,14 @@ public:
 	};
 	using CMethodInfoList = std::vector<CMethodInfo>;
 
+	// 生成関数
+	template<typename T, typename... Args>
+	static com_pointer_type make_instance(Args&&... args)
+		requires std::constructible_from<T, Args...>
+	{
+		return Base::template make_instance<T>(std::forward<Args>(args)...);
+	}
+	
 	// コンストラクタ・デストラクタ
 protected:
 	CIfObj(std::wstring_view name, bool isGlobal);
