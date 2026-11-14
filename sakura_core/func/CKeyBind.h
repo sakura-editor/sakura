@@ -18,6 +18,7 @@
 #pragma once
 
 #include <Windows.h>
+#include <array>
 #include "Funccode_enum.h"
 
 class CFuncLookup;
@@ -54,8 +55,7 @@ struct KEYDATA {
 #define VKEX_WHEEL_LEFT		0x0109	// ホイール左
 #define VKEX_WHEEL_RIGHT	0x010A	// ホイール右
 
-extern const WCHAR* jpVKEXNames[];
-extern const int jpVKEXNamesLen;
+extern const std::array<const WCHAR*, 11> jpVKEXNames;
 
 /*-----------------------------------------------------------------------
 クラスの宣言

@@ -769,7 +769,8 @@ static const KEYDATAINIT	KeyDataInit[] = {
 	{ VK_APPS,	{ (LPCWSTR)STR_KEY_BIND_APLI },	{ F_MENU_RBUTTON,	F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON,		F_MENU_RBUTTON,			F_MENU_RBUTTON }, }
 };
 
-const WCHAR* jpVKEXNames[] = {
+//TODO: リソースに入れる
+extern const std::array<const WCHAR*, 11> jpVKEXNames = {
 	L"ダブルクリック",
 	L"右クリック",
 	L"中クリック",

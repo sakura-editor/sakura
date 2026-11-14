@@ -458,6 +458,61 @@ TEST(CDataProfile, IOProfileData_EditInfo)
 /*!
  * @brief IOProfileDataのテスト
  */
+TEST(CDataProfile, IOProfileData_KeyBind)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	CommonSetting_KeyBind sKeyBind{};
+
+	const auto MAX_ENTRY = std::size(sKeyBind.m_pKeyNameArr) - 1;	// 最後の１要素はダミー用に予約 2012.11.25 aroka
+
+	for (auto& vkeyToKeyName : sKeyBind.m_VKeyToKeyNameArr) {
+		vkeyToKeyName = MAX_ENTRY;
+	}
+
+	sKeyBind.m_nKeyNameArrNum = 2;
+	wcscpy_s(sKeyBind.m_pKeyNameArr[0].m_szKeyName, L"A");
+	sKeyBind.m_pKeyNameArr[0].m_nKeyCode = L'A';
+	wcscpy_s(sKeyBind.m_pKeyNameArr[1].m_szKeyName, L"B");
+	sKeyBind.m_pKeyNameArr[1].m_nKeyCode = L'B';
+
+	// 旧バージョンを想定した値を入れる
+	cProfile.SetProfileData(L"KeyBind", L"A", L"1,2,3,4,5,6,7");	// 揃っていない
+	cProfile.SetProfileData(L"KeyBind", L"B", L"1,2,3,4,5,6,7,8");	// 揃っている
+
+	ShareData_IO_KeyBind(cProfile, sKeyBind, false);
+
+	// 現行バージョンを想定した値を入れる
+	cProfile.SetProfileData(L"KeyBind", L"KeyBind[000]", L"0043,1,2,3,4,5,6,7,8,C");
+	cProfile.SetProfileData(L"KeyBind", L"KeyBind[001]", L"0044,1,2,3,4,5,6,7,8,D");
+	cProfile.SetProfileData(L"KeyBind", L"KeyBind[002]", L"0043,1,2,3,4,5,6,7,8,C");
+
+	ShareData_IO_KeyBind(cProfile, sKeyBind, false);
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
+TEST(CDataProfile, IOProfileData_KeyData)
+{
+	CDataProfile cProfile;
+	cProfile.SetReadingMode();
+
+	KEYDATA keydata{};
+
+	// 設定項目がないと読めない
+	EXPECT_FALSE(ShareData_IO_KeyData(cProfile, L"Test", L"KeyBind[000]", keydata));
+
+	// 不適切な値を設定
+	cProfile.SetProfileData(L"Test", L"KeyBind[000]", std::format(L"{},{},{}", L"true", L"ABOUT", L"PATH"));
+
+	EXPECT_FALSE(ShareData_IO_KeyData(cProfile, L"Test", L"KeyBind[000]", keydata));
+}
+
+/*!
+ * @brief IOProfileDataのテスト
+ */
 TEST(CDataProfile, IOProfileData_KeyHelpInfo)
 {
 	CDataProfile cProfile;

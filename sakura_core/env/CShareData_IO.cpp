@@ -24,8 +24,17 @@
 #include "_main/CControlProcess.h"
 #include "config/app_constants.h"
 
+#include <algorithm>
+#include <string>
+#include <string_view>
+
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
+
+/*!
+ * @brief 機能名を格納するバッファ型
+ */
+using SFuncName = StaticString<MAX_PLUGIN_ID + 20, true>;
 
 template <typename T>
 void SetValueLimit(T& target, int minval, int maxval)
@@ -769,10 +778,7 @@ bool GetPlugCmdInfoByFuncCode(
 	A&				szFuncName				//!< [out] 機能名．この先にはMAX_PLUGIN_ID + 20文字のメモリが必要．
 )
 {
-	static_assert(
-		MAX_PLUGIN_ID + 20 <= _countof(szFuncName),
-		"szFuncName must have (MAX_PLUGIN_ID + 20) elements."
-	);
+	if(std::size(szFuncName) < MAX_PLUGIN_ID + 20) throw std::invalid_argument("szFuncName must have (MAX_PLUGIN_ID + 20) elements.");
 
 	CommonSetting_Plugin& plugin = GetDllShareData().m_Common.m_sPlugin;
 
@@ -833,7 +839,9 @@ void CShareData_IO::ShareData_IO_Toolbar( CDataProfile& cProfile, CMenuDrawer* p
 	CommonSetting_ToolBar& toolbar = pShare->m_Common.m_sToolBar;
 
 	EFunctionCode	eFunc;
-	WCHAR			szText[MAX_PLUGIN_ID+20];
+
+	SFuncName szText{};
+
 	int				nInvalid = -1;
 
 	cProfile.IOProfileData( pszSecName, L"bToolBarIsFlat", toolbar.m_bToolBarIsFlat );
@@ -984,14 +992,16 @@ void ShareData_IO_Font(
 }
 
 /*!
-	@brief KeyBindセクションの入出力
-	@param[in,out]	cProfile	INIファイル入出力クラス
-	@param[in,out]	sKeyBind	キー割り当て設定
-
-	@date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
-	@date 2010.08.21 Moca ShareData_IO_KeyBindをIO_KeyBindに名称変更
-	@date 2012.11.20 aroka 引数を CommonSetting_KeyBind に変更
-	@date 2012.11.25 aroka マウスコードの固定と重複排除
+ * @brief KeyBindセクションの入出力
+ *
+ * @param[in,out]	cProfile	INIファイル入出力クラス
+ * @param[in,out]	sKeyBind	キー割り当て設定
+ * @param[in] bOutCmdName	出力時にマクロ名で出力
+ * 
+ * @date 2005-04-07 D.S.Koba ShareData_IO_2から分離。
+ * @date 2010.08.21 Moca ShareData_IO_KeyBindをIO_KeyBindに名称変更
+ * @date 2012.11.20 aroka 引数を CommonSetting_KeyBind に変更
+ * @date 2012.11.25 aroka マウスコードの固定と重複排除
 */
 void ShareData_IO_KeyBind(
 	CDataProfile&			cProfile,
@@ -999,179 +1009,211 @@ void ShareData_IO_KeyBind(
 	bool					bOutCmdName
 )
 {
-	const WCHAR*	szSecName = L"KeyBind";
-	int		i;
-	WCHAR	szKeyName[64];
-	WCHAR	szKeyData[1024];
-//	int		nSize = m_pShareData->m_nKeyNameArrNum;
-	WCHAR	szWork[MAX_PLUGIN_ID+20+4];
-	bool	bOldVer = false;
-	const auto KEYNAME_SIZE = int(std::size(sKeyBind.m_pKeyNameArr))-1;// 最後の１要素はダミー用に予約 2012.11.25 aroka
-	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
+	constexpr auto& sectionName = L"KeyBind";
 
-	if( cProfile.IsReadingMode() ){ 
-		if (!cProfile.IOProfileData(szSecName, L"KeyBind[000]", StringBufferW(szKeyData)) ) {
+	const auto MAX_ENTRY = std::size(sKeyBind.m_pKeyNameArr) - 1;	// 最後の１要素はダミー用に予約 2012.11.25 aroka
+
+	std::wstring buffer;
+
+	bool bOldVer = false;
+
+	if (cProfile.IsReadingMode())
+	{ 
+		if (!cProfile.IOProfileData(sectionName, L"KeyBind[000]", buffer))
+		{
+			// 新形式のエントリを読み込めなかった
 			bOldVer = true;
 		}
 		else {
 			// 新スタイルのImportは割り当て表サイズぎりぎりまで読み込む
 			// 旧スタイルは初期値と一致しないKeyNameは捨てるのでデータ数に変化なし
-			sKeyBind.m_nKeyNameArrNum = KEYNAME_SIZE;
+			sKeyBind.m_nKeyNameArrNum = int(MAX_ENTRY);
 		}
 	}
 
-	for( i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i ){
-		// 2005.04.07 D.S.Koba
-		//KEYDATA& keydata = m_pShareData->m_pKeyNameArr[i];
-		//KEYDATA& keydata = sKeyBind.ppKeyNameArr[i];
-		
-		if( cProfile.IsReadingMode() ){
-			if (bOldVer) {
-				KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
-				wcscpy_s( szKeyName, keydata.m_szKeyName );
-				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
-					int buf[8];
-					scan_ints( szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d", buf );
-					keydata.m_nFuncCodeArr[0]	= (EFunctionCode)buf[0];
-					keydata.m_nFuncCodeArr[1]	= (EFunctionCode)buf[1];
-					keydata.m_nFuncCodeArr[2]	= (EFunctionCode)buf[2];
-					keydata.m_nFuncCodeArr[3]	= (EFunctionCode)buf[3];
-					keydata.m_nFuncCodeArr[4]	= (EFunctionCode)buf[4];
-					keydata.m_nFuncCodeArr[5]	= (EFunctionCode)buf[5];
-					keydata.m_nFuncCodeArr[6]	= (EFunctionCode)buf[6];
-					keydata.m_nFuncCodeArr[7]	= (EFunctionCode)buf[7];
-				}
-			}
-			else {		// 新バージョン(キー割り当てのImport,export の合わせた)	2008/5/25 Uchi
-				KEYDATA tmpKeydata;
-				auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
-				if( cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData)) ){
-					wchar_t	*p;
-					wchar_t	*pn;
-					int		nRes;
+	int nKeyNameArrUsed = sKeyBind.m_nKeyNameArrNum; // 使用済み領域
 
-					p = szKeyData;
-					// keycode取得
-					int keycode;
-					pn = wcschr(p,',');
-					if (pn == nullptr)	continue;
-					*pn = 0;
-					nRes = scan_ints(p, L"%04x", &keycode);
-					if (nRes!=1)	continue;
-					tmpKeydata.m_nKeyCode = (short)keycode;
-					p = pn+1;
+	for (int i = 0; i < sKeyBind.m_nKeyNameArrNum; ++i)
+	{
+		auto& keydata = sKeyBind.m_pKeyNameArr[i];
 
-					//後に続くトークン 
-					for (int j = 0; j < 8; j++) {
-						EFunctionCode n;
-						//機能名を数値に置き換える。(数値の機能名もあるかも)
-						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-						pn = wcschr(p,',');
-						if (pn == nullptr)	break;
-						*pn = 0;
-						n = GetFunctionStrToFunctionCode(p);
-						tmpKeydata.m_nFuncCodeArr[j] = n;
-						p = pn+1;
-					}
-					// KeyName
-					wcsncpy(tmpKeydata.m_szKeyName, p, int(std::size(tmpKeydata.m_szKeyName))-1);
-					tmpKeydata.m_szKeyName[std::size(tmpKeydata.m_szKeyName)-1] = '\0';
+		bool ret = false;
 
-					if( tmpKeydata.m_nKeyCode <= 0 ){ // マウスコードは先頭に固定されている KeyCodeが同じなのでKeyNameで判別
-// 互換性のため残したと書かれているが現状の共有データ構造と矛盾していて不正コードになってるので無効化しておく。
-// ・sKeyBind.m_pKeyNameArrのサイズは 0x101 で im + 0x0100 にアクセスしてはいけない。
-// ・tmpKeydata.m_nKeyCodeは設定ファイルから読む値で、負数にすることができる。
-// ・tmpKeydata.m_nKeyCodeを負数にするには 0x8000 以上の値を指定すればよい。（一般的なキーコードとしては不正値。）
-// ・どう直すのが適切か不明なので、一旦コードブロックを無効化しておく。
-#if 0
-						// 2013.10.23 syat マウスのキーコードを拡張仮想キーコードに変更。以下は互換性のため残す。
-						for( int im=0; im< jpVKEXNamesLen; im++ ){
-							if( wcscmp( tmpKeydata.m_szKeyName, jpVKEXNames[im] ) == 0 ){
-								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[im].m_szKeyName );
-								sKeyBind.m_pKeyNameArr[im + 0x0100] = tmpKeydata;
-							}
-						}
-#endif
-					}
-					else{
-						// 割り当て済みキーコードは上書き
-						int idx = sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode];
-						if( idx != KEYNAME_SIZE ){
-							wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName );
-							sKeyBind.m_pKeyNameArr[idx] = tmpKeydata;
-						}else{// 未割り当てキーコードは末尾に追加
-							if( nKeyNameArrUsed >= KEYNAME_SIZE ){}
-							else{
-								wcscpy( tmpKeydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
-								sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = tmpKeydata;
-								sKeyBind.m_VKeyToKeyNameArr[tmpKeydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
-							}
-						}
-					}
-				}
-			}
-		}else{
-		//	auto_sprintf( szKeyData, L"%d,%d,%d,%d,%d,%d,%d,%d",
-		//		keydata.m_nFuncCodeArr[0],
-		//		keydata.m_nFuncCodeArr[1],
-		//		keydata.m_nFuncCodeArr[2],
-		//		keydata.m_nFuncCodeArr[3],
-		//		keydata.m_nFuncCodeArr[4],
-		//		keydata.m_nFuncCodeArr[5],
-		//		keydata.m_nFuncCodeArr[6],
-		//		keydata.m_nFuncCodeArr[7]
-		//	);
-		//	cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szKeyData));
-
-// start 新バージョン	2008/5/25 Uchi
-			KEYDATA& keydata = sKeyBind.m_pKeyNameArr[i];
-			auto_sprintf(szKeyName, L"KeyBind[%03d]", i);
-			auto_sprintf(szKeyData, L"%04x", keydata.m_nKeyCode);
-			for(int j = 0; j < 8; j++)
+		// 読み込みモード時は旧バージョンを考慮する
+		if (cProfile.IsReadingMode() &&
+			bOldVer &&
+			cProfile.IOProfileData(sectionName, keydata.m_szKeyName, buffer))
+		{
+			std::array<int, 8> ints{};
+			if (8 == ::swscanf_s(
+				buffer.c_str(),
+				L"%d,%d,%d,%d,%d,%d,%d,%d",
+				&ints[0],
+				&ints[1],
+				&ints[2],
+				&ints[3],
+				&ints[4],
+				&ints[5],
+				&ints[6],
+				&ints[7]
+			))
 			{
-				WCHAR	szFuncName[256];
-				if (GetPlugCmdInfoByFuncCode( keydata.m_nFuncCodeArr[j], szFuncName )) {
-					// Plugin
-					auto_sprintf( szWork, L",%ls", szFuncName );
-				}
-				else {
-					if (bOutCmdName) {
-						//@@@ 2002.2.2 YAZAKI マクロをCSMacroMgrに統一
-						// 2010.06.30 Moca 日本語名を取得しないように
-						WCHAR	*p = CSMacroMgr::GetFuncInfoByID(
-							nullptr,
-							keydata.m_nFuncCodeArr[j],
-							szFuncName,
-							nullptr
-						);
-						if( p ) {
-							auto_sprintf(szWork, L",%ls", p);
-						}
-						else {
-							auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
-						}
-					}
-					else {
-						auto_sprintf(szWork, L",%d", keydata.m_nFuncCodeArr[j]);
-					}
-				}
-				wcscat(szKeyData, szWork);
-			}
+				// 全項目読み込めた場合のみ反映する
+				keydata.m_nFuncCodeArr[0] = EFunctionCode(ints[0]);
+				keydata.m_nFuncCodeArr[1] = EFunctionCode(ints[1]);
+				keydata.m_nFuncCodeArr[2] = EFunctionCode(ints[2]);
+				keydata.m_nFuncCodeArr[3] = EFunctionCode(ints[3]);
+				keydata.m_nFuncCodeArr[4] = EFunctionCode(ints[4]);
+				keydata.m_nFuncCodeArr[5] = EFunctionCode(ints[5]);
+				keydata.m_nFuncCodeArr[6] = EFunctionCode(ints[6]);
+				keydata.m_nFuncCodeArr[7] = EFunctionCode(ints[7]);
 
-			if( 0x0100 <= keydata.m_nKeyCode ){
-				auto_sprintf(szWork, L",%s", jpVKEXNames[ keydata.m_nKeyCode - 0x0100 ]);
-			}else{
-				auto_sprintf(szWork, L",%s", keydata.m_szKeyName);
+				ret = true;
 			}
-			wcscat(szKeyData, szWork);
-			cProfile.IOProfileData(szSecName, szKeyName, StringBufferW(szKeyData));
-//
 		}
+		// 通常処理
+		else if (!bOldVer) {
+			ret = ShareData_IO_KeyData(
+				cProfile,
+				sectionName,
+				std::format(L"KeyBind[{:03d}]", i),
+				keydata,
+				bOutCmdName
+			);
+		}
+
+		// 書き込みモードは後処理不要
+		// キーコードを取得できなかった場合も後処理しない
+		if (cProfile.IsWritingMode() ||
+			!ret ||
+			keydata.m_nKeyCode <= 0 ||
+			int(MAX_ENTRY) <= nKeyNameArrUsed)
+		{
+			continue;
+		}
+
+		// 割り当て済みキーコードは上書き
+		if (const auto idx = sKeyBind.m_VKeyToKeyNameArr[keydata.m_nKeyCode];
+			idx != MAX_ENTRY)
+		{
+			wcscpy_s(keydata.m_szKeyName, sKeyBind.m_pKeyNameArr[idx].m_szKeyName);
+			sKeyBind.m_pKeyNameArr[idx] = keydata;
+
+			continue;
+		}
+
+		// 未割り当てキーコードは末尾に追加
+		wcscpy_s(keydata.m_szKeyName, sKeyBind.m_pKeyNameArr[nKeyNameArrUsed].m_szKeyName );
+		sKeyBind.m_pKeyNameArr[nKeyNameArrUsed] = keydata;
+		sKeyBind.m_VKeyToKeyNameArr[keydata.m_nKeyCode] = (BYTE)nKeyNameArrUsed++;
 	}
 
 	if( cProfile.IsReadingMode() ){
 		sKeyBind.m_nKeyNameArrNum = nKeyNameArrUsed;
 	}
+}
+
+/*!
+ * @brief キー割り当て設定情報の入出力
+ */
+bool ShareData_IO_KeyData(
+	CDataProfile& cProfile,
+	std::wstring_view sectionName,
+	std::wstring_view entryKey,
+	KEYDATA& keydata,
+	bool bOutCmdName
+)
+{
+	std::wstring buffer;
+
+	if (cProfile.IsWritingMode()) {
+		buffer = std::format(L"{:04x}", keydata.m_nKeyCode);
+
+		for (const auto eFuncCode : keydata.m_nFuncCodeArr)
+		{
+			// 機能番号に対応するプラグイン名を取得する
+			SFuncName szFuncName{};
+			const auto isPluginCommand = GetPlugCmdInfoByFuncCode(eFuncCode, szFuncName);
+
+			// 機能番号に対応するマクロ名を取得する
+			LPCWSTR pszFuncName = nullptr;
+			if (!isPluginCommand && bOutCmdName) {
+				pszFuncName = CSMacroMgr::GetFuncInfoByID(
+					nullptr,
+					eFuncCode,
+					szFuncName,
+					nullptr
+				);
+			}
+
+			if (isPluginCommand || pszFuncName)
+			{
+				buffer += std::format(L",{:s}", szFuncName.c_str());
+			}
+			else
+			{
+				buffer += std::format(L",{:d}", static_cast<int>(eFuncCode));
+			}
+		}
+
+		if (const size_t exKeyCode = keydata.m_nKeyCode - 0x0100;
+			0x0100 <= keydata.m_nKeyCode &&
+			exKeyCode < std::size(jpVKEXNames))
+		{
+			buffer += std::format(L",{:s}", jpVKEXNames[exKeyCode]);
+		}
+		else
+		{
+			buffer += std::format(L",{:s}", keydata.m_szKeyName);
+		}
+	}
+
+	const auto ret = cProfile.IOProfileData(sectionName, entryKey, buffer);
+
+	if (cProfile.IsReadingMode() &&
+		ret)
+	{
+		std::array<int, 1> ints{};
+		std::array<SFuncName, 8> funcNames{};
+		decltype(keydata.m_szKeyName) keyName{};
+
+		if (10 != ::swscanf_s(
+			buffer.c_str(),
+			L"%x,%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^,],%[^\n]",
+			&ints[0],
+			funcNames[0].data(), unsigned(std::size(funcNames[0])),
+			funcNames[1].data(), unsigned(std::size(funcNames[1])),
+			funcNames[2].data(), unsigned(std::size(funcNames[2])),
+			funcNames[3].data(), unsigned(std::size(funcNames[3])),
+			funcNames[4].data(), unsigned(std::size(funcNames[4])),
+			funcNames[5].data(), unsigned(std::size(funcNames[5])),
+			funcNames[6].data(), unsigned(std::size(funcNames[6])),
+			funcNames[7].data(), unsigned(std::size(funcNames[7])),
+			keyName, unsigned(std::size(keyName))
+		))
+		{
+			// 全項目読み込めた場合のみ反映する
+			return false;
+		}
+
+		// keycode取得
+		keydata.m_nKeyCode = static_cast<short>(ints[0]);
+
+		//後に続くトークン 
+		//機能名を数値に置き換える。(数値の機能名もあるかも)
+		std::ranges::transform(
+			funcNames,
+			std::begin(keydata.m_nFuncCodeArr),
+			[](const auto& code) {
+				return GetFunctionStrToFunctionCode(code);
+			}
+		);
+
+		// KeyName
+		wcscpy_s(keydata.m_szKeyName, keyName);
+	}
+
+	return ret;
 }
 
 /*!
@@ -2236,7 +2278,9 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 	const WCHAR*	pszSecName = L"MainMenu";
 	CMainMenu*		pcMenu;
 	WCHAR	szKeyName[64];
-	WCHAR	szFuncName[MAX_PLUGIN_ID+20];
+
+	SFuncName szFuncName{};
+
 	EFunctionCode n;
 	int		nIdx;
 	WCHAR	szLine[1024];
@@ -2366,7 +2410,7 @@ void CShareData_IO::IO_MainMenu( CDataProfile& cProfile, std::vector<std::wstrin
 			auto_sprintf( szLine, L"%d,%d,%ls,%ls,%ls", 
 				pcMenu->m_nLevel, 
 				pcMenu->m_nType, 
-				szFuncName, 
+				szFuncName.c_str(),
 				pcMenu->m_sKey, 
 				pcMenu->m_nFunc == F_NODE ? pcMenu->m_sName : L"" );
 			cProfile.IOProfileData(pszSecName, szKeyName, StringBufferW(szLine));

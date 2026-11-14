@@ -98,6 +98,14 @@ void ShareData_IO_KeyBind(
 	bool					bOutCmdName
 );
 
+bool ShareData_IO_KeyData(
+	CDataProfile& cProfile,
+	std::wstring_view szSecName,
+	std::wstring_view szKeyName,
+	KEYDATA& keydata,
+	bool bOutCmdName = false
+);
+
 void ShareData_IO_KeyHelp(
 	CDataProfile&		cProfile,
 	std::wstring_view	sectionName,	//!< [in] セクション名

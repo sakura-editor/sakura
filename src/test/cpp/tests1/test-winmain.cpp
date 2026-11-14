@@ -43,6 +43,8 @@
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
+void debug_exit();
+
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
 namespace cxx {
@@ -575,6 +577,17 @@ void TerminateControlProcess(
 namespace winmain {
 
 using namespace cxx;
+
+TEST(Debug2, test101)
+{
+	EXPECT_EXIT({
+			// exit(1)を呼ぶ
+			debug_exit();
+		},
+		::testing::ExitedWithCode(1),
+		".*"
+	);
+}
 
 TEST(OnTerminated, test101)
 {

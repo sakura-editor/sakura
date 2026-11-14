@@ -93,6 +93,9 @@ namespace window {
 
 	EXPECT_THAT(&GetEditDoc(), GetDocument());
 
+	// 呼ぶだけ
+	pcEditDoc->m_cDocFile.GetSaveFilePath();
+
 	// 編集ウインドウがなくてもエラーにならない
 	EXPECT_THAT(GetEditWndPtr(), IsNull());
 
