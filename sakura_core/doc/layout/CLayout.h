@@ -8,7 +8,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2002, YAZAKI, aroka
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -31,41 +31,33 @@ class CLayoutMgr;
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-class CLayout
+class CLayout final
 {
-protected:
+private:
 	friend class CLayoutMgr; //####仮
+
 public:
 	/*
 	||  Constructors
 	*/
 	//2007.08.23 kobake コンストラクタでメンバ変数を初期化するようにした
 	CLayout(
-		const CDocLine*	pcDocLine,		//!< 実データへの参照
-		CLogicPoint		ptLogicPos,		//!< 実データ参照位置
-		CLogicInt		nLength,		//!< 実データ内データ長
-		EColorIndexType	nTypePrev,
-		CLayoutInt		nTypeIndent,
-		CLayoutColorInfo*		pColorInfo
-	)
-	{
-		m_pPrev			= nullptr;
-		m_pNext			= nullptr;
-		m_pCDocLine		= pcDocLine;
-		m_ptLogicPos	= ptLogicPos;	// 実データ参照位置
-		m_nLength		= nLength;		// 実データ内データ長
-		m_nTypePrev		= nTypePrev;	// タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
-		m_nIndent		= nTypeIndent;	// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
-		m_cExInfo.SetColorInfo(pColorInfo);
-	}
+		const CDocLine*		pcDocLine,		//!< 実データへの参照
+		CLogicPoint			ptLogicPos,		//!< 実データ参照位置
+		CLogicInt			nLength,		//!< 実データ内データ長
+		EColorIndexType		nTypePrev,
+		CLayoutInt			nTypeIndent,
+		CLayoutColorInfo*	pColorInfo
+	);
+
 	~CLayout();
+
 	void DUMP( void );
 
 	// m_ptLogicPos.xで補正したあとの文字列を得る
 	const wchar_t* GetPtr() const   { return m_pCDocLine->GetPtr() + m_ptLogicPos.x; }
 	CLogicInt GetLengthWithEOL() const    { return m_nLength;	}	//	ただしEOLは常に1文字とカウント？？
 	CLogicInt GetLengthWithoutEOL() const { return m_nLength - (m_cEol.GetLen() ? 1 : 0);	}
-	//CLogicInt GetLength() const {	return m_nLength;	}	//	CMemoryIterator用（EOL含む）
 	CLayoutInt GetIndent() const {	return m_nIndent;	}	//!< このレイアウト行のインデントサイズを取得。単位は半角文字。	CMemoryIterator用
 
 	//取得インターフェース
@@ -116,8 +108,8 @@ public:
 	}
 
 private:
-	CLayout*			m_pPrev;
-	CLayout*			m_pNext;
+	CLayout*			m_pPrev = nullptr;
+	CLayout*			m_pNext = nullptr;
 
 	//データ参照範囲
 	const CDocLine*		m_pCDocLine;		//!< 実データへの参照
@@ -133,4 +125,5 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayout);
 };
+
 #endif /* SAKURA_CLAYOUT_7DF189B5_10E6_42A4_8A49_371C848CB38F_H_ */

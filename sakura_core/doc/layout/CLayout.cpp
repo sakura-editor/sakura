@@ -18,6 +18,28 @@
 #include "charset/charcode.h"
 #include "extmodule/CBregexp.h" // CLayoutMgrの定義で必要
 
+/*!
+ * @brief コンストラクタ
+ *
+ * @date 2007/08/23 kobake コンストラクタでメンバ変数を初期化するようにした
+ */
+CLayout::CLayout(
+	const CDocLine* pcDocLine,		//!< 実データへの参照
+	CLogicPoint		ptLogicPos,		//!< 実データ参照位置
+	CLogicInt		nLength,		//!< 実データ内データ長
+	EColorIndexType	nTypePrev,
+	CLayoutInt		nTypeIndent,
+	CLayoutColorInfo* pColorInfo
+)
+	: m_pCDocLine{ pcDocLine }
+	, m_ptLogicPos{ ptLogicPos }	// 実データ参照位置
+	, m_nLength{ nLength }			// 実データ内データ長
+	, m_nTypePrev{ nTypePrev }		// タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	, m_nIndent{ nTypeIndent }		// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
+	, m_cExInfo{ pColorInfo }
+{
+}
+
 CLayout::~CLayout()
 {
 	return;
