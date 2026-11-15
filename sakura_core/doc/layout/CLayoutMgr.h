@@ -419,11 +419,11 @@ private:
 	// const関数(SearchLineByLayoutY)から更新される参照キャッシュ。更新時はm_mtxPrevReferで保護する。
 	mutable std::mutex		m_mtxPrevRefer;
 
-protected:
 	mutable CLayoutInt		m_nPrevReferLine{ 0 };
 	mutable CLayout*		m_pLayoutPrevRefer = nullptr;
 	
 	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca
+protected:
 	CLayoutInt				m_nEOFLine{ -1 }; //!< EOF行数
 	CLayoutInt				m_nEOFColumn{ -1 }; //!< EOF幅位置
 
