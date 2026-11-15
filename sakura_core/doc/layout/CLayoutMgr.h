@@ -24,10 +24,6 @@
 #define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
-#include <Windows.h>// 2002/2/10 aroka
-#include <vector>
-#include <memory_resource>
-#include <atomic>
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
@@ -35,6 +31,7 @@
 #include "types/CType.h"
 #include "CLayoutExInfo.h"
 #include "mem/CMemoryIterator.h"
+#include "mem/CPoolResource.h"
 #include "CTsvModeInfo.h"
 #include "view/colors/EColorIndexType.h"
 #include "cmd/COpe.h"
@@ -42,6 +39,13 @@
 #include "util/design_template.h"
 #include "charset/charcode.h"
 #include "env/DLLSHAREDATA.h"
+
+#include <atomic>
+#include <memory>
+#include <memory_resource>
+#include <vector>
+
+#include <Windows.h>
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -98,6 +102,8 @@ public:
 class CLayoutMgr : public CProgressSubject
 {
 private:
+	using MemHolder = std::shared_ptr<std::pmr::memory_resource>;
+
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
 
 public:
@@ -385,19 +391,19 @@ protected:
 	// 2007.10.08 kobake 変数名変更: getIndentOffset→m_getIndentOffset
 
 	//参照
-	CEditDoc*		m_pcEditDoc;
+	CEditDoc*				m_pcEditDoc = nullptr;
 
 	//実データ
 	CLayout*				m_pLayoutTop = nullptr;
 	CLayout*				m_pLayoutBot = nullptr;
-	std::shared_ptr<std::pmr::memory_resource> m_layoutMemRes;
+	MemHolder				m_layoutMemRes = std::make_shared<CPoolResource<CLayout>>();
 
 	//タイプ別設定
 	const STypeConfig*		m_pTypeConfig = nullptr;
 	CKetaXInt				m_nMaxLineKetas{ MAXLINEKETAS };			//!< 折り返し桁数
 	CKetaXInt				m_nTabSpace{ 4 };				//!< TABの文字数
 	CLayoutXInt				m_nCharLayoutXPerKeta;		//!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
-	CPixelXInt				m_nSpacing;					//!< 1文字ずつの間隔(px)
+	CPixelXInt				m_nSpacing{ 0 };					//!< 1文字ずつの間隔(px)
 	vector_ex<wchar_t>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
@@ -405,7 +411,7 @@ protected:
 
 	//フラグ等
 	EColorIndexType			m_nLineTypeBot = COLORIDX_DEFAULT;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
-	CLayoutExInfo			m_cLayoutExInfoBot;
+	CLayoutExInfo			m_cLayoutExInfoBot{};
 	CLayoutInt				m_nLines{ 0 };							// 全レイアウト行数
 
 	mutable CLayoutInt		m_nPrevReferLine{ 0 };

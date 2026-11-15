@@ -27,7 +27,6 @@
 #include "charset/charcode.h"
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
-#include "mem/CPoolResource.h"
 #include "view/CViewFont.h"
 #include "view/CTextMetrics.h"
 #include "basis/SakuraBasis.h"
@@ -40,8 +39,6 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-	: m_layoutMemRes(new CPoolResource<CLayout>())
-  //, m_layoutMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
 	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
