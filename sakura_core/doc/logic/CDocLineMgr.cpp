@@ -117,8 +117,12 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 	}
 	
 	//参照切り離し
-	if( m_pCodePrevRefer == pcDocLineDel ){
-		m_pCodePrevRefer = pcDocLineDel->GetNextLine();
+	{
+		std::scoped_lock lock{ m_mtxPrevRefer };
+
+		if (m_pCodePrevRefer == pcDocLineDel) {
+			m_pCodePrevRefer = pcDocLineDel->GetNextLine();
+		}
 	}
 
 	//データ削除
@@ -178,6 +182,9 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	if( CLogicInt(0) > nLine || nLine >= m_nLines ){
 		return nullptr;
 	}
+
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	// 2004.03.28 Moca m_pCodePrevReferより、Top,Botのほうが近い場合は、そちらを利用する
 	CLogicInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLine );
 	if( m_pCodePrevRefer == nullptr
@@ -261,6 +268,8 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 
 void CDocLineMgr::_Init()
 {
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	m_pDocLineTop = nullptr;
 	m_pDocLineBot = nullptr;
 	m_nLines = CLogicInt(0);
@@ -358,6 +367,9 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 void CDocLineMgr::DUMP()
 {
 #ifdef _DEBUG
+
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	MYTRACE( L"------------------------\n" );
 
 	CDocLine* pDocLine;
@@ -369,10 +381,10 @@ void CDocLineMgr::DUMP()
 	bool bIncludeCurrent = false;
 	bool bIncludePrevRefer = false;
 	CLogicInt nNum = CLogicInt(0);
-	if( m_pDocLineTop->m_pPrev != nullptr ){
+	if( m_pDocLineTop && m_pDocLineTop->m_pPrev != nullptr ){
 		MYTRACE( L"error: m_pDocLineTop->m_pPrev != NULL\n");
 	}
-	if( m_pDocLineBot->m_pNext != nullptr ){
+	if( m_pDocLineBot && m_pDocLineBot->m_pNext != nullptr ){
 		MYTRACE( L"error: m_pDocLineBot->m_pNext != NULL\n" );
 	}
 	while( nullptr != pDocLine ){

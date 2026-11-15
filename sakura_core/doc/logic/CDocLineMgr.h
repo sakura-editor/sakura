@@ -100,6 +100,8 @@ private:
 	CLogicInt	m_nLines;			//!< 全行数
 	std::shared_ptr<std::pmr::memory_resource> m_docLineMemRes;
 
+	mutable std::mutex	m_mtxPrevRefer{};
+
 public:
 	//$$ kobake注: 以下、絶対に切り離したい（最低切り離せなくても、変数の意味をコメントで明確に記すべき）変数群
 	mutable CDocLine*	m_pDocLineCurrent;	//!< 順アクセス時の現在位置

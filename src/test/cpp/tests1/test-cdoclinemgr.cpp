@@ -119,6 +119,9 @@ TEST(CDocLineMgr, ListManipulations)
 	EXPECT_EQ(m.GetLine(CLogicInt(1)), nullptr);
 	EXPECT_EQ(m.GetDocLineTop(), nullptr);
 	EXPECT_EQ(m.GetDocLineBottom(), nullptr);
+
+	// 呼ぶだけ
+	m.DUMP();
 }
 
 TEST(CDocLineMgr, RandomAccess)
