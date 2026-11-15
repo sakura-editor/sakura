@@ -423,7 +423,7 @@ LPCWSTR CDocLineMgr::GetNextLinrStr(int& nLineLen)
 */
 void CDocLineMgr::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
 
 	std::scoped_lock lock{ m_mtxPrevRefer };
 
@@ -503,6 +503,8 @@ void CDocLineMgr::DUMP()
 		pDocLine = pDocLineNext;
 	}
 	MYTRACE( L"------------------------\n" );
-#endif // _DEBUG
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }

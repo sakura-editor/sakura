@@ -104,7 +104,8 @@ void CFuncInfoArr::AppendData(
 
 void CFuncInfoArr::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	MYTRACE( L"=============================\n" );
 	for (int i = 0; i < GetNum(); ++i) {
 		MYTRACE( L"[%d]------------------\n", i );
@@ -118,7 +119,8 @@ void CFuncInfoArr::DUMP()
 		MYTRACE( L"m_nInfo\t\t\t=%d\n", m_funcInfoArr[i]->m_nInfo );
 	}
 	MYTRACE( L"=============================\n" );
-#endif
+
+#endif // if ENABLE_DEBUG_DUMP
 }
 
 void CFuncInfoArr::SetAppendText( int info, std::wstring s, bool overwrite )

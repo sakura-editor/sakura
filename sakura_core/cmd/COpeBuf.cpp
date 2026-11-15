@@ -138,7 +138,8 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 /* アンドゥ・リドゥバッファのダンプ */
 void COpeBuf::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	int i;
 	MYTRACE( L"COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
 	int size = (int)m_vCOpeBlkArr.size();
@@ -147,5 +148,8 @@ void COpeBuf::DUMP()
 		m_vCOpeBlkArr[i]->DUMP();
 	}
 	MYTRACE( L"COpeBuf.m_nCurrentPointer=[%d]----\n", m_nCurrentPointer );
-#endif
+
+#endif // if ENABLE_DEBUG_DUMP
+
+	return;
 }

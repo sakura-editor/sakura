@@ -29,20 +29,28 @@ COpe::COpe(EOpeCode eCode)
 /* COpeクラス消滅 */
 COpe::~COpe()
 {
+	return;
 }
 
 /* 編集操作要素のダンプ */
 void COpe::DUMP( void )
 {
+#if ENABLE_DEBUG_DUMP
+
 	DEBUG_TRACE( L"\t\tm_nOpe                  = [%d]\n", m_nOpe               );
 	DEBUG_TRACE( L"\t\tm_ptCaretPos_PHY_Before = [%d,%d]\n", int(m_ptCaretPos_PHY_Before.x), int(m_ptCaretPos_PHY_Before.y)   );
 	DEBUG_TRACE( L"\t\tm_ptCaretPos_PHY_After  = [%d,%d]\n", int(m_ptCaretPos_PHY_After.x), int(m_ptCaretPos_PHY_After.y)   );
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }
 
 /* 編集操作要素のダンプ */
 void CDeleteOpe::DUMP( void )
 {
+#if ENABLE_DEBUG_DUMP
+
 	COpe::DUMP();
 	DEBUG_TRACE( L"\t\tm_ptCaretPos_PHY_To     = [%d,%d]\n", int(m_ptCaretPos_PHY_To.x), int(m_ptCaretPos_PHY_To.y) );
 	DEBUG_TRACE( L"\t\tm_cOpeLineData.size         = [%d]\n", m_cOpeLineData.size() );
@@ -50,17 +58,25 @@ void CDeleteOpe::DUMP( void )
 		DEBUG_TRACE( L"\t\tm_cOpeLineData[%d].nSeq         = [%d]\n", m_cOpeLineData[i].nSeq );
 		DEBUG_TRACE( L"\t\tm_cOpeLineData[%d].cmemLine     = [%ls]\n", m_cOpeLineData[i].cmemLine.GetStringPtr() );		
 	}
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }
 
 /* 編集操作要素のダンプ */
 void CInsertOpe::DUMP( void )
 {
+#if ENABLE_DEBUG_DUMP
+
 	COpe::DUMP();
 	DEBUG_TRACE( L"\t\tm_cOpeLineData.size         = [%d]\n", m_cOpeLineData.size() );
 	for( size_t i = 0; i < m_cOpeLineData.size(); i++ ){
 		DEBUG_TRACE( L"\t\tm_cOpeLineData[%d].nSeq         = [%d]\n", m_cOpeLineData[i].nSeq );
 		DEBUG_TRACE( L"\t\tm_cOpeLineData[%d].cmemLine     = [%ls]\n", m_cOpeLineData[i].cmemLine.GetStringPtr() );		
 	}
+
+#endif // if ENABLE_DEBUG_DUMP	
+
 	return;
 }

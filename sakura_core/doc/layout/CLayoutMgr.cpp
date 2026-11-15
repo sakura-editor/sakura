@@ -1041,7 +1041,8 @@ void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLo
 /* テスト用にレイアウト情報をダンプ */
 void CLayoutMgr::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	const wchar_t* pData;
 	CLogicInt nDataLen;
 	MYTRACE( L"------------------------\n" );
@@ -1071,6 +1072,8 @@ void CLayoutMgr::DUMP()
 		pLayout = pLayoutNext;
 	}
 	MYTRACE( L"------------------------\n" );
-#endif
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }
