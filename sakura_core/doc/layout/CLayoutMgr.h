@@ -31,6 +31,7 @@
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
+#include "config/app_constants.h"
 #include "types/CType.h"
 #include "CLayoutExInfo.h"
 #include "mem/CMemoryIterator.h"
@@ -375,8 +376,8 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	CDocLineMgr*			m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
-	CTsvModeInfo			m_tsvInfo;
+	CDocLineMgr*			m_pcDocLineMgr = nullptr;	/* 行バッファ管理マネージャ */
+	CTsvModeInfo			m_tsvInfo{};
 
 protected:
 	// 2002.10.07 YAZAKI add m_nLineTypeBot
@@ -392,15 +393,15 @@ protected:
 	std::shared_ptr<std::pmr::memory_resource> m_layoutMemRes;
 
 	//タイプ別設定
-	const STypeConfig*		m_pTypeConfig;
-	CKetaXInt				m_nMaxLineKetas;			//!< 折り返し桁数
-	CKetaXInt				m_nTabSpace;				//!< TABの文字数
+	const STypeConfig*		m_pTypeConfig = nullptr;
+	CKetaXInt				m_nMaxLineKetas{ MAXLINEKETAS };			//!< 折り返し桁数
+	CKetaXInt				m_nTabSpace{ 4 };				//!< TABの文字数
 	CLayoutXInt				m_nCharLayoutXPerKeta;		//!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
 	CPixelXInt				m_nSpacing;					//!< 1文字ずつの間隔(px)
 	vector_ex<wchar_t>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
-	CalcIndentProc			m_getIndentOffset;			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
+	CalcIndentProc			m_getIndentOffset{ &CLayoutMgr::getIndentOffset_Normal };			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
 
 	//フラグ等
 	EColorIndexType			m_nLineTypeBot = COLORIDX_DEFAULT;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
@@ -415,8 +416,8 @@ protected:
 	CLayoutInt				m_nEOFColumn{ -1 }; //!< EOF幅位置
 
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
-	CLayoutInt				m_nTextWidth;				// テキスト最大幅の記憶
-	CLayoutInt				m_nTextWidthMaxLine;		// 最大幅のレイアウト行
+	CLayoutInt				m_nTextWidth{ 0 };				// テキスト最大幅の記憶
+	CLayoutInt				m_nTextWidthMaxLine{ 0 };		// 最大幅のレイアウト行
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };

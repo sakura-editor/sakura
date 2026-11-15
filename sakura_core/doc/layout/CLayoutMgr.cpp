@@ -10,13 +10,14 @@
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
 	Copyright (C) 2009, ryoji, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "doc/layout/CLayoutMgr.h"
+
 #include "doc/layout/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CEditDoc.h"
 #include "doc/CDocReader.h" // for _DEBUG
@@ -32,8 +33,6 @@
 #include "basis/SakuraBasis.h"
 #include "agent/CSearchAgent.h"
 #include "debug/CRunningTimer.h"
-#include "charset/charcode.h"
-#include "config/app_constants.h"
 #include "util/window.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -41,23 +40,12 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-  , m_layoutMemRes(new CPoolResource<CLayout>())
+	: m_layoutMemRes(new CPoolResource<CLayout>())
   //, m_layoutMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
-	m_pcDocLineMgr = nullptr;
-	m_pTypeConfig = nullptr;
-	m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
-	m_nTabSpace = CKetaXInt(4);
-	m_tsvInfo.m_nTsvMode = TSV_MODE_NONE;
 	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();						/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-
-	m_nTextWidth = CLayoutInt(0);			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
-	m_nTextWidthMaxLine = CLayoutInt(0);	// 最大幅のレイアウト行		// 2009.08.28 nasukoji
-
-	Init();
 }
 
 CLayoutMgr::~CLayoutMgr()
