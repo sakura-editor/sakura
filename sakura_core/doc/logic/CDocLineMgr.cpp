@@ -15,18 +15,15 @@
 	Copyright (C) 2003, Moca, ryoji, genta, かろと
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, ryoji, かろと
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-// Oct 6, 2000 ao
-#include <stdio.h>
-#include <list>
-#include "CDocLineMgr.h"
-#include "CDocLine.h"// 2002/2/10 aroka ヘッダー整理
+#include "doc/logic/CDocLineMgr.h"
+
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
@@ -38,7 +35,6 @@
 //	May 15, 2000 genta
 #include "basis/CEol.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
-#include "mem/CPoolResource.h"
 
 #include "io/CFileLoad.h" // 2002/08/30 Moca
 #include "io/CIoBridge.h"
@@ -48,13 +44,14 @@
 #include "util/file.h"
 #include "debug/CRunningTimer.h"
 
+// Oct 6, 2000 ao
+#include <stdio.h>
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDocLineMgr::CDocLineMgr()
-	: m_docLineMemRes(new CPoolResource<CDocLine>())
-	//: m_docLineMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
 	_Init();
 }

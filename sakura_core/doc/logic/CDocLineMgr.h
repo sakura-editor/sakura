@@ -12,7 +12,7 @@
 	Copyright (C) 2001, hor, genta
 	Copyright (C) 2002, aroka, MIK, hor
 	Copyright (C) 2003, Moca, ryoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,14 +22,18 @@
 #define SAKURA_CDOCLINEMGR_2896A92E_87D2_4BA6_A745_95A5C157E59D_H_
 #pragma once
 
-#include <Windows.h>
-#include <memory_resource>
-#include <memory>
 #include "_main/global.h" // 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
-#include "util/design_template.h"
 #include "cmd/COpe.h"
-#include "CDocLine.h"
+#include "doc/logic/CDocLine.h"
+#include "mem/CPoolResource.h"
+#include "util/design_template.h"
+
+#include <list>
+#include <memory>
+#include <memory_resource>
+
+#include <Windows.h>
 
 class CBregexp; // 2002/2/10 aroka
 
@@ -49,6 +53,9 @@ struct DocLineReplaceArg {
 -----------------------------------------------------------------------*/
 //2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
 class CDocLineMgr{
+private:
+	using MemHolder = std::shared_ptr<std::pmr::memory_resource>;
+
 public:
 	//コンストラクタ・デストラクタ
 	CDocLineMgr();
@@ -75,8 +82,8 @@ public:
 	void AppendAsMove( CDocLineMgr& other );	//!< 他のCDocLineMgrの内容を末尾に追加する
 
 	// メモリリソースのアクセス
-	std::shared_ptr<std::pmr::memory_resource> GetMemoryResource() const { return m_docLineMemRes; }
-	void SetMemoryResource(std::shared_ptr<std::pmr::memory_resource> memoryResource) { m_docLineMemRes = memoryResource; }
+	MemHolder GetMemoryResource() const { return m_docLineMemRes; }
+	void SetMemoryResource(MemHolder memoryResource) { m_docLineMemRes = memoryResource; }
 
 	//デバッグ
 	void DUMP();
@@ -98,7 +105,7 @@ private:
 	CDocLine*	m_pDocLineTop = nullptr;	//!< 最初の行
 	CDocLine*	m_pDocLineBot = nullptr;	//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
 	CLogicInt	m_nLines{ 0 };				//!< 全行数
-	std::shared_ptr<std::pmr::memory_resource> m_docLineMemRes;
+	MemHolder	m_docLineMemRes = std::make_shared<CPoolResource<CDocLine>>();
 
 	mutable std::mutex	m_mtxPrevRefer{};
 
