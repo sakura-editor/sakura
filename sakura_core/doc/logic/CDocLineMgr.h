@@ -95,19 +95,20 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 private:
-	CDocLine*	m_pDocLineTop;		//!< 最初の行
-	CDocLine*	m_pDocLineBot;		//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
-	CLogicInt	m_nLines;			//!< 全行数
+	CDocLine*	m_pDocLineTop = nullptr;	//!< 最初の行
+	CDocLine*	m_pDocLineBot = nullptr;	//!< 最後の行(※1行しかない場合はm_pDocLineTopと等しくなる)
+	CLogicInt	m_nLines{ 0 };				//!< 全行数
 	std::shared_ptr<std::pmr::memory_resource> m_docLineMemRes;
 
 	mutable std::mutex	m_mtxPrevRefer{};
 
 public:
 	//$$ kobake注: 以下、絶対に切り離したい（最低切り離せなくても、変数の意味をコメントで明確に記すべき）変数群
-	mutable CDocLine*	m_pDocLineCurrent;	//!< 順アクセス時の現在位置
-	mutable CLogicInt	m_nPrevReferLine;
-	mutable CDocLine*	m_pCodePrevRefer;
+	mutable CDocLine*	m_pDocLineCurrent = nullptr;	//!< 順アクセス時の現在位置
+	mutable CLogicInt	m_nPrevReferLine{ 0 };
+	mutable CDocLine*	m_pCodePrevRefer = nullptr;
 
 	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
+
 #endif /* SAKURA_CDOCLINEMGR_2896A92E_87D2_4BA6_A745_95A5C157E59D_H_ */

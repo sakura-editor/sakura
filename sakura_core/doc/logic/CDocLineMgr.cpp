@@ -276,6 +276,7 @@ void CDocLineMgr::_Init()
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = nullptr;
 	m_pDocLineCurrent = nullptr;
+
 	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
 }
 
