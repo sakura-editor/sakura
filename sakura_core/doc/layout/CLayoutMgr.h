@@ -43,6 +43,7 @@
 #include <atomic>
 #include <memory>
 #include <memory_resource>
+#include <mutex>
 #include <vector>
 
 #include <Windows.h>
@@ -414,6 +415,11 @@ protected:
 	CLayoutExInfo			m_cLayoutExInfoBot{};
 	CLayoutInt				m_nLines{ 0 };							// 全レイアウト行数
 
+private:
+	// const関数(SearchLineByLayoutY)から更新される参照キャッシュ。更新時はm_mtxPrevReferで保護する。
+	mutable std::mutex		m_mtxPrevRefer;
+
+protected:
 	mutable CLayoutInt		m_nPrevReferLine{ 0 };
 	mutable CLayout*		m_pLayoutPrevRefer = nullptr;
 	

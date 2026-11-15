@@ -70,6 +70,8 @@ void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
 
 void CLayoutMgr::Init()
 {
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	m_pLayoutTop = nullptr;
 	m_pLayoutBot = nullptr;
 	m_nPrevReferLine = CLayoutInt(0);
@@ -244,6 +246,8 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 //	}
 
 	/*+++++++わずかに高速版+++++++*/
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	// 2004.03.28 Moca m_pLayoutPrevReferより、Top,Botのほうが近い場合は、そちらを利用する
 	CLayoutInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLineNum );
 	if( m_pLayoutPrevRefer == nullptr
@@ -535,8 +539,12 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	}
 
 	// 1999.11.22
-	m_pLayoutPrevRefer = pLayoutInThisArea->GetPrevLayout();
-	m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
+	{
+		std::scoped_lock lock{ m_mtxPrevRefer };
+
+		m_pLayoutPrevRefer = pLayoutInThisArea->GetPrevLayout();
+		m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
+	}
 
 	/* 範囲内先頭に該当するレイアウト情報をサーチ */
 	pLayoutWork = pLayoutInThisArea->GetPrevLayout();
@@ -579,8 +587,13 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			(*pnDeleteLines)++;
 		}
 
+		{
+			std::scoped_lock lock{ m_mtxPrevRefer };
+
 		if( m_pLayoutPrevRefer == pLayout ){
 			DEBUG_TRACE( L"バグバグ\n" );
+		}
+
 		}
 
 		pLayout->~CLayout();
@@ -793,14 +806,18 @@ void CLayoutMgr::LogicToLayout(
 		nCaretPosY = t_max(CLayoutInt(ptLogic.y), nLineHint);
 
 		// 2013.05.12 m_pLayoutPrevReferを見る
-		if( nCaretPosY <= m_nPrevReferLine && m_pLayoutPrevRefer
-			&& m_pLayoutPrevRefer->GetLogicLineNo() <= ptLogic.y ){
-			// ヒントより現在位置のほうが後ろか同じぐらいで近い
-			nCaretPosY = CLayoutInt(ptLogic.y - m_pLayoutPrevRefer->GetLogicLineNo()) + m_nPrevReferLine;
-			pLayout = SearchLineByLayoutY(nCaretPosY);
-		}else{
-			pLayout = SearchLineByLayoutY(nCaretPosY);
+		{
+			// SearchLineByLayoutY内で再度ロックするため、参照キャッシュの読み取りだけロックする
+			std::scoped_lock lock{ m_mtxPrevRefer };
+			if (nCaretPosY <= m_nPrevReferLine &&
+				m_pLayoutPrevRefer &&
+				m_pLayoutPrevRefer->GetLogicLineNo() <= ptLogic.y)
+			{
+				// ヒントより現在位置のほうが後ろか同じぐらいで近い
+				nCaretPosY = CLayoutInt(ptLogic.y - m_pLayoutPrevRefer->GetLogicLineNo()) + m_nPrevReferLine;
+			}
 		}
+		pLayout = SearchLineByLayoutY(nCaretPosY);
 		if( !pLayout ){
 			pptLayout->SetY( m_nLines );
 			return;

@@ -489,8 +489,12 @@ void CLayoutMgr::_DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineE
 	m_nLineTypeBot = CColorStrategy::GetStrategyColorSafe(pWork->pcColorStrategy);
 	m_cLayoutExInfoBot.SetColorInfo(CColorStrategy::GetStrategyColorInfoSafe(pWork->pcColorStrategy));
 
-	m_nPrevReferLine = CLayoutInt(0);
-	m_pLayoutPrevRefer = nullptr;
+	{
+		std::scoped_lock lock{ m_mtxPrevRefer };
+
+		m_nPrevReferLine = CLayoutInt(0);
+		m_pLayoutPrevRefer = nullptr;
+	}
 
 	if( nListenerCount != 0 ){
 		if( nLineIndex == 0 ){
