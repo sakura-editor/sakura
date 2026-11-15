@@ -7,22 +7,26 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor, genta
 	Copyright (C) 2002, MIK, YAZAKI
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CDocLine.h"
+#include "doc/logic/CDocLine.h"
+
 #include "mem/CMemory.h"
 
 CDocLine::CDocLine()
-: m_pPrev( nullptr ), m_pNext( nullptr )
 {
+	return;
 }
 
-CDocLine::~CDocLine() = default;
+CDocLine::~CDocLine()
+{
+	return;
+}
 
 /* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する
 	true：空行だ。
