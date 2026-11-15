@@ -242,7 +242,7 @@ CLogicInt CNativeW::GetSizeOfChar( const wchar_t* pData, size_t cchData, size_t 
 	const auto nDataLen = int(cchData);
 	const auto nIdx = int(index);
 
-	if( nIdx >= nDataLen )
+	if( pData == nullptr || nIdx >= nDataLen )
 		return CLogicInt(0);
 
 	// サロゲートチェック					2008/7/5 Uchi

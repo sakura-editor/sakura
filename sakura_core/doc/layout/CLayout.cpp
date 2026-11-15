@@ -18,6 +18,28 @@
 #include "charset/charcode.h"
 #include "extmodule/CBregexp.h" // CLayoutMgrの定義で必要
 
+/*!
+ * @brief コンストラクタ
+ *
+ * @date 2007/08/23 kobake コンストラクタでメンバ変数を初期化するようにした
+ */
+CLayout::CLayout(
+	const CDocLine* pcDocLine,		//!< 実データへの参照
+	CLogicPoint		ptLogicPos,		//!< 実データ参照位置
+	CLogicInt		nLength,		//!< 実データ内データ長
+	EColorIndexType	nTypePrev,
+	CLayoutInt		nTypeIndent,
+	CLayoutColorInfo* pColorInfo
+)
+	: m_pCDocLine{ pcDocLine }
+	, m_ptLogicPos{ ptLogicPos }	// 実データ参照位置
+	, m_nLength{ nLength }			// 実データ内データ長
+	, m_nTypePrev{ nTypePrev }		// タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	, m_nIndent{ nTypeIndent }		// このレイアウト行のインデント数 @@@ 2002.09.23 YAZAKI
+	, m_cExInfo{ pColorInfo }
+{
+}
+
 CLayout::~CLayout()
 {
 	return;
@@ -25,12 +47,17 @@ CLayout::~CLayout()
 
 void CLayout::DUMP( void )
 {
+#if ENABLE_DEBUG_DUMP
+
 	DEBUG_TRACE( L"\n\n■CLayout::DUMP()======================\n" );
 	DEBUG_TRACE( L"m_ptLogicPos.y=%d\t\t対応する論理行番号\n", m_ptLogicPos.y );
 	DEBUG_TRACE( L"m_ptLogicPos.x=%d\t\t対応する論理行の先頭からのオフセット\n", m_ptLogicPos.x );
 	DEBUG_TRACE( L"m_nLength=%d\t\t対応する論理行のハイト数\n", (int)m_nLength );
 	DEBUG_TRACE( L"m_nTypePrev=%d\t\tタイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列 \n", m_nTypePrev );
 	DEBUG_TRACE( L"======================\n" );
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }
 

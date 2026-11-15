@@ -15,18 +15,15 @@
 	Copyright (C) 2003, Moca, ryoji, genta, かろと
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, ryoji, かろと
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-// Oct 6, 2000 ao
-#include <stdio.h>
-#include <list>
-#include "CDocLineMgr.h"
-#include "CDocLine.h"// 2002/2/10 aroka ヘッダー整理
+#include "doc/logic/CDocLineMgr.h"
+
 #include "charset/charcode.h"
 #include "charset/CCodeFactory.h"
 #include "charset/CCodeBase.h"
@@ -38,7 +35,6 @@
 //	May 15, 2000 genta
 #include "basis/CEol.h"
 #include "mem/CMemory.h"// 2002/2/10 aroka
-#include "mem/CPoolResource.h"
 
 #include "io/CFileLoad.h" // 2002/08/30 Moca
 #include "io/CIoBridge.h"
@@ -48,13 +44,14 @@
 #include "util/file.h"
 #include "debug/CRunningTimer.h"
 
+// Oct 6, 2000 ao
+#include <stdio.h>
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //               コンストラクタ・デストラクタ                  //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CDocLineMgr::CDocLineMgr()
-	: m_docLineMemRes(new CPoolResource<CDocLine>())
-	//: m_docLineMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
 	_Init();
 }
@@ -117,8 +114,12 @@ void CDocLineMgr::DeleteLine( CDocLine* pcDocLineDel )
 	}
 	
 	//参照切り離し
-	if( m_pCodePrevRefer == pcDocLineDel ){
-		m_pCodePrevRefer = pcDocLineDel->GetNextLine();
+	{
+		std::scoped_lock lock{ m_mtxPrevRefer };
+
+		if (m_pCodePrevRefer == pcDocLineDel) {
+			m_pCodePrevRefer = pcDocLineDel->GetNextLine();
+		}
 	}
 
 	//データ削除
@@ -178,6 +179,9 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 	if( CLogicInt(0) > nLine || nLine >= m_nLines ){
 		return nullptr;
 	}
+
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	// 2004.03.28 Moca m_pCodePrevReferより、Top,Botのほうが近い場合は、そちらを利用する
 	CLogicInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLine );
 	if( m_pCodePrevRefer == nullptr
@@ -261,12 +265,15 @@ const CDocLine* CDocLineMgr::GetLine( CLogicInt nLine ) const
 
 void CDocLineMgr::_Init()
 {
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	m_pDocLineTop = nullptr;
 	m_pDocLineBot = nullptr;
 	m_nLines = CLogicInt(0);
 	m_nPrevReferLine = CLogicInt(0);
 	m_pCodePrevRefer = nullptr;
 	m_pDocLineCurrent = nullptr;
+
 	CDiffManager::getInstance()->SetDiffUse(false);	/* DIFF使用中 */	//@@@ 2002.05.25 MIK     //##後でCDocListener::OnClear (OnAfterClose) を作成し、そこに移動
 }
 
@@ -316,6 +323,8 @@ void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 	++m_nLines;
 }
 
+#if 0 // 未使用（呼出不可）なので一旦無効化しておく
+
 //! pPosの直後に挿入。pPosにNULLを指定した場合は、先頭に追加。
 void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 {
@@ -344,6 +353,63 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 	m_nLines++;
 }
 
+#endif // if 0
+
+/*! 順アクセスモード：先頭行を得る
+
+	@param pnLineLen [out] 行の長さが返る。
+	@return 1行目の先頭へのポインタ。
+	データが1行もないときは、長さ0、ポインタNULLが返る。
+
+*/
+LPCWSTR CDocLineMgr::GetFirstLinrStr(int& nLineLen)
+{
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
+	const wchar_t* pszLine;
+	if (CLogicInt(0) == GetLineCount()) {
+		pszLine = nullptr;
+		nLineLen = 0;
+	}
+	else {
+		pszLine = GetDocLineTop()->GetDocLineStrWithEOL( &nLineLen );
+
+		m_pDocLineCurrent = GetDocLineTop()->GetNextLine();
+	}
+
+	return pszLine;
+}
+
+/*!
+	順アクセスモード：次の行を得る
+
+	@param pnLineLen [out] 行の長さが返る。
+	@return 次行の先頭へのポインタ。
+	GetFirstLinrStr()が呼び出されていないとNULLが返る
+
+*/
+LPCWSTR CDocLineMgr::GetNextLinrStr(int& nLineLen)
+{
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
+	const wchar_t* pszLine;
+	if (!m_pDocLineCurrent && !m_pDocLineTop) {
+		pszLine = nullptr;
+		nLineLen = 0;
+	}
+	else {
+		if (!m_pDocLineCurrent) {
+			m_pDocLineCurrent = m_pDocLineTop;
+		}
+
+		pszLine = m_pDocLineCurrent->GetDocLineStrWithEOL( &nLineLen );
+
+		m_pDocLineCurrent = m_pDocLineCurrent->GetNextLine();
+	}
+
+	return pszLine;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                         デバッグ                            //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -357,7 +423,10 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 */
 void CDocLineMgr::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	MYTRACE( L"------------------------\n" );
 
 	CDocLine* pDocLine;
@@ -369,10 +438,10 @@ void CDocLineMgr::DUMP()
 	bool bIncludeCurrent = false;
 	bool bIncludePrevRefer = false;
 	CLogicInt nNum = CLogicInt(0);
-	if( m_pDocLineTop->m_pPrev != nullptr ){
+	if( m_pDocLineTop && m_pDocLineTop->m_pPrev != nullptr ){
 		MYTRACE( L"error: m_pDocLineTop->m_pPrev != NULL\n");
 	}
-	if( m_pDocLineBot->m_pNext != nullptr ){
+	if( m_pDocLineBot && m_pDocLineBot->m_pNext != nullptr ){
 		MYTRACE( L"error: m_pDocLineBot->m_pNext != NULL\n" );
 	}
 	while( nullptr != pDocLine ){
@@ -434,6 +503,8 @@ void CDocLineMgr::DUMP()
 		pDocLine = pDocLineNext;
 	}
 	MYTRACE( L"------------------------\n" );
-#endif // _DEBUG
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }

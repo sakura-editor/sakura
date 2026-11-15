@@ -13,10 +13,16 @@
 
 class CDocLineMgr;
 
+CDocLineMgr& GetDocLineMgr();
+
 //as decorator
 class CDocReader{
 public:
-	CDocReader(const CDocLineMgr& pcDocLineMgr) : m_pcDocLineMgr(&pcDocLineMgr) { }
+	explicit CDocReader(
+		const CDocLineMgr& pcDocLineMgr [[maybe_unused]]
+	)
+	{
+	}
 
 	wchar_t* GetAllData(int* pnDataLen);	/* 全行データを返す */
 	const wchar_t* GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen );
@@ -25,6 +31,7 @@ public:
 	const wchar_t* GetNextLinrStr( int* pnLineLen );	/* 順アクセスモード：次の行を得る */
 
 private:
-	const CDocLineMgr* m_pcDocLineMgr;
+	CDocLineMgr* m_pcDocLineMgr{ &GetDocLineMgr() };
 };
+
 #endif /* SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_ */

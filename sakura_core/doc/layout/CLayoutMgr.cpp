@@ -10,13 +10,14 @@
 	Copyright (C) 2004, genta, Moca
 	Copyright (C) 2005, D.S.Koba, Moca
 	Copyright (C) 2009, ryoji, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 #include "StdAfx.h"
 #include "doc/layout/CLayoutMgr.h"
+
 #include "doc/layout/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CEditDoc.h"
 #include "doc/CDocReader.h" // for _DEBUG
@@ -26,14 +27,11 @@
 #include "charset/charcode.h"
 #include "mem/CMemory.h"/// 2002/2/10 aroka
 #include "mem/CMemoryIterator.h" // 2006.07.29 genta
-#include "mem/CPoolResource.h"
 #include "view/CViewFont.h"
 #include "view/CTextMetrics.h"
 #include "basis/SakuraBasis.h"
 #include "agent/CSearchAgent.h"
 #include "debug/CRunningTimer.h"
-#include "charset/charcode.h"
-#include "config/app_constants.h"
 #include "util/window.h"
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -41,23 +39,10 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 CLayoutMgr::CLayoutMgr()
-: m_getIndentOffset( &CLayoutMgr::getIndentOffset_Normal )	//	Oct. 1, 2002 genta	//	Nov. 16, 2002 メンバー関数ポインタにはクラス名が必要
-  , m_layoutMemRes(new CPoolResource<CLayout>())
-  //, m_layoutMemRes(new std::pmr::unsynchronized_pool_resource()) // メモリ使用量が大きい為に使用しない
 {
-	m_pcDocLineMgr = nullptr;
-	m_pTypeConfig = nullptr;
-	m_nMaxLineKetas = CKetaXInt(MAXLINEKETAS);
-	m_nTabSpace = CKetaXInt(4);
-	m_tsvInfo.m_nTsvMode = TSV_MODE_NONE;
 	m_pszKinsokuHead_1.clear();						/* 行頭禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuTail_1.clear();						/* 行末禁則 */	//@@@ 2002.04.08 MIK
 	m_pszKinsokuKuto_1.clear();						/* 句読点ぶらさげ */	//@@@ 2002.04.17 MIK
-
-	m_nTextWidth = CLayoutInt(0);			// テキスト最大幅の記憶		// 2009.08.28 nasukoji
-	m_nTextWidthMaxLine = CLayoutInt(0);	// 最大幅のレイアウト行		// 2009.08.28 nasukoji
-
-	Init();
 }
 
 CLayoutMgr::~CLayoutMgr()
@@ -85,6 +70,8 @@ void CLayoutMgr::Create( CEditDoc* pcEditDoc, CDocLineMgr* pcDocLineMgr )
 
 void CLayoutMgr::Init()
 {
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	m_pLayoutTop = nullptr;
 	m_pLayoutBot = nullptr;
 	m_nPrevReferLine = CLayoutInt(0);
@@ -259,6 +246,8 @@ const CLayout* CLayoutMgr::SearchLineByLayoutY(
 //	}
 
 	/*+++++++わずかに高速版+++++++*/
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
 	// 2004.03.28 Moca m_pLayoutPrevReferより、Top,Botのほうが近い場合は、そちらを利用する
 	CLayoutInt nPrevToLineNumDiff = t_abs( m_nPrevReferLine - nLineNum );
 	if( m_pLayoutPrevRefer == nullptr
@@ -550,8 +539,12 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 	}
 
 	// 1999.11.22
-	m_pLayoutPrevRefer = pLayoutInThisArea->GetPrevLayout();
-	m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
+	{
+		std::scoped_lock lock{ m_mtxPrevRefer };
+
+		m_pLayoutPrevRefer = pLayoutInThisArea->GetPrevLayout();
+		m_nPrevReferLine = nLineOf_pLayoutInThisArea - CLayoutInt(1);
+	}
 
 	/* 範囲内先頭に該当するレイアウト情報をサーチ */
 	pLayoutWork = pLayoutInThisArea->GetPrevLayout();
@@ -594,8 +587,13 @@ CLayout* CLayoutMgr::DeleteLayoutAsLogical(
 			(*pnDeleteLines)++;
 		}
 
+		{
+			std::scoped_lock lock{ m_mtxPrevRefer };
+
 		if( m_pLayoutPrevRefer == pLayout ){
 			DEBUG_TRACE( L"バグバグ\n" );
+		}
+
 		}
 
 		pLayout->~CLayout();
@@ -808,14 +806,18 @@ void CLayoutMgr::LogicToLayout(
 		nCaretPosY = t_max(CLayoutInt(ptLogic.y), nLineHint);
 
 		// 2013.05.12 m_pLayoutPrevReferを見る
-		if( nCaretPosY <= m_nPrevReferLine && m_pLayoutPrevRefer
-			&& m_pLayoutPrevRefer->GetLogicLineNo() <= ptLogic.y ){
-			// ヒントより現在位置のほうが後ろか同じぐらいで近い
-			nCaretPosY = CLayoutInt(ptLogic.y - m_pLayoutPrevRefer->GetLogicLineNo()) + m_nPrevReferLine;
-			pLayout = SearchLineByLayoutY(nCaretPosY);
-		}else{
-			pLayout = SearchLineByLayoutY(nCaretPosY);
+		{
+			// SearchLineByLayoutY内で再度ロックするため、参照キャッシュの読み取りだけロックする
+			std::scoped_lock lock{ m_mtxPrevRefer };
+			if (nCaretPosY <= m_nPrevReferLine &&
+				m_pLayoutPrevRefer &&
+				m_pLayoutPrevRefer->GetLogicLineNo() <= ptLogic.y)
+			{
+				// ヒントより現在位置のほうが後ろか同じぐらいで近い
+				nCaretPosY = CLayoutInt(ptLogic.y - m_pLayoutPrevRefer->GetLogicLineNo()) + m_nPrevReferLine;
+			}
 		}
+		pLayout = SearchLineByLayoutY(nCaretPosY);
 		if( !pLayout ){
 			pptLayout->SetY( m_nLines );
 			return;
@@ -1039,7 +1041,8 @@ void CLayoutMgr::LayoutToLogic( const CLayoutPoint& ptLayout, CLogicPoint* pptLo
 /* テスト用にレイアウト情報をダンプ */
 void CLayoutMgr::DUMP()
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	const wchar_t* pData;
 	CLogicInt nDataLen;
 	MYTRACE( L"------------------------\n" );
@@ -1069,6 +1072,8 @@ void CLayoutMgr::DUMP()
 		pLayout = pLayoutNext;
 	}
 	MYTRACE( L"------------------------\n" );
-#endif
+
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }

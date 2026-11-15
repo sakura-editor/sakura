@@ -349,7 +349,8 @@ void CProfile::SetProfileData(
 
 void CProfile::DUMP( void )
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	//	2006.02.20 ryoji: MAP_STR_STR_ITER削除時の修正漏れによるコンパイルエラー修正
 	MYTRACE( L"\n\nCProfile::DUMP()======================" );
 	for (const auto& section : m_ProfileData) {
@@ -359,6 +360,8 @@ void CProfile::DUMP( void )
 		}
 	}
 	MYTRACE( L"========================================\n" );
-#endif
+	
+#endif // if ENABLE_DEBUG_DUMP
+
 	return;
 }

@@ -75,12 +75,16 @@ COpe* COpeBlk::GetOpe( int nIndex )
 /* 編集操作要素ブロックのダンプ */
 void COpeBlk::DUMP( void )
 {
-#ifdef _DEBUG
+#if ENABLE_DEBUG_DUMP
+
 	int i;
 	int size = GetNum();
 	for( i = 0; i < size; ++i ){
 		MYTRACE( L"\tCOpeBlk.m_ppCOpeArr[%d]----\n", i );
 		m_ppCOpeArr[i]->DUMP();
 	}
-#endif
+
+#endif // if ENABLE_DEBUG_DUMP
+
+	return;
 }

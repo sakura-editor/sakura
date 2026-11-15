@@ -7,22 +7,26 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor, genta
 	Copyright (C) 2002, MIK, YAZAKI
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
 */
 
 #include "StdAfx.h"
-#include "CDocLine.h"
+#include "doc/logic/CDocLine.h"
+
 #include "mem/CMemory.h"
 
 CDocLine::CDocLine()
-: m_pPrev( nullptr ), m_pNext( nullptr )
 {
+	return;
 }
 
-CDocLine::~CDocLine() = default;
+CDocLine::~CDocLine()
+{
+	return;
+}
 
 /* 空行（スペース、タブ、改行記号のみの行）かどうかを取得する
 	true：空行だ。
@@ -43,31 +47,66 @@ bool CDocLine::IsEmptyLine() const
 	return true;	//	すべてスペースかタブだけだったらtrue。
 }
 
-void CDocLine::SetEol(bool bEnableExtEol)
+/*!
+ * @brief 現在のバッファから改行コードを設定する
+ */
+void CDocLine::SetEol(
+	bool bEnableExtEol
+)
 {
-	const wchar_t* pData = m_cLine.GetStringPtr();
-	int nLength = m_cLine.GetStringLength();
+	// 一旦、改行コード「なし」にする
+	m_cEol = EEolType::none;
+
+	// 行データを取り出す
+	const auto line = m_cLine.str();
+
+	// 行データが空なら改行コード「なし」で確定
+	if (line.empty()) return;
+
+	// 改行コードの開始位置を探す
+	const auto found = std::find_if(
+		line.rbegin(),
+		line.rend(),
+		[bEnableExtEol](wchar_t wc) {
+			return !WCODE::IsLineDelimiter(wc, bEnableExtEol);
+		}
+	);
+
+	// 改行コードの開始位置を確定する
+	const auto nOffsetToEol = found != line.rend()
+		? std::distance(line.begin(), found.base())
+		: 0;
+
+	// 改行コードの部分文字列を切り出す
+	std::wstring_view eol = line.substr(nOffsetToEol);
+
 	//改行コード設定
-	const wchar_t* p = &pData[nLength] - 1;
-	while(p>=pData && WCODE::IsLineDelimiter(*p, bEnableExtEol))p--;
-	p++;
-	if(p>=pData){
-		m_cEol.SetTypeByString(p, &pData[nLength]-p);
-	}
-	else{
-		m_cEol = EEolType::none;
-	}
+	m_cEol.SetTypeByString(eol.data(), eol.length());
 }
 
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol)
+void CDocLine::SetDocLineString(
+	std::wstring_view line,
+	bool bEnableExtEol
+)
 {
-	m_cLine.SetString(pData, nLength);
+	// 行データのバッファを更新する
+	m_cLine.SetString(line.data(), line.length());
+
+	// 現在のバッファから改行コードを設定する
 	SetEol(bEnableExtEol);
 }
 
-void CDocLine::SetDocLineString(const CNativeW& cData, bool bEnableExtEol)
+void CDocLine::SetDocLineString(
+	const wchar_t* pData,
+	int nLength,
+	bool bEnableExtEol
+)
 {
-	SetDocLineString(cData.GetStringPtr(), cData.GetStringLength(), bEnableExtEol);
+	// 引数から文字列参照を構築する
+	std::wstring_view line{ pData, static_cast<size_t>(nLength) };
+
+	// 文字列を渡すバージョンを呼び出す
+	SetDocLineString(line, bEnableExtEol);
 }
 
 void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom, bool bEnableExtEol)

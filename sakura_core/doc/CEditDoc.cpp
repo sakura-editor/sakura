@@ -154,6 +154,11 @@ CEditDoc& GetEditDoc()
 	return *doc;
 }
 
+CDocLineMgr& GetDocLineMgr()
+{
+	return GetEditDoc().m_cDocLineMgr;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
