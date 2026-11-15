@@ -22,6 +22,7 @@
 
 #include "util/design_template.h"
 #include "basis/CEol.h"
+#include "basis/primitive.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
 
@@ -29,6 +30,9 @@
 #include "docplus/CDiffManager.h"
 #include "docplus/CModifyManager.h"
 #include "docplus/CFuncListManager.h"
+
+#include <string_view>
+#include <type_traits>
 
 class CDocLine;
 class CDocLineMgr;
@@ -106,8 +110,26 @@ public:
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
+	void SetDocLineString(std::wstring_view line, bool bEnableExtEol);
 	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
-	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
+
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	void SetDocLineString(
+		const A& line,
+		bool bEnableExtEol
+	)
+	{
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Line{ line };
+
+		// 文字列を渡すバージョンを呼び出す
+		return SetDocLineString(
+			_Line.str(),
+			bEnableExtEol
+		);
+	}
+
 	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 
 	//チェーン属性

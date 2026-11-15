@@ -84,15 +84,29 @@ void CDocLine::SetEol(
 	m_cEol.SetTypeByString(eol.data(), eol.length());
 }
 
-void CDocLine::SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol)
+void CDocLine::SetDocLineString(
+	std::wstring_view line,
+	bool bEnableExtEol
+)
 {
-	m_cLine.SetString(pData, nLength);
+	// 行データのバッファを更新する
+	m_cLine.SetString(line.data(), line.length());
+
+	// 現在のバッファから改行コードを設定する
 	SetEol(bEnableExtEol);
 }
 
-void CDocLine::SetDocLineString(const CNativeW& cData, bool bEnableExtEol)
+void CDocLine::SetDocLineString(
+	const wchar_t* pData,
+	int nLength,
+	bool bEnableExtEol
+)
 {
-	SetDocLineString(cData.GetStringPtr(), cData.GetStringLength(), bEnableExtEol);
+	// 引数から文字列参照を構築する
+	std::wstring_view line{ pData, static_cast<size_t>(nLength) };
+
+	// 文字列を渡すバージョンを呼び出す
+	SetDocLineString(line, bEnableExtEol);
 }
 
 void CDocLine::SetDocLineStringMove(CNativeW* pcDataFrom, bool bEnableExtEol)
