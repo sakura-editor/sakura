@@ -6,8 +6,10 @@
 */
 #include "StdAfx.h"
 #include "CDocReader.h"
-#include "logic/CDocLine.h"
-#include "logic/CDocLineMgr.h"
+
+#include "doc/logic/CDocLine.h"
+#include "doc/logic/CDocLineMgr.h"
+
 #include "CSelectLang.h"
 
 /* 全行データを返す
@@ -91,16 +93,9 @@ const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen
 */
 const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 {
-	const wchar_t* pszLine;
-	if( CLogicInt(0) == m_pcDocLineMgr->GetLineCount() ){
-		pszLine = nullptr;
-		*pnLineLen = 0;
-	}else{
-		pszLine = m_pcDocLineMgr->GetDocLineTop()->GetDocLineStrWithEOL( pnLineLen );
+	if (!pnLineLen) throw std::invalid_argument("pnLineLen is required");
 
-		m_pcDocLineMgr->m_pDocLineCurrent = const_cast<CDocLine*>(m_pcDocLineMgr->GetDocLineTop()->GetNextLine());
-	}
-	return pszLine;
+	return m_pcDocLineMgr->GetFirstLinrStr(*pnLineLen);
 }
 
 /*!
@@ -113,15 +108,7 @@ const wchar_t* CDocReader::GetFirstLinrStr( int* pnLineLen )
 */
 const wchar_t* CDocReader::GetNextLinrStr( int* pnLineLen )
 {
-	const wchar_t* pszLine;
-	if( nullptr == m_pcDocLineMgr->m_pDocLineCurrent ){
-		pszLine = nullptr;
-		*pnLineLen = 0;
-	}
-	else{
-		pszLine = m_pcDocLineMgr->m_pDocLineCurrent->GetDocLineStrWithEOL( pnLineLen );
+	if (!pnLineLen) throw std::invalid_argument("pnLineLen is required");
 
-		m_pcDocLineMgr->m_pDocLineCurrent = m_pcDocLineMgr->m_pDocLineCurrent->GetNextLine();
-	}
-	return pszLine;
+	return m_pcDocLineMgr->GetNextLinrStr(*pnLineLen);
 }

@@ -323,6 +323,8 @@ void CDocLineMgr::_InsertBeforePos(CDocLine* pDocLineNew, CDocLine* pPos)
 	++m_nLines;
 }
 
+#if 0 // 未使用（呼出不可）なので一旦無効化しておく
+
 //! pPosの直後に挿入。pPosにNULLを指定した場合は、先頭に追加。
 void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 {
@@ -349,6 +351,63 @@ void CDocLineMgr::_InsertAfterPos(CDocLine* pDocLineNew, CDocLine* pPos)
 
 	//行数を加算
 	m_nLines++;
+}
+
+#endif // if 0
+
+/*! 順アクセスモード：先頭行を得る
+
+	@param pnLineLen [out] 行の長さが返る。
+	@return 1行目の先頭へのポインタ。
+	データが1行もないときは、長さ0、ポインタNULLが返る。
+
+*/
+LPCWSTR CDocLineMgr::GetFirstLinrStr(int& nLineLen)
+{
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
+	const wchar_t* pszLine;
+	if (CLogicInt(0) == GetLineCount()) {
+		pszLine = nullptr;
+		nLineLen = 0;
+	}
+	else {
+		pszLine = GetDocLineTop()->GetDocLineStrWithEOL( &nLineLen );
+
+		m_pDocLineCurrent = GetDocLineTop()->GetNextLine();
+	}
+
+	return pszLine;
+}
+
+/*!
+	順アクセスモード：次の行を得る
+
+	@param pnLineLen [out] 行の長さが返る。
+	@return 次行の先頭へのポインタ。
+	GetFirstLinrStr()が呼び出されていないとNULLが返る
+
+*/
+LPCWSTR CDocLineMgr::GetNextLinrStr(int& nLineLen)
+{
+	std::scoped_lock lock{ m_mtxPrevRefer };
+
+	const wchar_t* pszLine;
+	if (!m_pDocLineCurrent && !m_pDocLineTop) {
+		pszLine = nullptr;
+		nLineLen = 0;
+	}
+	else {
+		if (!m_pDocLineCurrent) {
+			m_pDocLineCurrent = m_pDocLineTop;
+		}
+
+		pszLine = m_pDocLineCurrent->GetDocLineStrWithEOL( &nLineLen );
+
+		m_pDocLineCurrent = m_pDocLineCurrent->GetNextLine();
+	}
+
+	return pszLine;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
