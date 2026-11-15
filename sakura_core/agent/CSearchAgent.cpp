@@ -984,8 +984,7 @@ prev_line:;
 		/* 直前の行のオブジェクトのポインタ */
 		pCDocLine = pCDocLinePrev;
 		/* 最近参照した行番号と行データ */
-		--m_pcDocLineMgr->m_nPrevReferLine;
-		m_pcDocLineMgr->m_pCodePrevRefer = pCDocLine;
+		m_pcDocLineMgr->SetPrevRefer1(pCDocLinePrev);
 
 		if( nullptr != hwndCancel){
 			int nLines = pArg->sDelRange.GetTo().y - i;
@@ -1032,12 +1031,7 @@ prev_line:;
 			if( 0 == pArg->sDelRange.GetFrom().x ){
 				// 挿入データの最後が改行で行頭に挿入するとき、現在行を維持する
 				bInsertLineMode = true;
-				if( pCDocLine && m_pcDocLineMgr->m_pCodePrevRefer == pCDocLine ){
-					m_pcDocLineMgr->m_pCodePrevRefer = pCDocLine->GetPrevLine();
-					if( m_pcDocLineMgr->m_pCodePrevRefer ){
-						m_pcDocLineMgr->m_nPrevReferLine--;
-					}
-				}
+				m_pcDocLineMgr->SetPrevRefer2(pCDocLine);
 			}
 		}else{
 			bLastInsert = true;

@@ -14,7 +14,7 @@
 	Copyright (C) 2003, genta
 	Copyright (C) 2005, Moca, genta, D.S.Koba
 	Copyright (C) 2009, nasukoji
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -24,16 +24,14 @@
 #define SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_
 #pragma once
 
-#include <Windows.h>// 2002/2/10 aroka
-#include <vector>
-#include <memory_resource>
-#include <atomic>
 #include "doc/CDocListener.h"
 #include "_main/global.h"// 2002/2/10 aroka
 #include "basis/SakuraBasis.h"
+#include "config/app_constants.h"
 #include "types/CType.h"
 #include "CLayoutExInfo.h"
 #include "mem/CMemoryIterator.h"
+#include "mem/CPoolResource.h"
 #include "CTsvModeInfo.h"
 #include "view/colors/EColorIndexType.h"
 #include "cmd/COpe.h"
@@ -41,6 +39,14 @@
 #include "util/design_template.h"
 #include "charset/charcode.h"
 #include "env/DLLSHAREDATA.h"
+
+#include <atomic>
+#include <memory>
+#include <memory_resource>
+#include <mutex>
+#include <vector>
+
+#include <Windows.h>
 
 class CBregexp;// 2002/2/10 aroka
 class CLayout;// 2002/2/10 aroka
@@ -97,12 +103,16 @@ public:
 class CLayoutMgr : public CProgressSubject
 {
 private:
+	using MemHolder = std::shared_ptr<std::pmr::memory_resource>;
+
 	typedef CLayoutInt (CLayoutMgr::*CalcIndentProc)( CLayout* );
 
 public:
 	//生成と破棄
 	CLayoutMgr();
-	~CLayoutMgr();
+
+	~CLayoutMgr() override;
+
 	void Create( CEditDoc*, CDocLineMgr* );
 	void Init();
 	void _Empty();
@@ -110,7 +120,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        コンフィグ                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	//! タブ幅の取得
 	CLayoutInt GetTabSpace() const { return m_nTabSpace * m_nCharLayoutXPerKeta; }
 	CKetaXInt  GetTabSpaceKetas() const { return m_nTabSpace; }
@@ -124,7 +133,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                          参照系                             //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	//2007.10.09 kobake 関数名変更: Search → SearchLineByLayoutY
 	CLayoutInt		GetLineCount() const{ return m_nLines; }	/* 全物理行数を返す */
 	const wchar_t*	GetLineStr( CLayoutInt nLine, CLogicInt* pnLineLen ) const;	/* 指定された物理行のデータへのポインタとその長さを返す */
@@ -200,6 +208,7 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 protected:
 	int PrevOrNextWord( CLayoutInt, CLogicInt, CLayoutPoint* pptLayoutNew, BOOL, BOOL bStopsBothEnds );	/* 現在位置の左右の単語の先頭位置を調べる */
+
 public:
 	int PrevWord( CLayoutInt nLineNum, CLogicInt nIdx, CLayoutPoint* pptLayoutNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pptLayoutNew, TRUE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
 	int NextWord( CLayoutInt nLineNum, CLogicInt nIdx, CLayoutPoint* pptLayoutNew, BOOL bStopsBothEnds ){ return PrevOrNextWord(nLineNum, nIdx, pptLayoutNew, FALSE, bStopsBothEnds); }	/* 現在位置の左右の単語の先頭位置を調べる */
@@ -209,7 +218,6 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                        単位の変換                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	//!ロジック→レイアウト
 	void LogicToLayoutEx( const CLogicPointEx& ptLogicEx, CLayoutPoint* pptLayout, CLayoutInt nLineHint = CLayoutInt(0) )
 	{
@@ -239,13 +247,11 @@ public:
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         デバッグ                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	void DUMP();	/* テスト用にレイアウト情報をダンプ */
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         編集とか                            //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
-public:
 	/*
 	|| 更新系
 	*/
@@ -291,9 +297,9 @@ public:
 	|| 更新系
 	*/
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
-public:
 	void _DoLayout(bool bBlockingHook);	/* 現在の折り返し文字数に合わせて全データのレイアウト情報を再生成します */
 	void _DoLayoutSub(CDocLine* pDocLineBegin, const CDocLine* pDocLineEnd, int nLineIndexBegin, int nLineCount, std::atomic<bool>* pbCanceled);
+
 protected:
 	// 2005.11.21 Moca 引用符の色分け情報を引数から除去
 	// 2009.08.28 nasukoji	テキスト最大幅算出用引数追加
@@ -377,8 +383,8 @@ protected:
 	//                        メンバ変数                           //
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 public:
-	CDocLineMgr*			m_pcDocLineMgr;	/* 行バッファ管理マネージャ */
-	CTsvModeInfo			m_tsvInfo;
+	CDocLineMgr*			m_pcDocLineMgr = nullptr;	/* 行バッファ管理マネージャ */
+	CTsvModeInfo			m_tsvInfo{};
 
 protected:
 	// 2002.10.07 YAZAKI add m_nLineTypeBot
@@ -386,40 +392,46 @@ protected:
 	// 2007.10.08 kobake 変数名変更: getIndentOffset→m_getIndentOffset
 
 	//参照
-	CEditDoc*		m_pcEditDoc;
+	CEditDoc*				m_pcEditDoc = nullptr;
 
 	//実データ
-	CLayout*				m_pLayoutTop;
-	CLayout*				m_pLayoutBot;
-	std::shared_ptr<std::pmr::memory_resource> m_layoutMemRes;
+	CLayout*				m_pLayoutTop = nullptr;
+	CLayout*				m_pLayoutBot = nullptr;
+	MemHolder				m_layoutMemRes = std::make_shared<CPoolResource<CLayout>>();
 
 	//タイプ別設定
-	const STypeConfig*		m_pTypeConfig;
-	CKetaXInt				m_nMaxLineKetas;			//!< 折り返し桁数
-	CKetaXInt				m_nTabSpace;				//!< TABの文字数
+	const STypeConfig*		m_pTypeConfig = nullptr;
+	CKetaXInt				m_nMaxLineKetas{ MAXLINEKETAS };			//!< 折り返し桁数
+	CKetaXInt				m_nTabSpace{ 4 };				//!< TABの文字数
 	CLayoutXInt				m_nCharLayoutXPerKeta;		//!< CKetaXInt(1)あたりのCLayoutXInt値(Spacing入り)
-	CPixelXInt				m_nSpacing;					//!< 1文字ずつの間隔(px)
+	CPixelXInt				m_nSpacing{ 0 };					//!< 1文字ずつの間隔(px)
 	vector_ex<wchar_t>		m_pszKinsokuHead_1;			//!< 行頭禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuTail_1;			//!< 行末禁則文字	//@@@ 2002.04.08 MIK
 	vector_ex<wchar_t>		m_pszKinsokuKuto_1;			//!< 句読点ぶらさげ文字	//@@@ 2002.04.17 MIK
-	CalcIndentProc			m_getIndentOffset;			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
+	CalcIndentProc			m_getIndentOffset{ &CLayoutMgr::getIndentOffset_Normal };			//!< Oct. 1, 2002 genta インデント幅計算関数を保持
 
 	//フラグ等
-	EColorIndexType			m_nLineTypeBot;				//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
-	CLayoutExInfo			m_cLayoutExInfoBot;
-	CLayoutInt				m_nLines;					// 全レイアウト行数
+	EColorIndexType			m_nLineTypeBot = COLORIDX_DEFAULT;		//!< タイプ 0=通常 1=行コメント 2=ブロックコメント 3=シングルクォーテーション文字列 4=ダブルクォーテーション文字列
+	CLayoutExInfo			m_cLayoutExInfoBot{};
+	CLayoutInt				m_nLines{ 0 };							// 全レイアウト行数
 
-	mutable CLayoutInt		m_nPrevReferLine;
-	mutable CLayout*		m_pLayoutPrevRefer;
+private:
+	// const関数(SearchLineByLayoutY)から更新される参照キャッシュ。更新時はm_mtxPrevReferで保護する。
+	mutable std::mutex		m_mtxPrevRefer;
+
+	mutable CLayoutInt		m_nPrevReferLine{ 0 };
+	mutable CLayout*		m_pLayoutPrevRefer = nullptr;
 	
 	// EOFカーソル位置を記憶する(_DoLayout/DoLayout_Rangeで無効にする)	//2006.10.01 Moca
-	CLayoutInt				m_nEOFLine; //!< EOF行数
-	CLayoutInt				m_nEOFColumn; //!< EOF幅位置
+protected:
+	CLayoutInt				m_nEOFLine{ -1 }; //!< EOF行数
+	CLayoutInt				m_nEOFColumn{ -1 }; //!< EOF幅位置
 
 	// テキスト最大幅を記憶（折り返し位置算出に使用）	// 2009.08.28 nasukoji
-	CLayoutInt				m_nTextWidth;				// テキスト最大幅の記憶
-	CLayoutInt				m_nTextWidthMaxLine;		// 最大幅のレイアウト行
+	CLayoutInt				m_nTextWidth{ 0 };				// テキスト最大幅の記憶
+	CLayoutInt				m_nTextWidthMaxLine{ 0 };		// 最大幅のレイアウト行
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
+
 #endif /* SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_ */

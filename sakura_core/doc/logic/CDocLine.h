@@ -10,7 +10,7 @@
 	Copyright (C) 1998-2001, Norio Nakatani
 	Copyright (C) 2001, hor
 	Copyright (C) 2002, MIK
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,6 +22,7 @@
 
 #include "util/design_template.h"
 #include "basis/CEol.h"
+#include "basis/primitive.h"
 #include "mem/CMemory.h"
 #include "mem/CNativeW.h"
 
@@ -30,7 +31,11 @@
 #include "docplus/CModifyManager.h"
 #include "docplus/CFuncListManager.h"
 
+#include <string_view>
+#include <type_traits>
+
 class CDocLine;
+class CDocLineMgr;
 class COpeBlk;
 
 #pragma pack(push,1)
@@ -39,6 +44,7 @@ class COpeBlk;
 class CDocLine{
 protected:
 	friend class CDocLineMgr; //######仮
+
 public:
 	//コンストラクタ・デストラクタ
 	CDocLine();
@@ -104,8 +110,26 @@ public:
 	CNativeW& _GetDocLineData() { return m_cLine; }
 
 	//データ設定
+	void SetDocLineString(std::wstring_view line, bool bEnableExtEol);
 	void SetDocLineString(const wchar_t* pData, int nLength, bool bEnableExtEol);
-	void SetDocLineString(const CNativeW& cData, bool bEnableExtEol);
+
+	template <basis::NullTerminatedStringConstructible<WCHAR> A>
+		requires (!std::is_same_v<A, std::wstring_view>)
+	void SetDocLineString(
+		const A& line,
+		bool bEnableExtEol
+	)
+	{
+		// 引数はNUL終端文字列として扱う
+		cxx::NullTerminatedString<WCHAR> _Line{ line };
+
+		// 文字列を渡すバージョンを呼び出す
+		return SetDocLineString(
+			_Line.str(),
+			bEnableExtEol
+		);
+	}
+
 	void SetDocLineStringMove(CNativeW* pcData, bool bEnableExtEol);
 
 	//チェーン属性
@@ -117,10 +141,11 @@ public:
 	void _SetNextLine(CDocLine* pcDocLine){ m_pNext = pcDocLine; }
 
 private: //####
-	CDocLine*	m_pPrev;	//!< 一つ前の要素
-	CDocLine*	m_pNext;	//!< 一つ後の要素
-private:
-	CNativeW	m_cLine;	//!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
+	CDocLine*	m_pPrev = nullptr;	//!< 一つ前の要素
+	CDocLine*	m_pNext = nullptr;	//!< 一つ後の要素
+
+	CNativeW	m_cLine{};	//!< データ  2007.10.11 kobake ポインタではなく、実体を持つように変更
+
 public:
 	//拡張情報 $$分離中
 	struct MarkType{
@@ -130,11 +155,13 @@ public:
 		CLineDiffed		m_cDiffmarked;	//DIFF差分情報
 	};
 	MarkType m_sMark;
+
 private:
-	CEol		m_cEol;		//!< 行末コード
+	CEol		m_cEol{};		//!< 行末コード
 
 	DISALLOW_COPY_AND_ASSIGN(CDocLine);
 };
 
 #pragma pack(pop)
+
 #endif /* SAKURA_CDOCLINE_B592082C_24CC_41A6_A931_774BE9675F42_H_ */
