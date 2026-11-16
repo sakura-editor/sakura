@@ -1000,9 +1000,9 @@ TEST_F(CSearchAgentSearchTest, WordBackwardLastLineWithoutEol)
 /*!
 	単語単位・後方: カーソルが行末より右でも、行末とみなしてその行を探す
 
-	今はその行を飛ばすので DISABLED_ にしている(#2743 の 1)。文字列の後方検索は同じ位置からその行を探す。
+	文字列の後方検索と同じく、その行から探す(#2848)。
  */
-TEST_F(CSearchAgentSearchTest, DISABLED_WordBackwardCursorPastTextSearchesLine)
+TEST_F(CSearchAgentSearchTest, WordBackwardCursorPastTextSearchesLine)
 {
 	SetDocument({ L"abc\n", L"abc" });
 	ASSERT_THAT(SetKey(L"abc", false, true, true), IsTrue());
