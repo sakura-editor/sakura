@@ -74,6 +74,18 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	}
 
 	/*!
+	 * キャレット位置(ロジック座標)を取得する
+	 */
+	CLogicPoint GetCaretPos() const
+	{
+		HWND hWnd = nullptr;
+		pcEditWnd->DispatchEvent(hWnd, MYWM_GETCARETPOS, 0L, 0L);
+
+		const auto& sWorkBuffer = GetDllShareData().m_sWorkBuffer;
+		return sWorkBuffer.m_LogicPoint;
+	}
+
+	/*!
 	 * 編集中の内容を取得する
 	 */
 	std::wstring GetLineData() const
@@ -88,6 +100,20 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 		std::wstring line{ std::data(buffer), nLineLen };
 		return line;
+	}
+
+	/*!
+	 * キャレット位置を調整する
+	 */
+	void SetCaretPos(
+		CLogicPoint ptCaret
+	) const
+	{
+		auto& sWorkBuffer = GetDllShareDataPtr()->m_sWorkBuffer;
+		sWorkBuffer.m_LogicPoint = ptCaret;
+
+		HWND hWnd = nullptr;
+		pcEditWnd->DispatchEvent(hWnd, MYWM_SETCARETPOS, 0, 0L);
 	}
 };
 

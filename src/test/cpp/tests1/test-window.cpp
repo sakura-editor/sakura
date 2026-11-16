@@ -2312,15 +2312,8 @@ TEST_F(EditWndTest, Command_RECKEYMACRO101)
  */
 TEST_F(EditWndTest, Command_TAGJUMP001)
 {
-	HWND hWnd = nullptr;
-
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-
-	const auto& text = L"#define FUNCTION_ALIAS TARGET_FUNCTION\n";
-
-	AddString(text);
+	AddString(L"#define FUNCTION_ALIAS TARGET_FUNCTION\n");
 
 	// タグファイルを作る
 	{
@@ -2331,9 +2324,8 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 	}
 
 	// キャレット位置を設定する
-	auto& ptCaret = sWorkBuffer.m_LogicPoint;
-	ptCaret = CLogicPoint(9, 0);	// 10文字目、1行目
-	pcEditWnd->DispatchEvent(hWnd, MYWM_SETCARETPOS, std::size(text), 0L);
+	const CLogicPoint ptCaret{ 9, 0 };
+	SetCaretPos(ptCaret);
 
 	// タグジャンプ発動
 	ExecEditorCommand(F_TAGJUMP);
