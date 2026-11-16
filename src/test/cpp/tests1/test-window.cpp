@@ -78,6 +78,10 @@
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
+using ::testing::Gt;
+using ::testing::Lt;
+using ::testing::Pair;
+
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
 void MacroError(BSTR Description, BSTR Source, void *Data);
@@ -1848,6 +1852,9 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	void TearDown() override
 	{
+		// 他のテストに影響しないよう、編集内容と選択範囲を初期化する
+		ResetText();
+
 		// 強制的に「編集なし」にする
 		pcEditDoc->m_cDocEditor.m_bIsDocModified = false;
 
@@ -2236,27 +2243,406 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
+ * コマンド：1ページダウン
+ */
+TEST_F(EditWndTest, Command_1PageDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_1PageDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：1ページアップ
+ */
+TEST_F(EditWndTest, Command_1PageUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_1PageUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：オートスクロール
+ */
+TEST_F(EditWndTest, DISABLED_Command_AUTOSCROLL001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：範囲選択開始
+ */
+TEST_F(EditWndTest, Command_BEGIN_SELECT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	ExecEditorCommand(F_BEGIN_SEL);
+	EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsTrue());
+	ExecEditorCommand(F_RIGHT);
+	ExecEditorCommand(F_RIGHT);
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	ExecEditorCommand(F_BEGIN_SEL);
+	EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsFalse());
+}
+
+/*!
+ * コマンド：矩形範囲選択開始
+ */
+TEST_F(EditWndTest, Command_BEGIN_BOXSELECT001)
+{
+	ResetText(L"abc\ndef\n", CLogicPoint(0, 0));
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	ExecEditorCommand(F_BEGIN_BOX);
+	// 固定幅フォントでない場合は何もしない仕様
+	if (GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH) {
+		EXPECT_THAT(cSelectionInfo.IsBoxSelecting(), IsTrue());
+		EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsTrue());
+	}
+	else {
+		EXPECT_THAT(cSelectionInfo.IsBoxSelecting(), IsFalse());
+	}
+}
+
+/*!
  * コマンド：選択範囲内全行行番号付きコピー
  */
 TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
 {
-	HWND hWnd = nullptr;
-
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto& text = L"This is test-data.\n2行目\n3行目。\n";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
-
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(L"This is test-data.\n2行目\n3行目。\n");
 
 	// 全選択する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SELECTALL);
 
 	//選択範囲内全行行番号付きコピー
-	FORWARD_WM_COMMAND(hWnd, F_COPYLINESWITHLINENUMBER, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_COPYLINESWITHLINENUMBER);
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ下部に
+ */
+TEST_F(EditWndTest, Command_CURLINEBOTTOM001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINEBOTTOM);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ中央へ
+ */
+TEST_F(EditWndTest, Command_CURLINECENTER001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINECENTER);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ上部に
+ */
+TEST_F(EditWndTest, Command_CURLINETOP001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：行切り取り(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_CUT_LINE001)
+{
+	ResetText(L"a\nb\nc\n", CLogicPoint(0, 1));
+	ExecEditorCommand(F_CUT_LINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nc\n"));
+}
+
+/*!
+ * コマンド：行削除(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_DELETE_LINE001)
+{
+	ResetText(L"a\nb\nc\n", CLogicPoint(0, 1));
+	ExecEditorCommand(F_DELETE_LINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nc\n"));
+}
+
+/*!
+ * コマンド：カーソル下移動
+ */
+TEST_F(EditWndTest, Command_DOWN001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_DOWN);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 1));
+}
+
+/*!
+ * コマンド：カーソル下移動(2行ごと)
+ */
+TEST_F(EditWndTest, Command_DOWN2001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_DOWN2);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 2));
+}
+
+/*!
+ * コマンド：行の二重化(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_DUPLICATELINE001)
+{
+	ResetText(L"a\nb\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_DUPLICATELINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\na\nb\n"));
+}
+
+/*!
+ * コマンド：ファイルの最後に移動
+ */
+TEST_F(EditWndTest, Command_GOFILEEND001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_GOFILEEND);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 3));
+}
+
+/*!
+ * コマンド：ファイルの先頭に移動
+ */
+TEST_F(EditWndTest, Command_GOFILETOP001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 1));
+	ExecEditorCommand(F_GOFILETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：行末に移動(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_GOLINEEND001)
+{
+	ResetText(L"abc def\nghi\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_GOLINEEND);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(7, 0));
+}
+
+/*!
+ * コマンド：行頭に移動(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_GOLINETOP001)
+{
+	ResetText(L"abc def\nghi\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_GOLINETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：次の段落へ移動
+ */
+TEST_F(EditWndTest, Command_GONEXTPARAGRAPH001)
+{
+	ResetText(L"a\n\nb\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_GONEXTPARAGRAPH);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 2));
+}
+
+/*!
+ * コマンド：前の段落へ移動
+ */
+TEST_F(EditWndTest, Command_GOPREVPARAGRAPH001)
+{
+	ResetText(L"a\n\nb\n", CLogicPoint(0, 2));
+	ExecEditorCommand(F_GOPREVPARAGRAPH);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：半ページダウン
+ */
+TEST_F(EditWndTest, Command_HalfPageDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_HalfPageDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：半ページアップ
+ */
+TEST_F(EditWndTest, Command_HalfPageUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_HalfPageUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：SPACEインデント
+ */
+TEST_F(EditWndTest, Command_INDENT_SPACE001)
+{
+	ResetText(L"a\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_INDENT_SPACE);
+	EXPECT_THAT(GetAllText(), StrEq(L" a\n b\n"));
+}
+
+/*!
+ * コマンド：TABインデント
+ */
+TEST_F(EditWndTest, Command_INDENT_TAB001)
+{
+	ResetText(L"a\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_INDENT_TAB);
+	EXPECT_THAT(GetAllText(), StrEq(L"\ta\n\tb\n"));
+}
+
+/*!
+ * コマンド：移動履歴: 次へ
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_NEXT001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	SetCaretPos(CLogicPoint(0, 2));
+	ExecEditorCommand(F_JUMPHIST_PREV);
+	ExecEditorCommand(F_JUMPHIST_NEXT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 2));
+}
+
+/*!
+ * コマンド：移動履歴: 前へ
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_PREV001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	SetCaretPos(CLogicPoint(0, 2));
+	ExecEditorCommand(F_JUMPHIST_PREV);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：現在位置を移動履歴に登録
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_SET001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：カーソル左移動
+ */
+TEST_F(EditWndTest, Command_LEFT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(2, 0));
+	ExecEditorCommand(F_LEFT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：行末まで切り取り(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineCutToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineCutToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"abc\n"));
+}
+
+/*!
+ * コマンド：行頭まで切り取り(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineCutToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineCutToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：行末まで削除(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineDeleteToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineDeleteToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"abc\n"));
+}
+
+/*!
+ * コマンド：行頭まで削除(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineDeleteToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineDeleteToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：左TRIM(行頭空白の除去)
+ */
+TEST_F(EditWndTest, Command_LTRIM001)
+{
+	ResetText(L"  a\n b\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_LTRIM);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：選択範囲内全行を連結(重複行のマージ)
+ */
+TEST_F(EditWndTest, Command_MERGE001)
+{
+	ResetText(L"a\na\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_MERGE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：次の変更行へ
+ */
+TEST_F(EditWndTest, Command_MODIFYLINE_NEXT001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_MODIFYLINE_NEXT);
+}
+
+/*!
+ * コマンド：前の変更行へ
+ */
+TEST_F(EditWndTest, Command_MODIFYLINE_PREV001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_MODIFYLINE_PREV);
+}
+
+/*!
+ * コマンド：カーソル移動
+ */
+TEST_F(EditWndTest, DISABLED_Command_MOVECURSOR001)
+{
+	// 移動先をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：カーソル移動(レイアウト座標)
+ */
+TEST_F(EditWndTest, DISABLED_Command_MOVECURSORLAYOUT001)
+{
+	// 移動先をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
 }
 
 /*!
@@ -2274,8 +2660,56 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 		.Times(1)
 		.WillOnce(Return(FALSE));
 
+	ExecEditorCommand(F_OPEN_COMMAND_PROMPT);
+}
+
+/*!
+ * コマンド：管理者としてコマンドプロンプトを開く
+ */
+TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT_AS_ADMIN001)
+{
+	const auto& targetPath = dummyPath;
+
+	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
+
+	Shell32::setInstance<MockShell32>();
+	auto pShell32 = (MockShell32*)Shell32::getInstance();
+	EXPECT_CALL(*pShell32, ShellExecuteExW(_))
+		.Times(1)
+		.WillOnce(Return(FALSE));
+
 	HWND hWnd = nullptr;
-	FORWARD_WM_COMMAND(hWnd, F_OPEN_COMMAND_PROMPT, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	FORWARD_WM_COMMAND(hWnd, F_OPEN_COMMAND_PROMPT_AS_ADMIN, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * コマンド：ファイルの場所を開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_FOLDER_IN_EXPLORER001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecute を直接呼ぶ実装でモック化できず、実行すると実際に explorer.exe が起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：PowerShellを開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_POWERSHELL001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecuteW を直接呼ぶ実装でモック化できず、実行すると実際に powershell.exe が起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：管理者としてPowerShellを開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_POWERSHELL_AS_ADMIN001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecuteW を直接呼ぶ実装でモック化できず、実行すると実際に powershell.exe が昇格起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
 }
 
 /*!
@@ -2298,8 +2732,7 @@ TEST_F(EditWndTest, Command_PROFILEMGR101)
 		.WillOnce(Return(IDOK));
 
 	using target = CDlgProfileMgr;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROFILEMGR, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROFILEMGR);
 
 	// 設定を元に戻す
 	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
@@ -2310,9 +2743,85 @@ TEST_F(EditWndTest, Command_PROFILEMGR101)
  */
 TEST_F(EditWndTest, Command_RECKEYMACRO101)
 {
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_RECKEYMACRO);
+	ExecEditorCommand(F_RECKEYMACRO);
+}
+
+/*!
+ * コマンド：再変換
+ */
+TEST_F(EditWndTest, DISABLED_Command_RECONVERT001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// IMEの再変換メッセージを送るため、IME環境に依存して結果を検証できない。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：カーソル右移動
+ */
+TEST_F(EditWndTest, Command_RIGHT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(2, 0));
+	ExecEditorCommand(F_RIGHT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(3, 0));
+}
+
+/*!
+ * コマンド：右TRIM(行末空白の除去)
+ */
+TEST_F(EditWndTest, Command_RTRIM001)
+{
+	ResetText(L"a  \nb \n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_RTRIM);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：1行選択
+ */
+TEST_F(EditWndTest, Command_SELECTLINE001)
+{
+	ResetText(L"abc\ndef\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_SELECTLINE);
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 1));
+}
+
+/*!
+ * コマンド：現在位置の単語選択
+ */
+TEST_F(EditWndTest, Command_SELECTWORD001)
+{
+	ResetText(L"abc def\n", CLogicPoint(5, 0));
+	ExecEditorCommand(F_SELECTWORD);
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(7, 0));
+}
+
+/*!
+ * コマンド：選択範囲内全行を昇順ソート
+ */
+TEST_F(EditWndTest, Command_SORT_ASC001)
+{
+	ResetText(L"c\na\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_SORT_ASC);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\nc\n"));
+}
+
+/*!
+ * コマンド：選択範囲内全行を降順ソート
+ */
+TEST_F(EditWndTest, Command_SORT_DESC001)
+{
+	ResetText(L"a\nc\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_SORT_DESC);
+	EXPECT_THAT(GetAllText(), StrEq(L"c\nb\na\n"));
 }
 
 /*!
@@ -2320,17 +2829,8 @@ TEST_F(EditWndTest, Command_RECKEYMACRO101)
  */
 TEST_F(EditWndTest, Command_TAGJUMP001)
 {
-	HWND hWnd = nullptr;
-
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto& text = L"#define FUNCTION_ALIAS TARGET_FUNCTION\n";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
-
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(L"#define FUNCTION_ALIAS TARGET_FUNCTION\n");
 
 	// タグファイルを作る
 	{
@@ -2341,12 +2841,53 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 	}
 
 	// キャレット位置を設定する
-	auto& ptCaret = sWorkBuffer.m_LogicPoint;
-	ptCaret = CLogicPoint(9, 0);	// 10文字目、1行目
-	pcEditWnd->DispatchEvent(hWnd, MYWM_SETCARETPOS, std::size(text), 0L);
+	const CLogicPoint ptCaret{ 9, 0 };
+	SetCaretPos(ptCaret);
 
 	// タグジャンプ発動
-	FORWARD_WM_COMMAND(hWnd, F_TAGJUMP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TAGJUMP);
+}
+
+/*!
+ * コマンド：逆SPACEインデント
+ */
+TEST_F(EditWndTest, Command_UNINDENT_SPACE001)
+{
+	ResetText(L" a\n b\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_UNINDENT_SPACE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：逆TABインデント
+ */
+TEST_F(EditWndTest, Command_UNINDENT_TAB001)
+{
+	ResetText(L"\ta\n\tb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_UNINDENT_TAB);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：カーソル上移動
+ */
+TEST_F(EditWndTest, Command_UP001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 1));
+	ExecEditorCommand(F_UP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：カーソル上移動(2行ごと)
+ */
+TEST_F(EditWndTest, Command_UP2001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 2));
+	ExecEditorCommand(F_UP2);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
 }
 
 /*!
@@ -2360,11 +2901,162 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
 
 	// ビューモードにする
-	HWND hWnd = nullptr;
-	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_VIEWMODE);
 
 	// ビューモードを解除する
-	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_VIEWMODE);
+}
+
+/*!
+ * コマンド：ホイール下回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELDOWN001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール左回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELLEFT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページダウン
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGEDOWN001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページ左
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGELEFT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページ右
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGERIGHT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページアップ
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGEUP001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール右回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELRIGHT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール上回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELUP001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：テキストを1行下へスクロール
+ */
+TEST_F(EditWndTest, Command_WndScrollDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_WndScrollDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：テキストを1行上へスクロール
+ */
+TEST_F(EditWndTest, Command_WndScrollUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_WndScrollUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：単語切り取り
+ */
+TEST_F(EditWndTest, Command_WordCut001)
+{
+	ResetText(L"abc def\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_WordCut);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：単語削除
+ */
+TEST_F(EditWndTest, Command_WordDelete001)
+{
+	ResetText(L"abc def\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_WordDelete);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：単語の右端まで削除
+ */
+TEST_F(EditWndTest, Command_WordDeleteToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_WordDeleteToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"def\n"));
+}
+
+/*!
+ * コマンド：単語の左端まで削除
+ */
+TEST_F(EditWndTest, Command_WordDeleteToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(4, 0));
+	ExecEditorCommand(F_WordDeleteToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L"def\n"));
+}
+
+/*!
+ * コマンド：単語の左端に移動
+ */
+TEST_F(EditWndTest, Command_WORDLEFT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(4, 0));
+	ExecEditorCommand(F_WORDLEFT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：単語の右端に移動
+ */
+TEST_F(EditWndTest, Command_WORDRIGHT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_WORDRIGHT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(4, 0));
 }
 
 template <typename ...Args>
@@ -2851,8 +3543,7 @@ TEST_F(EditWndTest, HelpContents101)
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_COMMAND, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_HELP_CONTENTS, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_HELP_CONTENTS);
 }
 
 TEST_F(EditWndTest, HelpSearch101)
@@ -2860,8 +3551,7 @@ TEST_F(EditWndTest, HelpSearch101)
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_KEY, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_HELP_SEARCH, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_HELP_SEARCH);
 }
 
 /*!
@@ -2903,8 +3593,7 @@ TEST_F(EditWndTest, ShowDlgAbout001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
 
 	using target = CDlgAbout;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_ABOUT, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_ABOUT);
 }
 
 /*!
@@ -3050,8 +3739,7 @@ TEST_F(EditWndTest, ShowDlgCtrlCode001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, HLP000255)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgCtrlCode;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_CTRL_CODE_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_CTRL_CODE_DIALOG);
 }
 
 /*!
@@ -3121,8 +3809,7 @@ TEST_F(EditWndTest, ShowDlgDiff001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgDiff;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_DIFF_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_DIFF_DIALOG);
 }
 
 /*!
@@ -3176,8 +3863,7 @@ TEST_F(EditWndTest, ShowDlgExec001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgExec;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_EXECMD_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_EXECMD_DIALOG);
 }
 
 /*!
@@ -3251,8 +3937,7 @@ TEST_F(EditWndTest, ShowDlgFavorite001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFavorite;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_FAVORITE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_FAVORITE);
 }
 
 /*!
@@ -3330,8 +4015,7 @@ TEST_F(EditWndTest, ShowDlgFileTree001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFileTree;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_OUTLINE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_OUTLINE);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3465,8 +4149,7 @@ TEST_F(EditWndTest, ShowDlgFind001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFind;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_SEARCH_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SEARCH_DIALOG);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3556,8 +4239,7 @@ TEST_F(EditWndTest, ShowDlgFuncList101)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFuncList;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_OUTLINE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_OUTLINE);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3615,8 +4297,7 @@ TEST_F(EditWndTest, ShowDlgGrep001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgGrep;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_DIALOG);
 }
 
 /*!
@@ -3628,8 +4309,7 @@ TEST_F(EditWndTest, ShowDlgGrep101)
 	dialog::ModalDialogCloser closer(L"Grep");
 
 	using target = CDlgGrep;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_DIALOG);
 }
 
 /*!
@@ -3672,8 +4352,7 @@ TEST_F(EditWndTest, ShowDlgGrepReplace001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgGrepReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_REPLACE_DLG);
 
 	// 設定を元に戻す
 	GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.clear();
@@ -3688,8 +4367,7 @@ TEST_F(EditWndTest, ShowDlgGrepReplace101)
 	dialog::ModalDialogCloser closer(L"Grep置換");
 
 	using target = CDlgGrepReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_REPLACE_DLG);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -3847,8 +4525,7 @@ TEST_F(EditWndTest, ShowDlgJump001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgJump;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_JUMP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_JUMP_DIALOG);
 }
 
 /*!
@@ -3860,8 +4537,7 @@ TEST_F(EditWndTest, ShowDlgJump101)
 	dialog::ModalDialogCloser closer(L"指定行へジャンプ");
 
 	using target = CDlgJump;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_JUMP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_JUMP_DIALOG);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4129,8 +4805,7 @@ TEST_F(EditWndTest, ShowDlgPrintSetting101)
 	dialog::ModalDialogCloser closer(L"印刷ページ設定");
 
 	using target = CDlgPrintSetting;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PRINT_PAGESETUP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PRINT_PAGESETUP);
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4192,8 +4867,7 @@ TEST_F(EditWndTest, ShowDlgProfileMgr101)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgProfileMgr;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROFILEMGR, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROFILEMGR);
 }
 
 /*!
@@ -4228,8 +4902,7 @@ TEST_F(EditWndTest, ShowDlgProperty001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgProperty;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROPERTY_FILE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROPERTY_FILE);
 }
 
 /*!
@@ -4333,8 +5006,7 @@ TEST_F(EditWndTest, ShowDlgReplace001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_REPLACE_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_REPLACE_DIALOG);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -4463,8 +5135,7 @@ TEST_F(EditWndTest, ShowDlgSetCharSet001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
 
 	using target = CDlgSetCharSet;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_CHG_CHARSET, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_CHG_CHARSET);
 }
 
 /*!
@@ -4588,8 +5259,7 @@ TEST_F(EditWndTest, ShowDlgTagsMake001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTagsMake;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TAGS_MAKE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TAGS_MAKE);
 }
 
 /*!
@@ -4664,8 +5334,7 @@ TEST_F(EditWndTest, ShowDlgTypeAscertain001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTypeAscertain;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TYPE_LIST, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TYPE_LIST);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4737,8 +5406,7 @@ TEST_F(EditWndTest, ShowDlgTypeList001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTypeList;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TYPE_LIST, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TYPE_LIST);
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4861,6 +5529,12 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 		::GetClientRect(hWndDlg, &rc);
 		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
 
+		// 無理矢理表示させる
+		::ShowWindow( hWndDlg, SW_SHOW );
+
+		auto& view = GetEditWnd().GetActiveView();
+		view.m_bHokan = true;
+
 		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_HOME, 0L), Eq(-1));
 
 		const auto bHokanKey_RETURN = GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RETURN;
@@ -4897,14 +5571,7 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 	EXPECT_THAT(ExecMacroCommand(L"Complete()"), IsTrue());
 
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto& text = L"test\n\ntes";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
-
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(L"test\n\ntes");
 
 	// データありで補完実行
 	EXPECT_THAT(ExecMacroCommand(L"Complete()"), IsTrue());
@@ -4916,10 +5583,6 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
-
-	// 全選択してゴミを削除する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_DELETE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
 /*!

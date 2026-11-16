@@ -445,32 +445,22 @@ struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public win
  */
 TEST_P(ConvTest, test)
 {
+	const std::wstring_view source{ std::get<1>(GetParam()) };
 	const std::wstring expected{ std::get<2>(GetParam()) };
 
-	const auto hWnd = pcEditWnd->GetHwnd();
-
 	// 全選択してゴミを削除する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_DELETE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto source = std::get<1>(GetParam());
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(source), std::size(source));
+	ResetText();
 
 	// 末尾にデータを入れて全選択する
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(source), 0L);
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	AddString(source);
+	ExecEditorCommand(F_SELECTALL);
 
 	// バッファ変換機能を呼び出す
 	const auto eFuncCode = std::get<0>(GetParam());
-	FORWARD_WM_COMMAND(hWnd, eFuncCode, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(eFuncCode);
 
 	// 全データを取得する
-	const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
-	std::wstring_view actual{ std::data(buffer), nLineLen };
+	const auto actual = GetLineData();
 	EXPECT_THAT(actual, StrEq(expected));
 }
 
