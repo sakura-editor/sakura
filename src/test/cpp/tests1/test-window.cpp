@@ -2244,17 +2244,8 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
  */
 TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
 {
-	HWND hWnd = nullptr;
-
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto& text = L"This is test-data.\n2行目\n3行目。\n";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
-
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(L"This is test-data.\n2行目\n3行目。\n");
 
 	// 全選択する
 	ExecEditorCommand(F_SELECTALL);
@@ -2326,12 +2317,10 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 	// とりあえずデータを入れる
 	auto pShareData = GetDllShareDataPtr();
 	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
 
 	const auto& text = L"#define FUNCTION_ALIAS TARGET_FUNCTION\n";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
 
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(text);
 
 	// タグファイルを作る
 	{
@@ -4837,6 +4826,12 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 		::GetClientRect(hWndDlg, &rc);
 		FORWARD_WM_SIZE(hWndDlg, SIZE_RESTORED, rc.right, rc.bottom, ::SendMessageW);
 
+		// 無理矢理表示させる
+		::ShowWindow( hWndDlg, SW_SHOW );
+
+		auto& view = GetEditWnd().GetActiveView();
+		view.m_bHokan = true;
+
 		EXPECT_THAT(cHokanMgr.KeyProc(hWndDlg, WM_KEYDOWN, VK_HOME, 0L), Eq(-1));
 
 		const auto bHokanKey_RETURN = GetDllShareData().m_Common.m_sHelper.m_bHokanKey_RETURN;
@@ -4873,14 +4868,7 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 	EXPECT_THAT(ExecMacroCommand(L"Complete()"), IsTrue());
 
 	// とりあえずデータを入れる
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto& text = L"test\n\ntes";
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(text), std::size(text));
-
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
+	AddString(L"test\n\ntes");
 
 	// データありで補完実行
 	EXPECT_THAT(ExecMacroCommand(L"Complete()"), IsTrue());

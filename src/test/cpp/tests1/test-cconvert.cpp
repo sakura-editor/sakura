@@ -445,23 +445,15 @@ struct ConvTest : public ::testing::TestWithParam<ConvTestParamType>, public win
  */
 TEST_P(ConvTest, test)
 {
+	const std::wstring_view source{ std::get<1>(GetParam()) };
 	const std::wstring expected{ std::get<2>(GetParam()) };
-
-	const auto hWnd = pcEditWnd->GetHwnd();
 
 	// 全選択してゴミを削除する
 	ExecEditorCommand(F_SELECTALL);
 	ExecEditorCommand(F_DELETE);
 
-	auto pShareData = GetDllShareDataPtr();
-	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
-	auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
-
-	const auto source = std::get<1>(GetParam());
-	::wcsncpy_s(std::data(buffer), std::size(buffer), std::data(source), std::size(source));
-
 	// 末尾にデータを入れて全選択する
-	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(source), 0L);
+	AddString(source);
 	ExecEditorCommand(F_SELECTALL);
 
 	// バッファ変換機能を呼び出す
@@ -469,8 +461,7 @@ TEST_P(ConvTest, test)
 	ExecEditorCommand(eFuncCode);
 
 	// 全データを取得する
-	const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
-	std::wstring_view actual{ std::data(buffer), nLineLen };
+	const auto actual = GetLineData();
 	EXPECT_THAT(actual, StrEq(expected));
 }
 

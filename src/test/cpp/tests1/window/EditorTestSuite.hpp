@@ -18,6 +18,7 @@
 #include "agent/CGrepAgent.h"
 #include "agent/CLoadAgent.h"
 #include "agent/CSaveAgent.h"
+#include "config/system_constants.h"
 #include "macro/CSMacroMgr.h"
 #include "uiparts/CVisualProgress.h"
 
@@ -46,6 +47,22 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	static void TearDownEditor();
 
 	/*!
+	 * 編集中ドキュメントの末尾に文字列を追加する
+	 */
+	void AddString(
+		std::wstring_view text
+	) const
+	{
+		auto& sWorkBuffer = GetDllShareDataPtr()->m_sWorkBuffer;
+		auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
+
+		wcscpy_s(buffer, text);
+
+		HWND hWnd = nullptr;
+		pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, text.size(), 0L);
+	}
+
+	/*!
 	 * エディターコマンドを実行する
 	 * 
 	 * @param[in] nFuncCode 機能コード
@@ -54,6 +71,23 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	{
 		HWND hWnd = nullptr;
 		FORWARD_WM_COMMAND(hWnd, nFuncCode, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	}
+
+	/*!
+	 * 編集中の内容を取得する
+	 */
+	std::wstring GetLineData() const
+	{
+		auto pShareData = GetDllShareDataPtr();
+		auto& sWorkBuffer = pShareData->m_sWorkBuffer;
+		auto buffer = std::span(sWorkBuffer.GetWorkBuffer<WCHAR>(), sWorkBuffer.GetWorkBufferCount<WCHAR>());
+
+		// 全データを取得する
+		HWND hWnd = nullptr;
+		const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
+
+		std::wstring line{ std::data(buffer), nLineLen };
+		return line;
 	}
 };
 
