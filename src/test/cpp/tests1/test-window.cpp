@@ -78,6 +78,10 @@
 using namespace std::literals::string_literals;
 using namespace std::literals::string_view_literals;
 
+using ::testing::Gt;
+using ::testing::Lt;
+using ::testing::Pair;
+
 void extract_zip_resource(WORD id, const std::optional<std::filesystem::path>& optOutDir);
 
 void MacroError(BSTR Description, BSTR Source, void *Data);
@@ -2239,6 +2243,69 @@ TEST_F(EditWndTest, OnLButtonDblClk101)
 #if defined(_MSC_VER) &&  defined(_DEBUG)
 
 /*!
+ * コマンド：1ページダウン
+ */
+TEST_F(EditWndTest, Command_1PageDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_1PageDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：1ページアップ
+ */
+TEST_F(EditWndTest, Command_1PageUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_1PageUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：オートスクロール
+ */
+TEST_F(EditWndTest, DISABLED_Command_AUTOSCROLL001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：範囲選択開始
+ */
+TEST_F(EditWndTest, Command_BEGIN_SELECT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	ExecEditorCommand(F_BEGIN_SEL);
+	EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsTrue());
+	ExecEditorCommand(F_RIGHT);
+	ExecEditorCommand(F_RIGHT);
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	ExecEditorCommand(F_BEGIN_SEL);
+	EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsFalse());
+}
+
+/*!
+ * コマンド：矩形範囲選択開始
+ */
+TEST_F(EditWndTest, Command_BEGIN_BOXSELECT001)
+{
+	ResetText(L"abc\ndef\n", CLogicPoint(0, 0));
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	ExecEditorCommand(F_BEGIN_BOX);
+	// 固定幅フォントでない場合は何もしない仕様
+	if (GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH) {
+		EXPECT_THAT(cSelectionInfo.IsBoxSelecting(), IsTrue());
+		EXPECT_THAT(cSelectionInfo.m_bSelectingLock, IsTrue());
+	}
+	else {
+		EXPECT_THAT(cSelectionInfo.IsBoxSelecting(), IsFalse());
+	}
+}
+
+/*!
  * コマンド：選択範囲内全行行番号付きコピー
  */
 TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
@@ -2251,6 +2318,331 @@ TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
 
 	//選択範囲内全行行番号付きコピー
 	ExecEditorCommand(F_COPYLINESWITHLINENUMBER);
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ下部に
+ */
+TEST_F(EditWndTest, Command_CURLINEBOTTOM001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINEBOTTOM);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ中央へ
+ */
+TEST_F(EditWndTest, Command_CURLINECENTER001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINECENTER);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：カーソル行をウィンドウ上部に
+ */
+TEST_F(EditWndTest, Command_CURLINETOP001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_CURLINETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 100));
+}
+
+/*!
+ * コマンド：行切り取り(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_CUT_LINE001)
+{
+	ResetText(L"a\nb\nc\n", CLogicPoint(0, 1));
+	ExecEditorCommand(F_CUT_LINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nc\n"));
+}
+
+/*!
+ * コマンド：行削除(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_DELETE_LINE001)
+{
+	ResetText(L"a\nb\nc\n", CLogicPoint(0, 1));
+	ExecEditorCommand(F_DELETE_LINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nc\n"));
+}
+
+/*!
+ * コマンド：カーソル下移動
+ */
+TEST_F(EditWndTest, Command_DOWN001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_DOWN);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 1));
+}
+
+/*!
+ * コマンド：カーソル下移動(2行ごと)
+ */
+TEST_F(EditWndTest, Command_DOWN2001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_DOWN2);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 2));
+}
+
+/*!
+ * コマンド：行の二重化(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_DUPLICATELINE001)
+{
+	ResetText(L"a\nb\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_DUPLICATELINE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\na\nb\n"));
+}
+
+/*!
+ * コマンド：ファイルの最後に移動
+ */
+TEST_F(EditWndTest, Command_GOFILEEND001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_GOFILEEND);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 3));
+}
+
+/*!
+ * コマンド：ファイルの先頭に移動
+ */
+TEST_F(EditWndTest, Command_GOFILETOP001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 1));
+	ExecEditorCommand(F_GOFILETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：行末に移動(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_GOLINEEND001)
+{
+	ResetText(L"abc def\nghi\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_GOLINEEND);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(7, 0));
+}
+
+/*!
+ * コマンド：行頭に移動(折り返し単位)
+ */
+TEST_F(EditWndTest, Command_GOLINETOP001)
+{
+	ResetText(L"abc def\nghi\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_GOLINETOP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：次の段落へ移動
+ */
+TEST_F(EditWndTest, Command_GONEXTPARAGRAPH001)
+{
+	ResetText(L"a\n\nb\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_GONEXTPARAGRAPH);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 2));
+}
+
+/*!
+ * コマンド：前の段落へ移動
+ */
+TEST_F(EditWndTest, Command_GOPREVPARAGRAPH001)
+{
+	ResetText(L"a\n\nb\n", CLogicPoint(0, 2));
+	ExecEditorCommand(F_GOPREVPARAGRAPH);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：半ページダウン
+ */
+TEST_F(EditWndTest, Command_HalfPageDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_HalfPageDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：半ページアップ
+ */
+TEST_F(EditWndTest, Command_HalfPageUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_HalfPageUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：SPACEインデント
+ */
+TEST_F(EditWndTest, Command_INDENT_SPACE001)
+{
+	ResetText(L"a\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_INDENT_SPACE);
+	EXPECT_THAT(GetAllText(), StrEq(L" a\n b\n"));
+}
+
+/*!
+ * コマンド：TABインデント
+ */
+TEST_F(EditWndTest, Command_INDENT_TAB001)
+{
+	ResetText(L"a\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_INDENT_TAB);
+	EXPECT_THAT(GetAllText(), StrEq(L"\ta\n\tb\n"));
+}
+
+/*!
+ * コマンド：移動履歴: 次へ
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_NEXT001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	SetCaretPos(CLogicPoint(0, 2));
+	ExecEditorCommand(F_JUMPHIST_PREV);
+	ExecEditorCommand(F_JUMPHIST_NEXT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 2));
+}
+
+/*!
+ * コマンド：移動履歴: 前へ
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_PREV001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	SetCaretPos(CLogicPoint(0, 2));
+	ExecEditorCommand(F_JUMPHIST_PREV);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：現在位置を移動履歴に登録
+ */
+TEST_F(EditWndTest, Command_JUMPHIST_SET001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_JUMPHIST_SET);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：カーソル左移動
+ */
+TEST_F(EditWndTest, Command_LEFT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(2, 0));
+	ExecEditorCommand(F_LEFT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：行末まで切り取り(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineCutToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineCutToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"abc\n"));
+}
+
+/*!
+ * コマンド：行頭まで切り取り(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineCutToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineCutToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：行末まで削除(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineDeleteToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineDeleteToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"abc\n"));
+}
+
+/*!
+ * コマンド：行頭まで削除(改行単位)
+ */
+TEST_F(EditWndTest, Command_LineDeleteToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(3, 0));
+	ExecEditorCommand(F_LineDeleteToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：左TRIM(行頭空白の除去)
+ */
+TEST_F(EditWndTest, Command_LTRIM001)
+{
+	ResetText(L"  a\n b\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_LTRIM);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：選択範囲内全行を連結(重複行のマージ)
+ */
+TEST_F(EditWndTest, Command_MERGE001)
+{
+	ResetText(L"a\na\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_MERGE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：次の変更行へ
+ */
+TEST_F(EditWndTest, Command_MODIFYLINE_NEXT001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_MODIFYLINE_NEXT);
+}
+
+/*!
+ * コマンド：前の変更行へ
+ */
+TEST_F(EditWndTest, Command_MODIFYLINE_PREV001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_MODIFYLINE_PREV);
+}
+
+/*!
+ * コマンド：カーソル移動
+ */
+TEST_F(EditWndTest, DISABLED_Command_MOVECURSOR001)
+{
+	// 移動先をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：カーソル移動(レイアウト座標)
+ */
+TEST_F(EditWndTest, DISABLED_Command_MOVECURSORLAYOUT001)
+{
+	// 移動先をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
 }
 
 /*!
@@ -2269,6 +2661,55 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 		.WillOnce(Return(FALSE));
 
 	ExecEditorCommand(F_OPEN_COMMAND_PROMPT);
+}
+
+/*!
+ * コマンド：管理者としてコマンドプロンプトを開く
+ */
+TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT_AS_ADMIN001)
+{
+	const auto& targetPath = dummyPath;
+
+	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
+
+	Shell32::setInstance<MockShell32>();
+	auto pShell32 = (MockShell32*)Shell32::getInstance();
+	EXPECT_CALL(*pShell32, ShellExecuteExW(_))
+		.Times(1)
+		.WillOnce(Return(FALSE));
+
+	HWND hWnd = nullptr;
+	FORWARD_WM_COMMAND(hWnd, F_OPEN_COMMAND_PROMPT_AS_ADMIN, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+}
+
+/*!
+ * コマンド：ファイルの場所を開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_FOLDER_IN_EXPLORER001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecute を直接呼ぶ実装でモック化できず、実行すると実際に explorer.exe が起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：PowerShellを開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_POWERSHELL001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecuteW を直接呼ぶ実装でモック化できず、実行すると実際に powershell.exe が起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：管理者としてPowerShellを開く
+ */
+TEST_F(EditWndTest, DISABLED_Command_OPEN_POWERSHELL_AS_ADMIN001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// ::ShellExecuteW を直接呼ぶ実装でモック化できず、実行すると実際に powershell.exe が昇格起動してしまう。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
 }
 
 /*!
@@ -2307,6 +2748,83 @@ TEST_F(EditWndTest, Command_RECKEYMACRO101)
 }
 
 /*!
+ * コマンド：再変換
+ */
+TEST_F(EditWndTest, DISABLED_Command_RECONVERT001)
+{
+	// 操作条件が不明のため枠のみ作成。
+	// IMEの再変換メッセージを送るため、IME環境に依存して結果を検証できない。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：カーソル右移動
+ */
+TEST_F(EditWndTest, Command_RIGHT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(2, 0));
+	ExecEditorCommand(F_RIGHT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(3, 0));
+}
+
+/*!
+ * コマンド：右TRIM(行末空白の除去)
+ */
+TEST_F(EditWndTest, Command_RTRIM001)
+{
+	ResetText(L"a  \nb \n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_RTRIM);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：1行選択
+ */
+TEST_F(EditWndTest, Command_SELECTLINE001)
+{
+	ResetText(L"abc\ndef\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_SELECTLINE);
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 1));
+}
+
+/*!
+ * コマンド：現在位置の単語選択
+ */
+TEST_F(EditWndTest, Command_SELECTWORD001)
+{
+	ResetText(L"abc def\n", CLogicPoint(5, 0));
+	ExecEditorCommand(F_SELECTWORD);
+	auto& cSelectionInfo = pcEditWnd->GetActiveView().GetSelectionInfo();
+	EXPECT_THAT(cSelectionInfo.IsTextSelected(), IsTrue());
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(7, 0));
+}
+
+/*!
+ * コマンド：選択範囲内全行を昇順ソート
+ */
+TEST_F(EditWndTest, Command_SORT_ASC001)
+{
+	ResetText(L"c\na\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_SORT_ASC);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\nc\n"));
+}
+
+/*!
+ * コマンド：選択範囲内全行を降順ソート
+ */
+TEST_F(EditWndTest, Command_SORT_DESC001)
+{
+	ResetText(L"a\nc\nb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_SORT_DESC);
+	EXPECT_THAT(GetAllText(), StrEq(L"c\nb\na\n"));
+}
+
+/*!
  * コマンド：タグジャンプ
  */
 TEST_F(EditWndTest, Command_TAGJUMP001)
@@ -2331,6 +2849,48 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 }
 
 /*!
+ * コマンド：逆SPACEインデント
+ */
+TEST_F(EditWndTest, Command_UNINDENT_SPACE001)
+{
+	ResetText(L" a\n b\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_UNINDENT_SPACE);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：逆TABインデント
+ */
+TEST_F(EditWndTest, Command_UNINDENT_TAB001)
+{
+	ResetText(L"\ta\n\tb\n");
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_UNINDENT_TAB);
+	EXPECT_THAT(GetAllText(), StrEq(L"a\nb\n"));
+}
+
+/*!
+ * コマンド：カーソル上移動
+ */
+TEST_F(EditWndTest, Command_UP001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 1));
+	ExecEditorCommand(F_UP);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
+ * コマンド：カーソル上移動(2行ごと)
+ */
+TEST_F(EditWndTest, Command_UP2001)
+{
+	ResetText(L"abc def\nghi\njkl\n", CLogicPoint(1, 2));
+	ExecEditorCommand(F_UP2);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(1, 0));
+}
+
+/*!
  * コマンド：ビューモード
  */
 TEST_F(EditWndTest, Command_VIEWMODE001)
@@ -2345,6 +2905,158 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 
 	// ビューモードを解除する
 	ExecEditorCommand(F_VIEWMODE);
+}
+
+/*!
+ * コマンド：ホイール下回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELDOWN001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール左回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELLEFT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページダウン
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGEDOWN001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページ左
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGELEFT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページ右
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGERIGHT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイールページアップ
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELPAGEUP001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール右回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELRIGHT001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：ホイール上回転
+ */
+TEST_F(EditWndTest, DISABLED_Command_WHEELUP001)
+{
+	// 回転量をパラメーターで渡す必要があり、操作条件が不明のため枠のみ作成。
+	GTEST_SKIP() << "操作条件が不明なため未実装";
+}
+
+/*!
+ * コマンド：テキストを1行下へスクロール
+ */
+TEST_F(EditWndTest, Command_WndScrollDown001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_WndScrollDown);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：テキストを1行上へスクロール
+ */
+TEST_F(EditWndTest, Command_WndScrollUp001)
+{
+	ResetText(std::wstring(200, L'\n'), CLogicPoint(0, 100));
+	ExecEditorCommand(F_WndScrollUp);
+	EXPECT_THAT(GetCaretPos().x, Eq(0));
+}
+
+/*!
+ * コマンド：単語切り取り
+ */
+TEST_F(EditWndTest, Command_WordCut001)
+{
+	ResetText(L"abc def\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_WordCut);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：単語削除
+ */
+TEST_F(EditWndTest, Command_WordDelete001)
+{
+	ResetText(L"abc def\n", CLogicPoint(1, 0));
+	ExecEditorCommand(F_WordDelete);
+	EXPECT_THAT(GetAllText(), StrEq(L" def\n"));
+}
+
+/*!
+ * コマンド：単語の右端まで削除
+ */
+TEST_F(EditWndTest, Command_WordDeleteToEnd001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_WordDeleteToEnd);
+	EXPECT_THAT(GetAllText(), StrEq(L"def\n"));
+}
+
+/*!
+ * コマンド：単語の左端まで削除
+ */
+TEST_F(EditWndTest, Command_WordDeleteToStart001)
+{
+	ResetText(L"abc def\n", CLogicPoint(4, 0));
+	ExecEditorCommand(F_WordDeleteToStart);
+	EXPECT_THAT(GetAllText(), StrEq(L"def\n"));
+}
+
+/*!
+ * コマンド：単語の左端に移動
+ */
+TEST_F(EditWndTest, Command_WORDLEFT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(4, 0));
+	ExecEditorCommand(F_WORDLEFT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
+ * コマンド：単語の右端に移動
+ */
+TEST_F(EditWndTest, Command_WORDRIGHT001)
+{
+	ResetText(L"abc def\n", CLogicPoint(0, 0));
+	ExecEditorCommand(F_WORDRIGHT);
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(4, 0));
 }
 
 template <typename ...Args>

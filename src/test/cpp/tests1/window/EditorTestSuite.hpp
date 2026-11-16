@@ -22,6 +22,12 @@
 #include "macro/CSMacroMgr.h"
 #include "uiparts/CVisualProgress.h"
 
+#include <filesystem>
+#include <memory>
+#include <optional>
+#include <string>
+#include <string_view>
+
 namespace window {
 
 struct EditorTestSuite : public env::ShareDataTestSuite
@@ -83,6 +89,20 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 		const auto& sWorkBuffer = GetDllShareData().m_sWorkBuffer;
 		return sWorkBuffer.m_LogicPoint;
+	}
+
+	/*!
+	 * 編集中の内容を取得する
+	 */
+	std::wstring GetAllText() const
+	{
+		std::wstring result;
+		const auto& cDocLineMgr = pcEditWnd->GetDocument()->m_cDocLineMgr;
+		for (CLogicInt i = CLogicInt(0); i < cDocLineMgr.GetLineCount(); ++i) {
+			const auto pLine = cDocLineMgr.GetLine(i);
+			result.append(pLine->GetPtr(), pLine->GetLengthWithEOL());
+		}
+		return result;
 	}
 
 	/*!
