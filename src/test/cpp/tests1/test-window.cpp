@@ -1849,8 +1849,7 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	void TearDown() override
 	{
 		// 他のテストに影響しないよう、編集内容と選択範囲を初期化する
-		ExecEditorCommand(F_SELECTALL);
-		ExecEditorCommand(F_DELETE);
+		ResetText();
 
 		// 強制的に「編集なし」にする
 		pcEditDoc->m_cDocEditor.m_bIsDocModified = false;

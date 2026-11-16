@@ -449,8 +449,7 @@ TEST_P(ConvTest, test)
 	const std::wstring expected{ std::get<2>(GetParam()) };
 
 	// 全選択してゴミを削除する
-	ExecEditorCommand(F_SELECTALL);
-	ExecEditorCommand(F_DELETE);
+	ResetText();
 
 	// 末尾にデータを入れて全選択する
 	AddString(source);

@@ -103,6 +103,26 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	}
 
 	/*!
+	 * 編集中の内容を置き換えてキャレットを移動する
+	 */
+	void ResetText(
+		std::optional<std::wstring> optText = std::nullopt,
+		std::optional<CLogicPoint> optCaret = std::nullopt
+	) const
+	{
+		ExecEditorCommand(F_SELECTALL);
+		ExecEditorCommand(F_DELETE);
+
+		if (optText.has_value()) {
+			AddString(*optText);
+		}
+
+		if (optCaret.has_value()) {
+			SetCaretPos(*optCaret);
+		}
+	}
+
+	/*!
 	 * キャレット位置を調整する
 	 */
 	void SetCaretPos(
