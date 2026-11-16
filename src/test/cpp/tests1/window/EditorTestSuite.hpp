@@ -44,6 +44,17 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 
 	static void SetUpEditor();
 	static void TearDownEditor();
+
+	/*!
+	 * エディターコマンドを実行する
+	 * 
+	 * @param[in] nFuncCode 機能コード
+	 */
+	void ExecEditorCommand(int nFuncCode) const
+	{
+		HWND hWnd = nullptr;
+		FORWARD_WM_COMMAND(hWnd, nFuncCode, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	}
 };
 
 } // namespace env

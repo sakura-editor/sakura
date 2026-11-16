@@ -1848,6 +1848,10 @@ struct EditWndTest : public ::testing::Test, public window::EditorTestSuite, pub
 	 */
 	void TearDown() override
 	{
+		// 他のテストに影響しないよう、編集内容と選択範囲を初期化する
+		ExecEditorCommand(F_SELECTALL);
+		ExecEditorCommand(F_DELETE);
+
 		// 強制的に「編集なし」にする
 		pcEditDoc->m_cDocEditor.m_bIsDocModified = false;
 
@@ -2253,10 +2257,10 @@ TEST_F(EditWndTest, Command_COPYLINESWITHLINENUMBER001)
 	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(text), 0L);
 
 	// 全選択する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SELECTALL);
 
 	//選択範囲内全行行番号付きコピー
-	FORWARD_WM_COMMAND(hWnd, F_COPYLINESWITHLINENUMBER, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_COPYLINESWITHLINENUMBER);
 }
 
 /*!
@@ -2274,8 +2278,7 @@ TEST_F(EditWndTest, Command_OPEN_COMMAND_PROMPT101)
 		.Times(1)
 		.WillOnce(Return(FALSE));
 
-	HWND hWnd = nullptr;
-	FORWARD_WM_COMMAND(hWnd, F_OPEN_COMMAND_PROMPT, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_OPEN_COMMAND_PROMPT);
 }
 
 /*!
@@ -2298,8 +2301,7 @@ TEST_F(EditWndTest, Command_PROFILEMGR101)
 		.WillOnce(Return(IDOK));
 
 	using target = CDlgProfileMgr;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROFILEMGR, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROFILEMGR);
 
 	// 設定を元に戻す
 	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
@@ -2310,9 +2312,8 @@ TEST_F(EditWndTest, Command_PROFILEMGR101)
  */
 TEST_F(EditWndTest, Command_RECKEYMACRO101)
 {
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_RECKEYMACRO, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_RECKEYMACRO);
+	ExecEditorCommand(F_RECKEYMACRO);
 }
 
 /*!
@@ -2346,7 +2347,7 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 	pcEditWnd->DispatchEvent(hWnd, MYWM_SETCARETPOS, std::size(text), 0L);
 
 	// タグジャンプ発動
-	FORWARD_WM_COMMAND(hWnd, F_TAGJUMP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TAGJUMP);
 }
 
 /*!
@@ -2360,11 +2361,10 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 	EXPECT_THAT(ExecMacroCommand(std::format(L"FileOpen('{}', 99, 0, '無題1')", targetPath.native())), IsTrue());
 
 	// ビューモードにする
-	HWND hWnd = nullptr;
-	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_VIEWMODE);
 
 	// ビューモードを解除する
-	FORWARD_WM_COMMAND(hWnd, F_VIEWMODE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_VIEWMODE);
 }
 
 template <typename ...Args>
@@ -2851,8 +2851,7 @@ TEST_F(EditWndTest, HelpContents101)
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_COMMAND, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_HELP_CONTENTS, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_HELP_CONTENTS);
 }
 
 TEST_F(EditWndTest, HelpSearch101)
@@ -2860,8 +2859,7 @@ TEST_F(EditWndTest, HelpSearch101)
 	auto pUser32 = (MockUser32*)User32::getInstance();
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_KEY, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_HELP_SEARCH, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_HELP_SEARCH);
 }
 
 /*!
@@ -2903,8 +2901,7 @@ TEST_F(EditWndTest, ShowDlgAbout001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
 
 	using target = CDlgAbout;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_ABOUT, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_ABOUT);
 }
 
 /*!
@@ -3050,8 +3047,7 @@ TEST_F(EditWndTest, ShowDlgCtrlCode001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, HLP000255)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgCtrlCode;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_CTRL_CODE_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_CTRL_CODE_DIALOG);
 }
 
 /*!
@@ -3121,8 +3117,7 @@ TEST_F(EditWndTest, ShowDlgDiff001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgDiff;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_DIFF_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_DIFF_DIALOG);
 }
 
 /*!
@@ -3176,8 +3171,7 @@ TEST_F(EditWndTest, ShowDlgExec001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgExec;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_EXECMD_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_EXECMD_DIALOG);
 }
 
 /*!
@@ -3251,8 +3245,7 @@ TEST_F(EditWndTest, ShowDlgFavorite001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFavorite;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_FAVORITE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_FAVORITE);
 }
 
 /*!
@@ -3330,8 +3323,7 @@ TEST_F(EditWndTest, ShowDlgFileTree001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFileTree;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_OUTLINE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_OUTLINE);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3465,8 +3457,7 @@ TEST_F(EditWndTest, ShowDlgFind001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFind;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_SEARCH_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SEARCH_DIALOG);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3556,8 +3547,7 @@ TEST_F(EditWndTest, ShowDlgFuncList101)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgFuncList;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_OUTLINE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_OUTLINE);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -3615,8 +3605,7 @@ TEST_F(EditWndTest, ShowDlgGrep001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgGrep;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_DIALOG);
 }
 
 /*!
@@ -3628,8 +3617,7 @@ TEST_F(EditWndTest, ShowDlgGrep101)
 	dialog::ModalDialogCloser closer(L"Grep");
 
 	using target = CDlgGrep;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_DIALOG);
 }
 
 /*!
@@ -3672,8 +3660,7 @@ TEST_F(EditWndTest, ShowDlgGrepReplace001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgGrepReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_REPLACE_DLG);
 
 	// 設定を元に戻す
 	GetDllShareData().m_sSearchKeywords.m_aReplaceKeys.clear();
@@ -3688,8 +3675,7 @@ TEST_F(EditWndTest, ShowDlgGrepReplace101)
 	dialog::ModalDialogCloser closer(L"Grep置換");
 
 	using target = CDlgGrepReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_GREP_REPLACE_DLG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_GREP_REPLACE_DLG);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -3847,8 +3833,7 @@ TEST_F(EditWndTest, ShowDlgJump001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgJump;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_JUMP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_JUMP_DIALOG);
 }
 
 /*!
@@ -3860,8 +3845,7 @@ TEST_F(EditWndTest, ShowDlgJump101)
 	dialog::ModalDialogCloser closer(L"指定行へジャンプ");
 
 	using target = CDlgJump;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_JUMP_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_JUMP_DIALOG);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4129,8 +4113,7 @@ TEST_F(EditWndTest, ShowDlgPrintSetting101)
 	dialog::ModalDialogCloser closer(L"印刷ページ設定");
 
 	using target = CDlgPrintSetting;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PRINT_PAGESETUP, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PRINT_PAGESETUP);
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4192,8 +4175,7 @@ TEST_F(EditWndTest, ShowDlgProfileMgr101)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgProfileMgr;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROFILEMGR, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROFILEMGR);
 }
 
 /*!
@@ -4228,8 +4210,7 @@ TEST_F(EditWndTest, ShowDlgProperty001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgProperty;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_PROPERTY_FILE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_PROPERTY_FILE);
 }
 
 /*!
@@ -4333,8 +4314,7 @@ TEST_F(EditWndTest, ShowDlgReplace001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgReplace;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_REPLACE_DIALOG, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_REPLACE_DIALOG);
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
@@ -4463,8 +4443,7 @@ TEST_F(EditWndTest, ShowDlgSetCharSet001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXTMENU, _)).WillRepeatedly(testing::DoDefault());		// WM_CONTEXTMENU 空振り
 
 	using target = CDlgSetCharSet;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_CHG_CHARSET, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_CHG_CHARSET);
 }
 
 /*!
@@ -4588,8 +4567,7 @@ TEST_F(EditWndTest, ShowDlgTagsMake001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTagsMake;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TAGS_MAKE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TAGS_MAKE);
 }
 
 /*!
@@ -4664,8 +4642,7 @@ TEST_F(EditWndTest, ShowDlgTypeAscertain001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTypeAscertain;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TYPE_LIST, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TYPE_LIST);
 }
 
 #endif // if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4737,8 +4714,7 @@ TEST_F(EditWndTest, ShowDlgTypeList001)
 	EXPECT_CALL(*pUser32, WinHelpW(_, IsNull(), HELP_CONTEXT, _)).WillRepeatedly(testing::DoDefault());	// IDC_BUTTON_HELP
 
 	using target = CDlgTypeList;
-	const auto hWnd = pcEditWnd->GetHwnd();
-	FORWARD_WM_COMMAND(hWnd, F_TYPE_LIST, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_TYPE_LIST);
 }
 
 #if defined(_MSC_VER) &&  defined(_DEBUG)
@@ -4916,10 +4892,6 @@ TEST_F(EditWndTest, ShowHokanMgr001)
 
 	// キューに溜まるメッセージを処理する
 	RunMessageLoop();
-
-	// 全選択してゴミを削除する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_DELETE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
 }
 
 /*!

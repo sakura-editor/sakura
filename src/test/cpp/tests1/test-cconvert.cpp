@@ -450,8 +450,8 @@ TEST_P(ConvTest, test)
 	const auto hWnd = pcEditWnd->GetHwnd();
 
 	// 全選択してゴミを削除する
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
-	FORWARD_WM_COMMAND(hWnd, F_DELETE, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SELECTALL);
+	ExecEditorCommand(F_DELETE);
 
 	auto pShareData = GetDllShareDataPtr();
 	auto& sWorkBuffer = pShareData->m_sWorkBuffer;
@@ -462,11 +462,11 @@ TEST_P(ConvTest, test)
 
 	// 末尾にデータを入れて全選択する
 	pcEditWnd->DispatchEvent(hWnd, MYWM_ADDSTRINGLEN_W, std::size(source), 0L);
-	FORWARD_WM_COMMAND(hWnd, F_SELECTALL, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(F_SELECTALL);
 
 	// バッファ変換機能を呼び出す
 	const auto eFuncCode = std::get<0>(GetParam());
-	FORWARD_WM_COMMAND(hWnd, eFuncCode, nullptr, BN_CLICKED, pcEditWnd->DispatchEvent);
+	ExecEditorCommand(eFuncCode);
 
 	// 全データを取得する
 	const auto nLineLen = static_cast<size_t>(pcEditWnd->DispatchEvent(hWnd, MYWM_GETLINEDATA, 0L, 0L));
