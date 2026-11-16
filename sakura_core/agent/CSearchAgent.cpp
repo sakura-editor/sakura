@@ -637,6 +637,7 @@ int CSearchAgent::SearchWord(
 	単語単位の後方検索
 
 	カーソルの位置から単語を 1 つずつさかのぼり、検索語のどれかの単語と同じ単語を探す。
+	カーソルが改行より右にあるときは、改行を除いた行の長さからさかのぼる。
 	行の先頭まで来たら、前の行の行末からさかのぼる。
 	@retval true 見つかった。pMatchRange に一致の範囲を返す
 */
@@ -654,6 +655,11 @@ bool CSearchAgent::SearchWordBackwardByWord(
 	CLogicInt	nLinePos = ptSerachBegin.GetY2();
 	const CDocLine*	pDocLine = m_pcDocLineMgr->GetLine( nLinePos );
 	CLogicInt	nNextWordFrom = ptSerachBegin.GetX2();
+	// カーソルが改行より右にあるときは、改行を除いた行の長さからさかのぼる
+	// (PrevOrNextWord() は改行の位置を返し、WhereCurrentWord() が単語でないとして、その行を飛ばすため)
+	if( nullptr != pDocLine ){
+		nNextWordFrom = t_min( nNextWordFrom, pDocLine->GetLengthWithoutEOL() );
+	}
 	CLogicInt	nWork(0);		// さかのぼった単語の先頭
 	CLogicInt	nWordFrom(0);	// その単語の範囲の始まり
 	CLogicInt	nWordTo(0);		// その単語の範囲の終わりの次
