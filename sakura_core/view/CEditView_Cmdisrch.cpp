@@ -168,12 +168,14 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 		if(GetSelectionInfo().IsTextSelected())	
 			GetSelectionInfo().DisableSelectArea( true );
 
-		m_sCurSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
+		//	使えるかを調べ終えるまで、ビューの検索オプション(m_sCurSearchOption)は変えない。
+		//	途中で return すると、検索パターンの作り直しと色分けの停止が行われず、食い違うため。
+		SSearchOption sSearchOption = GetDllShareData().m_Common.m_sSearch.m_sSearchOption;
 		switch( mode ) {
 			case SEARCH_NORMAL: // 通常インクリメンタルサーチ
-				m_sCurSearchOption.bRegularExp = false;
-				m_sCurSearchOption.bLoHiCase = false;
-				m_sCurSearchOption.bWordOnly = false;
+				sSearchOption.bRegularExp = false;
+				sSearchOption.bLoHiCase = false;
+				sSearchOption.bWordOnly = false;
 				//SendStatusMessage(L"I-Search: ");
 				break;
 			case SEARCH_REGEXP: // 正規表現インクリメンタルサーチ
@@ -182,8 +184,8 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 					SendStatusMessage(LS(STR_EDITVWISRCH_REGEX));
 					return;
 				}
-				m_sCurSearchOption.bRegularExp = true;
-				m_sCurSearchOption.bLoHiCase = false;
+				sSearchOption.bRegularExp = true;
+				sSearchOption.bLoHiCase = false;
 				//SendStatusMessage(L"[RegExp] I-Search: ");
 				break;
 			case SEARCH_MIGEMO: // MIGEMOインクリメンタルサーチ
@@ -206,8 +208,8 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 				}
 				m_pcmigemo->migemo_load_all();
 				if (m_pcmigemo->migemo_is_enable()) {
-					m_sCurSearchOption.bRegularExp = true;
-					m_sCurSearchOption.bLoHiCase = false;
+					sSearchOption.bRegularExp = true;
+					sSearchOption.bLoHiCase = false;
 					//SendStatusMessage(L"[MIGEMO] I-Search: ");
 				}else{
 					WarningBeep();
@@ -219,6 +221,9 @@ void CEditView::ISearchEnter( ESearchMode mode, ESearchDirection direction)
 				break;
 		}
 		
+		// 使えると分かったので、ビューに写す
+		m_sCurSearchOption = sSearchOption;
+
 		//	Feb. 04, 2005 genta	検索開始位置を記録
 		//	インクリメンタルサーチ間でモードを切り替える場合には開始と見なさない
 		if( m_nISearchMode == SEARCH_NONE ){
