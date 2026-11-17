@@ -793,7 +793,8 @@ int DeleteRegistry(HKEY root, const std::wstring& path)
 		}
 	}
 	keySrc.Close();
-	if( (errorCode = CRegKey::DeleteKey(root, path.c_str())) != 0 ){ return errorCode; }
+
+	errorCode = CRegKey::DeleteKey(root, path.c_str());
 
 	return errorCode;
 }

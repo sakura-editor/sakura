@@ -915,7 +915,9 @@ void GetExistPathW( wchar_t *po , const wchar_t *pi )
 	*pw = L'\0';		/* 文字列終端 */
 
 	dl = GetExistPath_NO_DriveLetter;	/*「ドライブレターが無い」にしておく*/
-	if( *(po+1)==L':' && WCODE::IsAZ(*po) ){	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
+	if (L':' == *(po + 1) &&
+		WCODE::IsAZ(*po))
+	{	/* 先頭にドライブレターがある。そのドライブが有効かどうか判定する */
 		wchar_t	drv[4] = L"_:\\";
 		drv[0] = *po;
 		if( _waccess(drv,0) == 0 )	dl = GetExistPath_AV_Drive;		/* 有効 */
@@ -980,7 +982,8 @@ void my_splitpath_w (
 	wchar_t *ext
 )
 {
-	wchar_t	ppp[_MAX_PATH];		/* パス格納（作業用） */
+	SFilePath ppp{};		/* パス格納（作業用） */
+
 	wchar_t	*pd;
 	wchar_t	*pf;
 	wchar_t	*pe;
