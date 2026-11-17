@@ -2904,6 +2904,96 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 }
 
 /*!
+ * コマンド：文字入力（通常文字）
+ */
+TEST_F(EditWndTest, Command_WCHAR001)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(1, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"aXbc"));
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(2, 0));
+}
+
+/*!
+ * コマンド：文字入力（改行）
+ */
+TEST_F(EditWndTest, Command_WCHAR002)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(1, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'\r', 0, view.DispatchEvent);
+
+	const auto text = GetAllText();
+	EXPECT_THAT(text.starts_with(L"a"), IsTrue());
+	EXPECT_THAT(text.ends_with(L"bc"), IsTrue());
+	EXPECT_THAT(text.size(), Gt(3u));
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 1));
+}
+
+/*!
+ * コマンド：文字入力（選択範囲を置換）
+ */
+TEST_F(EditWndTest, Command_WCHAR003)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(0, 0));
+	ExecEditorCommand(F_RIGHT_SEL);
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"Xbc"));
+}
+
+/*!
+ * コマンド：文字入力（上書きモード）
+ */
+TEST_F(EditWndTest, Command_WCHAR004)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ASSERT_THAT(view.IsInsMode(), IsTrue());
+
+	ExecEditorCommand(F_CHGMOD_INS);
+	ASSERT_THAT(view.IsInsMode(), IsFalse());
+
+	ResetText(L"abc", CLogicPoint(0, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"Xbc"));
+
+	ExecEditorCommand(F_CHGMOD_INS);
+}
+
+/*!
+ * コマンド：文字入力（改行時に前行末尾の空白を削除）
+ */
+TEST_F(EditWndTest, Command_WCHAR005)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	auto* pTypeData = const_cast<STypeConfig*>(view.m_pTypeData);
+	const auto bOld = pTypeData->m_bRTrimPrevLine;
+	pTypeData->m_bRTrimPrevLine = true;
+
+	ResetText(L"abc  ", CLogicPoint(5, 0));
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'\r', 0, view.DispatchEvent);
+
+	const auto text = GetAllText();
+	EXPECT_THAT(text.starts_with(L"abc"), IsTrue());
+	EXPECT_THAT(text.find(L' '), Eq(std::wstring::npos));
+
+	pTypeData->m_bRTrimPrevLine = bOld;
+}
+
+/*!
  * コマンド：ホイール下回転
  */
 TEST_F(EditWndTest, DISABLED_Command_WHEELDOWN001)
