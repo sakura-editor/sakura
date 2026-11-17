@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,8 +19,9 @@ CDocLineMgr& GetDocLineMgr();
 class CDocReader{
 public:
 	explicit CDocReader(
-		const CDocLineMgr& pcDocLineMgr [[maybe_unused]]
+		CDocLineMgr& cDocLineMgr
 	)
+		: m_pcDocLineMgr{ &cDocLineMgr }
 	{
 	}
 
@@ -31,7 +32,7 @@ public:
 	const wchar_t* GetNextLinrStr( int* pnLineLen );	/* 順アクセスモード：次の行を得る */
 
 private:
-	CDocLineMgr* m_pcDocLineMgr{ &GetDocLineMgr() };
+	CDocLineMgr* m_pcDocLineMgr;
 };
 
 #endif /* SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_ */

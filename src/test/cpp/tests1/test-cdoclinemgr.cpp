@@ -7,6 +7,8 @@
 #include "pch.h"
 #include "doc/logic/CDocLineMgr.h"
 
+#include "doc/CDocReader.h"
+
 #include <array>
 
 TEST(CDocLineMgr, ListManipulations)
@@ -135,4 +137,64 @@ TEST(CDocLineMgr, RandomAccess)
 	EXPECT_EQ(m.GetLine(CLogicInt(90)), lines[90]);
 	EXPECT_EQ(m.GetLine(CLogicInt(60)), lines[60]);
 	EXPECT_EQ(m.GetLine(CLogicInt(70)), lines[70]);
+}
+
+TEST(CDocLineMgr, GetFirstLinrStr001)
+{
+	CDocLineMgr m;
+	auto r = CDocReader(m);
+
+	// 1行追加する。行数1。
+	CDocLine* a = m.AddNewLine();
+	ASSERT_NE(a, nullptr);
+	a->SetDocLineString(L"test", 4, false);
+
+	int nLineLen;
+	EXPECT_TRUE(r.GetFirstLinrStr(&nLineLen));
+	EXPECT_THAT(r.GetFirstLinrStr(&nLineLen), StrEq(L"test"));
+	EXPECT_THAT(nLineLen, Eq(4));
+
+	m.DeleteAllLine();
+}
+
+TEST(CDocLineMgr, GetFirstLinrStr101)
+{
+	CDocLineMgr m;
+	auto r = CDocReader(m);
+	int nLineLen;
+	EXPECT_FALSE(r.GetFirstLinrStr(&nLineLen));
+	EXPECT_THAT(nLineLen, Eq(0));
+}
+
+TEST(CDocLineMgr, GetNextLinrStr001)
+{
+	CDocLineMgr m;
+	m.DeleteAllLine();
+	auto r = CDocReader(m);
+
+	// 1行追加する。行数1。
+	CDocLine* a = m.AddNewLine();
+	ASSERT_NE(a, nullptr);
+	a->SetDocLineString(L"test\r\n", 6, false);
+
+	// 1行追加する。行数2。
+	CDocLine* b = m.AddNewLine();
+	ASSERT_NE(b, nullptr);
+	b->SetDocLineString(L"test", 4, false);
+
+	int nLineLen;
+	EXPECT_TRUE(r.GetNextLinrStr(&nLineLen));
+	EXPECT_THAT(r.GetNextLinrStr(&nLineLen), StrEq(L"test"));
+	EXPECT_THAT(nLineLen, Eq(4));
+
+	m.DeleteAllLine();
+}
+
+TEST(CDocLineMgr, GetNextLinrStr101)
+{
+	CDocLineMgr m;
+	auto r = CDocReader(m);
+	int nLineLen;
+	EXPECT_FALSE(r.GetNextLinrStr(&nLineLen));
+	EXPECT_THAT(nLineLen, Eq(0));
 }

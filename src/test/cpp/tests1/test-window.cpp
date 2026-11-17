@@ -58,10 +58,6 @@
 #include "plugin/CSmartIndentIfObj.h"
 #include "plugin/CWSHPlugin.h"
 
-#include "doc/logic/CDocLineMgr.h"
-
-#include "doc/CDocReader.h"
-
 #include <fstream>
 #include <gtest/gtest-spi.h>
 
@@ -3179,67 +3175,6 @@ TEST_F(EditWndTest, CSmartIndentIfObj001)
 	EXPECT_HRESULT_EQ(disp->Invoke(1, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
 
 	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), S_OK);
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetFirstLinrStr001)
-{
-	auto& m = GetDocLineMgr();
-	m.DeleteAllLine();
-	auto r = CDocReader(m);
-
-	// 1行追加する。行数1。
-	CDocLine* a = m.AddNewLine();
-	ASSERT_NE(a, nullptr);
-	a->SetDocLineString(L"test", 4, false);
-
-	int nLineLen;
-	EXPECT_TRUE(r.GetFirstLinrStr(&nLineLen));
-	EXPECT_THAT(r.GetFirstLinrStr(&nLineLen), StrEq(L"test"));
-	EXPECT_THAT(nLineLen, Eq(4));
-
-	m.DeleteAllLine();
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetFirstLinrStr101)
-{
-	const auto& m = GetDocLineMgr();
-	auto r = CDocReader(m);
-	int nLineLen;
-	EXPECT_FALSE(r.GetFirstLinrStr(&nLineLen));
-	EXPECT_THAT(nLineLen, Eq(0));
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetNextLinrStr001)
-{
-	auto& m = GetDocLineMgr();
-	m.DeleteAllLine();
-	auto r = CDocReader(m);
-
-	// 1行追加する。行数1。
-	CDocLine* a = m.AddNewLine();
-	ASSERT_NE(a, nullptr);
-	a->SetDocLineString(L"test\r\n", 6, false);
-
-	// 1行追加する。行数2。
-	CDocLine* b = m.AddNewLine();
-	ASSERT_NE(b, nullptr);
-	b->SetDocLineString(L"test", 4, false);
-
-	int nLineLen;
-	EXPECT_TRUE(r.GetNextLinrStr(&nLineLen));
-	EXPECT_THAT(r.GetNextLinrStr(&nLineLen), StrEq(L"test"));
-	EXPECT_THAT(nLineLen, Eq(4));
-
-	m.DeleteAllLine();
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetNextLinrStr101)
-{
-	const auto& m = GetDocLineMgr();
-	auto r = CDocReader(m);
-	int nLineLen;
-	EXPECT_FALSE(r.GetNextLinrStr(&nLineLen));
-	EXPECT_THAT(nLineLen, Eq(0));
 }
 
 /*!
