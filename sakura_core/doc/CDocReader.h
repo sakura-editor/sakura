@@ -11,6 +11,8 @@
 
 #include "basis/SakuraBasis.h"
 
+#include <string>
+
 class CDocLineMgr;
 
 CDocLineMgr& GetDocLineMgr();
@@ -25,7 +27,8 @@ public:
 	{
 	}
 
-	wchar_t* GetAllData(int* pnDataLen);	/* 全行データを返す */
+	std::wstring GetAllText() const;
+
 	const wchar_t* GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen );
 	const wchar_t* GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen ); // 2003.06.22 Moca
 	const wchar_t* GetFirstLinrStr( int* pnLineLen );	/* 順アクセスモード：先頭行を得る */

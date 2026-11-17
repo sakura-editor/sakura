@@ -19,6 +19,7 @@
 #include "agent/CLoadAgent.h"
 #include "agent/CSaveAgent.h"
 #include "config/system_constants.h"
+#include "doc/CDocReader.h"
 #include "macro/CSMacroMgr.h"
 #include "uiparts/CVisualProgress.h"
 
@@ -96,13 +97,7 @@ struct EditorTestSuite : public env::ShareDataTestSuite
 	 */
 	std::wstring GetAllText() const
 	{
-		std::wstring result;
-		const auto& cDocLineMgr = pcEditWnd->GetDocument()->m_cDocLineMgr;
-		for (CLogicInt i = CLogicInt(0); i < cDocLineMgr.GetLineCount(); ++i) {
-			const auto pLine = cDocLineMgr.GetLine(i);
-			result.append(pLine->GetPtr(), pLine->GetLengthWithEOL());
-		}
-		return result;
+		return CDocReader(GetDocLineMgr()).GetAllText();
 	}
 
 	/*!

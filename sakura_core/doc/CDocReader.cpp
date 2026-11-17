@@ -1,58 +1,49 @@
 ﻿/*! @file */
 /*
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
 #include "StdAfx.h"
-#include "CDocReader.h"
+#include "doc/CDocReader.h"
 
 #include "doc/logic/CDocLine.h"
 #include "doc/logic/CDocLineMgr.h"
 
-#include "CSelectLang.h"
-
-/* 全行データを返す
-	改行コードは、CRLFに統一される。
-	@retval 全行データ。freeで解放しなければならない。
-	@note   Debug版のテストにのみ使用している。
-*/
-wchar_t* CDocReader::GetAllData(int* pnDataLen)
+/*!
+ * @brief 全行データを返す
+ *
+ * @returns 全行データ。
+ * @note Debug版のテストにのみ使用している。
+ * @note 設定されたデータをそのまま返すよう実装を変更。（改行コードをCRLFに変更する機能はドロップ。）
+ */
+std::wstring CDocReader::GetAllText() const
 {
-	int			nDataLen;
-	int			nLineLen;
-	const CDocLine* 	pDocLine;
+	std::wstring buffer{};
 
-	pDocLine = m_pcDocLineMgr->GetDocLineTop();
-	nDataLen = 0;
-	while( nullptr != pDocLine ){
-		//	Oct. 7, 2002 YAZAKI
-		nDataLen += pDocLine->GetLengthWithoutEOL() + 2;	//	\r\nを追加して返すため+2する。
-		pDocLine = pDocLine->GetNextLine();
+	// 全行データのサイズを計測する
+	size_t allDataSize = 0;
+	for (auto pDocLine = m_pcDocLineMgr->GetDocLineTop();
+		pDocLine;
+		pDocLine = pDocLine->GetNextLine())
+	{
+		allDataSize += pDocLine->length();
 	}
 
-	wchar_t* pData = (wchar_t*)malloc( (nDataLen + 1) * sizeof(wchar_t) );
-	if( nullptr == pData ){
-		TopErrorMessage( nullptr, LS(STR_ERR_DLGDOCLM6), nDataLen + 1 );
-		return nullptr;
-	}
-	pDocLine = m_pcDocLineMgr->GetDocLineTop();
+	// データが空でない場合
+	if (allDataSize) {
+		// バッファサイズを調整する
+		buffer.reserve(allDataSize);
 
-	nDataLen = 0;
-	while( nullptr != pDocLine ){
-		//	Oct. 7, 2002 YAZAKI
-		nLineLen = pDocLine->GetLengthWithoutEOL();
-		if( 0 < nLineLen ){
-			wmemcpy( &pData[nDataLen], pDocLine->GetPtr(), nLineLen );
-			nDataLen += nLineLen;
+		for (auto pDocLine = m_pcDocLineMgr->GetDocLineTop();
+			pDocLine;
+			pDocLine = pDocLine->GetNextLine())
+		{
+			buffer.append(pDocLine->data(), pDocLine->length());
 		}
-		pData[nDataLen++] = L'\r';
-		pData[nDataLen++] = L'\n';
-		pDocLine = pDocLine->GetNextLine();
 	}
-	pData[nDataLen] = L'\0';
-	*pnDataLen = nDataLen;
-	return pData;
+
+	return buffer;
 }
 
 const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
