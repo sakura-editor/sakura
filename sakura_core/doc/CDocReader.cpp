@@ -46,23 +46,6 @@ std::wstring CDocReader::GetAllText() const
 	return buffer;
 }
 
-/*!
-	指定された行番号の文字列と改行コードを除く長さを取得
-	
-	@author Moca
-	@date 2003.06.22
-*/
-const wchar_t* CDocReader::GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen )
-{
-	const CDocLine* pDocLine = m_pcDocLineMgr->GetLine( nLine );
-	if( nullptr == pDocLine ){
-		*pnLineLen = 0;
-		return nullptr;
-	}
-	*pnLineLen = pDocLine->GetLengthWithoutEOL();
-	return pDocLine->GetPtr();
-}
-
 /*! 順アクセスモード：先頭行を得る
 
 	@param pnLineLen [out] 行の長さが返る。

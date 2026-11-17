@@ -11,6 +11,25 @@
 
 #include <array>
 
+TEST(CDocLineMgr, CDocLineMgr001)
+{
+	CDocLineMgr m;
+
+	// 初期状態。行数0。
+	EXPECT_EQ(m.GetLineCount(), 0);
+	EXPECT_THAT(m.GetLine(CLogicInt(0)), IsNull());
+	EXPECT_THAT(m.GetLine(CLogicInt(1)), IsNull());
+	EXPECT_THAT(m.GetDocLineTop(), IsNull());
+	EXPECT_THAT(m.GetDocLineBottom(), IsNull());
+
+	int nLineLen = 1;
+	EXPECT_THAT(m.GetLineStrWithoutEOL(CLogicInt(0), nLineLen), IsNull());
+	EXPECT_THAT(nLineLen, Eq(0));
+
+	// 呼ぶだけ
+	m.DUMP();
+}
+
 TEST(CDocLineMgr, ListManipulations)
 {
 	CDocLineMgr m;

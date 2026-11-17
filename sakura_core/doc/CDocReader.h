@@ -15,8 +15,6 @@
 
 class CDocLineMgr;
 
-CDocLineMgr& GetDocLineMgr();
-
 //as decorator
 class CDocReader{
 public:
@@ -29,7 +27,6 @@ public:
 
 	std::wstring GetAllText() const;
 
-	const wchar_t* GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen ); // 2003.06.22 Moca
 	const wchar_t* GetFirstLinrStr( int* pnLineLen );	/* 順アクセスモード：先頭行を得る */
 	const wchar_t* GetNextLinrStr( int* pnLineLen );	/* 順アクセスモード：次の行を得る */
 

@@ -87,6 +87,7 @@ public:
 	void SetMemoryResource(MemHolder memoryResource) { m_docLineMemRes = memoryResource; }
 
 	LPCWSTR GetFirstLinrStr(int& nLineLen);
+	LPCWSTR GetLineStrWithoutEOL(CLogicInt nLine, int& nLineLen) const;
 	LPCWSTR GetNextLinrStr(int& nLineLen);
 
 	void SetPrevRefer1( CDocLine* pCDocLine )
@@ -141,5 +142,7 @@ private:
 
 	DISALLOW_COPY_AND_ASSIGN(CDocLineMgr);
 };
+
+CDocLineMgr& GetDocLineMgr();
 
 #endif /* SAKURA_CDOCLINEMGR_2896A92E_87D2_4BA6_A745_95A5C157E59D_H_ */
