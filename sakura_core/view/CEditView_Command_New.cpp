@@ -27,7 +27,6 @@
 #include "cmd/COpe.h" ///	2002/2/3 aroka from here
 #include "cmd/COpeBlk.h" ///
 #include "doc/CEditDoc.h"	//	2002/5/13 YAZAKI ヘッダー整理
-#include "doc/CDocReader.h"
 #include "doc/layout/CLayout.h"
 #include "doc/logic/CDocLine.h"
 #include "cmd/CViewCommander_inline.h"
@@ -961,9 +960,11 @@ void CEditView::RTrimPrevLine( void )
 
 	CLogicPoint ptCaretPos_PHY = GetCaret().GetCaretLogicPos();
 
-	if( GetCaret().GetCaretLogicPos().y > 0 ){
+	if (const auto nLine = GetCaret().GetCaretLogicPos().y;
+		0 < nLine)
+	{
 		int				nLineLen;
-		const wchar_t*	pLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( GetCaret().GetCaretLogicPos().GetY2() - CLogicInt(1), &nLineLen );
+		const wchar_t*	pLine = GetDocLineMgr().GetLineStrWithoutEOL(nLine - 1, nLineLen);
 		if( nullptr != pLine && nLineLen > 0 ){
 			int i=0;
 			int j=0;

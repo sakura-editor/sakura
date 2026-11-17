@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -11,27 +11,27 @@
 
 #include "basis/SakuraBasis.h"
 
-class CDocLineMgr;
+#include <string>
 
-CDocLineMgr& GetDocLineMgr();
+class CDocLineMgr;
 
 //as decorator
 class CDocReader{
 public:
 	explicit CDocReader(
-		const CDocLineMgr& pcDocLineMgr [[maybe_unused]]
+		CDocLineMgr& cDocLineMgr
 	)
+		: m_pcDocLineMgr{ &cDocLineMgr }
 	{
 	}
 
-	wchar_t* GetAllData(int* pnDataLen);	/* 全行データを返す */
-	const wchar_t* GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen );
-	const wchar_t* GetLineStrWithoutEOL( CLogicInt nLine, int* pnLineLen ); // 2003.06.22 Moca
+	std::wstring GetAllText() const;
+
 	const wchar_t* GetFirstLinrStr( int* pnLineLen );	/* 順アクセスモード：先頭行を得る */
 	const wchar_t* GetNextLinrStr( int* pnLineLen );	/* 順アクセスモード：次の行を得る */
 
 private:
-	CDocLineMgr* m_pcDocLineMgr{ &GetDocLineMgr() };
+	CDocLineMgr* m_pcDocLineMgr;
 };
 
 #endif /* SAKURA_CDOCREADER_0183B68F_2942_40E1_B2A4_59FE0C20268F_H_ */

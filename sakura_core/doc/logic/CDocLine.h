@@ -66,6 +66,8 @@ public:
 		return p;
 	}
 #endif
+	auto			length() const noexcept { return m_cLine.length(); }
+
 	const wchar_t*	GetDocLineStrWithEOL(CLogicInt* pnLen) const //###仮の名前、仮の対処
 	{
 		if(this){ // TODO: Remove "this" check
@@ -102,6 +104,8 @@ public:
 			return CStringRef(nullptr, 0);
 		}
 	}
+	auto			data() const noexcept { return m_cLine.data(); }
+
 	const CEol& GetEol() const{ return m_cEol; }
 	void SetEol(const CEol& cEol, COpeBlk* pcOpeBlk);
 	void SetEol(bool bEnableExtEol); // 現在のバッファから設定

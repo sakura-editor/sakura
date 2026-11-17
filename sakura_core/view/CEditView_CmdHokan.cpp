@@ -19,7 +19,6 @@
 #include "StdAfx.h"
 #include "view/CEditView.h"
 #include "doc/CEditDoc.h"
-#include "doc/CDocReader.h"
 #include "charset/charcode.h"  // 2006.06.28 rastiv
 #include "window/CEditWnd.h"
 #include "parse/CWordParse.h"
@@ -199,8 +198,8 @@ size_t CEditView::HokanSearchByFile(
 	// キーの先頭が記号(#$@\)かどうか判定
 	bKeyStartWithMark = ( wcschr( L"$@#\\", pszKey[0] ) != nullptr ? true : false );
 
-	for( CLogicInt i = CLogicInt(0); i < nLines; i++  ){
-		pszLine = CDocReader(m_pcEditDoc->m_cDocLineMgr).GetLineStrWithoutEOL( i, &nLineLen );
+	for (auto i = CLogicInt(0); i < nLines; ++i) {
+		pszLine = GetDocLineMgr().GetLineStrWithoutEOL(i, nLineLen);
 
 		for( j = 0; j < nLineLen; j += nCharSize ){
 			nCharSize = CNativeW::GetSizeOfChar( pszLine, nLineLen, j );

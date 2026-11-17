@@ -58,10 +58,6 @@
 #include "plugin/CSmartIndentIfObj.h"
 #include "plugin/CWSHPlugin.h"
 
-#include "doc/logic/CDocLineMgr.h"
-
-#include "doc/CDocReader.h"
-
 #include <fstream>
 #include <gtest/gtest-spi.h>
 
@@ -2908,6 +2904,96 @@ TEST_F(EditWndTest, Command_VIEWMODE001)
 }
 
 /*!
+ * コマンド：文字入力（通常文字）
+ */
+TEST_F(EditWndTest, Command_WCHAR001)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(1, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"aXbc"));
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(2, 0));
+}
+
+/*!
+ * コマンド：文字入力（改行）
+ */
+TEST_F(EditWndTest, Command_WCHAR002)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(1, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'\r', 0, view.DispatchEvent);
+
+	const auto text = GetAllText();
+	EXPECT_THAT(text.starts_with(L"a"), IsTrue());
+	EXPECT_THAT(text.ends_with(L"bc"), IsTrue());
+	EXPECT_THAT(text.size(), Gt(3u));
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 1));
+}
+
+/*!
+ * コマンド：文字入力（選択範囲を置換）
+ */
+TEST_F(EditWndTest, Command_WCHAR003)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ResetText(L"abc", CLogicPoint(0, 0));
+	ExecEditorCommand(F_RIGHT_SEL);
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"Xbc"));
+}
+
+/*!
+ * コマンド：文字入力（上書きモード）
+ */
+TEST_F(EditWndTest, Command_WCHAR004)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	ASSERT_THAT(view.IsInsMode(), IsTrue());
+
+	ExecEditorCommand(F_CHGMOD_INS);
+	ASSERT_THAT(view.IsInsMode(), IsFalse());
+
+	ResetText(L"abc", CLogicPoint(0, 0));
+
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'X', 0, view.DispatchEvent);
+
+	EXPECT_THAT(GetAllText(), StrEq(L"Xbc"));
+
+	ExecEditorCommand(F_CHGMOD_INS);
+}
+
+/*!
+ * コマンド：文字入力（改行時に前行末尾の空白を削除）
+ */
+TEST_F(EditWndTest, Command_WCHAR005)
+{
+	auto& view = pcEditWnd->GetActiveView();
+	auto* pTypeData = const_cast<STypeConfig*>(view.m_pTypeData);
+	const auto bOld = pTypeData->m_bRTrimPrevLine;
+	pTypeData->m_bRTrimPrevLine = true;
+
+	ResetText(L"abc  ", CLogicPoint(5, 0));
+	const auto hWndView = view.GetHwnd();
+	FORWARD_WM_CHAR(hWndView, L'\r', 0, view.DispatchEvent);
+
+	const auto text = GetAllText();
+	EXPECT_THAT(text.starts_with(L"abc"), IsTrue());
+	EXPECT_THAT(text.find(L' '), Eq(std::wstring::npos));
+
+	pTypeData->m_bRTrimPrevLine = bOld;
+}
+
+/*!
  * コマンド：ホイール下回転
  */
 TEST_F(EditWndTest, DISABLED_Command_WHEELDOWN001)
@@ -3179,67 +3265,6 @@ TEST_F(EditWndTest, CSmartIndentIfObj001)
 	EXPECT_HRESULT_EQ(disp->Invoke(1, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), E_UNEXPECTED);	// 範囲外
 
 	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), S_OK);
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetFirstLinrStr001)
-{
-	auto& m = GetDocLineMgr();
-	m.DeleteAllLine();
-	auto r = CDocReader(m);
-
-	// 1行追加する。行数1。
-	CDocLine* a = m.AddNewLine();
-	ASSERT_NE(a, nullptr);
-	a->SetDocLineString(L"test", 4, false);
-
-	int nLineLen;
-	EXPECT_TRUE(r.GetFirstLinrStr(&nLineLen));
-	EXPECT_THAT(r.GetFirstLinrStr(&nLineLen), StrEq(L"test"));
-	EXPECT_THAT(nLineLen, Eq(4));
-
-	m.DeleteAllLine();
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetFirstLinrStr101)
-{
-	const auto& m = GetDocLineMgr();
-	auto r = CDocReader(m);
-	int nLineLen;
-	EXPECT_FALSE(r.GetFirstLinrStr(&nLineLen));
-	EXPECT_THAT(nLineLen, Eq(0));
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetNextLinrStr001)
-{
-	auto& m = GetDocLineMgr();
-	m.DeleteAllLine();
-	auto r = CDocReader(m);
-
-	// 1行追加する。行数1。
-	CDocLine* a = m.AddNewLine();
-	ASSERT_NE(a, nullptr);
-	a->SetDocLineString(L"test\r\n", 6, false);
-
-	// 1行追加する。行数2。
-	CDocLine* b = m.AddNewLine();
-	ASSERT_NE(b, nullptr);
-	b->SetDocLineString(L"test", 4, false);
-
-	int nLineLen;
-	EXPECT_TRUE(r.GetNextLinrStr(&nLineLen));
-	EXPECT_THAT(r.GetNextLinrStr(&nLineLen), StrEq(L"test"));
-	EXPECT_THAT(nLineLen, Eq(4));
-
-	m.DeleteAllLine();
-}
-
-TEST_F(EditWndTest, CDocLineMgr_GetNextLinrStr101)
-{
-	const auto& m = GetDocLineMgr();
-	auto r = CDocReader(m);
-	int nLineLen;
-	EXPECT_FALSE(r.GetNextLinrStr(&nLineLen));
-	EXPECT_THAT(nLineLen, Eq(0));
 }
 
 /*!

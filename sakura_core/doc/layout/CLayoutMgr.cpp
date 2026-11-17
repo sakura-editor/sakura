@@ -20,7 +20,6 @@
 
 #include "doc/layout/CLayout.h"/// 2002/2/10 aroka
 #include "doc/CEditDoc.h"
-#include "doc/CDocReader.h" // for _DEBUG
 #include "doc/CDocEditor.h"
 #include "doc/logic/CDocLine.h"/// 2002/2/10 aroka
 #include "doc/logic/CDocLineMgr.h"/// 2002/2/10 aroka
@@ -37,6 +36,7 @@
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 
 CLayoutMgr::CLayoutMgr()
 {
@@ -1067,7 +1067,7 @@ void CLayoutMgr::DUMP()
 		MYTRACE( L"\tm_enumEOLType =%ls\n",	pLayout->GetLayoutEol().GetName() );
 		MYTRACE( L"\tm_nEOLLen =%d\n",		pLayout->GetLayoutEol().GetLen() );
 		MYTRACE( L"\tm_nTypePrev=%d\n",		pLayout->GetColorTypePrev() );
-		pData = CDocReader(*m_pcDocLineMgr).GetLineStr( pLayout->GetLogicLineNo(), &nDataLen );
+		pData = pLayout->GetStringRef().data();
 		MYTRACE( L"\t[%ls]\n", pData );
 		pLayout = pLayoutNext;
 	}
