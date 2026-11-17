@@ -46,18 +46,6 @@ std::wstring CDocReader::GetAllText() const
 	return buffer;
 }
 
-const wchar_t* CDocReader::GetLineStr( CLogicInt nLine, CLogicInt* pnLineLen )
-{
-	const CDocLine* pDocLine;
-	pDocLine = m_pcDocLineMgr->GetLine( nLine );
-	if( nullptr == pDocLine ){
-		*pnLineLen = CLogicInt(0);
-		return nullptr;
-	}
-	// 2002/2/10 aroka CMemory のメンバ変数に直接アクセスしない(inline化されているので速度的な問題はない)
-	return pDocLine->GetDocLineStrWithEOL( pnLineLen );
-}
-
 /*!
 	指定された行番号の文字列と改行コードを除く長さを取得
 	
