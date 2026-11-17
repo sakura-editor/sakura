@@ -2059,9 +2059,9 @@ int CGrepAgent::DoGrepReplaceFile(
 					cOutBuffer.AppendString( &pLine[nCopyFrom], std::max( 0, match->nIndex - nCopyFrom ) );
 					cOutBuffer.AppendNativeData( cmGrepReplace );
 					//	2003.06.10 Moca マッチした文字列の後ろから次の検索を開始する
-					//	長さ 0 の一致では、写し始める位置も探し始める位置と一緒に 1 文字進む(#2743 の 4。今の動きのまま)
 					nStart = CLineMatchFinder::GetNextStart( pLine, nLineLen, *match );
-					nCopyFrom = nStart;
+					//	長さ 0 の一致では探し始める位置だけを 1 文字進め、飛ばした文字は次に写す(#2851)
+					nCopyFrom = match->nIndex + match->nLength;
 				}
 				if( nCopyFrom < nLineLen ){
 					cOutBuffer.AppendString( &pLine[nCopyFrom], nLineLen - nCopyFrom );

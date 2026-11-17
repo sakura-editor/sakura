@@ -1337,6 +1337,24 @@ TEST_F(GrepReplaceDetailTest, PasteRegexMultipleInLine)
 	EXPECT_THAT(folder.ReadFile(L"p.txt"), Eq("aZbZc\r\n"));
 }
 
+//! 正規表現 + C: 行頭(^)の長さ 0 の一致では、一致の次の文字を消さない(#2851)
+TEST_F(GrepReplaceDetailTest, PasteRegexLineTopKeepsNextChar)
+{
+	folder.AddFile(L"p.txt", "HIT\r\nx\r\n");
+	SetClipboardText(L"Z");
+	EXPECT_THAT(Grep(L"^", L"p.txt", L"XRC", LR"(-GREPR="unused")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"p.txt"), Eq("ZHIT\r\nZx\r\n"));
+}
+
+//! 正規表現 + C: 行末($)の長さ 0 の一致では、一致の次の文字(行末の CR)を消さない(#2851)
+TEST_F(GrepReplaceDetailTest, PasteRegexLineEndKeepsEol)
+{
+	folder.AddFile(L"p.txt", "HIT\r\nx\r\n");
+	SetClipboardText(L"Z");
+	EXPECT_THAT(Grep(L"$", L"p.txt", L"XRC", LR"(-GREPR="unused")"), Eq(2u));
+	EXPECT_THAT(folder.ReadFile(L"p.txt"), Eq("HITZ\r\nxZ\r\n"));
+}
+
 //! F(ファイル毎最初のみ): 結果に出すのは最初の 1 件だけで、置換はすべて行い、置換した数を返す
 TEST_F(GrepReplaceDetailTest, FileOnlyReplacesAll)
 {
