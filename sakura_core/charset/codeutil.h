@@ -9,8 +9,14 @@
 #define SAKURA_CODEUTIL_72398A53_6BF2_4A77_93D9_506C19E55681_H_
 #pragma once
 
-#include <Windows.h>
 #include "basis/primitive.h"
+#include "charset/charcode.h"
+
+#include <array>
+#include <span>
+#include <stdexcept>
+
+#include <Windows.h>
 
 #if 0  // 未使用
 //	Oct. 3, 2002 genta
@@ -170,27 +176,70 @@ inline int MyWideCharToMultiByte_JP( const unsigned short* pSrc, const int nSrcL
 
 	nSrcLen は 1 か 2
 */
-inline int MyMultiByteToWideChar_JP( const unsigned char* pSrc, const int nSrcLen, unsigned short* pDst, bool bKeepRt = true )
+inline int MyMultiByteToWideChar_JP(
+	const unsigned char* pSrc,
+	const int nSrcLen,
+	std::span<unsigned short> dst,
+	bool bKeepRt = true
+)
 {
-	int nret;
-	unsigned char czenkaku[4];
+	// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+	if (nSrcLen <= 0) throw std::invalid_argument("nSrcLen must be positive.");
 
-	nret = ::MultiByteToWideChar( 932, 0, reinterpret_cast<const char*>(pSrc), nSrcLen, reinterpret_cast<wchar_t*>(pDst), 4 );
-	if( nret > 0 &&	bKeepRt == true ){
-		MyWideCharToMultiByte_JP( pDst, nret, czenkaku );
-		if( nSrcLen == 2 ){
-			if( pSrc[0] != czenkaku[0] || pSrc[1] != czenkaku[1] ){
-				nret = 0;
-			}
-		}else if( nSrcLen == 1 ){
-			if( pSrc[0] != czenkaku[0] ){
-				nret = 0;
-			}
-		}else{
-			;
+	// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+	if (2 < nSrcLen) throw std::invalid_argument("nSrcLen must be 1 or 2.");
+
+	// この例外が出る場合、使い方が誤っているので、呼出元を修正すること。
+	if (std::size(dst) < 4) throw std::invalid_argument("dst must have room over 4 chars.");
+
+	// 生APIを呼び出してAW変換する。戻り値は変換された文字数。
+	int nret = ::MultiByteToWideChar(
+		CP_SJIS,
+		0,
+		LPCSTR(pSrc),
+		nSrcLen,
+		LPWSTR(std::data(dst)),
+		int(std::size(dst))
+	);
+
+	if (0 < nret &&
+		bKeepRt)
+	{
+		// 逆変換用のバッファを用意する
+		std::array<unsigned char, 5> czenkaku{};
+
+		// 逆変換する。戻り値仕様が独自なので、戻り値を見る意味はない。
+		MyWideCharToMultiByte_JP(
+			std::data(dst),
+			nret,
+			czenkaku.data()
+		);
+
+		if (pSrc[0] != czenkaku[0] ||
+			nSrcLen < 2 ||
+			pSrc[1] != czenkaku[1])
+		{
+			nret = 0;
 		}
 	}
 
 	return nret;
 }
+
+// オーバーロード。危険なので使わないで。
+inline int MyMultiByteToWideChar_JP(
+	const unsigned char* pSrc,
+	const int nSrcLen,
+	unsigned short* pDst,
+	bool bKeepRt = true
+)
+{
+	return MyMultiByteToWideChar_JP(
+		pSrc,
+		nSrcLen,
+		std::span{ pDst, 4 },	//4個分以上あるとみなす
+		bKeepRt
+	);
+}
+
 #endif /* SAKURA_CODEUTIL_72398A53_6BF2_4A77_93D9_506C19E55681_H_ */
