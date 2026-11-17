@@ -35,11 +35,6 @@ CSearchStringPattern::CSearchStringPattern()
 {
 }
 
-CSearchStringPattern::~CSearchStringPattern()
-{
-	Reset();
-}
-
 /*!
 	@brief 正規表現のオプション(大文字小文字の区別・全域)を返す
 */
@@ -63,37 +58,40 @@ int CSearchStringPattern::GetRegexpOption() const
 	@retval true	コンパイルした。正規表現でなければ何もせず true
 	@retval false	正規表現ライブラリを使えないか、コンパイルに失敗した
 
-	@note SetPattern() に渡したパターン・置換後文字列・検索オプションを、このオブジェクトと同じく参照する。
+	@note SetPattern() で写したパターン・置換後文字列・検索オプションを使う。
 */
 bool CSearchStringPattern::CompileRegexp( CBregexp& regexp ) const
 {
-	if( !m_psSearchOption || !m_psSearchOption->bRegularExp ){
+	if( !m_sSearchOption.bRegularExp ){
 		return true;
 	}
 	if( !InitRegexp( nullptr, regexp, false ) ){
 		return false;
 	}
-	return regexp.Compile( m_pszKey, m_pszKey2, GetRegexpOption() );
+	return regexp.Compile( m_strKey.c_str(), GetKey2(), GetRegexpOption() );
+}
+
+/*!
+	@brief 正規表現の置換後文字列を返す。置換でなければ nullptr
+*/
+const wchar_t* CSearchStringPattern::GetKey2() const
+{
+	return m_strKey2 ? m_strKey2->c_str() : nullptr;
 }
 
 void CSearchStringPattern::Reset(){
-	m_pszKey = nullptr;
-	m_pszKey2 = nullptr;
-	m_pszCaseKeyRef = nullptr;
-	m_psSearchOption = nullptr;
+	m_strKey.clear();
+	m_strKey2.reset();
+	m_sSearchOption = SSearchOption();
 	m_pRegexp = nullptr;
 	m_bGlobal = false;
 
-	delete [] m_pszPatternCase;
-	m_pszPatternCase = nullptr;
+	m_strCaseKey.clear();
 #ifdef SEARCH_STRING_KMP
-	delete [] m_pnNextPossArr;
-	m_pnNextPossArr = nullptr;
+	m_nextPossArr.clear();
 #endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	delete [] m_pnUseCharSkipArr;
-	m_pnUseCharSkipArr = nullptr;
-#endif
+	m_skipMap.clear();
+	m_skipMap.shrink_to_fit();	// 文字列検索でなくなったときに、表の領域を持ち続けない
 }
 
 bool CSearchStringPattern::SetPattern(
@@ -106,42 +104,35 @@ bool CSearchStringPattern::SetPattern(
 	bool bGlobal
 )
 {
-	auto nPatternLen = int(cchPattern);
+	// 呼び出し側の検索語・オプションが後で変わっても、作った表と食い違わないように写して持つ
 	Reset();
-	m_pszCaseKeyRef = m_pszKey = pszPattern;
-	m_nPatternLen = nPatternLen;
-	m_psSearchOption = &sSearchOption;
+	m_strKey.assign( pszPattern, cchPattern );
+	if( pszPattern2 ){
+		m_strKey2 = pszPattern2;
+	}
+	m_sSearchOption = sSearchOption;
 	m_pRegexp = regexp;
-	m_pszKey2 = pszPattern2;
 	m_bGlobal = bGlobal;
-	if( m_psSearchOption->bRegularExp ){
+	if( m_sSearchOption.bRegularExp ){
 		if( !m_pRegexp ){
 			return false;
 		}
 		if( !InitRegexp( hwnd, *m_pRegexp, true ) ){
 			return false;
 		}
-		const int nFlag = GetRegexpOption();
 		/* 検索パターンのコンパイル */
-		if( pszPattern2 ){
-			if( !m_pRegexp->Compile( pszPattern, pszPattern2, nFlag ) ){
-				return false;
-			}
-		}else{
-			if( !m_pRegexp->Compile( pszPattern, nFlag ) ){
-				return false;
-			}
+		if( !m_pRegexp->Compile( m_strKey.c_str(), GetKey2(), GetRegexpOption() ) ){
+			return false;
 		}
-	}else if( m_psSearchOption->bWordOnly ){
+	}else if( m_sSearchOption.bWordOnly ){
+		// 単語単位では何も作らない。単語の一覧は、探す側が検索語から作る(CSearchAgent::CreateWordList())
 	}else{
+		const int nPatternLen = GetLen();
 		if( GetIgnoreCase() ){
-			m_pszPatternCase = new wchar_t[nPatternLen + 1];
-			m_pszCaseKeyRef = m_pszPatternCase;
 			//note: 合成文字,サロゲートの「大文字小文字同一視」未対応
-			for( int i = 0; i < m_nPatternLen; i++ ){
-				m_pszPatternCase[i] = (wchar_t)skr_towlower(pszPattern[i]);
-			}
-			m_pszPatternCase[nPatternLen] = L'\0';
+			m_strCaseKey = m_strKey;
+			std::transform( m_strCaseKey.cbegin(), m_strCaseKey.cend(), m_strCaseKey.begin(),
+				[]( wchar_t c ){ return static_cast<wchar_t>(skr_towlower( c )); } );
 		}
 
 #ifdef SEARCH_STRING_KMP
@@ -150,9 +141,9 @@ bool CSearchStringPattern::SetPattern(
 	// "AABAA" => {-1, 0, 0, 0, 0}
 	// "ABABA" => {-1, 0, 0, 2, 0}
 //	if( GetIgnoreCase() ){
-		m_pnNextPossArr = new int[nPatternLen + 1];
-		int* next = m_pnNextPossArr;
-		const wchar_t* key = m_pszPatternCase;
+		m_nextPossArr.assign( nPatternLen + 1, 0 );
+		int* next = m_nextPossArr.data();
+		const wchar_t* key = GetCaseKey();
 		for( int i = 0, k = -1; i < nPatternLen; ++i, ++k ){
 			next[i] = k;
 			while( -1 < k && key[i] != key[k] ){
@@ -166,13 +157,11 @@ bool CSearchStringPattern::SetPattern(
 		const int BM_MAPSIZE = 0x200;
 		// 64KB も作らないで、ISO-8859-1 それ以外(包括) の2つの情報のみ記録する
 		// 「あ」と「乂」　「ぅ」と「居」は値を共有している
-		m_pnUseCharSkipArr = new int[BM_MAPSIZE];
-		for( int n = 0; n < BM_MAPSIZE; ++n ){
-			m_pnUseCharSkipArr[n] = nPatternLen + 1;
-		}
+		const wchar_t* pszCaseKey = GetCaseKey();
+		m_skipMap.assign( BM_MAPSIZE, nPatternLen + 1 );
 		for( int n = 0; n < nPatternLen; ++n ){
-			const int index = GetMapIndex(m_pszCaseKeyRef[n]);
-			m_pnUseCharSkipArr[index] = nPatternLen - n;
+			const int index = GetMapIndex(pszCaseKey[n]);
+			m_skipMap[index] = nPatternLen - n;
 		}
 #endif
 	}
@@ -192,6 +181,10 @@ const wchar_t* CSearchAgent::SearchString(
 	const CSearchStringPattern& pattern
 )
 {
+	// 文字列検索用に作られていないパターン(正規表現・単語単位・設定の前)では探さない
+	if( !pattern.IsStringSearchReady() ){
+		return nullptr;
+	}
 	const int      nPatternLen = pattern.GetLen();
 	const wchar_t* pszPattern  = pattern.GetCaseKey();
 #ifdef SEARCH_STRING_SUNDAY_QUICK
