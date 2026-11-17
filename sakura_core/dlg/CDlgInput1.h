@@ -16,6 +16,7 @@
 #pragma once
 
 #include "util/design_template.h"
+#include "window/CCustomizedWnd.hpp"
 
 #include <span>
 #include <string>
@@ -29,13 +30,15 @@ class CDlgInput1;
 /*!
  * @brief １行入力ダイアログボックス
  */
-class CDlgInput1 : public TSakuraSingleton<CDlgInput1>
+class CDlgInput1 : public TSakuraSingleton<CDlgInput1>, public CCustomizedWnd
 {
 private:
 	using SBuffer = std::span<WCHAR>;
 	using SFuncType = std::function<int(HWND, std::wstring_view, size_t)>;
 
+	using Base = CCustomizedWnd;
 	using Me = CDlgInput1;
+	using MePtr = Me*;
 
 public:
 	static INT_PTR CALLBACK DlgProc(
@@ -46,17 +49,6 @@ public:
 	);
 
 	static int NoValidation(HWND hWndDlg, std::wstring_view text, size_t cchBuffer);
-
-	static LRESULT CALLBACK SubclassProc(
-		HWND hWnd,
-		UINT uMsg,
-		WPARAM wParam,
-		LPARAM lParam,
-		UINT_PTR uIdSubclass,
-		DWORD_PTR dwRefData
-	);
-
-	virtual ~CDlgInput1() noexcept = default;
 
 	BOOL DoModal(
 		_Reserved_ HINSTANCE unusedArg1 [[maybe_unused]],
@@ -118,7 +110,7 @@ public:
 	);
 
 	INT_PTR	DispatchDlgEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	LRESULT	DispatchEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	LRESULT	DispatchEvent(HWND hWndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	int		GetDlgData(HWND hWndDlg);
 	void	SetDlgData(HWND hWndDlg) const;
