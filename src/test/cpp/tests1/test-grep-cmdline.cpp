@@ -531,6 +531,51 @@ TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("CLIP x CLIP\r\nnone\r\nCLIP\r\n"));
 }
 
+/*!
+	置換 + C(クリップボードから貼り付け): クリップボードが空なら、出力先のビューの検索語・検索オプション・色分けの印を変えない(#2868)
+
+	マクロの GrepReplace(0x100000)・コマンドライン(-GOPT=C)は、Grep 置換ダイアログのクリップボードの確かめを通らない。
+	CGrepAgent::DoGrep() はエラーのメッセージを出して 0 を返す。
+*/
+TEST_F(GrepCommandLineTest, ReplaceWithEmptyClipboardKeepsViewSearch)
+{
+	AddBasicFiles();
+	ASSERT_THAT(::OpenClipboard(pcEditWnd->GetHwnd()), IsTrue());
+	::EmptyClipboard();
+	::CloseClipboard();
+
+	// 出力先のビューの検索語・検索オプション・色分けの印・検索キーシーケンスを、Grep の条件と全部違う値にしておく
+	auto& view = pcEditWnd->GetActiveView();
+	const SSearchOption viewOption(true, true, true);
+	const int viewSequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence - 1;
+	view.m_strCurSearchKey = L"before";
+	view.m_sCurSearchOption = viewOption;
+	view.m_bCurSrchKeyMark = false;
+	view.m_nCurSearchKeySequence = viewSequence;
+
+	std::wstring shown;
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _)).WillOnce(Invoke([&shown](HWND, LPCWSTR text, LPCWSTR, UINT, WORD) {
+		shown = text ? text : L"";
+		return IDOK;
+	}));
+
+	EXPECT_THAT(Grep(L"HIT", L"a.txt", L"XC", LR"(-GREPR="unused")"), Eq(0u));
+
+	// クリップボードが取れずに戻る経路を通った
+	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGREPLC_CLIPBOARD))));
+	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("HIT x HIT\r\nnone\r\nHIT\r\n"));
+
+	// 出力先のビューは変わらない
+	EXPECT_THAT(view.m_strCurSearchKey, Eq(L"before"));
+	EXPECT_THAT(view.m_sCurSearchOption, Eq(viewOption));
+	EXPECT_THAT(view.m_bCurSrchKeyMark, IsFalse());
+	EXPECT_THAT(view.m_nCurSearchKeySequence, Eq(viewSequence));
+
+	// この経路は操作ブロックを Release しないで戻るので、後のテストに残さないよう、ここで Release する
+	view.SetUndoBuffer();
+}
+
 // ---------------------------------------------------------------------------
 // 状態
 // ---------------------------------------------------------------------------

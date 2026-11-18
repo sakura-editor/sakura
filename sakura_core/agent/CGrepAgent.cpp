@@ -624,11 +624,6 @@ DWORD CGrepAgent::DoGrep(
 	}
 	pcViewDst->GetCommander().GetOpeBlk()->AddRef();
 
-	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
-	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
-	pcViewDst->m_sCurSearchOption = gi.sGrepSearchOption;						// 検索オプション
-	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-
 	// 置換後文字列の準備
 	CNativeW cmemReplace;
 	if( gi.bGrepReplace ){
@@ -669,6 +664,12 @@ DWORD CGrepAgent::DoGrep(
 		Note: ここで強調するのは最後の検索文字列であって
 		Grep対象パターンではないことに注意
 	*/
+	//	出力先のビューの検索語・検索オプションは、置換後文字列を用意できてから書き換える。
+	//	用意できずに戻ると、検索パターンを作り直さないので、色分けに使う検索パターンと食い違うため。
+	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
+	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
+	pcViewDst->m_sCurSearchOption = gi.sGrepSearchOption;						// 検索オプション
+	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	if (!pcViewDst->RefreshSearchPattern())
 	{
 		this->m_bGrepRunning = false;
