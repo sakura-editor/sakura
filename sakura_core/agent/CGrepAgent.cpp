@@ -624,11 +624,6 @@ DWORD CGrepAgent::DoGrep(
 	}
 	pcViewDst->GetCommander().GetOpeBlk()->AddRef();
 
-	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
-	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
-	pcViewDst->m_sCurSearchOption = gi.sGrepSearchOption;						// 検索オプション
-	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
-
 	// 置換後文字列の準備
 	CNativeW cmemReplace;
 	if( gi.bGrepReplace ){
@@ -669,6 +664,12 @@ DWORD CGrepAgent::DoGrep(
 		Note: ここで強調するのは最後の検索文字列であって
 		Grep対象パターンではないことに注意
 	*/
+	//	出力先のビューの検索語・検索オプションは、置換後文字列を用意できてから書き換える。
+	//	用意できずに戻ると、検索パターンを作り直さないので、色分けに使う検索パターンと食い違うため。
+	pcViewDst->m_bCurSrchKeyMark = true;								/* 検索文字列のマーク */
+	pcViewDst->m_strCurSearchKey = gi.cmGrepKey.GetStringPtr();				/* 検索文字列 */
+	pcViewDst->m_sCurSearchOption = gi.sGrepSearchOption;						// 検索オプション
+	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	if (!pcViewDst->RefreshSearchPattern())
 	{
 		this->m_bGrepRunning = false;
@@ -1223,11 +1224,11 @@ void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, ULO
 {
 	// 2003.06.23 Moca リアルタイム表示のときは早めに表示
 	// データ検索のときファイルの合計が最大10MBを超えたら表示
-	if( out.pOutput->IsDrawing() && L'\0' != pszKey[0] ){
-		if( !grep::AddFileSizeKB( nWork, nFileSize ) ){
-			// 足すと 10MB を超える、または、ファイルが大きすぎる
-			nHitCountOld = -100; // 即表示
-		}
+	if( out.pOutput->IsDrawing() &&
+		L'\0' != pszKey[0] &&
+		!grep::AddFileSizeKB( nWork, nFileSize ) ){
+		// 足すと 10MB を超える、または、ファイルが大きすぎる(足せたときは nWork が増える)
+		nHitCountOld = -100; // 即表示
 	}
 	/* 結果出力 */
 	if( 0 < out.cmemMessage.GetStringLength() &&
