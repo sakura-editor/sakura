@@ -29,11 +29,22 @@ public:
 		DWORD_PTR dwRefData
 	);
 
+	/*!
+	 * @brief コンストラクタ
+	 * 
+	 * @param[in, opt] uIdSubclass サブクラスID。省略した場合はthisポインタのアドレスを数値として使う。
+	 */
+	explicit CCustomizedWnd(
+		UINT_PTR uIdSubclass = 0
+	)
+		: m_IdSubclass{ uIdSubclass ? uIdSubclass : UINT_PTR(this) }
+	{
+	}
+
 	virtual ~CCustomizedWnd() = default;
 
 	virtual bool AttachWnd(
-		HWND hWnd,
-		UINT_PTR uIdSubclass = 0
+		HWND hWnd
 	);
 
 	virtual LRESULT DispatchEvent(
@@ -44,5 +55,8 @@ public:
 	);
 
 	virtual void	OnDestroy(HWND hWnd);
+
+private:
+	UINT_PTR	m_IdSubclass;
 };
 

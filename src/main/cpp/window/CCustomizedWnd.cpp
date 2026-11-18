@@ -60,19 +60,22 @@
  * @brief 指定したウィンドウをこのクラスに紐付ける
  *
  * @param[in] hWnd ウィンドウのハンドル
- * @param[in] uIdSubclass サブクラスID
  *
  * @returns 処理結果
  * @retval true  サブクラス化に成功した
  * @retval false サブクラス化に失敗した
  */
 bool CCustomizedWnd::AttachWnd(
-	HWND hWnd,
-	UINT_PTR uIdSubclass
+	HWND hWnd
 )
 {
 	// ウィンドウをサブクラス化する
-	return ::SetWindowSubclass(hWnd, &SubclassProc, uIdSubclass, DWORD_PTR(this));
+	return ::SetWindowSubclass(
+		hWnd,
+		&SubclassProc,
+		m_IdSubclass,
+		DWORD_PTR(this)
+	);
 }
 
 /*!
