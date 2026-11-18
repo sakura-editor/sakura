@@ -9,6 +9,7 @@
 
 #include "grep/CGrepEnumKeys.h"
 #include "agent/CSearchAgent.h"
+#include "cmd/CViewCommander_inline.h"	// GetOpeBlk
 #include "types/CType.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
@@ -536,6 +537,7 @@ TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 
 	マクロの GrepReplace(0x100000)・コマンドライン(-GOPT=C)は、Grep 置換ダイアログのクリップボードの確かめを通らない。
 	CGrepAgent::DoGrep() はエラーのメッセージを出して 0 を返す。
+	他の 0 を返す経路と同じく、操作ブロックも片付ける。
 */
 TEST_F(GrepCommandLineTest, ReplaceWithEmptyClipboardKeepsViewSearch)
 {
@@ -552,6 +554,7 @@ TEST_F(GrepCommandLineTest, ReplaceWithEmptyClipboardKeepsViewSearch)
 	view.m_sCurSearchOption = viewOption;
 	view.m_bCurSrchKeyMark = false;
 	view.m_nCurSearchKeySequence = viewSequence;
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());	// 前提
 
 	std::wstring shown;
 	auto pUser32 = (MockUser32*)User32::getInstance();
@@ -572,8 +575,8 @@ TEST_F(GrepCommandLineTest, ReplaceWithEmptyClipboardKeepsViewSearch)
 	EXPECT_THAT(view.m_bCurSrchKeyMark, IsFalse());
 	EXPECT_THAT(view.m_nCurSearchKeySequence, Eq(viewSequence));
 
-	// この経路は操作ブロックを Release しないで戻るので、後のテストに残さないよう、ここで Release する
-	view.SetUndoBuffer();
+	// 操作ブロックは残らない
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
 }
 
 // ---------------------------------------------------------------------------
@@ -832,17 +835,23 @@ TEST_F(GrepCommandLineTest, InvalidHwndTarget)
 }
 
 /*!
-	【不具合】無効な :HWND: の後も、同じウィンドウで Grep できること(Issue #xxxx で修正予定)
+	無効な :HWND: の後も、同じウィンドウで Grep できること(#2877)
 
-	DoGrep() の :HWND: のエラー経路だけが m_bGrepRunning を戻さずに return するので、
-	以後の Grep が再入とみなされる。後始末は GrepTestSuite::TearDown() がフラグを戻す。
+	DoGrep() の :HWND: のエラーの経路も、他の 0 を返す経路と同じく、
+	Grep 実行中のフラグ・出力先のビューの m_bDoing_UndoRedo・操作ブロックを片付けてから戻る。
 */
-TEST_F(GrepCommandLineTest, DISABLED_InvalidHwndTargetResetsRunningFlag)
+TEST_F(GrepCommandLineTest, InvalidHwndTargetResetsRunningFlag)
 {
 	AddBasicFiles();
+	auto& view = pcEditWnd->GetActiveView();
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());	// 前提
+
 	EXPECT_THAT(Grep(L"HIT", L":HWND:0", L"X"), Eq(0u));
-	// フラグが残ったまま次の Grep を呼ぶと、再入の assert_warning で止まる(Debug ビルド)ので、ここで打ち切る
-	ASSERT_THAT(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning, IsFalse());
+	EXPECT_THAT(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning, IsFalse());
+	EXPECT_THAT(view.m_bDoing_UndoRedo, IsFalse());
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+
+	// 同じウィンドウで、もう一度 Grep できる(再入とみなされない)
 	ResetDocument();
 	EXPECT_THAT(Grep(L"HIT", L"*.txt", L"X"), Eq(3u));
 }
@@ -2342,9 +2351,6 @@ TEST_F(GrepOutputTargetTest, NonexistentFolderMessageToTarget)
 
 /*!
 	無効な :HWND: のエラーも出力先に足される
-
-	このエラーの経路は m_bGrepRunning を戻さない(DISABLED_InvalidHwndTargetResetsRunningFlag の件)。
-	後始末は GrepTestSuite::TearDown() が行うので、このテストでは DoGrep() を 1 回だけ呼ぶ。
 */
 TEST_F(GrepOutputTargetTest, HwndErrorToTarget)
 {
