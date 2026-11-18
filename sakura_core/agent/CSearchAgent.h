@@ -10,6 +10,8 @@
 #pragma once
 
 #include <optional>
+#include <string>
+#include <vector>
 #include "_main/global.h"
 #include "util/design_template.h"
 #include "basis/SakuraBasis.h"
@@ -26,50 +28,48 @@ class CSearchStringPattern
 {
 public:
 	CSearchStringPattern();
-	~CSearchStringPattern();
 	void Reset();
 	bool SetPattern(HWND hwnd, const wchar_t* pszPattern, size_t nPatternLen, const SSearchOption& sSearchOption, CBregexp* pRegexp){
 		return SetPattern(hwnd, pszPattern, nPatternLen, nullptr, sSearchOption, pRegexp, false);
 	}
 	bool SetPattern(HWND, const wchar_t* pszPattern, size_t cchPattern, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
-	const wchar_t* GetKey() const{ return m_pszKey; }
-	const wchar_t* GetCaseKey() const{ return m_pszCaseKeyRef; }
-	int GetLen() const{ return m_nPatternLen; }
-	bool GetIgnoreCase() const{ return !m_psSearchOption->bLoHiCase; }
-	bool GetLoHiCase() const{ return m_psSearchOption->bLoHiCase; }
-	const SSearchOption& GetSearchOption() const{ return *m_psSearchOption; }
+	const wchar_t* GetKey() const{ return m_strKey.c_str(); }
+	//! 文字列検索で比べる検索語(大文字小文字を区別しないときは小文字にそろえたもの)
+	const wchar_t* GetCaseKey() const{ return GetIgnoreCase() ? m_strCaseKey.c_str() : m_strKey.c_str(); }
+	int GetLen() const{ return static_cast<int>(m_strKey.length()); }
+	bool GetIgnoreCase() const{ return !m_sSearchOption.bLoHiCase; }
+	bool GetLoHiCase() const{ return m_sSearchOption.bLoHiCase; }
+	const SSearchOption& GetSearchOption() const{ return m_sSearchOption; }
 	CBregexp* GetRegexp() const{ return m_pRegexp; }
 	bool CompileRegexp( CBregexp& regexp ) const;
+	//! 文字列検索の準備ができているか(正規表現・単語単位・設定の前は false)
+	bool IsStringSearchReady() const{ return !m_skipMap.empty(); }
 #ifdef SEARCH_STRING_KMP
-	const int* GetKMPNextTable() const{ return m_pnNextPossArr; }
+	const int* GetKMPNextTable() const{ return m_nextPossArr.data(); }
 #endif
 #ifdef SEARCH_STRING_SUNDAY_QUICK
-	const int* GetUseCharSkipMap() const{ return m_pnUseCharSkipArr; }
+	const int* GetUseCharSkipMap() const{ return m_skipMap.data(); }
 
 	static int GetMapIndex( wchar_t c );
 #endif
 
 private:
 	int GetRegexpOption() const;
+	const wchar_t* GetKey2() const;
 
-	// 外部依存
-	const wchar_t*	m_pszKey = nullptr;
-	const wchar_t*	m_pszKey2 = nullptr;	//!< 正規表現の置換後文字列(置換でなければ nullptr)
-	const SSearchOption* m_psSearchOption = nullptr;
-	CBregexp* m_pRegexp = nullptr;
-	bool	m_bGlobal = false;				//!< 正規表現の全域オプション(/g)
+	// SetPattern() に渡されたものの写し
+	std::wstring	m_strKey;						//!< 検索語
+	std::optional<std::wstring>	m_strKey2;			//!< 正規表現の置換後文字列(置換でなければ値なし)
+	SSearchOption	m_sSearchOption;				//!< 検索オプション
+	CBregexp* m_pRegexp = nullptr;					//!< 正規表現(持ち主は呼び出し側)
+	bool	m_bGlobal = false;						//!< 正規表現の全域オプション(/g)
 
-	const wchar_t* m_pszCaseKeyRef = nullptr;
-
-	// 内部バッファ
-	wchar_t* m_pszPatternCase = nullptr;
-	int  m_nPatternLen;
+	// SetPattern() で作るもの
+	std::wstring	m_strCaseKey;					//!< 小文字にそろえた検索語(大文字小文字を区別しない文字列検索のときだけ)
 #ifdef SEARCH_STRING_KMP
-	int* m_pnNextPossArr = nullptr;
+	std::vector<int>	m_nextPossArr;				//!< KMP 法の表
 #endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	int* m_pnUseCharSkipArr = nullptr;
-#endif
+	std::vector<int>	m_skipMap;					//!< 読み飛ばす幅の表(文字列検索のときだけ)
 
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);
 };

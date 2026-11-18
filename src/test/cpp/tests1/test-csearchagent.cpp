@@ -1181,34 +1181,59 @@ TEST_F(CLineMatchFinderTest, StringMatchCaseLongKey)
 	EXPECT_THAT(FindAll(L"abcdef xabcdefx abcdef"), ElementsAre(0, 6, 8, 6, 16, 6));
 }
 
-//! 文字列: 大文字と小文字を区別しなければ、検索語と行のどちらが大文字でも見つかる
-TEST_F(CLineMatchFinderTest, StringIgnoreCaseShortAndLongKey)
+//! 文字列: 大文字と小文字を区別しない短い検索語(5 文字以下)は、検索語と行のどちらが大文字でも見つかる
+TEST_F(CLineMatchFinderTest, StringIgnoreCaseShortKey)
 {
 	ASSERT_THAT(SetKey(L"aBc", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABC xabCx Abc"), ElementsAre(0, 3, 5, 3, 10, 3));
+}
+
+//! 文字列: 大文字と小文字を区別しない長い検索語(6 文字以上)は、検索語と行のどちらが大文字でも見つかる
+TEST_F(CLineMatchFinderTest, StringIgnoreCaseLongKey)
+{
 	ASSERT_THAT(SetKey(L"aBcDeF", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABCDEF xabcdefx AbCdEf"), ElementsAre(0, 6, 8, 6, 16, 6));
 }
 
-//! 文字列: 大文字と小文字を区別すれば、大文字と小文字が違う所は見つからない
-TEST_F(CLineMatchFinderTest, StringMatchCaseRejectsDifferentCase)
+//! 文字列: 大文字と小文字を区別する短い検索語は、大文字と小文字が違う所では見つからない
+TEST_F(CLineMatchFinderTest, StringMatchCaseShortKeyRejectsDifferentCase)
 {
 	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABC aBc abc"), ElementsAre(8, 3));
+}
+
+//! 文字列: 大文字と小文字を区別する長い検索語は、大文字と小文字が違う所では見つからない
+TEST_F(CLineMatchFinderTest, StringMatchCaseLongKeyRejectsDifferentCase)
+{
 	ASSERT_THAT(SetKey(L"abcdef", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABCDEF abcdeF abcdef"), ElementsAre(14, 6));
 }
 
-//! 文字列: 検索語が行より長い・行が空・検索語が空なら、見つからない
-TEST_F(CLineMatchFinderTest, StringKeyLongerThanLineOrEmpty)
+//! 文字列: 短い検索語が行より長い(行が空のときも)なら、見つからない
+TEST_F(CLineMatchFinderTest, StringShortKeyLongerThanLine)
 {
 	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ab"), IsEmpty());
 	EXPECT_THAT(FindAll(L""), IsEmpty());
+}
+
+//! 文字列: 長い検索語が行より長いなら、見つからない
+TEST_F(CLineMatchFinderTest, StringLongKeyLongerThanLine)
+{
 	ASSERT_THAT(SetKey(L"abcdef", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abcde"), IsEmpty());
+}
+
+//! 文字列: 大文字と小文字を区別する空の検索語は、見つからない
+TEST_F(CLineMatchFinderTest, StringEmptyKeyMatchCase)
+{
 	ASSERT_THAT(SetKey(L"", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abc"), IsEmpty());
+}
+
+//! 文字列: 大文字と小文字を区別しない空の検索語は、見つからない
+TEST_F(CLineMatchFinderTest, StringEmptyKeyIgnoreCase)
+{
 	ASSERT_THAT(SetKey(L"", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abc"), IsEmpty());
 }
@@ -1223,17 +1248,22 @@ TEST_F(CLineMatchFinderTest, StringStartNearLineEnd)
 	EXPECT_THAT(Find(L"abab", 5), IsEmpty());
 }
 
-//! 文字列: 検索語が 1 文字
-TEST_F(CLineMatchFinderTest, StringSingleCharKey)
+//! 文字列: 大文字と小文字を区別する 1 文字の検索語
+TEST_F(CLineMatchFinderTest, StringSingleCharKeyMatchCase)
 {
 	ASSERT_THAT(SetKey(L"a", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"a bab A"), ElementsAre(0, 1, 3, 1));
+}
+
+//! 文字列: 大文字と小文字を区別しない 1 文字の検索語
+TEST_F(CLineMatchFinderTest, StringSingleCharKeyIgnoreCase)
+{
 	ASSERT_THAT(SetKey(L"a", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"A bab a"), ElementsAre(0, 1, 3, 1, 6, 1));
 }
 
 /*!
-	文字列: 読み飛ばす幅の表で同じ場所を使う文字(「あ」と「乂」)が混ざっても、見落とさず、取り違えない
+	文字列: 読み飛ばす幅の表で同じ場所を使う文字(「あ」と「乂」)が行に混ざっても、見落とさず、取り違えない
 
 	表は、上位バイトが 0 でない文字を下位バイトだけで分けるので、「あ」(U+3042)と「乂」(U+4E42)は同じ場所になる。
  */
@@ -1242,16 +1272,31 @@ TEST_F(CLineMatchFinderTest, StringCharsSharingSkipTableSlot)
 	ASSERT_THAT(SetKey(L"あい", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"xx乂あい"), ElementsAre(3, 2));
 	EXPECT_THAT(FindAll(L"乂い あい"), ElementsAre(3, 2));
+}
+
+//! 文字列: 検索語の側が「乂」でも、行の「あ」と取り違えない
+TEST_F(CLineMatchFinderTest, StringCharsSharingSkipTableSlotInKey)
+{
 	ASSERT_THAT(SetKey(L"乂い", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"あい乂い"), ElementsAre(2, 2));
+}
+
+//! 文字列: 長い検索語(6 文字以上)でも、表の同じ場所を使う文字で見落とさない
+TEST_F(CLineMatchFinderTest, StringCharsSharingSkipTableSlotLongKey)
+{
 	ASSERT_THAT(SetKey(L"あいうえおか", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"乂いうえおか あいうえおか"), ElementsAre(7, 6));
+}
+
+//! 文字列: 大文字と小文字を区別しないときも、表の同じ場所を使う文字で見落とさない
+TEST_F(CLineMatchFinderTest, StringCharsSharingSkipTableSlotIgnoreCase)
+{
 	ASSERT_THAT(SetKey(L"あい", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"xx乂あい"), ElementsAre(3, 2));
 }
 
 /*!
-	文字列: 行の後ろに終端の NUL が無くても、行の長さまでを探す
+	文字列: 行の後ろに終端の NUL が無くても、行の長さまでを探す(短い検索語)
 
 	長い文字列の前半だけを行として渡す。行の後ろに続く文字は、一致に含めない。
  */
@@ -1261,9 +1306,19 @@ TEST_F(CLineMatchFinderTest, StringLineWithoutTerminator)
 	EXPECT_THAT(FindAll(std::wstring_view(L"xxabcabc", 5)), ElementsAre(2, 3));
 	EXPECT_THAT(FindAll(std::wstring_view(L"abdabc", 3)), IsEmpty());
 	EXPECT_THAT(FindAll(std::wstring_view(L"xabc", 3)), IsEmpty());
+}
+
+//! 文字列: 行の後ろに終端の NUL が無くても、行の長さまでを探す(長い検索語)
+TEST_F(CLineMatchFinderTest, StringLineWithoutTerminatorLongKey)
+{
 	ASSERT_THAT(SetKey(L"abcdef", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(std::wstring_view(L"xabcdefabcdef", 7)), ElementsAre(1, 6));
 	EXPECT_THAT(FindAll(std::wstring_view(L"abcdexabcdef", 6)), IsEmpty());
+}
+
+//! 文字列: 行の後ろに終端の NUL が無くても、行の長さまでを探す(大文字と小文字を区別しない)
+TEST_F(CLineMatchFinderTest, StringLineWithoutTerminatorIgnoreCase)
+{
 	ASSERT_THAT(SetKey(L"abc", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(std::wstring_view(L"xxABCabc", 5)), ElementsAre(2, 3));
 	EXPECT_THAT(FindAll(std::wstring_view(L"ABDabc", 3)), IsEmpty());
@@ -1421,33 +1476,55 @@ TEST_F(CompileRegexpTest, BeforeSetPattern)
 	EXPECT_THAT(m_cOtherRegexp.IsAvailable(), IsFalse());
 }
 
-//! 同じパターンに設定し直すと、大文字と小文字の区別は後の設定に従う
-TEST_F(CLineMatchFinderTest, SetPatternAgainChangesCase)
+//! 区別する設定の後で、区別しない設定にし直すと、区別しないで探す
+TEST_F(CLineMatchFinderTest, SetPatternIgnoreCaseAfterMatchCase)
 {
 	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
-	EXPECT_THAT(FindAll(L"ABC abc"), ElementsAre(4, 3));
 	ASSERT_THAT(SetKey(L"abc", false, false, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABC abc"), ElementsAre(0, 3, 4, 3));
+}
+
+//! 区別しない設定の後で、区別する設定にし直すと、区別して探す
+TEST_F(CLineMatchFinderTest, SetPatternMatchCaseAfterIgnoreCase)
+{
+	ASSERT_THAT(SetKey(L"abc", false, false, false), IsTrue());
 	ASSERT_THAT(SetKey(L"ABC", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"ABC abc"), ElementsAre(0, 3));
 }
 
-//! 同じパターンに設定し直すと、探し方(文字列・正規表現・単語単位)は後の設定に従う
-TEST_F(CLineMatchFinderTest, SetPatternAgainChangesKind)
+//! 文字列の設定の後で、正規表現の設定にし直すと、正規表現で探す
+TEST_F(CLineMatchFinderTest, SetPatternRegexAfterString)
 {
 	ASSERT_THAT(SetKey(L"a.c", false, true, false), IsTrue());
-	EXPECT_THAT(FindAll(L"abc a.c"), ElementsAre(4, 3));
 	ASSERT_THAT(SetKey(L"a.c", true, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abc a.c"), ElementsAre(0, 3, 4, 3));
+}
+
+//! 正規表現の設定の後で、文字列の設定にし直すと、文字列で探す
+TEST_F(CLineMatchFinderTest, SetPatternStringAfterRegex)
+{
+	ASSERT_THAT(SetKey(L"a.c", true, true, false), IsTrue());
 	ASSERT_THAT(SetKey(L"a.c", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abc a.c"), ElementsAre(4, 3));
+}
+
+//! 文字列の設定の後で、単語単位の設定にし直すと、単語単位で探す
+TEST_F(CLineMatchFinderTest, SetPatternWordAfterString)
+{
+	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
 	ASSERT_THAT(SetKey(L"abc", false, true, true), IsTrue());
 	EXPECT_THAT(FindAll(L"abcd abc"), ElementsAre(5, 3));
+}
+
+//! 単語単位の設定の後で、文字列の設定にし直すと、文字列で探す
+TEST_F(CLineMatchFinderTest, SetPatternStringAfterWord)
+{
+	ASSERT_THAT(SetKey(L"abc", false, true, true), IsTrue());
 	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"abcd abc"), ElementsAre(0, 3, 5, 3));
 }
 
-//! 正規表現をコンパイルできなくても、検索語と検索の条件は覚えている。その後で設定し直せば探せる
+//! 正規表現をコンパイルできなくても、検索語と検索の条件は覚えている
 TEST_F(CLineMatchFinderTest, SetPatternRemembersKeyWhenCompileFails)
 {
 	ASSERT_THAT(SetKey(L"(", true, false, false), IsFalse());
@@ -1455,7 +1532,12 @@ TEST_F(CLineMatchFinderTest, SetPatternRemembersKeyWhenCompileFails)
 	EXPECT_THAT(m_cPattern.GetLen(), Eq(1));
 	EXPECT_THAT(m_cPattern.GetSearchOption().bRegularExp, IsTrue());
 	EXPECT_THAT(m_cPattern.GetIgnoreCase(), IsTrue());
+}
 
+//! 正規表現をコンパイルできなかった後でも、設定し直せば探せる
+TEST_F(CLineMatchFinderTest, SetPatternStringAfterFailedRegex)
+{
+	ASSERT_THAT(SetKey(L"(", true, false, false), IsFalse());
 	ASSERT_THAT(SetKey(L"ab", false, true, false), IsTrue());
 	EXPECT_THAT(FindAll(L"xab"), ElementsAre(1, 2));
 }
@@ -1471,6 +1553,60 @@ TEST_F(CompileRegexpTest, EmptyReplacePattern)
 	constexpr std::wstring_view target = L"HIT x HIT";
 	EXPECT_THAT(m_cOtherRegexp.Replace(target.data(), static_cast<int>(target.length())), Eq(2));
 	EXPECT_THAT(std::wstring_view(m_cOtherRegexp.GetString(), m_cOtherRegexp.GetStringLen()), Eq(L" x "));
+}
+
+//! SetPattern() の後で呼び出し側の検索語・検索オプションを書き換えても、設定したときの条件で探す
+TEST_F(CLineMatchFinderTest, SetPatternCopiesKeyAndOption)
+{
+	ASSERT_THAT(SetKey(L"abc", false, true, false), IsTrue());
+	m_strKey = L"xyz";
+	m_sSearchOption.bLoHiCase = false;
+	EXPECT_THAT(std::wstring_view(m_cPattern.GetKey()), Eq(L"abc"));
+	EXPECT_THAT(m_cPattern.GetLoHiCase(), IsTrue());
+	EXPECT_THAT(FindAll(L"ABC abc xyz"), ElementsAre(4, 3));
+}
+
+//! 設定の前のパターンでは、文字列検索は何も返さない
+TEST_F(CLineMatchFinderTest, SearchStringBeforeSetPattern)
+{
+	constexpr std::wstring_view line = L"abc abc";
+	EXPECT_THAT(CSearchAgent::SearchString(line.data(), static_cast<int>(line.length()), 0, m_cPattern), IsNull());
+}
+
+//! 正規表現のパターンでは、文字列検索は何も返さない(文字列検索の表を作らない)
+TEST_F(CLineMatchFinderTest, SearchStringWithRegexPattern)
+{
+	ASSERT_THAT(SetKey(L"abc", true, true, false), IsTrue());
+	constexpr std::wstring_view line = L"abc abc";
+	EXPECT_THAT(CSearchAgent::SearchString(line.data(), static_cast<int>(line.length()), 0, m_cPattern), IsNull());
+}
+
+//! 単語単位のパターンでは、文字列検索は何も返さない(文字列検索の表を作らない)
+TEST_F(CLineMatchFinderTest, SearchStringWithWordPattern)
+{
+	ASSERT_THAT(SetKey(L"abc", false, true, true), IsTrue());
+	constexpr std::wstring_view line = L"abc abc";
+	EXPECT_THAT(CSearchAgent::SearchString(line.data(), static_cast<int>(line.length()), 0, m_cPattern), IsNull());
+}
+
+//! 正規表現: SetPattern() の後で呼び出し側の検索語・検索オプションを書き換えても、設定したときのパターンをコンパイルする
+TEST_F(CompileRegexpTest, CopiesKeyAndOption)
+{
+	ASSERT_THAT(SetKey(L"H.T", true, true, false), IsTrue());
+	m_strKey = L"(";
+	m_sSearchOption = SSearchOption(false, false, false);
+	ASSERT_THAT(m_cPattern.CompileRegexp(m_cOtherRegexp), IsTrue());
+	EXPECT_THAT(FindAllWithOther(L"xHIT HAT hit\n"), ElementsAre(1, 3, 5, 3));
+}
+
+//! 設定する前は、検索語は空で、検索オプションは既定の値。文字列検索の準備もできていない
+TEST(CSearchStringPattern, BeforeSetPattern)
+{
+	const CSearchStringPattern pattern;
+	EXPECT_THAT(std::wstring_view(pattern.GetKey()), IsEmpty());
+	EXPECT_THAT(pattern.GetLen(), Eq(0));
+	EXPECT_THAT(pattern.GetSearchOption() == SSearchOption(), IsTrue());
+	EXPECT_THAT(pattern.IsStringSearchReady(), IsFalse());
 }
 
 //! 次に探し始める位置: 一致の後ろ。長さ 0 の一致なら 1 文字(サロゲートペアは 2)進め、行の末尾でも 1 進める
