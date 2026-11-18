@@ -8,6 +8,7 @@
 #include "window/CAppMainWnd.hpp"
 
 #include "util/os/make_system_error.hpp"
+#include "util/os/User32.hpp"
 
 #include "CSelectLang.h"
 
@@ -27,6 +28,38 @@ CAppMainWnd::CAppMainWnd(
 		CSelectLang::getLangRsrcInstance(),
 		GetHwnd(),	// 常にNULLなので、指定する意味はない。
 		&GetIcons()
+	);
+}
+
+/*!
+ * @brief ポップアップメニューを表示する
+ *
+ * 生Windows APIと余り変わらない、呼出ラッパー。
+ * 不要な引数を指定しなくて済む点と
+ * その気になればモック可能な点が標準と異なる。
+ *
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uFlags メニューの表示方法
+ * @param[in] x メニューの表示位置のX座標（スクリーン座標）
+ * @param[in] y メニューの表示位置のY座標（スクリーン座標）
+ * @param[in] hWnd メニューの表示位置の基準となるウィンドウのハンドル
+ */
+int CAppMainWnd::TrackPopupMenu(
+	HMENU hMenu,
+	UINT uFlags,
+	LONG x,
+	LONG y,
+	HWND hWnd
+) const
+{
+	return User32::getInstance()->TrackPopupMenu(
+		hMenu,
+		uFlags,
+		x,
+		y,
+		0,		// reserved, must be zero
+		hWnd,
+		nullptr	// reserved, must be nullptr
 	);
 }
 

@@ -1509,8 +1509,6 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	HMENU		hMenu;
 	HMENU		hMenuPopUp;
 	WCHAR		szMenu[100 + MAX_PATH * 2];	//	Jan. 19, 2001 genta
-	POINT		po;
-	RECT		rc;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1591,18 +1589,12 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	//	Jun. 9, 2001 genta ソフトウェア名改称
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 
-	po.x = 0;
-	po.y = 0;
-	::GetCursorPos( &po );
-	po.y -= 4;
-
-	rc.left = 0;
-	rc.right = 0;
-	rc.top = 0;
-	rc.bottom = 0;
+	POINT pt{};
+	::GetCursorPos(&pt);
+	pt.y -= 4;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = User32::getInstance()->TrackPopupMenu(
+	nId = Base::TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
@@ -1610,11 +1602,9 @@ int	CControlTray::CreatePopUpMenu_L( void )
 		| TPM_LEFTBUTTON
 		/*| TPM_RIGHTBUTTON*/
 		,
-		po.x,
-		po.y,
-		0,
-		GetTrayHwnd(),
-		&rc
+		pt.x,
+		pt.y,
+		GetHwnd()
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
@@ -1634,8 +1624,6 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	int		nId;
 	HMENU	hMenuTop;
 	HMENU	hMenu;
-	POINT	po;
-	RECT	rc;
 
 	//本当はセマフォにしないとだめ
 	if( m_bUseTrayMenu ) return -1;
@@ -1660,18 +1648,12 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	//	Jun. 18, 2001 genta ソフトウェア名改称
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );
 
-	po.x = 0;
-	po.y = 0;
-	::GetCursorPos( &po );
-	po.y -= 4;
-
-	rc.left = 0;
-	rc.right = 0;
-	rc.top = 0;
-	rc.bottom = 0;
+	POINT pt{};
+	::GetCursorPos(&pt);
+	pt.y -= 4;
 
 	::SetForegroundWindow( GetTrayHwnd() );
-	nId = User32::getInstance()->TrackPopupMenu(
+	nId = Base::TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
@@ -1679,11 +1661,9 @@ int	CControlTray::CreatePopUpMenu_R( void )
 		| TPM_LEFTBUTTON
 		/*| TPM_RIGHTBUTTON*/
 		,
-		po.x,
-		po.y,
-		0,
-		GetTrayHwnd(),
-		&rc
+		pt.x,
+		pt.y,
+		GetHwnd()
 	);
 	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
 	::DestroyMenu( hMenuTop );
