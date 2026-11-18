@@ -24,54 +24,6 @@
 	if (pThis) pThis->RevokeDropTarget();
 }
 
- /*!
- * @brief 拡張ウィンドウのプロシージャ
- *
- * @param hWnd [in] 宛先ウィンドウのハンドル
- * @param uMsg [in] メッセージコード
- * @param wParam [in, opt] 第1パラメーター
- * @param lParam [in, opt] 第2パラメーター
- * @param uIdSubclass [in] サブクラスID
- * @param dwRefData [in] サブクラスデータ
- *
- * @returns  メッセージ処理結果。値の意味はメッセージ依存。
- */
-/* static */ LRESULT CALLBACK CDropTargetWnd::SubclassProc(
-	HWND hWnd,
-	UINT uMsg,
-	WPARAM wParam,
-	LPARAM lParam,
-	UINT_PTR uIdSubclass,
-	DWORD_PTR dwRefData
-)
-{
-	// クラスデータを取り出す。（格納方法は検討要。）
-	auto pcWnd = MePtr(dwRefData);
-
-	// クラスデータが無効な場合（防御コードなので到達不能）
-	if (!pcWnd) {
-		// サブクラスを解除する
-		::RemoveWindowSubclass(hWnd, &SubclassProc, uIdSubclass);
-
-		// DefSubclassProcにフォールバックする
-		return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
-	}
-
-	if (WM_DESTROY == uMsg) {
-		// 拡張WM_DESTROYハンドラを呼び出す
-		pcWnd->OnDestroy(hWnd);
-
-		// サブクラスを解除する
-		::RemoveWindowSubclass(hWnd, &SubclassProc, uIdSubclass);
-
-		// 元のウィンドウプロシージャへ転送する
-		return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
-	}
-
-	// メッセージを配送する
-	return pcWnd->DispatchEvent(hWnd, uMsg, wParam, lParam);
-}
-
 /*!
  * @brief 指定したウィンドウハンドルをこのクラスに紐付ける
  */
@@ -93,7 +45,7 @@ bool CDropTargetWnd::AttachDropTarget(
 	const auto hWnd = pThis->GetHwnd();
 
 	// ウィンドウをサブクラス化する
-	if (!::SetWindowSubclass(hWnd, &SubclassProc, 0, DWORD_PTR(this))) return false;
+	if (!AttachWnd(hWnd)) return false;
 
 	// ウィンドウハンドルを紐付ける
 	m_hWnd = hWnd;
@@ -138,39 +90,21 @@ void CDropTargetWnd::RevokeDropTarget() noexcept
 }
 
 /*!
- * @brief 拡張ウィンドウのメッセージ配送
- *
- * @param hWndDlg [in] 宛先ウィンドウのハンドル
- * @param uMsg [in] メッセージコード
- * @param wParam [in, opt] 第1パラメーター
- * @param lParam [in, opt] 第2パラメーター
- *
- * @returns  メッセージ処理結果。値の意味はメッセージ依存。
- *
- * @note 戻り値0は「処理済み」を示すことが多いが、実装時に確認すること。
- */
-LRESULT CDropTargetWnd::DispatchEvent(
-	HWND hWnd,
-	UINT uMsg,
-	WPARAM wParam,
-	LPARAM lParam
-)
-{
-	//あとはデフォルトに任せる
-	return ::DefSubclassProc(hWnd, uMsg, wParam, lParam);
-}
-
-/*!
  * @brief WM_DESTROYハンドラ
  *
  * WM_DESTROYはDestroyWindow関数によるウインドウ破棄中にポストされます。
- * このメッセージに戻り値はありません。
+ *
+ * @param[in] hWnd 宛先ウィンドウのハンドル
+ *
+ * @returns このメッセージに戻り値はありません。
  */
 void CDropTargetWnd::OnDestroy(HWND hWnd)
 {
 	if (!hWnd) return;
 
 	RevokeDropTarget();
+
+	Base::OnDestroy(hWnd);
 }
 
 template bool CDropTargetWnd::AttachDropTarget<CEditWnd>(CEditWnd* pThis);
