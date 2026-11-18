@@ -1224,11 +1224,11 @@ void CGrepAgent::AppendResultIfDue( SGrepOutput& out, const wchar_t* pszKey, ULO
 {
 	// 2003.06.23 Moca リアルタイム表示のときは早めに表示
 	// データ検索のときファイルの合計が最大10MBを超えたら表示
-	if( out.pOutput->IsDrawing() && L'\0' != pszKey[0] ){
-		if( !grep::AddFileSizeKB( nWork, nFileSize ) ){
-			// 足すと 10MB を超える、または、ファイルが大きすぎる
-			nHitCountOld = -100; // 即表示
-		}
+	if( out.pOutput->IsDrawing() &&
+		L'\0' != pszKey[0] &&
+		!grep::AddFileSizeKB( nWork, nFileSize ) ){
+		// 足すと 10MB を超える、または、ファイルが大きすぎる(足せたときは nWork が増える)
+		nHitCountOld = -100; // 即表示
 	}
 	/* 結果出力 */
 	if( 0 < out.cmemMessage.GetStringLength() &&
