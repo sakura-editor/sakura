@@ -634,6 +634,7 @@ DWORD CGrepAgent::DoGrep(
 			if( !pcViewDst->MyGetClipboardData( cmemReplace, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: nullptr ) ){
 				this->m_bGrepRunning = false;
 				pcViewDst->m_bDoing_UndoRedo = false;
+				pcViewDst->SetUndoBuffer();
 				ErrorMessage( pcViewDst->m_hwndParent, LS(STR_DLGREPLC_CLIPBOARD) );
 				return 0;
 			}
@@ -840,6 +841,9 @@ DWORD CGrepAgent::DoGrep(
 			if( sGrepOption.bGrepHeader ){
 				AppendResult( *pcOutput, cmemMessage );
 			}
+			this->m_bGrepRunning = false;
+			pcViewDst->m_bDoing_UndoRedo = false;
+			pcViewDst->SetUndoBuffer();
 			return 0;
 		}else if( 0 == nHwndRet ){
 			{
