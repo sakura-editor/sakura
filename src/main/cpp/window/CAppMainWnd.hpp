@@ -48,6 +48,14 @@ public:
 
 	CMenuDrawer&	GetMenuDrawer() noexcept { return m_cMenuDrawer; }
 
+	int TrackPopupMenu(
+		HMENU hMenu,
+		UINT uFlags,
+		LONG x,
+		LONG y,
+		HWND hWnd
+	) const;
+
 	HINSTANCE		m_hInstance;
 	HWND			m_hWnd = nullptr;
 
