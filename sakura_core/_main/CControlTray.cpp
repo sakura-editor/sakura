@@ -1499,6 +1499,43 @@ BOOL CControlTray::CloseAllEditor(
 	return bRes;
 }
 
+/*!
+ * @brief ポップアップメニューを表示する
+ *
+ * @param[in] hMenu メニューのハンドル
+ * @param[in] uFlags メニューの表示方法
+ */
+int CControlTray::TrackPopupMenu(
+	HMENU hMenu,
+	UINT uFlags
+) const
+{
+	POINT pt{};
+	::GetCursorPos(&pt);
+
+	const auto cyDrag = GetSystemMetrics(SM_CYDRAG);
+	pt.y -= cyDrag;
+
+	const auto hWnd = GetHwnd();
+
+	::SetForegroundWindow(hWnd);
+
+	const auto nId = Base::TrackPopupMenu(
+		hMenu,
+		uFlags
+		| TPM_RETURNCMD		//選択されたメニューIDを戻り値で返す
+		| TPM_LEFTBUTTON	//（あれば）左側にメニューアイコン
+		,
+		pt.x,
+		pt.y,
+		hWnd
+	);
+
+	::PostMessageW(hWnd, WM_USER + 1, 0, 0);
+
+	return nId;
+}
+
 /*! ポップアップメニュー(トレイ左ボタン) */
 int	CControlTray::CreatePopUpMenu_L( void )
 {
@@ -1589,26 +1626,15 @@ int	CControlTray::CreatePopUpMenu_L( void )
 	//	Jun. 9, 2001 genta ソフトウェア名改称
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );	//Dec. 26, 2000 JEPRO F_に変更
 
-	POINT pt{};
-	::GetCursorPos(&pt);
-	pt.y -= 4;
+	// メニューハンドルをスマートポインターに入れる
+	MenuHolder menuHolder{ hMenuTop };
 
-	::SetForegroundWindow( GetTrayHwnd() );
-	nId = Base::TrackPopupMenu(
+	// ポップアップメニューを表示する
+	nId = TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
-		| TPM_RETURNCMD
-		| TPM_LEFTBUTTON
-		/*| TPM_RIGHTBUTTON*/
-		,
-		pt.x,
-		pt.y,
-		GetHwnd()
 	);
-	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
-	::DestroyMenu( hMenuTop );
-//	MYTRACE( L"nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 
@@ -1648,26 +1674,15 @@ int	CControlTray::CreatePopUpMenu_R( void )
 	//	Jun. 18, 2001 genta ソフトウェア名改称
 	m_cMenuDrawer.MyAppendMenu( hMenu, MF_BYPOSITION | MF_STRING, F_EXITALL, L"", L"X", FALSE );
 
-	POINT pt{};
-	::GetCursorPos(&pt);
-	pt.y -= 4;
+	// メニューハンドルをスマートポインターに入れる
+	MenuHolder menuHolder{ hMenuTop };
 
-	::SetForegroundWindow( GetTrayHwnd() );
-	nId = Base::TrackPopupMenu(
+	// ポップアップメニューを表示する
+	nId = TrackPopupMenu(
 		hMenu,
 		TPM_BOTTOMALIGN
 		| TPM_RIGHTALIGN
-		| TPM_RETURNCMD
-		| TPM_LEFTBUTTON
-		/*| TPM_RIGHTBUTTON*/
-		,
-		pt.x,
-		pt.y,
-		GetHwnd()
 	);
-	::PostMessageAny( GetTrayHwnd(), WM_USER + 1, 0, 0 );
-	::DestroyMenu( hMenuTop );
-//	MYTRACE( L"nId=%d\n", nId );
 
 	m_bUseTrayMenu = false;
 

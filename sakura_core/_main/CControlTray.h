@@ -27,9 +27,11 @@
 #define SAKURA_CCONTROLTRAY_E9E24D69_3511_4EC1_A29A_1D119F68004A_H_
 #pragma once
 
-#include <Windows.h>
+#include "cxx/ResourceHolder.hpp"
 #include "dlg/CDlgGrep.h" // 2002/2/10 aroka
 #include "window/CAppMainWnd.hpp"
+
+#include <Windows.h>
 
 struct SLoadInfo;
 struct EditInfo;
@@ -44,6 +46,8 @@ struct EditInfo;
 class CControlTray final : public CAppMainWnd
 {
 private:
+	using MenuHolder = cxx::ResourceHolder<&::DestroyMenu>;
+
 	using Base = CAppMainWnd;
 
 	/*!
@@ -129,6 +133,11 @@ private:
 	bool	OnGetTypeSetting(size_t index);
 	bool	OnAddTypeSetting(size_t index);
 	bool	OnDelTypeSetting(size_t index);
+
+	int TrackPopupMenu(
+		HMENU hMenu,
+		UINT uFlags
+	) const;
 
 public:	// テストできないのでアクセス権変更
 	/*
