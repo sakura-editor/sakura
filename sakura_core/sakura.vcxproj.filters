@@ -289,6 +289,9 @@
     <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp">
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\sync\ProcessHolder.hpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\cpp\window\CAppMainWnd.hpp">
       <Filter>Cpp Source Files\window</Filter>
     </ClInclude>
@@ -1409,6 +1412,9 @@
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\sync\MutexHandle.cpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\sync\ProcessHolder.cpp">
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\window\CAppMainWnd.cpp">

@@ -29,6 +29,7 @@
 #include "util/os.h"
 #include "util/sync/HandleHolder.hpp"
 #include "util/sync/MutexHandle.hpp"
+#include "util/sync/ProcessHolder.hpp"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
 #include "version.h"
@@ -990,6 +991,39 @@ TEST_F(Kernel32, MutexHandleCreateMutexW101)
 
 	// 想定されたエラーコードが設定されていること
 	EXPECT_THAT(::GetLastError(), ERROR_ALREADY_EXISTS);
+}
+
+TEST_F(Kernel32, ProcessHolderCreateProcessW101)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	const auto exePath = GetExeFileName();
+	std::wstring emptyStr{};
+	const auto currentDir = cxx::GetCurrentDirectoryW();
+	STARTUPINFO si{};
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([&] {
+			ProcessHolder::CreateProcessW(
+				exePath,
+				emptyStr,
+				CREATE_DEFAULT_ERROR_MODE,
+				currentDir.c_str(),
+				si
+			);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("CreateProcessW() failed"))
+	);
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)
