@@ -95,5 +95,12 @@ bool WaitForMultipleObjects(
 	);
 }
 
+DWORD MsgWaitForMultipleObjects(
+	std::span<const HANDLE> handles,
+	bool waitAll,
+	DWORD timeout,
+	DWORD wakeMask
+);
+
 } // namespace cxx
 

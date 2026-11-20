@@ -25,6 +25,14 @@ struct User32 : public TSakuraSingleton<User32>
 		_In_ WORD wLanguageId
 	) const;
 
+	virtual DWORD MsgWaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_opt_(nCount) CONST HANDLE* pHandles,
+		_In_ BOOL fWaitAll,
+		_In_ DWORD dwMilliseconds,
+		_In_ DWORD dwWakeMask
+	) const;
+
 	virtual BOOL TrackPopupMenu(
 		_In_ HMENU hMenu,
 		_In_ UINT uFlags,

@@ -8,6 +8,7 @@
 #include "util/sync/HandleHolder.hpp"
 
 #include "util/os/Kernel32.hpp"
+#include "util/os/User32.hpp"
 #include "util/os/make_system_error.hpp"
 #include "util/os/ntstatus_category.hpp"
 
@@ -73,6 +74,50 @@ bool WaitForMultipleObjects(
 			int(dwRet),
 			ntstatus_category(),
 			"WaitForMultipleObjects() failed"
+		);
+	}
+
+	return dwRet;
+}
+
+DWORD MsgWaitForMultipleObjects(
+	std::span<const HANDLE> handles,
+	bool waitAll,
+	DWORD timeout,
+	DWORD wakeMask
+)
+{
+	const auto dwRet = User32::getInstance()->MsgWaitForMultipleObjects(
+		DWORD(std::size(handles)),
+		std::data(handles),
+		waitAll,
+		timeout,
+		wakeMask
+	);
+
+	const auto count = DWORD(std::size(handles));
+
+	bool bRet = false;
+
+	for (DWORD i = 0; i < count; ++i)
+	{
+		if (WAIT_OBJECT_0 + i == dwRet ||
+			WAIT_ABANDONED + i == dwRet)
+		{
+			bRet = true;
+			break;
+		}
+	}
+
+	if (!bRet &&
+		WAIT_OBJECT_0 + count != dwRet &&
+		WAIT_TIMEOUT != dwRet)
+	{
+		// システムエラー例外を発生させる
+		throw std::system_error(
+			int(dwRet),
+			ntstatus_category(),
+			"MsgWaitForMultipleObjects() failed"
 		);
 	}
 

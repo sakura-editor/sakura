@@ -37,6 +37,7 @@
 #include "window/EditorTestSuite.hpp"
 #include "util/os/MockBcrypt.hpp"
 #include "util/os/MockKernel32.hpp"
+#include "util/os/MockUser32.hpp"
 
 #include <fstream>
 
@@ -1420,6 +1421,71 @@ TEST_F(Kernel32, OpenExisting103)
 	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, 0, nullptr))
 		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));		// 指定ファイル作成失敗
 	EXPECT_THROW(FileHandle::OpenExisting(fileName, dwDesiredAccess, dwShareMode), std::system_error);
+}
+
+/*!
+ * User32のAPI呼出テスト
+ */
+struct User32 : public ::testing::Test {
+	using Target = ::User32;
+
+	void SetUp() override
+	{
+		Target::setInstance<MockUser32>();
+		pUser32 = static_cast<MockUser32*>(Target::getInstance());
+	}
+
+	void TearDown() override
+	{
+		Target::resetInstance();
+	}
+
+	MockUser32* pUser32 = nullptr;
+};
+
+TEST_F(User32, MsgWaitForMultipleObjects001)
+{
+	std::array handles{ HANDLE(nullptr) };
+
+	EXPECT_CALL(*pUser32, MsgWaitForMultipleObjects(1, std::data(handles), FALSE, 100, QS_SENDMESSAGE))
+		.WillOnce(Return(WAIT_OBJECT_0 + DWORD(std::size(handles))))
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_THAT(
+		cxx::MsgWaitForMultipleObjects(handles, false, 100, QS_SENDMESSAGE),
+		Eq(WAIT_OBJECT_0 + DWORD(std::size(handles)))
+	);
+
+	EXPECT_THAT(
+		cxx::MsgWaitForMultipleObjects(handles, false, 100, QS_SENDMESSAGE),
+		Eq(WAIT_TIMEOUT)
+	);
+}
+
+TEST_F(User32, MsgWaitForMultipleObjects101)
+{
+	EXPECT_CALL(*pUser32, MsgWaitForMultipleObjects(_, _, _, _, _))
+		.WillOnce(Return(WAIT_FAILED));
+
+	EXPECT_THAT(([] {
+			std::array handles{ HANDLE(nullptr) };
+			cxx::MsgWaitForMultipleObjects(handles, false, 15000, QS_SENDMESSAGE);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("MsgWaitForMultipleObjects() failed"))
+	);
+}
+
+TEST_F(User32, TrackPopupMenu001)
+{
+	Target::getInstance()->TrackPopupMenu(
+		HMENU(nullptr),
+		0,
+		0,
+		0,
+		0,
+		nullptr,
+		nullptr
+	);
 }
 
 /*!
