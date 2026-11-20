@@ -55,6 +55,8 @@ HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>&
 
 [[noreturn]] void OnTerminated();
 
+std::wstring QuoteArg(const std::wstring_view arg);
+
 template<class T>
 concept DataAndSizeAccessible = requires(const T& value) {
 	std::data(value);
@@ -151,69 +153,6 @@ public:
 namespace testing {
 
 /*!
- * @brief コマンドライン引数を引用符で囲む
- *
- * @param arg [in] コマンドライン引数
- * @return 引用符で囲まれたコマンドライン引数
- */
-std::wstring QuoteArg(const std::wstring_view arg)
-{
-	const auto endsWithQuote = arg.ends_with(LR"(")");
-	const auto containsQuotes = std::wstring_view::npos != arg.find_first_of(LR"(")");
-	if (const auto needsEscape = std::wstring_view::npos != arg.find_first_of(L"\t ");
-		!endsWithQuote && containsQuotes)
-	{
-		return std::format(LR"("{:s}")", std::regex_replace(arg.data(), std::wregex(LR"(")"), LR"("")"));
-	}
-	else if (!endsWithQuote && needsEscape)
-	{
-		return std::format(LR"("{:s}")", arg);
-	}
-	else
-	{
-		return std::wstring(arg);
-	}
-}
-
-/*!
- * @brief サクラエディタのプロセスを起動する
- *
- * @param si スタートアップ情報
- * @param args コマンドライン引数
- * @param optWorkingDir カレントディレクトリ（省略した場合は起動元と同じ）
- * @param optProfileName プロファイル名（省略した場合は指定なし）
- * @return 起動したプロセスオブジェクト
- * @note 使い物になるかどうか試作してみた
- */
-cxx::ProcessHolder CreateSakuraProcess(
-	STARTUPINFO& si,
-	std::vector<std::wstring>& args,
-	const std::optional<std::filesystem::path>& optWorkingDir = std::nullopt,
-	const std::optional<std::wstring_view>& optProfileName = std::nullopt,
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE
-)
-{
-	const auto exePath = GetExeFileName();
-
-	if (optProfileName.has_value()) {
-		args.emplace(args.begin(), std::format(LR"(-PROF="{}")", *optProfileName));
-	}
-
-	args.emplace(args.begin(), std::format(LR"("{:s}")", exePath.native()));
-
-	auto strCommandLine = std::accumulate(args.begin(), args.end(), std::wstring(), [](const std::wstring& a, std::wstring_view b) { return std::format(LR"({} {})", a, QuoteArg(b)); });
-	strCommandLine.erase(strCommandLine.cbegin());	// 先頭のスペースを削除
-
-	return cxx::ProcessHolder::CreateProcessW(
-		exePath,
-		strCommandLine,
-		dwCreationFlag,
-		optWorkingDir,
-		si
-	);
-}
-
-/*!
  * @brief コントロールプロセスを起動する
  *
  * @param profileName プロファイル名
@@ -222,36 +161,8 @@ cxx::ProcessHolder CreateSakuraProcess(
  */
 cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 {
-	// 初期化完了イベントの名前を決める
-	SFilePath initEventName{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
-	initEventName += profileName;
-
-	// プロセス起動前に初期化完了イベントを作成する
-	cxx::HandleHolder hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
-	if (!hEvent || ERROR_ALREADY_EXISTS == ::GetLastError()) {
-		throw cxx::make_system_error("create event failed.");
-	}
-
-	std::wstring title{ L"sakura control process" };
-
-	// スタートアップ情報（入力用構造体なので値を入れる）
-	STARTUPINFO si = { sizeof(STARTUPINFO) };
-	si.dwFlags = STARTF_USESHOWWINDOW;
-	si.lpTitle = std::data(title);
-	si.wShowWindow = SW_SHOWDEFAULT;
-
-	std::vector<std::wstring> commandArgs{ LR"(-NOWIN)" };
-
 	// コントロールプロセスを起動する
-	auto cp = CreateSakuraProcess(si, commandArgs, cxx::GetSystemDirectoryW(), profileName);
-	EXPECT_THAT(cp, NotNull());
-
-	// 初期化完了を待つ
-	std::array handles{ hEvent.get(), cp.get() };
-	cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(15));
-
-	// プロセスオブジェクトを返す
-	return cxx::ProcessHolder{ cp.release(), cp.dwProcessId, cp.dwThreadId };
+	return cxx::ProcessHolder::CreateControlProcess(profileName);
 }
 
 /*!
@@ -280,11 +191,13 @@ cxx::ProcessHolder CreateSakuraProcess(
 	si.wShowWindow = SW_SHOWDEFAULT;
 
 	// エディタープロセスを起動する
-	auto ep = CreateSakuraProcess(si, commandArgs, std::nullopt, profileName, dwCreationFlag);
-	EXPECT_THAT(ep, NotNull());
-
-	// プロセスオブジェクトを返す
-	return cxx::ProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId };
+	return cxx::ProcessHolder::CreateSakuraProcess(
+		profileName,
+		commandArgs,
+		dwCreationFlag,
+		std::nullopt,
+		si
+	);
 }
 
 /*!
@@ -343,7 +256,13 @@ cxx::EditorProcessHolder CreateEditorProcess(
 	if (sync) dwCreationFlag |= CREATE_SUSPENDED;
 
 	// エディタープロセスを起動する
-	auto ep = CreateSakuraProcess(si, commandArgs, std::nullopt, profileName, dwCreationFlag);
+	auto ep = cxx::ProcessHolder::CreateSakuraProcess(
+		commandArgs,
+		dwCreationFlag,
+		std::nullopt,
+		si,
+		profileName
+	);
 	EXPECT_THAT(ep, NotNull());
 
 	if (!sync) return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, HWND(nullptr) };
@@ -481,6 +400,40 @@ TEST(OnTerminated, test101)
 		::testing::ExitedWithCode(static_cast<int>(EAppExitCode::Terminated)),
 		".*"
 	);
+}
+
+/*!
+ * !endsWithQuote && containsQuotes
+ * 引用符で終わらず、引用符を含む引数は囲む（引用符は二重化される）
+ */
+TEST(QuoteArg, test001)
+{
+	EXPECT_THAT(cxx::QuoteArg(LR"(途中に"を含む)"), StrEq(LR"("途中に""を含む")"));
+}
+
+/*!
+ * !endsWithQuote && needsEscape
+ * 引用符で終わらず、空白を含む引数は囲む
+ */
+TEST(QuoteArg, test002)
+{
+	EXPECT_THAT(cxx::QuoteArg(LR"(途中に を含む)"), StrEq(LR"("途中に を含む")"));
+}
+
+/*!
+ * 空白を含まない引数は囲まない
+ */
+TEST(QuoteArg, test003)
+{
+	EXPECT_THAT(cxx::QuoteArg(LR"(-PROF=profile1)"), StrEq(LR"(-PROF=profile1)"));
+}
+
+/*!
+ * 空白を含んでいても引用符で終わる引数は囲まない
+ */
+TEST(QuoteArg, test004)
+{
+	EXPECT_THAT(cxx::QuoteArg(LR"( -PROF="profile1")"), StrEq(LR"( -PROF="profile1")"));
 }
 
 /*!

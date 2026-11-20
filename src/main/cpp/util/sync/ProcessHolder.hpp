@@ -26,12 +26,24 @@ private:
 	using Me = ProcessHolder;
 
 public:
+	static Me CreateControlProcess(
+		const std::optional<std::wstring_view>& optProfileName = std::nullopt
+	);
+
 	static Me CreateProcessW(
 		const std::filesystem::path& exePath,
 		std::wstring& strCommandLine,
 		DWORD dwCreationFlag,
 		const std::optional<std::filesystem::path>& optWorkingDir,
 		STARTUPINFO& si
+	);
+
+	static Me CreateSakuraProcess(
+		std::vector<std::wstring>& args,
+		DWORD dwCreationFlag,
+		const std::optional<std::filesystem::path>& optWorkingDir,
+		STARTUPINFO& si,
+		const std::optional<std::wstring_view>& optProfileName = std::nullopt
 	);
 
 	ProcessHolder(
