@@ -14,6 +14,8 @@
 
 namespace cxx {
 
+class EditorProcessHolder;
+
 /*!
  * @brief 起動したプロセスをラップするクラス
  *
@@ -27,6 +29,13 @@ private:
 
 public:
 	static Me CreateControlProcess(
+		const std::optional<std::wstring_view>& optProfileName = std::nullopt
+	);
+
+	static EditorProcessHolder CreateEditorProcess(
+		std::vector<std::wstring>& args,
+		const std::optional<std::filesystem::path>& optWorkingDir = std::nullopt,
+		bool sync = true,
 		const std::optional<std::wstring_view>& optProfileName = std::nullopt
 	);
 

@@ -31,6 +31,7 @@
 #include "env/CSakuraEnvironment.h"
 #include "util/file.h"
 #include "util/os/make_system_error.hpp"
+#include "util/sync/EditorProcessHolder.hpp"
 #include "util/sync/HandleHolder.hpp"
 #include "util/sync/ProcessHolder.hpp"
 #include "config/system_constants.h"
@@ -116,38 +117,6 @@ void writeTextFile(
 	fos.close();
 }
 
-/*!
- * @brief 起動したエディタープロセスオブジェクト
- *
- * @note 使い物になるかどうか試作してみた
- */
-class EditorProcessHolder : public cxx::ProcessHolder
-{
-private:
-	using Base = cxx::ProcessHolder;
-	using Me = EditorProcessHolder;
-
-public:
-	explicit EditorProcessHolder(
-		HANDLE hProcess,
-		DWORD dwProcessId,
-		DWORD dwThreadId,
-		HWND hWnd
-	)
-		: Base(hProcess, dwProcessId, dwThreadId)
-		, hWnd(hWnd)
-	{
-	}
-
-	EditorProcessHolder(const Me&) = delete;
-	Me& operator=(const Me&) = delete;
-
-	EditorProcessHolder(Me&& other) noexcept = default;
-	Me& operator=(Me&& rhs) noexcept = default;
-
-	HWND hWnd;
-};
-
 } // namespace cxx
 
 namespace testing {
@@ -163,63 +132,6 @@ cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 {
 	// コントロールプロセスを起動する
 	return cxx::ProcessHolder::CreateControlProcess(profileName);
-}
-
-/*!
- * @brief プロセスを起動する
- *
- * @tparam T コマンドライン引数のコンテナ型
- * @param args コマンドライン引数
- * @param profileName プロファイル名
- * @return 起動したプロセスオブジェクト
- * @note 使い物になるかどうか試作してみた
- */
-template<class T>
-	requires std::ranges::range<T> && std::convertible_to<std::ranges::range_reference_t<T>, std::wstring_view>
-cxx::ProcessHolder CreateSakuraProcess(
-	const T& args,
-	std::wstring_view profileName,
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE
-)
-{
-	// コマンドライン引数の編集用vector
-	std::vector<std::wstring> commandArgs{ std::begin(args), std::end(args) };
-
-	// スタートアップ情報（入力用構造体なので値を入れる）
-	STARTUPINFO si = { sizeof(STARTUPINFO) };
-	si.dwFlags = STARTF_USESHOWWINDOW;
-	si.wShowWindow = SW_SHOWDEFAULT;
-
-	// エディタープロセスを起動する
-	return cxx::ProcessHolder::CreateSakuraProcess(
-		profileName,
-		commandArgs,
-		dwCreationFlag,
-		std::nullopt,
-		si
-	);
-}
-
-/*!
- * @brief 編集ウィンドウを列挙するコールバック関数
- *
- * @param hWnd 列挙されたウィンドウのハンドル
- * @param lParam 列挙の呼び出し元から渡されたパラメータ（HWND* を期待）
- * @retval TRUE 列挙続行（編集ウィンドウではなかった。）
- * @retval FALSE 列挙停止（編集ウィンドウが見付かった。）
- */
-BOOL CALLBACK EnumEditorWindowProc(
-	_In_ HWND   hWnd,
-	_In_ LPARAM lParam
-)
-{
-	if (!hWnd || !lParam || !IsSakuraMainWindow(hWnd)) return TRUE;	// 検索続行
-
-	auto phWndFound = std::bit_cast<HWND*>(lParam);
-
-	*phWndFound = hWnd;
-
-	return FALSE;
 }
 
 /*!
@@ -242,80 +154,13 @@ cxx::EditorProcessHolder CreateEditorProcess(
 	// コマンドライン引数の編集用vector
 	std::vector<std::wstring> commandArgs{ std::begin(args), std::end(args) };
 
-	// コマンドラインに -CODE 指定がない場合は付与する
-	if (const auto found = std::ranges::find_if(args, [](const std::wstring& arg) { return std::regex_match(arg, std::wregex(LR"(\s*-CODE.*)", std::wregex::icase)); }); found == args.end()) {
-		commandArgs.emplace_back(std::format(LR"(-CODE={})", static_cast<int>(CODE_AUTODETECT)));
-	}
-
-	// スタートアップ情報（入力用構造体なので値を入れる）
-	STARTUPINFO si = { sizeof(STARTUPINFO) };
-	si.dwFlags = STARTF_USESHOWWINDOW;
-	si.wShowWindow = SW_SHOWDEFAULT;
-
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
-	if (sync) dwCreationFlag |= CREATE_SUSPENDED;
-
 	// エディタープロセスを起動する
-	auto ep = cxx::ProcessHolder::CreateSakuraProcess(
+	return cxx::ProcessHolder::CreateEditorProcess(
 		commandArgs,
-		dwCreationFlag,
 		std::nullopt,
-		si,
+		sync,
 		profileName
 	);
-	EXPECT_THAT(ep, NotNull());
-
-	if (!sync) return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, HWND(nullptr) };
-
-	// エディターのメインスレッドを開く
-	cxx::HandleHolder hThread{ ::OpenThread(THREAD_SUSPEND_RESUME, FALSE, ep.dwThreadId) };
-
-	const bool isGrepMode = std::ranges::any_of(commandArgs, [] (std::wstring_view opt) {
-		return cxx::iequals(opt, L"-GREPMODE")
-			|| cxx::iequals(opt, L"-GREPDLG");
-	});
-
-	// 初期化完了イベントを作成する
-	SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, ep.dwThreadId) };
-	cxx::HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
-
-	cxx::HandleHolder grepEvent{};
-
-	if (isGrepMode) {
-		// Grep完了イベントを作成する
-		SFilePath grepEventName{ std::format(GSTR_EVENT_SAKURA_GREP_COMPLETED, ep.dwThreadId) };
-		grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
-	}
-
-	// エディターのメインスレッドを再開する
-	::ResumeThread(hThread);
-
-	// エディター初期化完了を待つ
-	std::array handles{ hEvent.get(), ep.get() };
-	if (const auto dwRet = cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(30));
-		WAIT_OBJECT_0 != dwRet)
-	{
-		return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
-	}
-
-	if (isGrepMode) {
-		// Grep完了を待つ
-		std::array grepHandles{ grepEvent.get(), ep.get() };
-		if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(grepHandles)), std::data(grepHandles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
-			return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
-		}
-	}
-
-	// メインウインドウを取得する
-	HWND hWndFound = nullptr;
-
-	// スレッドに含まれるウインドウを列挙する
-	::EnumThreadWindows(ep.dwThreadId, EnumEditorWindowProc, LPARAM(&hWndFound));
-
-	EXPECT_THAT(hWndFound, NotNull());
-
-	// プロセスオブジェクトを返す
-	return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, hWndFound };
 }
 
 //! 外部ウインドウにクローズを要求する
@@ -1435,8 +1280,11 @@ TEST_F(WinMainFuncTest, CreateEditorProcess102)
  *  プログラムが起動する正常ルートに潜む障害を検出するためのもの。
  *  エディター起動の失敗をテストする。
  */
-TEST_F(WinMainFuncTest, DISABLED_CreateEditorProcess103)
+TEST_F(WinMainFuncTest, CreateEditorProcess103)
 {
+	// コントロールプロセスに終了指示を出して終了を待つ
+	testing::TerminateControlProcess(L"");
+
 	// テスト用プロファイル名
 	const auto profileName{ GetProfileName() };
 
