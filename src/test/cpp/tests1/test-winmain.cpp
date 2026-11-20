@@ -308,7 +308,7 @@ cxx::ProcessHolder CreateControlProcess(std::wstring_view profileName)
 
 	// 初期化完了を待つ
 	std::array handles{ hEvent.get(), cp.get() };
-	::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000);
+	cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(15));
 
 	// プロセスオブジェクトを返す
 	return cxx::ProcessHolder{ cp.release(), cp.dwProcessId, cp.dwThreadId };
@@ -433,7 +433,9 @@ cxx::EditorProcessHolder CreateEditorProcess(
 
 	// エディター初期化完了を待つ
 	std::array handles{ hEvent.get(), ep.get() };
-	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 30000); WAIT_OBJECT_0 != dwRet) {
+	if (const auto dwRet = cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(30));
+		WAIT_OBJECT_0 != dwRet)
+	{
 		return cxx::EditorProcessHolder{ ep.release(), ep.dwProcessId, ep.dwThreadId, nullptr };
 	}
 

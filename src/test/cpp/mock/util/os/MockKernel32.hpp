@@ -149,6 +149,14 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
 	));
+	
+	MOCK_CONST_METHOD4(WaitForMultipleObjects, DWORD(
+		_In_ DWORD nCount,
+		_In_reads_(nCount)
+		CONST HANDLE* lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
+	));
 
 	MOCK_CONST_METHOD2(WaitForSingleObject, DWORD(
 		_In_ HANDLE hHandle,
@@ -256,6 +264,13 @@ struct MockKernel32 final : public Kernel32
 	static DWORD _SizeofResource(
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
+	);
+
+	static DWORD _WaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_( nCount ) CONST HANDLE * lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
 	);
 
 	static DWORD _WaitForSingleObject(

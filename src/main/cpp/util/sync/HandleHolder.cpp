@@ -41,6 +41,44 @@ DWORD WaitForSingleObject(
 	return dwRet;
 }
 
+bool WaitForMultipleObjects(
+	std::span<const HANDLE> handles,
+	bool waitAll,
+	DWORD timeout
+)
+{
+	const auto dwRet = Kernel32::getInstance()->WaitForMultipleObjects(
+		DWORD(std::size(handles)),
+		std::data(handles),
+		waitAll,
+		timeout
+	);
+
+	bool bRet = false;
+
+	for (int i = 0; i < std::ssize(handles); ++i)
+	{
+		if (WAIT_OBJECT_0 + i == dwRet ||
+			WAIT_ABANDONED + i == dwRet)
+		{
+			bRet = true;
+			break;
+		}
+	}
+
+	if (!bRet)
+	{
+		// システムエラー例外を発生させる
+		throw std::system_error(
+			int(dwRet),
+			ntstatus_category(),
+			"WaitForMultipleObjects() failed"
+		);
+	}
+
+	return dwRet;
+}
+
 bool HandleHolder::Lock(
 	DWORD dwTimeout
 )

@@ -226,6 +226,21 @@
 	);
 }
 
+/* static */ DWORD MockKernel32::_WaitForMultipleObjects(
+	_In_ DWORD nCount,
+	_In_reads_( nCount ) CONST HANDLE* lpHandles,
+	_In_ BOOL bWaitAll,
+	_In_ DWORD dwMilliseconds
+)
+{
+	return ::WaitForMultipleObjects(
+		nCount,
+		lpHandles,
+		bWaitAll,
+		dwMilliseconds
+	);
+}
+
 /* static */ DWORD MockKernel32::_WaitForSingleObject(
 	_In_ HANDLE hHandle,
 	_In_ DWORD dwMilliseconds
@@ -254,5 +269,6 @@ MockKernel32::MockKernel32()
 	ON_CALL(*this, OpenFileMappingW(_, _, _)).WillByDefault(&_OpenFileMappingW);
 	ON_CALL(*this, SetCurrentDirectoryW(_)).WillByDefault(&_SetCurrentDirectoryW);
 	ON_CALL(*this, SizeofResource(_, _)).WillByDefault(&_SizeofResource);
+	ON_CALL(*this, WaitForMultipleObjects(_, _, _, _)).WillByDefault(&_WaitForMultipleObjects);
 	ON_CALL(*this, WaitForSingleObject(_, _)).WillByDefault(&_WaitForSingleObject);
 }

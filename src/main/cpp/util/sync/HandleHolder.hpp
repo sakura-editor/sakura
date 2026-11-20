@@ -73,5 +73,27 @@ DWORD WaitForSingleObject(
 	_In_ DWORD dwMilliseconds
 );
 
+bool WaitForMultipleObjects(
+	std::span<const HANDLE> handles,
+	bool waitAll,
+	DWORD timeout
+);
+
+template <class Rep, class Period>
+bool WaitForMultipleObjects(
+	std::span<const HANDLE> handles,
+	bool waitAll,
+	const std::chrono::duration<Rep, Period>& timeout
+)
+{
+	const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(timeout);
+
+	return WaitForMultipleObjects(
+		handles,
+		waitAll,
+		DWORD(milliseconds.count())
+	);
+}
+
 } // namespace cxx
 

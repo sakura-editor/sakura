@@ -270,6 +270,21 @@ DWORD Kernel32::SizeofResource(
 	);
 }
 
+DWORD Kernel32::WaitForMultipleObjects(
+	_In_ DWORD nCount,
+	_In_reads_( nCount ) CONST HANDLE* lpHandles,
+	_In_ BOOL bWaitAll,
+	_In_ DWORD dwMilliseconds
+) const
+{
+	return ::WaitForMultipleObjects(
+		nCount,
+		lpHandles,
+		bWaitAll,
+		dwMilliseconds
+	);
+}
+
 DWORD Kernel32::WaitForSingleObject(
 	_In_ HANDLE hHandle,
 	_In_ DWORD dwMilliseconds

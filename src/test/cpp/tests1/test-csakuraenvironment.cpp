@@ -1306,6 +1306,21 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 	);
 }
 
+TEST_F(Kernel32, WaitForMultipleObjects101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, WaitForMultipleObjects(_, _, _, _))
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			std::array handles{ (HANDLE)nullptr };
+			cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(15));
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("WaitForMultipleObjects() failed"))
+	);
+}
+
 TEST_F(Kernel32, CreateNew101)
 {
 	constexpr auto& fileName = L"tests1.ini";

@@ -143,6 +143,13 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_ HRSRC hResInfo
 	) const;
 
+	virtual DWORD WaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_( nCount ) CONST HANDLE * lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
+	) const;
+
 	virtual DWORD WaitForSingleObject(
 		_In_ HANDLE hHandle,
 		_In_ DWORD dwMilliseconds
