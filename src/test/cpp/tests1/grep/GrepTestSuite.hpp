@@ -15,6 +15,7 @@
 #include "_main/CCommandLine.h"
 #include "agent/CGrepAgent.h"
 #include "basis/GrepInfo.h"
+#include "cmd/CViewCommander_inline.h"	// GetOpeBlk
 #include "basis/primitive.h"
 #include "charset/charset.h"
 #include "doc/CEditDoc.h"
@@ -309,6 +310,9 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 
 	void TearDown() override
 	{
+		// 製品のコードが残した状態は、戻す前に確かめて失敗にする(後始末で隠さない)
+		ExpectGrepCleanedUp();
+
 		// デバッグ用: 失敗したテストでは、Grep の結果の文書を出力する
 		if (HasFailure()) {
 			const auto utf8 = Encode(GetDocumentText(), CP_UTF8);
@@ -327,6 +331,32 @@ struct GrepTestSuite : public ::testing::Test, public window::EditorTestSuite, p
 		TearDownUia();
 
 		User32::resetInstance();
+	}
+
+	/*!
+		@brief Grep の後に片付いていることを確かめる
+
+		CGrepAgent::DoGrep() は、どの経路で戻っても、Grep 実行中のフラグ・出力先のビューの m_bDoing_UndoRedo・操作ブロックを戻す。
+		残っていたらテストを失敗にし、後のテストに残さないよう、ここで戻す。
+	*/
+	static void ExpectGrepCleanedUp()
+	{
+		auto pGrepAgent = CEditApp::getInstance()->m_pcGrepAgent;
+		if (pGrepAgent->m_bGrepRunning) {
+			ADD_FAILURE() << "m_bGrepRunning is left true.";
+			pGrepAgent->m_bGrepRunning = false;
+		}
+		auto& view = pcEditWnd->GetActiveView();
+		if (view.m_bDoing_UndoRedo) {
+			ADD_FAILURE() << "m_bDoing_UndoRedo is left true.";
+			view.m_bDoing_UndoRedo = false;
+		}
+		if (view.GetCommander().GetOpeBlk()) {
+			ADD_FAILURE() << "The operation block is left.";
+			while (view.GetCommander().GetOpeBlk()) {
+				view.SetUndoBuffer();
+			}
+		}
 	}
 
 	//! 文書を空・未編集・無題に戻す

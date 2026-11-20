@@ -11,8 +11,12 @@
 #include "grep/CGrepEnumFilterFiles.h"
 #include "grep/CGrepEnumFilterFolders.h"
 
+#include <algorithm>
+#include <cwctype>
 #include <filesystem>
 #include <fstream>
+
+#include <Shlwapi.h>
 
 namespace {
 
@@ -193,11 +197,22 @@ TEST(CGrepEnumFiles, SpecialCharactersInFileName)
 	@brief 短いファイル名(8.3形式)で一致しても、長いファイル名で一致しなければ列挙されないこと
 
 	FindFirstFile は短いファイル名にも一致するが、PathMatchSpec で長いファイル名を確かめ直している。
+	短いファイル名を作らないドライブでは確かめたい状況にならないので、結果の XML に記録して、確かめずに終える。
+	(GTEST_SKIP() は Visual Studio のテスト エクスプローラーで失敗の扱いになるので使わない)
 */
 TEST(CGrepEnumFiles, ShortNameDoesNotMatch)
 {
 	TempFolder folder;
 	folder.AddFile(L"a.html");
+
+	// 短いファイル名(A~1.HTM など)が *.htm に一致するかを先に確かめる
+	const auto path = folder.Path() / L"a.html";
+	std::wstring shortPath(MAX_PATH, L'\0');
+	shortPath.resize(::GetShortPathNameW(path.c_str(), shortPath.data(), DWORD(shortPath.size())));
+	if (!::PathMatchSpecW(shortPath.c_str(), L"*.htm")) {
+		RecordProperty("ShortName", "not created");
+		return;
+	}
 
 	CGrepEnumFiles files;
 	auto keys = Keys({ L"*.htm" });
@@ -387,6 +402,34 @@ TEST(CGrepEnumFilterFiles, ExceptAbsolutePath)
 }
 
 /*!
+	@brief 絶対パスの除外ファイルは、英大文字小文字の違うパスでも除外されること
+
+	ExceptAbsolutePath は、検索するフォルダーと除外のパスを同じ文字列から作るので、この違いを確かめられない。
+	今は除外の一覧とファイルのパスを文字列の完全一致で比べ、除外されないので DISABLED_ にしている。
+*/
+TEST(CGrepEnumFilterFiles, DISABLED_ExceptAbsolutePathIgnoresCase)
+{
+	TempFolder folder;
+	folder.AddFile(L"a.txt");
+	folder.AddFile(L"b.txt");
+
+	CGrepEnumKeys keys;
+	auto excludePath = (folder.Path() / L"a.txt").wstring();
+	std::ranges::transform(excludePath, excludePath.begin(), [](wchar_t ch) { return wchar_t(std::towupper(ch)); });
+	const std::wstring fileKeys = L"*;!\"" + excludePath + L"\"";
+	EXPECT_THAT(keys.SetFileKeys(fileKeys.c_str()), Eq(0));
+
+	CGrepEnumOptions options;
+	CGrepEnumFiles absExcept;
+	absExcept.Enumerates(L"", keys.m_vecExceptAbsFileKeys, options);
+	EXPECT_THAT(absExcept.GetCount(), Eq(1));	// 前提: 大文字にしたパスでもファイルは見つかる
+
+	CGrepEnumFilterFiles files;
+	files.Enumerates(folder.Path().c_str(), keys, options, absExcept);
+	EXPECT_THAT(Names(files), Eq(std::vector<std::wstring>{ L"b.txt" }));
+}
+
+/*!
 	@brief 絶対パスの除外ファイルにワイルドカードを使えること
 */
 TEST(CGrepEnumFilterFiles, ExceptAbsolutePathWithWildcard)
@@ -450,6 +493,33 @@ TEST(CGrepEnumFilterFolders, ExceptAbsolutePath)
 	CGrepEnumFolders absExcept;
 	absExcept.Enumerates(L"", keys.m_vecExceptAbsFolderKeys, options);
 	EXPECT_THAT(absExcept.GetCount(), Eq(1));
+
+	CGrepEnumFilterFolders folders;
+	folders.Enumerates(folder.Path().c_str(), keys, options, absExcept);
+	EXPECT_THAT(Names(folders), Eq(std::vector<std::wstring>{ L"src" }));
+}
+
+/*!
+	@brief 絶対パスの除外フォルダーは、英大文字小文字の違うパスでも除外されること
+
+	今は文字列の完全一致で比べ、除外されないので DISABLED_ にしている(除外ファイルと同じ)。
+*/
+TEST(CGrepEnumFilterFolders, DISABLED_ExceptAbsolutePathIgnoresCase)
+{
+	TempFolder folder;
+	folder.AddFolder(L"obj");
+	folder.AddFolder(L"src");
+
+	CGrepEnumKeys keys;
+	auto excludePath = (folder.Path() / L"obj").wstring();
+	std::ranges::transform(excludePath, excludePath.begin(), [](wchar_t ch) { return wchar_t(std::towupper(ch)); });
+	const std::wstring fileKeys = L"*;#\"" + excludePath + L"\"";
+	EXPECT_THAT(keys.SetFileKeys(fileKeys.c_str()), Eq(0));
+
+	CGrepEnumOptions options;
+	CGrepEnumFolders absExcept;
+	absExcept.Enumerates(L"", keys.m_vecExceptAbsFolderKeys, options);
+	EXPECT_THAT(absExcept.GetCount(), Eq(1));	// 前提: 大文字にしたパスでもフォルダーは見つかる
 
 	CGrepEnumFilterFolders folders;
 	folders.Enumerates(folder.Path().c_str(), keys, options, absExcept);

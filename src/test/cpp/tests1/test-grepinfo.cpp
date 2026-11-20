@@ -11,7 +11,14 @@
 #include "basis/GrepInfo.h"
 #include "_main/CCommandLine.h"
 #include "dlg/CDlgGrepReplace.h"
+#include "env/CDataProfile.h"
+#include "env/CShareData_IO.h"
 #include "grep/CGrepEnumKeys.h"
+
+#include <filesystem>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "window/EditorTestSuite.hpp"
 
@@ -547,4 +554,113 @@ TEST_F(CDlgGrepTest, MakeGrepInfo_ExceptFileRegexpRoundTrip)
 TEST_F(CDlgGrepTest, ShareDataDefault_ExceptFileRegexpIsOff)
 {
 	EXPECT_THAT(GetDllShareData().m_Common.m_sSearch.m_bGrepExceptFileRegexp, IsFalse());
+}
+
+/*!
+ * @brief 共有データの Grep セクションの入出力のテスト
+ *  履歴 4 種(対象ファイル・フォルダー・除外ファイル・除外フォルダー)を ini に書いて読み直すと、同じになること。
+ *  区切り文字・引用符・=・日本語・上限の長さの値も、そのまま戻る
+ */
+TEST_F(CDlgGrepTest, ShareDataIoGrep_RoundTrip)
+{
+	//! protected の入出力の関数を呼ぶための派生クラス
+	struct ShareDataIo : CShareData_IO {
+		using CShareData_IO::ShareData_IO_Grep;
+	};
+	//! 履歴を文字列の配列にする
+	const auto toVector = [](const auto& history) {
+		std::vector<std::wstring> values;
+		for (int i = 0; i < history.size(); ++i) {
+			values.emplace_back(history[size_t(i)].c_str());
+		}
+		return values;
+	};
+
+	auto& keywords = GetDllShareData().m_sSearchKeywords;
+	const auto saved = std::make_unique<SShare_SearchKeywords>(keywords);	// 後のテストに残さないよう、最後に戻す(大きいのでヒープに置く)
+
+	const std::vector<std::wstring> files{ L"*.cpp;*.h", LR"(*.*;#"obj,old";!"a b.txt")", L"テスト*.txt", std::wstring(MAX_GREP_PATH - 1, L'x') };
+	const std::vector<std::wstring> folders{ LR"(C:\a b)", LR"(C:\x;"C:\y;z")" };
+	const std::vector<std::wstring> excludeFiles{ L"a=b.txt", L"*.bak *.tmp" };
+	const std::vector<std::wstring> excludeFolders{ L".git;.svn", L"日本語" };
+	keywords.m_aGrepFiles.clear();
+	keywords.m_aGrepFolders.clear();
+	keywords.m_aExcludeFiles.clear();
+	keywords.m_aExcludeFolders.clear();
+	for (const auto& value : files) { keywords.m_aGrepFiles.push_back(value.c_str()); }
+	for (const auto& value : folders) { keywords.m_aGrepFolders.push_back(value.c_str()); }
+	for (const auto& value : excludeFiles) { keywords.m_aExcludeFiles.push_back(value.c_str()); }
+	for (const auto& value : excludeFolders) { keywords.m_aExcludeFolders.push_back(value.c_str()); }
+
+	const auto iniPath = std::filesystem::temp_directory_path() / L"sakura_test_grepinfo_io.ini";
+	{
+		CDataProfile cProfile;
+		cProfile.SetWritingMode();
+		ShareDataIo::ShareData_IO_Grep(cProfile);
+		EXPECT_THAT(cProfile.WriteProfile(iniPath), IsTrue());
+	}
+
+	keywords.m_aGrepFiles.clear();
+	keywords.m_aGrepFolders.clear();
+	keywords.m_aExcludeFiles.clear();
+	keywords.m_aExcludeFolders.clear();
+	{
+		CDataProfile cProfile;
+		cProfile.SetReadingMode();
+		EXPECT_THAT(cProfile.ReadProfile(iniPath), IsTrue());
+		ShareDataIo::ShareData_IO_Grep(cProfile);
+	}
+	EXPECT_THAT(toVector(keywords.m_aGrepFiles), Eq(files));
+	EXPECT_THAT(toVector(keywords.m_aGrepFolders), Eq(folders));
+	EXPECT_THAT(toVector(keywords.m_aExcludeFiles), Eq(excludeFiles));
+	EXPECT_THAT(toVector(keywords.m_aExcludeFolders), Eq(excludeFolders));
+
+	keywords = *saved;
+	std::error_code ec;
+	std::filesystem::remove(iniPath, ec);
+}
+
+/*!
+ * @brief CDlgGrep::MakeGrepInfo() から、新しいウィンドウのコマンドラインへの往復のテスト
+ *  ダイアログの設定から作った GrepInfo をコマンドラインにして解析すると、元と同じになること(空白・;・"・日本語・除外を含む)。
+ *  解析した対象ファイルを Grep の実行側で分けると、除外も元のとおりに分かれる
+ */
+TEST_F(CDlgGrepTest, MakeGrepInfo_CommandLineRoundTrip)
+{
+	CDlgGrep dlg;
+	dlg.m_strText = LR"(日本語 "key";x)";
+	dlg.m_szFile = LR"(*.cpp;"a b.h")";
+	dlg.m_szFolder = LR"(C:\a b;"C:\c;d")";
+	dlg.m_szExcludeFile = LR"("x y.txt" *.bak)";
+	dlg.m_szExcludeFolder = L"obj テスト";
+	dlg.m_bSubFolder = TRUE;
+
+	const GrepInfo gi = dlg.MakeGrepInfo();
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(gi.MakeCommandLine().c_str(), false);
+	const auto& parsed = cCommandLine.GetGrepInfoRef();
+	EXPECT_THAT(parsed == gi, IsTrue());
+
+	CGrepEnumKeys keys;
+	EXPECT_THAT(keys.SetFileKeys(parsed.cmGrepFile.GetStringPtr()), Eq(0));
+	EXPECT_THAT(keys.m_vecSearchFileKeys, (VGrepEnumKeys{ L"*.cpp", L"a b.h" }));
+	EXPECT_THAT(keys.m_vecExceptFileKeys, (VGrepEnumKeys{ L"x y.txt", L"*.bak" }));
+	EXPECT_THAT(keys.m_vecExceptFolderKeys, (VGrepEnumKeys{ L"obj", L"テスト" }));
+}
+
+/*!
+ * @brief GrepInfo::MakeCommandLine() のテスト
+ *  長い検索キー(2000 文字)も、コマンドラインにして解析すると元に戻ること
+ */
+TEST(GrepInfo, MakeCommandLine_LongKeyRoundTrip)
+{
+	GrepInfo gi;
+	gi.cmGrepKey.SetString(std::wstring(2000, L'あ').c_str());
+	gi.cmGrepFile.SetString(L"*.txt");
+	gi.cmGrepFolder.SetString(LR"(C:\work)");
+
+	CCommandLine cCommandLine;
+	cCommandLine.ParseCommandLine(gi.MakeCommandLine().c_str(), false);
+	EXPECT_THAT(cCommandLine.GetGrepInfoRef() == gi, IsTrue());
+	EXPECT_THAT(cCommandLine.GetGrepInfoRef().cmGrepKey.GetStringLength(), Eq(2000));
 }
