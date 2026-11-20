@@ -823,7 +823,7 @@ DWORD CGrepAgent::DoGrep(
 	if( gi.bGrepReplace ){
 		cmemMessage.AppendString( LS(STR_GREP_REPLACE_TO) );
 		if( gi.bGrepPaste ){
-			cmemMessage.AppendString( LS(STR_GREP_PASTE_CLIPBOAD) );
+			cmemMessage.AppendStringF( L"%s\r\n", LS(STR_GREP_PASTE_CLIPBOAD) );
 		}else{
 			cmemMessage.AppendString( L"\"" );
 			cmemMessage += EscapeStringLiteral(type, cmemReplace);

@@ -513,7 +513,9 @@ TEST_F(GrepCommandLineTest, ReplaceWithOutputOptions)
 	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("REP x REP\r\nnone\r\nREP\r\n"));
 }
 
-//! 置換 + C(クリップボードから貼り付け)
+/*!
+	置換 + C(クリップボードから貼り付け): クリップボードの内容で置換する。見出しの「置換後」の行は改行で終わる(#2878)
+*/
 TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 {
 	AddBasicFiles();
@@ -530,6 +532,10 @@ TEST_F(GrepCommandLineTest, ReplaceWithClipboard)
 
 	Grep(L"HIT", L"a.txt", L"XC", LR"(-GREPR="unused")");
 	EXPECT_THAT(folder.ReadFile(L"a.txt"), Eq("CLIP x CLIP\r\nnone\r\nCLIP\r\n"));
+
+	// 見出しの「置換後」の行は改行で終わり、次の行が「検索対象」になる
+	const auto header = std::format(L"{}{}\r\n{}", LS(STR_GREP_REPLACE_TO), LS(STR_GREP_PASTE_CLIPBOAD), LS(STR_GREP_SEARCH_TARGET));
+	EXPECT_THAT(Contains(GetDocumentText(), header), IsTrue()) << header;
 }
 
 /*!
