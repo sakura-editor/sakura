@@ -27,9 +27,16 @@
 #include "dlg/CDlgProfileMgr.h"
 #include "debug/CRunningTimer.h"
 #include "util/os.h"
+#include "util/sync/ProcessHolder.hpp"
 #include <tchar.h>
 #include "CSelectLang.h"
 #include "config/system_constants.h"
+
+namespace cxx {
+
+HWND	FindWindowW(std::wstring_view className, const std::optional<std::wstring>& optWindowName = std::nullopt);
+
+} // namespace cxx
 
 CProcessFactory::CProcessFactory(
 	_In_opt_ HINSTANCE hInstance
@@ -186,91 +193,38 @@ bool CProcessFactory::IsStartingControlProcess() const
 {
 	MY_RUNNINGTIMER(cRunningTimer,L"StartControlProcess" );
 
-	using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
+	std::wstring trayWndClassName = GSTR_CEDITAPP;
+	trayWndClassName += GetProfileName();
 
-	const auto pszProfileName = GetProfileName();
+	const auto isTrayWndReady = [&trayWndClassName] () {
+		const auto hWndTray = cxx::FindWindowW(trayWndClassName, trayWndClassName);
+		return
+			hWndTray &&
+			::SendMessageTimeoutW(hWndTray, WM_NULL, 0L, 0L, SMTO_ABORTIFHUNG | SMTO_ERRORONEXIT, 2000, nullptr);
+	};
 
-	// 初期化完了イベントの名前を組み立てる
-	SFilePath initEventName{ GSTR_EVENT_SAKURA_CP_INITIALIZED };
-	initEventName.append(pszProfileName);
-
-	// 初期化完了イベントを作成する
-	HandleHolder hEvent{ ::CreateEventW(nullptr, TRUE, FALSE, initEventName) };
-	if (!hEvent || ERROR_ALREADY_EXISTS == ::GetLastError()) {
-		// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。
-		TopErrorMessage(nullptr, LS(STR_ERR_DLGPROCFACT5));
-		return false;
+	// 起動中ミューテックスが有効、かつ、
+	// トレイウィンドウが応答可能なら起動済みとみなす
+	if (IsExistControlProcess() &&
+		isTrayWndReady())
+	{
+		return true;	// 起動済み
 	}
 
-	//	プロセスの起動
-	PROCESS_INFORMATION p;
-	STARTUPINFO s;
+	bool bRet = false;
+	try {
+		// コントロールプロセスを起動する
+		const auto cp = cxx::ProcessHolder::CreateControlProcess();
 
-	s.cb          = sizeof( s );
-	s.lpReserved  = nullptr;
-	s.lpDesktop   = nullptr;
-	s.lpTitle     = const_cast<WCHAR*>(L"sakura control process"); //2007.09.21 kobake デバッグしやすいように、名前を付ける
-	s.dwFlags     = STARTF_USESHOWWINDOW;
-	s.wShowWindow = SW_SHOWDEFAULT;
-	s.cbReserved2 = 0;
-	s.lpReserved2 = nullptr;
+		bRet = true;	// 起動できた
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&) {
+		// 別プロセスによって起動されたトレイウィンドウがあるはず。
+		if (!isTrayWndReady()) throw;
 
-	WCHAR szCmdLineBuf[1024];	//	コマンドライン
-	WCHAR szEXE[MAX_PATH + 1];	//	アプリケーションパス名
-
-	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)));
-	if( CCommandLine::getInstance()->IsSetProfile() ){
-		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN -PROF=\"%ls\"",
-			szEXE, GetProfileName() );
-	}else{
-		::auto_sprintf_s( szCmdLineBuf, std::size(szCmdLineBuf), L"\"%s\" -NOWIN", szEXE ); // ""付加
+		bRet = true;	// 起動済み
 	}
 
-	//常駐プロセス起動
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
-#ifdef _DEBUG
-//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
-#endif
-	BOOL bCreateResult = ::CreateProcess(
-		szEXE,				// 実行可能モジュールの名前
-		szCmdLineBuf,		// コマンドラインの文字列
-		nullptr,				// セキュリティ記述子
-		nullptr,				// セキュリティ記述子
-		FALSE,				// ハンドルの継承オプション
-		dwCreationFlag,		// 作成のフラグ
-		nullptr,				// 新しい環境ブロック
-		nullptr,				// カレントディレクトリの名前
-		&s,					// スタートアップ情報
-		&p					// プロセス情報
-	);
-	if( !bCreateResult ){
-		//	失敗
-		WCHAR* pMsg;
-		::FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
-						FORMAT_MESSAGE_IGNORE_INSERTS |
-						FORMAT_MESSAGE_FROM_SYSTEM,
-						nullptr,
-						::GetLastError(),
-						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-						(LPWSTR)&pMsg,
-						0,
-						nullptr
-		);
-		ErrorMessage( nullptr, L"\'%s\'\nプロセスの起動に失敗しました。\n%s", szEXE, pMsg );
-		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
-		return false;
-	}
-
-	HandleHolder hProcess{ p.hProcess };
-	HandleHolder hThread{ p.hThread };
-
-	// 初期化完了を待つ
-	std::array handles{ hEvent.get(), hProcess.get()};
-	if (const auto dwRet = ::WaitForMultipleObjects(DWORD(std::size(handles)), std::data(handles), FALSE, 15000); WAIT_OBJECT_0 != dwRet) {
-		// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。
-		TopErrorMessage(nullptr, LS(STR_ERR_DLGPROCFACT5));
-		return false;
-	}
-
-	return true;
+	return bRet;
 }
