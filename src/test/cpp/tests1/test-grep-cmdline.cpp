@@ -609,7 +609,8 @@ TEST_F(GrepCommandLineTest, RejectsReentry)
 		ThrowsMessage<std::domain_error>(Eq("The DoGrep method is not reentrant"))
 	);
 
-	// Grep実行中のフラグはTearDownで落ちる
+	// テストで立てたフラグは、ここで戻す(TearDown は残っていたら失敗にする)
+	CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning = false;
 }
 
 //! Grep 実行中は閉じられない。実行後は閉じられる
@@ -1184,6 +1185,30 @@ TEST_F(GrepOutputSnapshotTest, Style3LineTypes)
 	EXPECT_THAT(GrepStdout(L"needle", L"snap.txt", L"3P"), Eq(L"alpha needle one\r\n"));
 }
 
+/*!
+	K(文字コードの自動判別): 文字コード名が付いた結果の行の全体
+
+	文字コード名は前に空白 2 つ。BOM 付きの UTF-8 にして、判別の結果を決める。
+	タグジャンプは、これらの行からファイル名と行・桁を読む。
+*/
+TEST_F(GrepOutputSnapshotTest, CharsetNameInEachStyle)
+{
+	folder.AddFile(L"snap.txt", std::string(Utf8Bom) + std::string(SNAPSHOT_TEXT));
+	const auto path = LongPath(folder.Path() / L"snap.txt");
+	const auto base = LongPath(folder.Path());
+
+	// 形式 1(ノーマル): 文字コード名は(行,桁)の後ろ
+	EXPECT_THAT(GrepStdout(L"needle", L"snap.txt", L"1K"), Eq(path + L"(1,7)  [UTF-8]: needle\r\n"));
+
+	// 形式 2(WZ 風): 文字コード名はファイルの見出しに付く
+	const std::wstring style2 = std::format(L"■\"{}\"  [UTF-8]\r\n", path) + L"・(     1,7    ): needle\r\n";
+	EXPECT_THAT(GrepStdout(L"needle", L"snap.txt", L"2K"), Eq(style2));
+
+	// B(ベースフォルダー表示): 結果の行は「・」＋ベースからの相対パス
+	const std::wstring baseFolder = std::format(L"■\"{}\"\r\n", base) + L"・snap.txt(1,7)  [UTF-8]: needle\r\n";
+	EXPECT_THAT(GrepStdout(L"needle", L"snap.txt", L"1KB"), Eq(baseFolder));
+}
+
 //! B(ベースフォルダー表示): 見出しは 1 回、結果は「・」＋ベースからの相対パス。ファイルが先、サブフォルダーが後
 TEST_F(GrepOutputSnapshotTest, BaseFolderRelativePath)
 {
@@ -1386,6 +1411,45 @@ TEST_F(GrepReplaceDetailTest, RegexCountsEachMatch)
 	folder.AddFile(L"r.txt", "HIT HAT\r\nHUT\r\n");
 	EXPECT_THAT(Grep(L"H(.)T", L"r.txt", L"XR", LR"(-GREPR="Z$1Z")"), Eq(3u));
 	EXPECT_THAT(folder.ReadFile(L"r.txt"), Eq("ZIZ ZAZ\r\nZUZ\r\n"));
+}
+
+/*!
+	@brief 正規表現の置換後の文字列の、特殊な記号を置換するテスト
+
+	置換後の文字列は、コマンドラインの引用符の扱いを避けるため、解析した後の GrepInfo に入れる。
+*/
+struct GrepRegexReplacementTest : public GrepReplaceDetailTest {
+	//! aHITb の HIT を、正規表現で replace に置換し、ファイルの中身を返す
+	std::string ReplaceHit(std::wstring_view replace) const
+	{
+		folder.AddFile(L"r.txt", "aHITb\r\n");
+		auto gi = ParseGrepCommandLine(Args(L"HIT", L"r.txt", L"XR", LR"(-GREPR="unused")"));
+		gi.cmGrepRep.SetString(replace.data(), replace.length());
+		EXPECT_THAT(RunGrep(gi), Eq(1u));
+		ResetDocument();
+		return folder.ReadFile(L"r.txt");
+	}
+};
+
+//! \t・\n・\\ は制御文字と \ に、$& は一致した文字列になる
+TEST_F(GrepRegexReplacementTest, Symbols)
+{
+	EXPECT_THAT(ReplaceHit(LR"([\t])"), Eq("a[\t]b\r\n"));
+	EXPECT_THAT(ReplaceHit(LR"([\n])"), Eq("a[\n]b\r\n"));
+	EXPECT_THAT(ReplaceHit(LR"([\\])"), Eq("a[\\]b\r\n"));
+	EXPECT_THAT(ReplaceHit(L"[$&]"), Eq("a[HIT]b\r\n"));
+}
+
+/*!
+	$0・$$ は記号にならず、そのまま書く。無いグループ($9)は空になる
+
+	bregonig は、置換後の文字列の $0・$$ を記号として扱わない。一致した文字列は $& で書く。
+*/
+TEST_F(GrepRegexReplacementTest, EdgeSymbols)
+{
+	EXPECT_THAT(ReplaceHit(L"[$0]"), Eq("a[$0]b\r\n"));
+	EXPECT_THAT(ReplaceHit(L"[$$]"), Eq("a[$$]b\r\n"));
+	EXPECT_THAT(ReplaceHit(L"[$9]"), Eq("a[]b\r\n"));
 }
 
 //! 正規表現 + C(クリップボードから貼り付け): 一致を探して、前の部分と貼り付ける文字列をつなぐ
@@ -1829,6 +1893,22 @@ TEST_F(GrepHwndTargetTest, ReadsWindowNotFile)
 	EXPECT_THAT(GrepStdout(L"HIT", window.Target(), L"1"), StrEq(expected));
 }
 
+/*!
+	パスが空の文書(無題)で、編集ウィンドウの一覧に無いウィンドウは、ハンドルのエラーにする
+
+	GetHwndTitle() は、パスが空のとき、編集ウィンドウの一覧からウィンドウの番号を読む。
+	一覧に無いウィンドウ(この偽のウィンドウ・起動中や終了中のウィンドウ)では null を参照して落ちるので、
+	DISABLED_ にしている(#2884 の 2)。
+*/
+TEST_F(GrepHwndTargetTest, DISABLED_UntitledWindowNotInListIsHandleError)
+{
+	FakeEditWindow window(L"", { L"alpha HIT one\r\n" });
+	EXPECT_THAT(window.GetHwnd(), Ne(nullptr));
+
+	EXPECT_THAT(Grep(L"HIT", window.Target(), L"X"), Eq(0u));
+	EXPECT_THAT(Contains(GetDocumentText(), L"HWND handle error."), IsTrue());
+}
+
 //! 該当行(P): CRLF・LF・CR・改行なし(最後の行)のどれでも、改行コードを除いて出力する
 TEST_F(GrepHwndTargetTest, LineEndings)
 {
@@ -2125,15 +2205,28 @@ TEST_F(GrepProgressTest, CancelBeforeSubFolder)
 	EXPECT_THAT(Contains(text, L"d.txt"), IsFalse());
 }
 
-//! Grep 置換をファイルの途中(2 行目)で中断すると、1 行目は数えるが、ファイルは書き換えず、一時ファイルも残さない
+//! Grep 置換をファイルの途中(2 行目)で中断すると、ファイルは書き換えず、一時ファイルも残さない
 TEST_F(GrepProgressTest, CancelReplaceKeepsFile)
 {
 	folder.AddFile(L"r.txt", "HIT\r\nHIT\r\n");
 	FakeGrepProgress progress(4);
-	EXPECT_THAT(GrepWith(progress, L"HIT", L"r.txt", L"X", LR"(-GREPR="REP")"), Eq(1u));
+	GrepWith(progress, L"HIT", L"r.txt", L"X", LR"(-GREPR="REP")");	// 置換した数は DISABLED_CancelReplaceIsNotCounted で確かめる
 	EXPECT_THAT(folder.ReadFile(L"r.txt"), StrEq("HIT\r\nHIT\r\n"));
 	EXPECT_THAT(folder.Exists(L"r.txt.skrnew"), IsFalse());
 	EXPECT_THAT(Contains(GetDocumentText(), LS(STR_GREP_SUSPENDED)), IsTrue());
+}
+
+/*!
+	Grep 置換をファイルの途中で中断したファイルは、書き換えないので、置換した数に数えない
+
+	置換に失敗したファイルを数えない(DISABLED_FailedReplaceIsNotCounted)のと同じ考え方。
+	今は中断までの 1 件を数えるので DISABLED_ にしている(#2887 の 3)。
+*/
+TEST_F(GrepProgressTest, DISABLED_CancelReplaceIsNotCounted)
+{
+	folder.AddFile(L"r.txt", "HIT\r\nHIT\r\n");
+	FakeGrepProgress progress(4);
+	EXPECT_THAT(GrepWith(progress, L"HIT", L"r.txt", L"X", LR"(-GREPR="REP")"), Eq(0u));
 }
 
 //! ファイル名だけを返す(検索キーが空)ときは、ファイルごとにヒット数を表示する。最後はファイル名を消す

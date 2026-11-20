@@ -1495,3 +1495,27 @@ TEST(CFilePath, GetDirPath102)
 }
 
 } // namespace path_util
+
+/*!
+	@brief _IS_REL_PATH は、ドライブ文字と \ で始まるパスと UNC パスを絶対パスとし、ほかを相対パスとする
+*/
+TEST(file, IsRelPath)
+{
+	EXPECT_THAT(_IS_REL_PATH(LR"(C:\work)"), IsFalse());
+	EXPECT_THAT(_IS_REL_PATH(LR"(z:\)"), IsFalse());
+	EXPECT_THAT(_IS_REL_PATH(LR"(\\server\share)"), IsFalse());
+	EXPECT_THAT(_IS_REL_PATH(L"a.txt"), IsTrue());
+	EXPECT_THAT(_IS_REL_PATH(LR"(sub\a.txt)"), IsTrue());
+	EXPECT_THAT(_IS_REL_PATH(LR"(..\a.txt)"), IsTrue());
+	EXPECT_THAT(_IS_REL_PATH(L""), IsTrue());
+}
+
+/*!
+	@brief _IS_REL_PATH は、/ で区切ったドライブ文字のパス(C:/work)も絶対パスとする
+
+	今は X:\ と \\ だけを見て相対パスとするので DISABLED_ にしている(#2891 の 1)。
+*/
+TEST(file, DISABLED_IsRelPathWithSlash)
+{
+	EXPECT_THAT(_IS_REL_PATH(L"C:/work"), IsFalse());
+}

@@ -8,10 +8,15 @@
 #include <tchar.h>
 #include <Windows.h>
 
+#include <filesystem>
+#include <fstream>
 #include <string>
 #include <string_view>
 
 #include "grep/GrepMessageFormat.h"
+#include "charset/charset.h"
+#include "util/file.h"
+#include "util/string_ex2.h"
 
 #include "window/EditorTestSuite.hpp"
 
@@ -61,7 +66,7 @@ TEST(GrepMessageFormat, OutputPathInfoResultOnlyOutputsNothing)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\a.txt", L"C:\\work",
-		L"sub", L"sub\\a.txt", L" [SJIS]",
+		L"sub", L"sub\\a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	EXPECT_THAT(cmemMessage.GetStringLength(), 0);
@@ -85,7 +90,7 @@ TEST(GrepMessageFormat, OutputPathInfoBaseFolderNormalStyle)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\a.txt", L"C:\\work",
-		L"", L"a.txt", L" [SJIS]",
+		L"", L"a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\"C:\\work\"\r\n"));
@@ -108,7 +113,7 @@ TEST(GrepMessageFormat, OutputPathInfoBaseFolderSeparateFolder)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\sub\\a.txt", L"C:\\work",
-		L"sub", L"sub\\a.txt", L" [SJIS]",
+		L"sub", L"sub\\a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"◎\"C:\\work\"\r\n■\"sub\"\r\n"));
@@ -131,7 +136,7 @@ TEST(GrepMessageFormat, OutputPathInfoEmptyFolderName)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\a.txt", L"C:\\work",
-		L"", L"a.txt", L" [SJIS]",
+		L"", L"a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\r\n"));
@@ -152,10 +157,10 @@ TEST(GrepMessageFormat, OutputPathInfoWzStyleFileName)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\a.txt", L"C:\\work",
-		L"", L"a.txt", L" [SJIS]",
+		L"", L"a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\"C:\\work\\a.txt\" [SJIS]\r\n"));
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"■\"C:\\work\\a.txt\"  [SJIS]\r\n"));
 	EXPECT_THAT(bOutFileName, IsTrue());
 }
 
@@ -175,7 +180,7 @@ TEST(GrepMessageFormat, OutputPathInfoDoesNotOutputTwice)
 	BOOL bOutFileName = TRUE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\sub\\a.txt", L"C:\\work",
-		L"sub", L"sub\\a.txt", L" [SJIS]",
+		L"sub", L"sub\\a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	EXPECT_THAT(cmemMessage.GetStringLength(), 0);
@@ -197,10 +202,10 @@ TEST(GrepMessageFormat, OutputPathInfoWzStyleSeparateFolder)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\sub\\a.txt", L"C:\\work",
-		L"sub", L"sub\\a.txt", L" [SJIS]",
+		L"sub", L"sub\\a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
-	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"◆\"sub\\a.txt\" [SJIS]\r\n"));
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"◆\"sub\\a.txt\"  [SJIS]\r\n"));
 	EXPECT_THAT(bOutFileName, IsTrue());
 }
 
@@ -221,12 +226,21 @@ TEST(GrepMessageFormat, OutputPathInfoExpandsBuffer)
 	BOOL bOutFileName = FALSE;
 
 	OutputPathInfo( cmemMessage, gi, L"C:\\work\\a.txt", L"C:\\work",
-		L"", L"a.txt", L" [SJIS]",
+		L"", L"a.txt", L"  [SJIS]",
 		bOutputBaseFolder, bOutputFolderName, bOutFileName );
 
 	const std::wstring expected = prefix + L"■\"C:\\work\"\r\n";
 	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(expected.c_str()));
 	EXPECT_THAT(bOutputBaseFolder, IsTrue());
+}
+
+/*!
+ * @brief このファイルのテストで使う文字コード名「  [SJIS]」が、製品の結果の行に付くものと同じであること
+ *  CGrepAgent は CCodeTypeName::Bracket() の文字列を結果の行に付ける(前に空白 2 つ)
+ */
+TEST(GrepMessageFormat, CodeNameMatchesProduct)
+{
+	EXPECT_THAT(CCodeTypeName(CODE_SJIS).Bracket(), StrEq(L"  [SJIS]"));
 }
 
 /*!
@@ -252,11 +266,11 @@ TEST_F(SetGrepResultTest, NormalStyleHitLine)
 	gi.nGrepOutputLineType = 1;
 
 	constexpr std::wstring_view line = L"hello\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 12, 3,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 12, 3,
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"a.txt(12,3) [SJIS]: hello\r\n"));
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"a.txt(12,3)  [SJIS]: hello\r\n"));
 }
 
 /*!
@@ -272,11 +286,11 @@ TEST_F(SetGrepResultTest, NormalStyleWithBaseFolderMark)
 	gi.bGrepOutputBaseFolder = true;
 
 	constexpr std::wstring_view line = L"hello\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 1, 1,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 1, 1,
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
-	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"・a.txt(1,1) [SJIS]: hello\r\n"));
+	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(L"・a.txt(1,1)  [SJIS]: hello\r\n"));
 }
 
 /*!
@@ -291,7 +305,7 @@ TEST_F(SetGrepResultTest, WzStyleHitLine)
 	gi.nGrepOutputLineType = 1;
 
 	constexpr std::wstring_view line = L"hello\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 12, 3,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 12, 3,
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
@@ -310,7 +324,7 @@ TEST_F(SetGrepResultTest, ResultOnlyStyleHitLine)
 	gi.nGrepOutputLineType = 1;
 
 	constexpr std::wstring_view line = L"hello\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 12, 3,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 12, 3,
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
@@ -330,7 +344,7 @@ TEST_F(SetGrepResultTest, MatchedPartOnly)
 
 	constexpr std::wstring_view line = L"hello world\r\n";
 	constexpr std::wstring_view match = L"world";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 1, 7,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 1, 7,
 		line.data(), static_cast<int>(line.length()), 2,
 		match.data(), static_cast<int>(match.length()), gi );
 
@@ -350,7 +364,7 @@ TEST_F(SetGrepResultTest, MatchedPartEndingWithEol)
 
 	constexpr std::wstring_view line = L"hello\r\n";
 	constexpr std::wstring_view match = L"hello\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 1, 1,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 1, 1,
 		line.data(), static_cast<int>(line.length()), 2,
 		match.data(), static_cast<int>(match.length()), gi );
 
@@ -370,12 +384,12 @@ TEST_F(SetGrepResultTest, HitLineIsTruncated)
 
 	std::wstring line(2100, L'a');
 	line += L"\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 1, 1,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 1, 1,
 		line.data(), static_cast<int>(line.length()), 2,
 		nullptr, 0, gi );
 
 	const std::wstring expected =
-		std::wstring(L"a.txt(1,1) [SJIS]: ") + std::wstring(2000, L'a') + L"\r\n";
+		std::wstring(L"a.txt(1,1)  [SJIS]: ") + std::wstring(2000, L'a') + L"\r\n";
 	ASSERT_THAT(cmemMessage.GetStringPtr(), StrEq(expected.c_str()));
 }
 
@@ -392,7 +406,7 @@ TEST_F(SetGrepResultTest, MatchedPartIsTruncated)
 
 	std::wstring line(2600, L'b');
 	line += L"\r\n";
-	SetGrepResult( cmemMessage, L"a.txt", L" [SJIS]", 1, 1,
+	SetGrepResult( cmemMessage, L"a.txt", L"  [SJIS]", 1, 1,
 		line.data(), static_cast<int>(line.length()), 2,
 		line.data(), 2600, gi );
 
@@ -425,7 +439,7 @@ protected:
 	//! C:\work の下のファイル(文字コード名は [SJIS])
 	static SGrepResultFile File(const wchar_t* pszFullPath, const wchar_t* pszFolder, const wchar_t* pszRelPath)
 	{
-		return { .pszFullPath = pszFullPath, .pszBaseFolder = L"C:\\work", .pszFolder = pszFolder, .pszRelPath = pszRelPath, .pszCodeName = L" [SJIS]" };
+		return { .pszFullPath = pszFullPath, .pszBaseFolder = L"C:\\work", .pszFolder = pszFolder, .pszRelPath = pszRelPath, .pszCodeName = L"  [SJIS]" };
 	}
 };
 
@@ -443,7 +457,7 @@ TEST_F(CGrepResultWriterTest, NormalStyleMatchedPart)
 	AddMatch(writer, 1, line, 2, 3);
 	AddMatch(writer, 1, line, 6, 3);
 
-	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"C:\\work\\a.txt(1,3) [SJIS]: HIT\r\nC:\\work\\a.txt(1,7) [SJIS]: HIT\r\n"));
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"C:\\work\\a.txt(1,3)  [SJIS]: HIT\r\nC:\\work\\a.txt(1,7)  [SJIS]: HIT\r\n"));
 }
 
 /*!
@@ -459,7 +473,7 @@ TEST_F(CGrepResultWriterTest, WzStyleFileNameOnce)
 	AddMatch(writer, 1, L"hello\r\n", 2, 3);
 	AddMatch(writer, 2, L"world\r\n", 0, 1);
 
-	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\\a.txt\" [SJIS]\r\n・(     1,3    ): hello\r\n・(     2,1    ): world\r\n"));
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\\a.txt\"  [SJIS]\r\n・(     1,3    ): hello\r\n・(     2,1    ): world\r\n"));
 }
 
 /*!
@@ -477,7 +491,7 @@ TEST_F(CGrepResultWriterTest, BaseFolderOnceAcrossFiles)
 	CGrepResultWriter writerB(cmemMessage, gi, File(L"C:\\work\\b.txt", L"", L"b.txt"), bOutputBaseFolder, bOutputFolderName);
 	AddMatch(writerB, 1, L"y\r\n", 0, 1);
 
-	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\"\r\n・a.txt(1,1) [SJIS]: x\r\n・b.txt(1,1) [SJIS]: y\r\n"));
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"C:\\work\"\r\n・a.txt(1,1)  [SJIS]: x\r\n・b.txt(1,1)  [SJIS]: y\r\n"));
 	EXPECT_THAT(bOutputBaseFolder, ::testing::IsTrue());
 }
 
@@ -496,7 +510,7 @@ TEST_F(CGrepResultWriterTest, SeparateFolderOncePerFolder)
 	CGrepResultWriter writerB(cmemMessage, gi, File(L"C:\\work\\sub\\b.txt", L"sub", L"b.txt"), bOutputBaseFolder, bOutputFolderName);
 	AddMatch(writerB, 1, L"y\r\n", 0, 1);
 
-	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"sub\"\r\n・a.txt(1,1) [SJIS]: x\r\n・b.txt(1,1) [SJIS]: y\r\n"));
+	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\"sub\"\r\n・a.txt(1,1)  [SJIS]: x\r\n・b.txt(1,1)  [SJIS]: y\r\n"));
 	EXPECT_THAT(bOutputFolderName, ::testing::IsTrue());
 }
 
@@ -571,4 +585,48 @@ TEST(GrepMessageFormat, AppendFolderHeadingsOnlyNotYetOutput)
 	AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"", bOutputBaseFolder, bOutputFolderName);
 	AppendFolderHeadings(cmemMessage, gi, L"C:\\work", L"", bOutputBaseFolder, bOutputFolderName);
 	EXPECT_THAT(cmemMessage.GetStringPtr(), ::testing::StrEq(L"■\r\n"));
+}
+
+/*!
+ * @brief 結果の行を読み直すテスト
+ *  形式 1(ノーマル)の結果の行から、IsFilePath() でファイル名を、GetLineColumn() で行・桁を読み直すと、元に戻ること。
+ *  タグジャンプは、この 2 つの関数で結果の行を読む。IsFilePath() はファイルがあるかを見るので、一時フォルダーにファイルを作る。
+ */
+TEST_F(SetGrepResultTest, NormalStyleLineReadsBack)
+{
+	const auto folder = std::filesystem::temp_directory_path() / L"sakura_test_grepmessageformat";
+	std::filesystem::create_directories(folder);
+
+	GrepInfo gi;
+	gi.nGrepOutputStyle = 1;
+	gi.nGrepOutputLineType = 1;
+	constexpr std::wstring_view line = L"hello\r\n";
+
+	// ファイル名の記号(空白・かっこ・#)と、文字コード名の有無の組み合わせ
+	for (const auto name : { L"a.txt", L"a b.txt", L"a(1).txt", L"[x].txt", L"a#b.txt", L"テスト.txt" }) {
+		std::ofstream(folder / name) << "x";
+		const auto path = (folder / name).native();
+		for (const auto codeName : { L"", L"  [SJIS]", L"  [UTF-8]" }) {
+			SCOPED_TRACE(path + codeName);
+			CNativeW cmemMessage(L"");
+			SetGrepResult(cmemMessage, path.c_str(), codeName, 12, 3,
+				line.data(), static_cast<int>(line.length()), 2,
+				nullptr, 0, gi);
+			const std::wstring result = cmemMessage.GetStringPtr();
+
+			size_t nBgn = 0;
+			size_t nPathLen = 0;
+			EXPECT_THAT(IsFilePath(result.c_str(), &nBgn, &nPathLen), IsTrue());
+			EXPECT_THAT(result.substr(nBgn, nPathLen), StrEq(path));
+
+			int nLine = 0;
+			int nColumn = 0;
+			GetLineColumn(result.c_str() + nBgn + nPathLen, &nLine, &nColumn);
+			EXPECT_THAT(nLine, Eq(12));
+			EXPECT_THAT(nColumn, Eq(3));
+		}
+	}
+
+	std::error_code ec;
+	std::filesystem::remove_all(folder, ec);
 }
