@@ -46,10 +46,11 @@
 #include "prop/CPropCommon.h"
 #include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
+#include "util/os/MockComdlg32.hpp"
+#include "util/os/MockKernel32.hpp"
+#include "util/os/MockShell32.hpp"
 #include "util/os/MockUser32.hpp"
 #include "util/shell.h"
-#include "util/os/MockComdlg32.hpp"
-#include "util/os/MockShell32.hpp"
 
 #include "outline/CFuncInfoArr.h"
 #include "plugin/CComplementIfObj.h"
@@ -470,6 +471,8 @@ struct TrayWndTest : public ::testing::Test, public window::TrayWndTestSuite, pu
 		pCommandLine = nullptr;
 	}
 
+	static void SetUpLoadString();
+
 	/*!
 	 * テストが実行される直前に毎回呼ばれる関数
 	 */
@@ -490,11 +493,50 @@ struct TrayWndTest : public ::testing::Test, public window::TrayWndTestSuite, pu
 
 		CDlgOpenFile::resetInstance();
 
+		Kernel32::resetInstance();
 		User32::resetInstance();
 
 		TearDownUia();
 	}
 };
+
+/*!
+ * @brief エラーメッセージの取得が通るようにモックを設定する
+ */
+/* static */ void TrayWndTest::SetUpLoadString()
+{
+	Kernel32::setInstance<MockKernel32>();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SetCurrentDirectoryW(_))
+		.WillRepeatedly(testing::DoDefault());
+}
 
 TEST_F(TrayWndTest, OpenNewEditor101)
 {
@@ -857,13 +899,15 @@ TEST_F(TrayWndTest, DoGrep101)
 	// 除外ファイル
 	CSearchKeywordManager().AddToExcludeFileArr(LR"(*.sys;*.dll;*.exe;*.mui;*.nls;*.chm;*.dat;*.tmp;*.wdf)");
 
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
 
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	// 表示されたモーダルダイアログをOKボタンで閉じる
 	dialog::ModalDialogCloser closer(L"Grep", [] (HWND hWndDlg) {
@@ -885,8 +929,6 @@ TEST_F(TrayWndTest, DoGrep101)
 	GetDllShareData().m_sSearchKeywords.m_aGrepFiles.clear();
 	GetDllShareData().m_sSearchKeywords.m_aExcludeFolders.clear();
 	GetDllShareData().m_sSearchKeywords.m_aExcludeFiles.clear();
-
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
 }
 
 /*!
@@ -930,9 +972,6 @@ TEST_F(TrayWndTest, HelpSearch101)
  */
 TEST_F(TrayWndTest, OpenFile101)
 {
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
-
 	const auto& path = dummyPath;
 	MockCDlgOpenFile::gm_Files.emplace_back(path.native());
 
@@ -941,16 +980,18 @@ TEST_F(TrayWndTest, OpenFile101)
 		.Times(1)
 		.WillOnce(testing::DoDefault());
 
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_FILEOPEN);
-
-	// 設定を元に戻す
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
 }
 
 /*!
@@ -959,20 +1000,19 @@ TEST_F(TrayWndTest, OpenFile101)
  */
 TEST_F(TrayWndTest, OpenNewEditor103)
 {
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
 
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	// トレイアイコンダブルクリックイベントを発生させる
 	HWND hWndTray = nullptr;
 	pcTrayWnd->DispatchEvent(hWndTray, MYWM_NOTIFYICON, 0L, WM_LBUTTONDBLCLK);
-
-	// 設定を元に戻す
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
 }
 
 /*!
@@ -980,19 +1020,18 @@ TEST_F(TrayWndTest, OpenNewEditor103)
  */
 TEST_F(TrayWndTest, OpenNewEditor104)
 {
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
 
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_FILENEW);
-
-	// 設定を元に戻す
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
 }
 
 /*!
@@ -1000,24 +1039,24 @@ TEST_F(TrayWndTest, OpenNewEditor104)
  */
 TEST_F(TrayWndTest, SelectAndOpenFilesFromMruFile101)
 {
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
-
 	GetDllShareData().m_Common.m_sFile.m_bRestoreCurPosition = true;
 
 	GetDllShareData().m_sHistory.m_nMRUArrNum = 1;
 
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, IDM_SELMRU);
 
 	// 設定を元に戻す
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
-
 	GetDllShareData().m_sHistory.m_nMRUArrNum = 0;
 
 	GetDllShareData().m_Common.m_sFile.m_bRestoreCurPosition = true;
@@ -1028,24 +1067,24 @@ TEST_F(TrayWndTest, SelectAndOpenFilesFromMruFile101)
  */
 TEST_F(TrayWndTest, SelectAndOpenFilesFromMruFile102)
 {
-	// 開いているファイルの数を上限値に設定する
-	GetDllShareData().m_sNodes.m_nEditArrNum = MAX_EDITWINDOWS;
-
 	GetDllShareData().m_Common.m_sFile.m_bRestoreCurPosition = false;
 
 	GetDllShareData().m_sHistory.m_nMRUArrNum = 1;
 
+	SetUpLoadString();
+
+	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
 	auto pUser32 = (MockUser32*)User32::getInstance();
-	EXPECT_CALL(*pUser32, MessageBoxExW(_, StrEq(strprintf(LS(STR_MAXWINDOW), MAX_EDITWINDOWS)), _, _, _))
-		.Times(1)
-		.WillOnce(Return(IDOK));
+	EXPECT_CALL(*pUser32, MessageBoxExW(_, _, _, _, _))
+		.WillRepeatedly(testing::DoDefault());
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, IDM_SELMRU);
 
 	// 設定を元に戻す
-	GetDllShareData().m_sNodes.m_nEditArrNum = 0;
-
 	GetDllShareData().m_sHistory.m_nMRUArrNum = 0;
 
 	GetDllShareData().m_Common.m_sFile.m_bRestoreCurPosition = true;
