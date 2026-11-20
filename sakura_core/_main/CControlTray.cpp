@@ -42,6 +42,7 @@
 #include "util/os.h"
 #include "util/os/User32.hpp"
 #include "util/shell.h"
+#include "util/sync/EditorProcessHolder.hpp"
 #include "util/window.h"
 #include "util/string_ex2.h"
 #include "env/CShareData.h"
@@ -58,6 +59,8 @@
 #include "config/system_constants.h"
 #include "config/app_constants.h"
 #include "apiwrap/DarkMode.h"
+
+#include <ranges>
 
 #define ID_HOTKEY_TRAYMENU	0x1234
 
@@ -1071,46 +1074,57 @@ bool CControlTray::OpenNewEditor(
 		pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
 		!pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin;
 
-	// -- -- -- -- コマンドライン文字列を生成 -- -- -- -- //
-	CCommandLineString cCmdLineBuf;
+	// -- -- -- -- コマンドライン引数を構築 -- -- -- -- //
 
-	//アプリケーションパス
-	WCHAR szEXE[MAX_PATH + 1];
-	::GetModuleFileName( nullptr, szEXE, int(std::size(szEXE)) );
-	cCmdLineBuf.AppendF( L"\"%s\"", szEXE );
+	// コマンドライン引数の編集用vector
+	auto commandArgs = std::vector<std::wstring>{};
 
 	// ファイル名
-	if( sLoadInfo.cFilePath.c_str()[0] != L'\0' )	cCmdLineBuf.AppendF( L" \"%s\"", sLoadInfo.cFilePath.c_str() );
+	if (!sLoadInfo.cFilePath.empty())
+		commandArgs.emplace_back(sLoadInfo.cFilePath.c_str());
 
 	// コード指定
-	if( IsValidCodeOrCPType(sLoadInfo.eCharCode) )cCmdLineBuf.AppendF( L" -CODE=%d", sLoadInfo.eCharCode );
+	if (IsValidCodeOrCPType(sLoadInfo.eCharCode))
+		commandArgs.emplace_back(std::format(L"-CODE={:d}", static_cast<int>(sLoadInfo.eCharCode)));
 
 	// ビューモード指定
-	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( L" -R" );
+	if (sLoadInfo.bViewMode)
+		commandArgs.emplace_back(L"-R");
 
 	// タブまとめ時はグループIDを指定できる
 	if (isTabMatome)
 	{
-	// グループID
-	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
-		// グループIDを親ウィンドウから取得
-		HWND hwndAncestor = MyGetAncestor( hWndParent, GA_ROOTOWNER2 );	// 2007.10.22 ryoji GA_ROOTOWNER -> GA_ROOTOWNER2
-		int nGroup = CAppNodeManager::getInstance()->GetEditNode( hwndAncestor )->GetGroup();
-		if( nGroup > 0 ){
-			cCmdLineBuf.AppendF( L" -GROUP=%d", nGroup );
-		}
-	}else{
-		// 空いているグループIDを使用する
-		cCmdLineBuf.AppendF( L" -GROUP=%d", CAppNodeManager::getInstance()->GetFreeGroupId() );
-	}
-	}
+		// グループID
+		int nGroup = 0;
 
-	if( CCommandLine::getInstance()->IsSetProfile() ){
-		cCmdLineBuf.AppendF( L" -PROF=\"%ls\"", CCommandLine::getInstance()->GetProfileName() );
+		// 新規エディタをウインドウで開く、の指定がある
+		if (bNewWindow) {
+			// 空いているグループIDを使用する
+			nGroup = CAppNodeManager::getInstance()->GetFreeGroupId();
+		}
+		// 新規エディタをウインドウで開く、の指定がない
+		else if (const auto pMainWnd = GetAppMainWndPtr()) {
+			// 現在の編集ウィンドウのグループIDを使用する
+			nGroup = CAppNodeManager::getInstance()->GetEditNode(pMainWnd->GetHwnd())->GetGroup();
+		}
+
+		// 妥当なグループIDを取得できた場合のみ引数に反映する
+		if (0 < nGroup) {
+			commandArgs.emplace_back(std::format(L"-GROUP={:d}", nGroup));
+		}
 	}
 
 	// 追加のコマンドラインオプション
-	WCHAR szResponseFile[_MAX_PATH] = L"";
+	auto additionalOpts = std::vector<std::wstring_view>{};
+	if (szCmdLineOption) {
+		additionalOpts = SplitLegacyCommandLine(szCmdLineOption);
+	}
+
+	//FIXME: 追加のコマンドラインがあふれた場合の仕様を再検討する必要がある
+	// 一時ファイルの使い方が微妙
+	//  ファイル名生成→オープンなのでTICTOU問題が起きうる。
+	//  本物の一時ファイルならクローズ時の削除処理は不要。
+	SFilePath szResponseFile{};
 	struct CResponsefileDeleter{
 		LPCWSTR fileName;
 		CResponsefileDeleter(): fileName(nullptr){}
@@ -1128,15 +1142,17 @@ bool CControlTray::OpenNewEditor(
 	CResponsefileDeleter respDeleter;
 	if( szCmdLineOption ){
 		// Grepなどで入りきらない場合はレスポンスファイルを利用する
-		if( cCmdLineBuf.max_size() < cCmdLineBuf.size() + wcslen(szCmdLineOption) ){
-			WCHAR szIniDir[_MAX_PATH];
+		const auto opts = std::wstring_view{ szCmdLineOption };
+		if (CCommandLineString cCmdLineBuf;
+			cCmdLineBuf.max_size() < opts.length() ){
+			SFilePath szIniDir{};
 			GetInidir(szIniDir);
 			LPWSTR pszTempFile = _wtempnam(szIniDir, L"skr_resp");
 			if( !pszTempFile ){
 				ErrorMessage(hWndParent, LS(STR_TRAY_RESPONSEFILE));
 				return false;
 			}
-			wcscpy(szResponseFile, pszTempFile);
+			wcscpy_s(szResponseFile, pszTempFile);
 			free(pszTempFile);
 			CTextOutputStream output(szResponseFile);
 			if( !output ){
@@ -1148,27 +1164,20 @@ bool CControlTray::OpenNewEditor(
 			output.WriteString(szCmdLineOption);
 			output.Close();
 			sync = true;
-			cCmdLineBuf.AppendF(L" -@=\"%s\"", szResponseFile);
-		}else{
-			cCmdLineBuf.AppendF(L" %s", szCmdLineOption);
+			commandArgs.emplace_back(std::format(LR"(-@="{:s}")", szResponseFile.c_str()));
 		}
-	}
-
-	std::vector<std::wstring_view> additionalOpts;
-	if (szCmdLineOption) {
-		additionalOpts = SplitLegacyCommandLine(szCmdLineOption);
+		else {
+			std::ranges::transform(
+				additionalOpts,
+				std::back_inserter(commandArgs),
+				[] (const auto& opt) {
+					return std::wstring{ opt };
+				}
+			);
+		}
 	}
 
 	// -- -- -- -- プロセス生成 -- -- -- -- //
-
-	// 無効なディレクトリのときはNULLに変更
-	if( pszCurDir ){
-		DWORD attr = GetFileAttributes( pszCurDir );
-		if( ( attr != -1) && ( attr & FILE_ATTRIBUTE_DIRECTORY ) != 0 ){
-		} else {
-			pszCurDir = nullptr;
-		}
-	}
 
 	// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つため、強制的に同期モードにする。（プロセスの起動前に変更する必要がある。）
 	if (isTabMatome &&
@@ -1178,50 +1187,30 @@ bool CControlTray::OpenNewEditor(
 	}
 
 	//	プロセスの起動
-	PROCESS_INFORMATION p;
-	STARTUPINFO s;
 
-	s.cb = sizeof_raw( s );
-	s.lpReserved = nullptr;
-	s.lpDesktop = nullptr;
-	s.lpTitle = nullptr;
+	bool bRet = false;
+	try {
+		// エディタープロセスを起動する
+		const auto ep = cxx::ProcessHolder::CreateEditorProcess(
+			commandArgs,
+			pszCurDir ? std::make_optional<std::filesystem::path>(pszCurDir) : std::nullopt,
+			sync
+		);
 
-	s.dwFlags = STARTF_USESHOWWINDOW;
-	s.wShowWindow = SW_SHOWDEFAULT;
-	s.cbReserved2 = 0;
-	s.lpReserved2 = nullptr;
+		bRet = true;
+	}
+	// エラーが発生した場合
+	catch (const std::system_error& e) {
+		const auto errorCode = e.code().value();
+		SFilePath szEXE{ GetExeFileName() };
 
-	//	May 30, 2003 genta カレントディレクトリ指定を可能に
-	//エディタプロセスを起動
-	DWORD dwCreationFlag = CREATE_DEFAULT_ERROR_MODE;
-
-	if (sync) dwCreationFlag |= CREATE_SUSPENDED;
-
-#ifdef _DEBUG
-//	dwCreationFlag |= DEBUG_PROCESS; //2007.09.22 kobake デバッグ用フラグ
-#endif
-	WCHAR szCmdLine[1024]; wcscpy_s(szCmdLine, std::size(szCmdLine), cCmdLineBuf.c_str());
-
-	if (const auto bCreateResult = ::CreateProcessW(
-		szEXE,					// 実行可能モジュールの名前
-		szCmdLine,				// コマンドラインの文字列
-		nullptr,					// セキュリティ記述子
-		nullptr,					// セキュリティ記述子
-		FALSE,					// ハンドルの継承オプション
-		dwCreationFlag,			// 作成のフラグ
-		nullptr,					// 新しい環境ブロック
-		pszCurDir,				// カレントディレクトリの名前
-		&s,						// スタートアップ情報
-		&p						// プロセス情報
-	);
-		!bCreateResult) {
 		//	失敗
 		WCHAR* pMsg;
 		FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER |
 						FORMAT_MESSAGE_IGNORE_INSERTS |
 						FORMAT_MESSAGE_FROM_SYSTEM,
 						nullptr,
-						GetLastError(),
+						errorCode,
 						MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 						(LPWSTR)&pMsg,
 						0,
@@ -1234,105 +1223,7 @@ bool CControlTray::OpenNewEditor(
 			pMsg
 		);
 		::LocalFree( (HLOCAL)pMsg );	//	エラーメッセージバッファを解放
-		return false;
 	}
-
-	// MYWM_FIRST_IDLE が届くまでちょっとだけ余分に待つ	// 2008.04.19 ryoji
-	// Note. 起動先プロセスが初期化処理中に COM 関数（SHGetFileInfo API なども含む）を実行すると、
-	//       その時点で COM の同期機構が動いて WaitForInputIdle は終了してしまう可能性がある（らしい）。
-	bool bRet = true;
-	if (sync)
-	{
-		const bool isGrepMode = std::ranges::any_of(additionalOpts, [] (std::wstring_view opt) {
-			return cxx::iequals(opt, L"-GREPMODE")
-				|| cxx::iequals(opt, L"-GREPDLG");
-		});
-
-		// エディター初期化完了イベントを作成する
-		SFilePath initEventName{ std::format(GSTR_EVENT_SAKURA_EP_INITIALIZED, p.dwThreadId) };
-		HANDLE hEvent = ::CreateEventW(nullptr, TRUE, FALSE, initEventName);
-
-		using HandleHolder = cxx::ResourceHolder<&::CloseHandle>;
-		HandleHolder initIvent{ hEvent };
-		HandleHolder grepEvent{};
-
-		if (isGrepMode)
-		{
-			// Grep完了イベントを作成する
-			SFilePath grepEventName{ std::format( GSTR_EVENT_SAKURA_GREP_COMPLETED, p.dwThreadId ) };
-			grepEvent = ::CreateEventW(nullptr, TRUE, FALSE, grepEventName);
-		}
-
-		// エディターのメインスレッドを再開する
-		::ResumeThread(p.hThread);
-
-		// エディター初期化完了を待つ
-		std::array handles{ hEvent, p.hProcess };
-		const auto count = DWORD(std::size(handles));
-
-		const auto startTick = ::GetTickCount64();
-		const ULONGLONG timeoutMillis = 15000;	// タイムアウト時間
-
-		DWORD dwRet = WAIT_TIMEOUT;
-		do {
-			// 残り時間を考慮して待機する
-			const auto elapsed = ::GetTickCount64() - startTick;	// 経過時間
-			if (timeoutMillis <= elapsed) break; // タイムアウト発生
-			const auto remaining = DWORD(timeoutMillis - elapsed);			// 残り時間
-			dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles), FALSE, remaining, QS_SENDMESSAGE);
-
-			// 自スレッドにメッセージが送られてきた場合
-			if (WAIT_OBJECT_0 + count == dwRet) {
-				BlockingHook(nullptr);	// 溜まったメッセージを処理する
-			}
-		}
-		while (
-			WAIT_OBJECT_0 != dwRet && // エディター初期化完了
-			WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
-		);
-
-		if (WAIT_OBJECT_0 != dwRet) {
-			ErrorMessage(
-				hWndParent,
-				LS(STR_TRAY_CREATEPROC2),
-				szEXE
-			);
-			bRet = false;
-		}
-
-		// プロセス起動正常、かつ、Grepモードの場合
-		if (bRet && isGrepMode) {
-			dwRet = WAIT_TIMEOUT;
-
-			constexpr auto waitIntervals = 100; // 100ms
-
-			while (
-				WAIT_OBJECT_0 != dwRet && // Grep完了
-				WAIT_OBJECT_0 + 1 != dwRet // エディタープロセス終了
-			) {
-				std::array handles2{ grepEvent.get(), p.hProcess};
-				dwRet = ::MsgWaitForMultipleObjects(count, std::data(handles2), FALSE, waitIntervals, QS_SENDMESSAGE);
-
-				// 自スレッドにメッセージが送られてきた場合
-				if (WAIT_OBJECT_0 + count == dwRet) {
-					BlockingHook(nullptr);	// 溜まったメッセージを処理する
-				}
-			}
-
-			if (WAIT_OBJECT_0 != dwRet) {
-				// プロセス起動側と同じメッセージを出しておく
-				ErrorMessage(
-					hWndParent,
-					LS(STR_TRAY_CREATEPROC2),
-					szEXE
-				);
-				bRet = false;
-			}
-		}
-	}
-
-	CloseHandle( p.hThread );
-	CloseHandle( p.hProcess );
 
 	return bRet;
 }

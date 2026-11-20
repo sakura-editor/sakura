@@ -1020,6 +1020,12 @@ TEST_F(TrayWndTest, OpenNewEditor103)
  */
 TEST_F(TrayWndTest, OpenNewEditor104)
 {
+	const auto bDispTabWnd_Old = GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd;
+	const auto bDispTabWndMultiWin_Old = GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin;
+
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = TRUE;
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin = FALSE;
+
 	SetUpLoadString();
 
 	auto pKernel32 = (MockKernel32*)Kernel32::getInstance();
@@ -1032,6 +1038,9 @@ TEST_F(TrayWndTest, OpenNewEditor104)
 
 	HWND hWndTray = nullptr;
 	pcTrayWnd->ExecCommand(hWndTray, F_FILENEW);
+
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWnd = bDispTabWnd_Old;
+	GetDllShareData().m_Common.m_sTabBar.m_bDispTabWndMultiWin = bDispTabWndMultiWin_Old;
 }
 
 /*!
