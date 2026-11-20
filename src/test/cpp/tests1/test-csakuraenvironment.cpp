@@ -27,6 +27,7 @@
 #include "util/file.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "util/sync/HandleHolder.hpp"
 #include "util/sync/MutexHandle.hpp"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
@@ -837,6 +838,34 @@ TEST_F(Kernel32, FilePointerOpenFilePath101)
 
 	std::error_code ec;
 	std::filesystem::remove(testDataPath, ec);
+}
+
+TEST_F(Kernel32, HandleHolder101)
+{
+	cxx::HandleHolder target{};
+
+	// エラーステータスを返して失敗させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, 0)) //try_lockは0秒待機
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_FALSE(target.try_lock());
+}
+
+TEST_F(Kernel32, HandleHolder102)
+{
+	cxx::HandleHolder target{};
+
+	// エラーステータスを返して失敗させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, 1000)) //1秒＝1000㍉秒
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_FALSE(target.try_lock_for(std::chrono::seconds(1)));
+}
+
+TEST_F(Kernel32, HandleHolder103)
+{
+	cxx::HandleHolder target{};
+	EXPECT_TRUE(target.unlock());	//未実装なので常に成功
 }
 
 TEST_F(Kernel32, LoadLibraryExW101)

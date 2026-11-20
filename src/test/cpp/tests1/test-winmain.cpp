@@ -29,8 +29,9 @@
 #include "mem/CNativeW.h"
 #include "env/DLLSHAREDATA.h"
 #include "env/CSakuraEnvironment.h"
-#include "util/os/make_system_error.hpp"
 #include "util/file.h"
+#include "util/os/make_system_error.hpp"
+#include "util/sync/HandleHolder.hpp"
 #include "config/system_constants.h"
 
 #include "testing/StartEditorProcess.hpp"
@@ -111,68 +112,6 @@ void writeTextFile(
 
 	fos.close();
 }
-
-//! HANDLE型のスマートポインタ
-class HandleHolder : public cxx::ResourceHolder<&::CloseHandle>
-{
-private:
-	using Base = cxx::ResourceHolder<&::CloseHandle>;
-	using Me = HandleHolder;
-
-public:
-	/*!
-	 * コンストラクタは流用する
-	 */
-	using Base::ResourceHolder;
-
-	virtual ~HandleHolder() = default;
-
-	void lock()
-	{
-		Lock(INFINITE);	//無限に待つ
-	}
-
-	bool try_lock()
-	{
-		return Lock(0);	//ロック取得を試行
-	}
-
-	template<class Rep, class Period>
-	bool try_lock_for(const std::chrono::duration<Rep, Period>& rel_time)
-	{
-		const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(rel_time);
-		return Lock(DWORD(milliseconds.count()));
-	}
-
-	bool unlock()
-	{
-		return Unlock();
-	}
-
-	virtual bool Lock(DWORD dwTimeout = INFINITE)
-	{
-		// ロック取得を試行
-		const auto dwRet = ::WaitForSingleObject(get(), dwTimeout);
-
-		if (WAIT_FAILED == dwRet) {
-			// エラー
-			return false;
-		}
-
-		return WAIT_OBJECT_0 == dwRet || WAIT_ABANDONED == dwRet;
-	}
-
-	virtual bool Unlock()
-	{
-		return true;
-	}
-
-	Me& operator = (HANDLE t)
-	{
-		reset(t);
-		return *this;
-	}
-};
 
 /*!
  * @brief 起動したプロセスオブジェクト

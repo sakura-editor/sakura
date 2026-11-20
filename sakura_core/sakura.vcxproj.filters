@@ -283,6 +283,9 @@
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp">
       <Filter>Cpp Source Files\util\os</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\util\sync\HandleHolder.hpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\cpp\util\sync\MutexHandle.hpp">
       <Filter>Cpp Source Files\util\sync</Filter>
     </ClInclude>
@@ -1401,6 +1404,9 @@
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp">
       <Filter>Cpp Source Files\util\os</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\main\cpp\util\sync\HandleHolder.cpp">
+      <Filter>Cpp Source Files\util\sync</Filter>
     </ClCompile>
     <ClCompile Include="..\src\main\cpp\util\sync\MutexHandle.cpp">
       <Filter>Cpp Source Files\util\sync</Filter>
