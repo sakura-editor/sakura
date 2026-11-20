@@ -1054,13 +1054,22 @@ bool CControlTray::OpenNewEditor(
 )
 {
 	/* 共有データ構造体のアドレスを返す */
-	const auto pShareData = &GetDllShareData();
+	const auto pShareData = GetDllShareDataPtr();
 
 	/* 編集ウィンドウの上限チェック */
-	if (MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum) {
+	if (
+		pShareData &&
+		MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum)
+	{
 		OkMessage( nullptr, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}
+
+	// タブまとめモードかどうか
+	const auto isTabMatome =
+		pShareData &&
+		pShareData->m_Common.m_sTabBar.m_bDispTabWnd &&
+		!pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin;
 
 	// -- -- -- -- コマンドライン文字列を生成 -- -- -- -- //
 	CCommandLineString cCmdLineBuf;
@@ -1079,6 +1088,9 @@ bool CControlTray::OpenNewEditor(
 	// ビューモード指定
 	if( sLoadInfo.bViewMode )cCmdLineBuf.AppendF( L" -R" );
 
+	// タブまとめ時はグループIDを指定できる
+	if (isTabMatome)
+	{
 	// グループID
 	if( false == bNewWindow ){	// 新規エディタをウインドウで開く
 		// グループIDを親ウィンドウから取得
@@ -1090,6 +1102,7 @@ bool CControlTray::OpenNewEditor(
 	}else{
 		// 空いているグループIDを使用する
 		cCmdLineBuf.AppendF( L" -GROUP=%d", CAppNodeManager::getInstance()->GetFreeGroupId() );
+	}
 	}
 
 	if( CCommandLine::getInstance()->IsSetProfile() ){
@@ -1158,7 +1171,9 @@ bool CControlTray::OpenNewEditor(
 	}
 
 	// タブまとめ時は起動したプロセスが立ち上がるまでしばらくタイトルバーをアクティブに保つため、強制的に同期モードにする。（プロセスの起動前に変更する必要がある。）
-	if (pShareData->m_Common.m_sTabBar.m_bDispTabWnd && !pShareData->m_Common.m_sTabBar.m_bDispTabWndMultiWin && !sync) {
+	if (isTabMatome &&
+		!sync)
+	{
 		sync = true;
 	}
 
@@ -1337,8 +1352,10 @@ bool CControlTray::OpenNewEditor2(
 )
 {
 	/* 編集ウィンドウの上限チェック */
-	if (const auto pShareData = &GetDllShareData();
-		MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum) {
+	if (const auto pShareData = GetDllShareDataPtr();
+		pShareData &&
+		MAX_EDITWINDOWS <= pShareData->m_sNodes.m_nEditArrNum)
+	{
 		OkMessage( nullptr, LS(STR_MAXWINDOW), MAX_EDITWINDOWS );
 		return false;
 	}

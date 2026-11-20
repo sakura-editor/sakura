@@ -13,6 +13,7 @@
 #include <Windows.h>
 #include <Shlwapi.h>
 
+#include "_main/CControlTray.h"
 #include "config/maxdata.h"
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
@@ -536,6 +537,72 @@ TEST_F(Kernel32, FileHandleCreateFileW001)
 	EXPECT_THAT(hFile, Eq(HANDLE(403)));
 
 	hFile.release();
+}
+
+TEST_F(Kernel32, CControlTrayOpenNewEditor101)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// プロセス起動は失敗させる
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	SLoadInfo sLoadInfo;
+	sLoadInfo.cFilePath = L"text.txt";
+	sLoadInfo.eCharCode = CODE_UTF8;
+	sLoadInfo.bViewMode = true;
+
+	auto additionalOpts = std::wstring(1024, L'a');
+
+	EXPECT_FALSE(CControlTray::OpenNewEditor(nullptr, HWND(nullptr), sLoadInfo, additionalOpts.c_str()));
+}
+
+TEST_F(Kernel32, CControlTrayOpenNewEditor102)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// プロセス起動は失敗させる
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	EditInfo fi{};
+	EXPECT_FALSE(CControlTray::OpenNewEditor2(nullptr, HWND(nullptr), &fi, false));
 }
 
 TEST_F(Kernel32, FileHandleCreateFileW101)
