@@ -25,6 +25,7 @@
 #include <process.h> // _beginthreadex
 #include <limits.h>
 #include "CEditView.h"
+
 #include "_main/CAppMode.h"
 #include "CEditApp.h"
 #include "agent/CGrepAgent.h" // use CEditApp.h
@@ -39,6 +40,7 @@
 #include "util/input.h"
 #include "util/os.h"
 #include "util/shell.h"
+#include "util/tchar_convert.h"
 #include "charset/CCodeBase.h"
 #include "charset/CCodeFactory.h"
 #include "apiwrap/StdApi.h"
@@ -1667,22 +1669,7 @@ void CEditView::OnLBUTTONDBLCLK( WPARAM fwKeys, int _xPos , int _yPos )
 //                           D&D                               //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
-void CEditView::EnterDragMode()
-{
-	_SetDragMode(true);
-}
-
-void CEditView::LeaveDragMode()
-{
-	_SetDragMode(false);
-
-	// 非アクティブ時は表示状態を非アクティブに戻す
-	if (!::GetActiveWindow()) {
-		OnKillFocus();
-	}
-}
-
-IFACEMETHODIMP CEditView::DragEnter(
+IFACEMETHODIMP CDropTarget::DragEnter(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1734,7 +1721,7 @@ IFACEMETHODIMP CEditView::DragEnter(
 	);
 }
 
-IFACEMETHODIMP CEditView::DragOver(
+IFACEMETHODIMP CDropTarget::DragOver(
 	DWORD dwKeyState,
 	POINTL pt,
 	LPDWORD pdwEffect
@@ -1764,7 +1751,7 @@ IFACEMETHODIMP CEditView::DragOver(
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::DragLeave()
+IFACEMETHODIMP CDropTarget::DragLeave()
 {
 	DEBUG_TRACE( L"CEditView::DragLeave()\n" );
 
@@ -1781,7 +1768,7 @@ IFACEMETHODIMP CEditView::DragLeave()
 	return S_OK;
 }
 
-IFACEMETHODIMP CEditView::Drop(
+IFACEMETHODIMP CDropTarget::Drop(
 	LPDATAOBJECT pDataObject,
 	DWORD dwKeyState,
 	POINTL pt,
@@ -1789,15 +1776,6 @@ IFACEMETHODIMP CEditView::Drop(
 )
 {
 	DEBUG_TRACE( L"CEditView::Drop()\n" );
-	BOOL		bBoxData;
-	BOOL		bMove;
-	BOOL		bMoveToPrev = FALSE;
-	RECT		rcSel;
-	CNativeW	cmemBuf;
-	bool		bBeginBoxSelect_Old = false;
-
-	CLayoutRange sSelectBgn_Old;
-	CLayoutRange sSelect_Old;
 
 	// ドラッグモードを終了する
 	LeaveDragMode();
@@ -1820,51 +1798,91 @@ IFACEMETHODIMP CEditView::Drop(
 	if (IsDragFile())
 		return PostMyDropFiles( pDataObject );
 
+	bool bMove = false;
+
 	// 外部からのドロップは以後の処理ではコピーと同様に扱う
-	const auto pcDragSourceView = GetDragSourceView();
-	bMove = (*pdwEffect == DROPEFFECT_MOVE) && pcDragSourceView;
+	if (const auto pcDragSourceView = GetDragSourceView())
+	{
+		// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
+		if (!pcDragSourceView->IsCurrentPositionSelected(GetCaret().GetCaretLayoutPos())) {
+			// DragEnter時のカーソル位置を復元
+			// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
+			*pdwEffect = DROPEFFECT_NONE;
 
-	// カーソルが選択範囲内にあるときはコピー／移動しない	// 2009.06.09 ryoji
-	if( pcDragSourceView &&
-		!pcDragSourceView->IsCurrentPositionSelected( GetCaret().GetCaretLayoutPos() )
-	){
-		// DragEnter時のカーソル位置を復元
-		// Note. ドラッグ元が他ビューでもマウス移動が速いと稀にここにくる可能性がありそう
-		*pdwEffect = DROPEFFECT_NONE;
+			return DragLeave();
+		}
 
-		return DragLeave();
+		bMove = (DROPEFFECT_MOVE == *pdwEffect);
 	}
 
-	bBoxData = m_bDragBoxData;
+	return m_pcEditView->InsertDroppedText(
+		pDataObject,
+		bMove
+	);
+}
 
-	CLIPFORMAT cf = 0;
+HRESULT CEditView::InsertDroppedText(
+	LPDATAOBJECT pDataObject,
+	bool bMove
+)
+{
+	BOOL		bMoveToPrev = FALSE;
+	RECT		rcSel;
+	CNativeW	cmemBuf;
+	bool		bBeginBoxSelect_Old = false;
 
-	if (m_Formats.contains(CDataObject::cfSakuraClip)) cf = CDataObject::cfSakuraClip;
-	if (0 == cf && m_Formats.contains(CF_UNICODETEXT)) cf = CF_UNICODETEXT;
-	if (0 == cf && m_Formats.contains(CF_TEXT)) cf = CF_TEXT;
+	CLayoutRange sSelectBgn_Old;
+	CLayoutRange sSelect_Old;
+
+	const auto formats = GetAvailableClipFormats(pDataObject);
 
 	// ドロップデータの取得
-	HGLOBAL hData = GetGlobalData( pDataObject, cf );
-	if (hData == nullptr)
-		return E_INVALIDARG;
-	LPVOID pData = ::GlobalLock( hData );
-	SIZE_T nSize = ::GlobalSize( hData );
-	if( cf == CClipboard::GetSakuraFormat() ){
-		using LengthField = CClipboard::SAKURAClipW_LengthFieldType;
-		if( nSize > sizeof(LengthField) ){
-			const auto nStoredLength = *(LengthField*)pData;
-			const SIZE_T nMaxLength = (nSize - sizeof(LengthField)) / sizeof(wchar_t);
-			wchar_t* pszData = (wchar_t*)((BYTE*)pData + sizeof(LengthField));
-			cmemBuf.SetString( pszData, (nStoredLength <= 0)? 0: t_min( (SIZE_T)nStoredLength, nMaxLength ) );	// 途中のNUL文字も含める
+	std::wstring text;
+
+	// データ取得できた時点で break するためのループ
+	do {
+		STGMEDIUM me = {};
+
+		FORMATETC fe{};
+		fe.ptd = nullptr;
+		fe.dwAspect = DVASPECT_CONTENT;
+		fe.lindex = -1;
+		fe.tymed = TYMED_HGLOBAL;
+
+		fe.cfFormat = CDataObject::cfSakuraClip;
+		if (formats.contains(CDataObject::cfSakuraClip) &&
+			SUCCEEDED(pDataObject->QueryGetData(&fe)) &&
+			SUCCEEDED(pDataObject->GetData(&fe, &me)))
+		{
+			cxx::GlobalSakura buffer(me.hGlobal);
+			text = buffer.wstring();	// だいぶ効率悪い
+			break;
 		}
-	}else if( cf == CF_UNICODETEXT ){
-		cmemBuf.SetString( (wchar_t*)pData, wcsnlen( (wchar_t*)pData, nSize / sizeof(wchar_t) ) );
-	}else{
-		CNativeA binary;
-		binary.SetString((char*)pData, nSize / sizeof(char));
-		auto pcCodeBase = std::unique_ptr<CCodeBase>(CCodeFactory::CreateCodeBase(ECodeType::CODE_SJIS, 0));
-		pcCodeBase->CodeToUnicode(*binary._GetMemory(), &cmemBuf);
+
+		fe.cfFormat = CF_UNICODETEXT;
+		if (SUCCEEDED(pDataObject->GetData(&fe, &me)))
+		{
+			cxx::GlobalWString buffer(me.hGlobal);
+			text = buffer.wstring();	// だいぶ効率悪い
+			break;
+		}
+
+		fe.cfFormat = CF_TEXT;
+		if (SUCCEEDED(pDataObject->GetData(&fe, &me)))
+		{
+			cxx::GlobalString buffer(me.hGlobal);
+			text = cxx::to_wstring(buffer.string());	// だいぶ効率悪い
+			break;
+		}
 	}
+	while (false);
+
+	cmemBuf.SetString(text.c_str(), text.size());
+
+	// ドラッグデータは矩形か
+	const auto bBoxData = formats.contains(CDataObject::cfColumnSelect);
+
+	auto pcDragSourceView = GetDragSourceView();
 
 	// アンドゥバッファの準備
 	if( nullptr == m_cCommander.GetOpeBlk() ){
@@ -2061,12 +2079,6 @@ IFACEMETHODIMP CEditView::Drop(
 	/* アンドゥバッファの処理 */
 	SetUndoBuffer();
 
-	::GlobalUnlock( hData );
-	// 2004.07.12 fotomo/もか メモリリークの修正
-	if( 0 == (GMEM_LOCKCOUNT & ::GlobalFlags(hData)) ){
-		::GlobalFree( hData );
-	}
-
 	return S_OK;
 }
 
@@ -2075,9 +2087,22 @@ IFACEMETHODIMP CEditView::Drop(
 */
 STDMETHODIMP CEditView::PostMyDropFiles( LPDATAOBJECT pDataObject )
 {
-	HGLOBAL hData = GetGlobalData( pDataObject, CF_HDROP );
-	if( hData == nullptr )
+	STGMEDIUM me = {};
+
+	FORMATETC fe{};
+	fe.cfFormat = CF_HDROP;
+	fe.ptd = nullptr;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	fe.tymed = TYMED_HGLOBAL;
+
+	if (FAILED(pDataObject->QueryGetData(&fe)) ||
+		FAILED(pDataObject->GetData(&fe, &me)))
+	{
 		return E_INVALIDARG;
+	}
+
+	HGLOBAL hData = me.hGlobal;
 	LPVOID pData = ::GlobalLock( hData );
 	SIZE_T nSize = ::GlobalSize( hData );
 
@@ -2214,7 +2239,7 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::GlobalFree( hDrop );
 }
 
-DWORD CEditView::TranslateDropEffect(
+DWORD CDropTarget::TranslateDropEffect(
 	DWORD dwKeyState,
 	DWORD dwEffect
 ) const
@@ -2243,24 +2268,9 @@ DWORD CEditView::TranslateDropEffect(
 	return dwEffect;
 }
 
-bool CEditView::IsDragFile() const
-{
-	return
-		!IsDragText() &&
-		m_Formats.contains(CF_HDROP);
-}
-
 bool CEditView::IsDragSource() const
 {
 	return this == GetDragSourceView();
-}
-
-bool CEditView::IsDragText() const
-{
-	return
-		m_Formats.contains(CClipboard::GetSakuraFormat()) ||
-		m_Formats.contains(CF_UNICODETEXT) ||
-		m_Formats.contains(CF_TEXT);
 }
 
 /*!
