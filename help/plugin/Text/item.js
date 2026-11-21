@@ -23,7 +23,7 @@ if(IsChm()){
 function hideDiv (targetId)
 {
 	if (document.getElementById) {
-		target = document.getElementById( targetId );
+		var target = document.getElementById( targetId );
 		target.style.display = ( target.style.display == "none" ) ? "block" : "none";
 	}
 }
