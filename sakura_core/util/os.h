@@ -245,12 +245,6 @@ public:
 	//HGLOBALを指定して構築（メモリ変更は行わない）
 	using Base::Base;
 
-	//データ数だけ指定して構築（確保したメモリはゼロクリアされる）
-	explicit GlobalData(int count) : GlobalMemory(count * sizeof(T)) {}
-
-	//1データで構築
-	GlobalData() : GlobalData(1) {}
-
 	//データを指定して更新する
 	bool SetData(std::span<const T> data) const
 	{

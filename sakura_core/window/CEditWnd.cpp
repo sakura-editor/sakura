@@ -1218,6 +1218,10 @@ LRESULT CEditWnd::DispatchEvent(
 	CTypeConfig			cTypeNew;
 
 	switch( uMsg ){
+// clang-format off
+	HANDLE_MSG(hWnd, WM_DROPFILES,						OnDropFiles);
+// clang-format on
+
 	case WM_PAINTICON:
 		return 0;
 	case WM_ICONERASEBKGND:
@@ -1584,10 +1588,7 @@ LRESULT CEditWnd::DispatchEvent(
 	case WM_INITMENUPOPUP:
 		InitMenu( (HMENU)wParam, (UINT)LOWORD( lParam ), (BOOL)HIWORD( lParam ) );
 		return 0L;
-	case WM_DROPFILES:
-		/* ファイルがドロップされた */
-		OnDropFiles( (HDROP) wParam );
-		return 0L;
+
 	case WM_QUERYENDSESSION:	//OSの終了
 		if( OnClose( nullptr, false ) ){
 			::DestroyWindow( hwnd );
@@ -2861,9 +2862,15 @@ IFACEMETHODIMP CDropTarget_CEditWnd::Drop(
 	return GetEditWnd().GetActiveView().PostMyDropFiles( pDataObject );
 }
 
-/* ファイルがドロップされた */
-void CEditWnd::OnDropFiles( HDROP hDrop )
+/*!
+ * @brief WM_DROPFILESハンドラ
+ *
+ * ファイルがドロップされたときに送られてくる。
+ */
+void CEditWnd::OnDropFiles(HWND hWnd, HDROP hDrop)
 {
+	if (!hWnd || !hDrop) return;
+
 	POINT		pt;
 	int			cFiles, i;
 	EditInfo*	pfi;

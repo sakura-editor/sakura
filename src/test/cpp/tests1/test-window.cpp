@@ -2073,7 +2073,7 @@ TEST_F(EditWndTest, DISABLED_OnInitMenuPopup101)	// パラメーター不正の�
 	pcEditWnd->DispatchEvent(hWndEdit, WM_INITMENUPOPUP, 0L, 0L);
 }
 
-TEST_F(EditWndTest, DISABLED_OnDropFiles101)	// パラメーター不正の考慮がないので呼べない
+TEST_F(EditWndTest, OnDropFiles101)
 {
 	HWND hWndEdit = nullptr;
 	pcEditWnd->DispatchEvent(hWndEdit, WM_DROPFILES, 0L, 0L);
@@ -3384,6 +3384,86 @@ TEST_F(EditWndTest, DropTarget002)
 
 	//2回目はドロップする
 	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget003)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
+
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(110));	// ファイルを開く
+
+#if 1 // CEditView::Dropの実装がマズくてテストできないので代替実装でテストする
+
+	STGMEDIUM me = {};
+
+	FORMATETC fe{};
+	fe.cfFormat = CF_HDROP;
+	fe.ptd = nullptr;
+	fe.dwAspect = DVASPECT_CONTENT;
+	fe.lindex = -1;
+	fe.tymed = TYMED_HGLOBAL;
+
+	EXPECT_HRESULT_EQ(hDrop->QueryGetData(&fe), S_OK);
+	EXPECT_HRESULT_EQ(hDrop->GetData(&fe, &me), S_OK);
+
+	// 取得したグローバルメモリをスマートポインターに入れる
+	cxx::GlobalData<BYTE> src{ me.hGlobal };
+	auto drop = static_cast<HDROP>(src.get());
+
+	// ストレージの後始末にスマートポインターを用意する
+	using MeHolder = cxx::ResourceHolder<&::ReleaseStgMedium>;
+	MeHolder meHolder{};
+
+	// 外部IDataObjectの実装がおかしい場合に備えて、ReleaseStgMediumを呼ぶ仕組みを残しておく
+	if (me.pUnkForRelease) {
+		// pUnkForReleaseがある場合は、ReleaseStgMediumを呼ぶ必要がある
+		meHolder.reset(&me);
+
+		// 独自にグローバルメモリを確保してコピーする
+		auto dst = cxx::GlobalData<BYTE>{ src.size() };
+		dst.SetData(src.data());
+
+		// スマートポインターから生ポインターを取り出す
+		drop = static_cast<HDROP>(dst.release());
+	}
+
+	// グローバルメモリはWM_DROPFILESハンドラで解放されるので、スマートポインターから解放しておく
+	src.release();
+
+	auto& view =pcEditWnd->GetActiveView();
+	view.DispatchEvent(
+		view.GetHwnd(),
+		MYWM_DROPFILES,
+		WPARAM(drop),
+		0
+	);
+
+#else
+
+	//DragEnter～DragOverを実行させる
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	//ドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+#endif
 }
 
 /*!

@@ -2126,10 +2126,17 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	::InsertMenu( hMenu, 3, MF_BYPOSITION | MF_STRING, 110, LS(STR_VIEW_MOUSE_MENU_OPEN) );
 	::InsertMenu( hMenu, 4, MF_BYPOSITION | MF_SEPARATOR, 0, nullptr);	// セパレータ
 	::InsertMenu( hMenu, 5, MF_BYPOSITION | MF_STRING, IDCANCEL, LS(STR_VIEW_MOUSE_MENU_CANCEL) );
-	int nId = ::TrackPopupMenu( hMenu, TPM_LEFTALIGN | TPM_TOPALIGN | TPM_LEFTBUTTON | TPM_RETURNCMD,
-									( pt.x > rcWork.left )? pt.x: rcWork.left,
-									( pt.y < rcWork.bottom )? pt.y: rcWork.bottom,
-								0, hwnd, nullptr);
+
+	const auto nId = GetEditWnd().TrackPopupMenu(
+		hMenu,
+		TPM_LEFTALIGN
+		| TPM_TOPALIGN
+		,
+		rcWork.left < pt.x ? pt.x : rcWork.left,
+		pt.y < rcWork.bottom ? pt.y : rcWork.bottom,
+		hwnd
+	);
+
 	::DestroyMenu( hMenu );
 
 	::DestroyWindow( hwnd );
@@ -2141,8 +2148,8 @@ void CEditView::OnMyDropFiles( HDROP hDrop )
 	switch( nId ){
 	case 110:	// ファイルを開く
 		// 通常のドロップファイル処理を行う
-		::SendMessageAny( GetEditWnd().GetHwnd(), WM_DROPFILES, (WPARAM)hDrop, 0 );
-		break;
+		FORWARD_WM_DROPFILES(GetEditWnd().GetHwnd(), hDrop, GetEditWnd().DispatchEvent);
+		return;
 
 	case 100:	// パス名を貼り付ける
 	case 101:	// ファイル名を貼り付ける
