@@ -37,6 +37,19 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ LPCWSTR lpName
 	));
 
+	MOCK_CONST_METHOD10(CreateProcessW, BOOL(
+		_In_opt_ LPCWSTR lpApplicationName,
+		_Inout_opt_ LPWSTR lpCommandLine,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
+		_In_ BOOL bInheritHandles,
+		_In_ DWORD dwCreationFlags,
+		_In_opt_ LPVOID lpEnvironment,
+		_In_opt_ LPCWSTR lpCurrentDirectory,
+		_In_ LPSTARTUPINFOW lpStartupInfo,
+		_Out_ LPPROCESS_INFORMATION lpProcessInformation
+	));
+
 	MOCK_CONST_METHOD2(FindFirstFileW, HANDLE(
 		_In_ LPCWSTR lpFileName,
 		_Out_ LPWIN32_FIND_DATAW lpFindFileData
@@ -149,6 +162,14 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
 	));
+	
+	MOCK_CONST_METHOD4(WaitForMultipleObjects, DWORD(
+		_In_ DWORD nCount,
+		_In_reads_(nCount)
+		CONST HANDLE* lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
+	));
 
 	MOCK_CONST_METHOD2(WaitForSingleObject, DWORD(
 		_In_ HANDLE hHandle,
@@ -178,6 +199,19 @@ struct MockKernel32 final : public Kernel32
 		_In_opt_ LPSECURITY_ATTRIBUTES lpMutexAttributes,
 		_In_ BOOL bInitialOwner,
 		_In_opt_ LPCWSTR lpName
+	);
+
+	static BOOL _CreateProcessW(
+		_In_opt_ LPCWSTR lpApplicationName,
+		_Inout_opt_ LPWSTR lpCommandLine,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
+		_In_ BOOL bInheritHandles,
+		_In_ DWORD dwCreationFlags,
+		_In_opt_ LPVOID lpEnvironment,
+		_In_opt_ LPCWSTR lpCurrentDirectory,
+		_In_ LPSTARTUPINFOW lpStartupInfo,
+		_Out_ LPPROCESS_INFORMATION lpProcessInformation
 	);
 
 	static HANDLE _FindFirstFileW(
@@ -256,6 +290,13 @@ struct MockKernel32 final : public Kernel32
 	static DWORD _SizeofResource(
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
+	);
+
+	static DWORD _WaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_( nCount ) CONST HANDLE * lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
 	);
 
 	static DWORD _WaitForSingleObject(

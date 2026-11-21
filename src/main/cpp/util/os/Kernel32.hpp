@@ -42,6 +42,19 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 		_In_opt_ LPCWSTR lpName
 	) const;
 
+	virtual BOOL CreateProcessW(
+		_In_opt_ LPCWSTR lpApplicationName,
+		_Inout_opt_ LPWSTR lpCommandLine,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
+		_In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
+		_In_ BOOL bInheritHandles,
+		_In_ DWORD dwCreationFlags,
+		_In_opt_ LPVOID lpEnvironment,
+		_In_opt_ LPCWSTR lpCurrentDirectory,
+		_In_ LPSTARTUPINFOW lpStartupInfo,
+		_Out_ LPPROCESS_INFORMATION lpProcessInformation
+    ) const;
+
 	virtual HANDLE FindFirstFileW(
 		_In_ LPCWSTR lpFileName,
 		_Out_ LPWIN32_FIND_DATAW lpFindFileData
@@ -141,6 +154,13 @@ struct Kernel32 : public TSakuraSingleton<Kernel32>
 	virtual DWORD SizeofResource(
 		_In_opt_ HMODULE hModule,
 		_In_ HRSRC hResInfo
+	) const;
+
+	virtual DWORD WaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_( nCount ) CONST HANDLE * lpHandles,
+		_In_ BOOL bWaitAll,
+		_In_ DWORD dwMilliseconds
 	) const;
 
 	virtual DWORD WaitForSingleObject(

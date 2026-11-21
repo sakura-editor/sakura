@@ -24,6 +24,23 @@
 	return 0;
 }
 
+/* static */ DWORD MockUser32::_MsgWaitForMultipleObjects(
+	_In_ DWORD nCount,
+	_In_reads_opt_(nCount) CONST HANDLE* pHandles,
+	_In_ BOOL fWaitAll,
+	_In_ DWORD dwMilliseconds,
+	_In_ DWORD dwWakeMask
+)
+{
+	return ::MsgWaitForMultipleObjects(
+		nCount,
+		pHandles,
+		fWaitAll,
+		dwMilliseconds,
+		dwWakeMask
+	);
+}
+
 /* static */ BOOL MockUser32::_WinHelpW(
 	_In_opt_ HWND /* hWndMain */,
 	_In_opt_ LPCWSTR /* lpszHelp */,
@@ -38,5 +55,6 @@ MockUser32::MockUser32()
 {
 	// デフォルトの動作を設定する
 	ON_CALL(*this, MessageBoxExW(_, _, _, _, _)).WillByDefault(&_MessageBoxExW);
+	ON_CALL(*this, MsgWaitForMultipleObjects(_, _, _, _, _)).WillByDefault(&_MsgWaitForMultipleObjects);
 	ON_CALL(*this, WinHelpW(_, _, _, _)).WillByDefault(&_WinHelpW);
 }

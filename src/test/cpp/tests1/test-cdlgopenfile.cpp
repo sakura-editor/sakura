@@ -830,19 +830,6 @@ TEST(SelectDir, test101)
 
 namespace env {
 
-TEST(User32, TrackPopupMenu)
-{
-	User32::getInstance()->TrackPopupMenu(
-		HMENU(nullptr),
-		0,
-		0,
-		0,
-		0,
-		nullptr,
-		nullptr
-	);
-}
-
 TEST(Comdlg32, ChooseColorW)
 {
 	// 呼ぶだけ

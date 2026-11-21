@@ -60,6 +60,33 @@
 	);
 }
 
+/* static */ BOOL MockKernel32::_CreateProcessW(
+	_In_opt_ LPCWSTR lpApplicationName,
+	_Inout_opt_ LPWSTR lpCommandLine,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
+	_In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
+	_In_ BOOL bInheritHandles,
+	_In_ DWORD dwCreationFlags,
+	_In_opt_ LPVOID lpEnvironment,
+	_In_opt_ LPCWSTR lpCurrentDirectory,
+	_In_ LPSTARTUPINFOW lpStartupInfo,
+	_Out_ LPPROCESS_INFORMATION lpProcessInformation
+)
+{
+	return ::CreateProcessW(
+		lpApplicationName,
+		lpCommandLine,
+		lpProcessAttributes,
+		lpThreadAttributes,
+		bInheritHandles,
+		dwCreationFlags,
+		lpEnvironment,
+		lpCurrentDirectory,
+		lpStartupInfo,
+		lpProcessInformation
+	);
+}
+
 /* static */ HANDLE MockKernel32::_FindFirstFileW(
 	_In_ LPCWSTR lpFileName,
 	_Out_ LPWIN32_FIND_DATAW lpFindFileData
@@ -226,6 +253,21 @@
 	);
 }
 
+/* static */ DWORD MockKernel32::_WaitForMultipleObjects(
+	_In_ DWORD nCount,
+	_In_reads_( nCount ) CONST HANDLE* lpHandles,
+	_In_ BOOL bWaitAll,
+	_In_ DWORD dwMilliseconds
+)
+{
+	return ::WaitForMultipleObjects(
+		nCount,
+		lpHandles,
+		bWaitAll,
+		dwMilliseconds
+	);
+}
+
 /* static */ DWORD MockKernel32::_WaitForSingleObject(
 	_In_ HANDLE hHandle,
 	_In_ DWORD dwMilliseconds
@@ -243,6 +285,7 @@ MockKernel32::MockKernel32()
 	ON_CALL(*this, CreateFileMappingW(_, _, _, _, _, _)).WillByDefault(&_CreateFileMappingW);
 	ON_CALL(*this, CreateFileW(_, _, _, _, _, _, _)).WillByDefault(&_CreateFileW);
 	ON_CALL(*this, CreateMutexW(_, _, _)).WillByDefault(&_CreateMutexW);
+	ON_CALL(*this, CreateProcessW(_, _, _, _, _, _, _, _, _, _)).WillByDefault(&_CreateProcessW);
 	ON_CALL(*this, FindResourceG(_, _, _)).WillByDefault(&_FindResourceG);
 	ON_CALL(*this, GetCurrentDirectoryW(_, _)).WillByDefault(&_GetCurrentDirectoryW);
 	ON_CALL(*this, GetModuleFileNameW(_, _, _)).WillByDefault(&_GetModuleFileNameW);
@@ -254,5 +297,6 @@ MockKernel32::MockKernel32()
 	ON_CALL(*this, OpenFileMappingW(_, _, _)).WillByDefault(&_OpenFileMappingW);
 	ON_CALL(*this, SetCurrentDirectoryW(_)).WillByDefault(&_SetCurrentDirectoryW);
 	ON_CALL(*this, SizeofResource(_, _)).WillByDefault(&_SizeofResource);
+	ON_CALL(*this, WaitForMultipleObjects(_, _, _, _)).WillByDefault(&_WaitForMultipleObjects);
 	ON_CALL(*this, WaitForSingleObject(_, _)).WillByDefault(&_WaitForSingleObject);
 }

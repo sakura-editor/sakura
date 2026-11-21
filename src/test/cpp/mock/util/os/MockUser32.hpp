@@ -20,6 +20,14 @@ struct MockUser32 final : public User32
 		_In_ WORD wLanguageId
 	));
 
+	MOCK_CONST_METHOD5(MsgWaitForMultipleObjects, DWORD(
+		_In_ DWORD nCount,
+		_In_reads_opt_(nCount) CONST HANDLE* pHandles,
+		_In_ BOOL fWaitAll,
+		_In_ DWORD dwMilliseconds,
+		_In_ DWORD dwWakeMask
+	));
+
 	MOCK_CONST_METHOD7(TrackPopupMenu, BOOL(
 		_In_ HMENU hMenu,
 		_In_ UINT uFlags,
@@ -45,6 +53,14 @@ struct MockUser32 final : public User32
 		_In_ WORD wLanguageId
 	);
 
+	static DWORD _MsgWaitForMultipleObjects(
+		_In_ DWORD nCount,
+		_In_reads_opt_(nCount) CONST HANDLE* pHandles,
+		_In_ BOOL fWaitAll,
+		_In_ DWORD dwMilliseconds,
+		_In_ DWORD dwWakeMask
+	);
+
 	static BOOL _WinHelpW(
 		_In_opt_ HWND hWndMain,
 		_In_opt_ LPCWSTR lpszHelp,
@@ -54,4 +70,3 @@ struct MockUser32 final : public User32
 
 	MockUser32();
 };
-

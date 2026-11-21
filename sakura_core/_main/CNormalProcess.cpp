@@ -133,10 +133,16 @@ bool CNormalProcess::InitializeProcess(
 	EventHolder grepEvent;
 
 	// コントロールプロセスが起動している状態にする
-	if (!CProcessFactory::IsExistControlProcess() &&
-		!CProcessFactory::StartControlProcess())
-	{
-		return false;
+	try {
+		CProcessFactory::StartControlProcess();
+	}
+	// エラーが発生した場合
+	catch (const std::system_error&) {
+		throw basis::make_initialization_error(
+			// L"エディタまたはシステムがビジー状態です。\nしばらく待って開きなおしてください。
+			LS(STR_ERR_DLGPROCFACT5)
+			, static_cast<int>(EAppExitCode::Exited)	//エラーなのに正常っぽいコードを返すのは妥当か？
+		);
 	}
 
 	// 共有メモリを初期化する

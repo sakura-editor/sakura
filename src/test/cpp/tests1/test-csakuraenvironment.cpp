@@ -13,6 +13,7 @@
 #include <Windows.h>
 #include <Shlwapi.h>
 
+#include "_main/CControlTray.h"
 #include "config/maxdata.h"
 #include "basis/primitive.h"
 #include "debug/Debug2.h"
@@ -27,7 +28,9 @@
 #include "util/file.h"
 #include "util/module.h"
 #include "util/os.h"
+#include "util/sync/HandleHolder.hpp"
 #include "util/sync/MutexHandle.hpp"
+#include "util/sync/ProcessHolder.hpp"
 #include "util/tchar_convert.h"
 #include "recent/CMRUFolder.h"
 #include "version.h"
@@ -35,6 +38,7 @@
 #include "window/EditorTestSuite.hpp"
 #include "util/os/MockBcrypt.hpp"
 #include "util/os/MockKernel32.hpp"
+#include "util/os/MockUser32.hpp"
 
 #include <fstream>
 
@@ -535,6 +539,72 @@ TEST_F(Kernel32, FileHandleCreateFileW001)
 	hFile.release();
 }
 
+TEST_F(Kernel32, CControlTrayOpenNewEditor101)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// プロセス起動は失敗させる
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	SLoadInfo sLoadInfo;
+	sLoadInfo.cFilePath = L"text.txt";
+	sLoadInfo.eCharCode = CODE_UTF8;
+	sLoadInfo.bViewMode = true;
+
+	auto additionalOpts = std::wstring(1024, L'a');
+
+	EXPECT_FALSE(CControlTray::OpenNewEditor(nullptr, HWND(nullptr), sLoadInfo, additionalOpts.c_str()));
+}
+
+TEST_F(Kernel32, CControlTrayOpenNewEditor102)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, FindResourceG(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LoadResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, SizeofResource(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, LockResource(_))
+		.WillRepeatedly(testing::DoDefault());
+
+	// プロセス起動は失敗させる
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	EditInfo fi{};
+	EXPECT_FALSE(CControlTray::OpenNewEditor2(nullptr, HWND(nullptr), &fi, false));
+}
+
 TEST_F(Kernel32, FileHandleCreateFileW101)
 {
 	EXPECT_CALL(*pKernel32, CreateFileW(_, _, _, nullptr, OPEN_EXISTING, _, nullptr))
@@ -839,6 +909,34 @@ TEST_F(Kernel32, FilePointerOpenFilePath101)
 	std::filesystem::remove(testDataPath, ec);
 }
 
+TEST_F(Kernel32, HandleHolder101)
+{
+	cxx::HandleHolder target{};
+
+	// エラーステータスを返して失敗させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, 0)) //try_lockは0秒待機
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_FALSE(target.try_lock());
+}
+
+TEST_F(Kernel32, HandleHolder102)
+{
+	cxx::HandleHolder target{};
+
+	// エラーステータスを返して失敗させる
+	EXPECT_CALL(*pKernel32, WaitForSingleObject(_, 1000)) //1秒＝1000㍉秒
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_FALSE(target.try_lock_for(std::chrono::seconds(1)));
+}
+
+TEST_F(Kernel32, HandleHolder103)
+{
+	cxx::HandleHolder target{};
+	EXPECT_TRUE(target.unlock());	//未実装なので常に成功
+}
+
 TEST_F(Kernel32, LoadLibraryExW101)
 {
 	EXPECT_CALL(*pKernel32, LoadLibraryExW(_, _, _))
@@ -961,6 +1059,39 @@ TEST_F(Kernel32, MutexHandleCreateMutexW101)
 
 	// 想定されたエラーコードが設定されていること
 	EXPECT_THAT(::GetLastError(), ERROR_ALREADY_EXISTS);
+}
+
+TEST_F(Kernel32, ProcessHolderCreateProcessW101)
+{
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetModuleFileNameW(_, _, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// デフォルト処理を呼んで成功させる
+	EXPECT_CALL(*pKernel32, GetCurrentDirectoryW(_, _))
+		.WillRepeatedly(testing::DoDefault());
+
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, CreateProcessW(_, _, _, _, _, _, _, _, _, _))
+		.WillOnce(Return(FALSE));
+
+	const auto exePath = GetExeFileName();
+	std::wstring emptyStr{};
+	const auto currentDir = cxx::GetCurrentDirectoryW();
+	STARTUPINFO si{};
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([&] {
+			ProcessHolder::CreateProcessW(
+				exePath,
+				emptyStr,
+				CREATE_DEFAULT_ERROR_MODE,
+				currentDir.c_str(),
+				si
+			);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("CreateProcessW() failed"))
+	);
 }
 
 TEST_F(Kernel32, GetCurrentDirectoryW101)
@@ -1277,6 +1408,21 @@ TEST_F(Kernel32, SetCurrentDirectoryW101)
 	);
 }
 
+TEST_F(Kernel32, WaitForMultipleObjects101)
+{
+	// APIが0を返したら例外。
+	EXPECT_CALL(*pKernel32, WaitForMultipleObjects(_, _, _, _))
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	// システム例外のメッセージは先頭一致で評価する
+	EXPECT_THAT(([] {
+			std::array handles{ (HANDLE)nullptr };
+			cxx::WaitForMultipleObjects(handles, false, std::chrono::seconds(15));
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("WaitForMultipleObjects() failed"))
+	);
+}
+
 TEST_F(Kernel32, CreateNew101)
 {
 	constexpr auto& fileName = L"tests1.ini";
@@ -1342,6 +1488,71 @@ TEST_F(Kernel32, OpenExisting103)
 	EXPECT_CALL(*pKernel32, CreateFileW(_, dwDesiredAccess, dwShareMode, nullptr, OPEN_EXISTING, 0, nullptr))
 		.WillOnce(testing::Throw(std::system_error(ERROR_NOT_FOUND, std::system_category())));		// 指定ファイル作成失敗
 	EXPECT_THROW(FileHandle::OpenExisting(fileName, dwDesiredAccess, dwShareMode), std::system_error);
+}
+
+/*!
+ * User32のAPI呼出テスト
+ */
+struct User32 : public ::testing::Test {
+	using Target = ::User32;
+
+	void SetUp() override
+	{
+		Target::setInstance<MockUser32>();
+		pUser32 = static_cast<MockUser32*>(Target::getInstance());
+	}
+
+	void TearDown() override
+	{
+		Target::resetInstance();
+	}
+
+	MockUser32* pUser32 = nullptr;
+};
+
+TEST_F(User32, MsgWaitForMultipleObjects001)
+{
+	std::array handles{ HANDLE(nullptr) };
+
+	EXPECT_CALL(*pUser32, MsgWaitForMultipleObjects(1, std::data(handles), FALSE, 100, QS_SENDMESSAGE))
+		.WillOnce(Return(WAIT_OBJECT_0 + DWORD(std::size(handles))))
+		.WillOnce(Return(WAIT_TIMEOUT));
+
+	EXPECT_THAT(
+		cxx::MsgWaitForMultipleObjects(handles, false, 100, QS_SENDMESSAGE),
+		Eq(WAIT_OBJECT_0 + DWORD(std::size(handles)))
+	);
+
+	EXPECT_THAT(
+		cxx::MsgWaitForMultipleObjects(handles, false, 100, QS_SENDMESSAGE),
+		Eq(WAIT_TIMEOUT)
+	);
+}
+
+TEST_F(User32, MsgWaitForMultipleObjects101)
+{
+	EXPECT_CALL(*pUser32, MsgWaitForMultipleObjects(_, _, _, _, _))
+		.WillOnce(Return(WAIT_FAILED));
+
+	EXPECT_THAT(([] {
+			std::array handles{ HANDLE(nullptr) };
+			cxx::MsgWaitForMultipleObjects(handles, false, 15000, QS_SENDMESSAGE);
+		}),
+		ThrowsMessage<std::system_error>(StartsWith("MsgWaitForMultipleObjects() failed"))
+	);
+}
+
+TEST_F(User32, TrackPopupMenu001)
+{
+	Target::getInstance()->TrackPopupMenu(
+		HMENU(nullptr),
+		0,
+		0,
+		0,
+		0,
+		nullptr,
+		nullptr
+	);
 }
 
 /*!

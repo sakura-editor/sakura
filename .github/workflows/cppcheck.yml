@@ -2,16 +2,18 @@ name: Cppcheck
 
 on:
   push:
-    paths-ignore:
-      - '**/*.md'
-      - '.gitignore'
-      - '.editorconfig'
+    paths:
+      - 'sakura_core/**/*.cpp'
+      - 'src/main/cpp/**/*.cpp'
   pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - '.gitignore'
-      - '.editorconfig'
+    paths:
+      - 'sakura_core/**/*.cpp'
+      - 'src/main/cpp/**/*.cpp'
   workflow_dispatch:
+
+defaults:
+  run:
+    shell: msys2 {0} # 指定しない限りmsys2シェルを使う
 
 jobs:
   cppcheck:
@@ -32,18 +34,13 @@ jobs:
       - name: Set up MSYS2
         uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
-            mingw-w64-x86_64-cppcheck
-
-      - name: Show environment variables for debug
-        run: set
-        shell: cmd
+            mingw-w64-ucrt-x86_64-cppcheck
 
       - name: Run cppcheck
         run: ./run-cppcheck.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
-        shell: msys2 {0}
 
       - name: Zip files for artifacts
         run: zipArtifacts.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}

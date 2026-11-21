@@ -7,6 +7,23 @@
 #include "StdAfx.h"
 #include "util/os/User32.hpp"
 
+DWORD User32::MsgWaitForMultipleObjects(
+	_In_ DWORD nCount,
+	_In_reads_opt_(nCount) CONST HANDLE* pHandles,
+	_In_ BOOL fWaitAll,
+	_In_ DWORD dwMilliseconds,
+	_In_ DWORD dwWakeMask
+) const
+{
+	return ::MsgWaitForMultipleObjects(
+		nCount,
+		pHandles,
+		fWaitAll,
+		dwMilliseconds,
+		dwWakeMask
+	);
+}
+
 BOOL User32::TrackPopupMenu(
 	_In_ HMENU hMenu,
 	_In_ UINT uFlags,

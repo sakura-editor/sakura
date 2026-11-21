@@ -13,6 +13,10 @@ on:
       - '.editorconfig'
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: msys2 {0} # 指定しない限りmsys2シェルを使う
+
 jobs:
   doxygen:
     runs-on: windows-latest
@@ -32,18 +36,13 @@ jobs:
       - name: Set up MSYS2
         uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e # v2.33.0
         with:
-          msystem: MINGW64
+          msystem: UCRT64
           update: true
           install: >-
-            doxygen
-
-      - name: Show environment variables for debug
-        run: set
-        shell: cmd
+            mingw-w64-ucrt-x86_64-doxygen
 
       - name: Run doxygen
         run: ./run-doxygen.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
-        shell: msys2 {0}
 
       - name: Zip files for artifacts
         run: zipArtifacts.bat ${{ env.BuildPlatform }} ${{ env.Configuration }}
