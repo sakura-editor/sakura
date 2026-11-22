@@ -210,8 +210,23 @@ public:
 	void Command_PASTEBOX( const wchar_t *szPaste, size_t nPasteSize );
 	//>> 2002/03/29 Azumaiya
 	void Command_INSBOXTEXT(const wchar_t *pszPaste, int nPasteSize); // 矩形貼り付け
-	void Command_INSTEXT( bool bRedraw, const wchar_t* pszText, ptrdiff_t nTextLen, bool bNoWaitCursor,
-		bool bLinePaste = false, bool bFastMode = false, const CLogicRange*	psDelRangeLogicFast = nullptr ); // 2004.05.14 Moca テキストを貼り付け '\0'対応
+
+	/*!
+	 * @brief テキストを貼り付け
+	 *
+	 * 現在のキャレット位置に指定したテキストを挿入します。
+	 * Windows標準 EM_REPLACESEL に相当します。
+	 */
+	void Command_INSTEXT(
+		bool bRedraw,										//!< [in] 再描画するかどうか。🌟常にtrueとすべきです。
+		const wchar_t* pszText,								//!< [in] 貼り付ける文字列。
+		ptrdiff_t nTextLen,									//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する。🌟自動計算の仕様はそのうち削除します。
+		bool bNoWaitCursor [[maybe_unused]],				//!< [in] 🌟そのうち削除します。
+		bool bLinePaste = false,							//!< [in, opt] ラインモード貼り付け。🌟そのうち削除します。
+		bool bFastMode = false,								//!< [in, opt] 高速モード🌟そのうち削除します。
+		const CLogicRange*	psDelRangeLogicFast = nullptr	//!< [out, opt] 高速モードのときの削除範囲ロジック単位。🌟そのうち削除します。
+	);
+
 	void Command_ADDTAIL( const wchar_t* pszData, int nDataLen);	/* 最後にテキストを追加 */
 	void Command_COPYFILENAME( void );				/* このファイル名をクリップボードにコピー */ //2002/2/3 aroka
 	void Command_COPYPATH( void );					/* このファイルのパス名をクリップボードにコピー */
