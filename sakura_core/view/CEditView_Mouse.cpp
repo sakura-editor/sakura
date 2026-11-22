@@ -1704,8 +1704,8 @@ IFACEMETHODIMP CEditView::DragEnter(
 
 	m_Formats = GetAvailableClipFormats(pDataObject);
 
-	if (m_Formats.empty())
-		return E_INVALIDARG;
+	// ドラッグデータがフォーマットを含んでいない（あり得ない。）
+	if (m_Formats.empty()) return E_INVALIDARG;
 
 	// ファイルを受け付けるのは右ボタンで入ってきたときだけ
 	if (IsDragFile() &&
@@ -1808,8 +1808,8 @@ IFACEMETHODIMP CEditView::Drop(
 	if (!pdwEffect)
 		return E_INVALIDARG;
 
-	if (m_Formats.empty())
-		return E_INVALIDARG;
+	// ドラッグデータがフォーマットを含んでいない（あり得ない。）
+	if (m_Formats.empty()) return E_INVALIDARG;
 
 	*pdwEffect = TranslateDropEffect(dwKeyState, *pdwEffect);
 
