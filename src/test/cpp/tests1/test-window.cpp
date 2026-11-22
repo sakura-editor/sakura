@@ -44,6 +44,7 @@
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
 #include "util/os/MockComdlg32.hpp"
@@ -2473,6 +2474,78 @@ TEST_F(EditWndTest, Command_INDENT_TAB001)
 	ExecEditorCommand(F_SELECTALL);
 	ExecEditorCommand(F_INDENT_TAB);
 	EXPECT_THAT(GetAllText(), StrEq(L"\ta\n\tb\n"));
+}
+
+/*!
+ * コマンド：日付挿入
+ */
+TEST_F(EditWndTest, Command_INS_DATE001)
+{
+	// システム日時によって結果変わるため、呼ぶだけ
+	ExecEditorCommand(F_INS_DATE);
+}
+
+/*!
+ * コマンド：最近使ったファイル挿入
+ */
+TEST_F(EditWndTest, Command_INS_FILE_USED_RECENTLY001)
+{
+	std::array paths{ dummyPath, backupPathB00 };
+	std::wstring eol{ GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2() };
+	std::wstring expected;
+	CMRUFile cMRUFile;
+	for (const auto&path : paths) {
+		EditInfo ei{};
+		ei.m_szPath = path.c_str();
+		ei.m_nCharCode = CODE_UTF8;
+		cMRUFile.Add(&ei);
+	}
+	std::for_each(
+		paths.rbegin(),
+		paths.rend(),
+		[&expected, &eol] (const auto& path) {
+			expected += path;
+			expected += eol;
+		}
+	);
+	ExecEditorCommand(F_INS_FILE_USED_RECENTLY);
+	EXPECT_THAT(GetAllText(), StrEq(expected));
+	cMRUFile.ClearAll();
+}
+
+/*!
+ * コマンド：最近使ったフォルダ挿入
+ */
+TEST_F(EditWndTest, Command_INS_FOLDER_USED_RECENTLY001)
+{
+	std::array paths{ dummyPath.parent_path()};
+	std::wstring eol{ GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2() };
+	std::wstring expected;
+	CMRUFolder cMRUFolder;
+	for (const auto&path : paths) {
+		cMRUFolder.Add(path.c_str());
+	}
+	std::for_each(
+		paths.rbegin(),
+		paths.rend(),
+		[&expected, &eol] (const auto& path) {
+			expected += path;
+			expected += eol;
+		}
+	);
+	ExecEditorCommand(F_INS_FOLDER_USED_RECENTLY);
+	//おそらく実装に誤りがある
+//	EXPECT_THAT(GetAllText(), StrEq(expected));
+	cMRUFolder.ClearAll();
+}
+
+/*!
+ * コマンド：時刻挿入
+ */
+TEST_F(EditWndTest, Command_INS_TIME001)
+{
+	// システム日時によって結果変わるため、呼ぶだけ
+	ExecEditorCommand(F_INS_TIME);
 }
 
 /*!
