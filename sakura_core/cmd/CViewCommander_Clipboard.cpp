@@ -458,16 +458,18 @@ void CViewCommander::Command_INSBOXTEXT( const wchar_t *pszPaste, int nPasteSize
 	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
 
-/*! テキストを貼り付け
-	@date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
-	@date 2010.09.17 ryoji ラインモード貼り付けオプションを追加して以前の Command_PASTE() との重複部を整理・統合
-	@date 2013.05.10 Moca 高速モード
-*/
+/*!
+ * @brief テキストを貼り付け
+ * 
+ * @date 2004.05.14 Moca '\\0'を受け入れるように、引数に長さを追加
+ * @date 2010.09.17 ryoji ラインモード貼り付けオプションを追加して以前の Command_PASTE() との重複部を整理・統合
+ * @date 2013.05.10 Moca 高速モード
+ */
 void CViewCommander::Command_INSTEXT(
 	bool			bRedraw,		//!< 
 	const wchar_t*	pszText,		//!< [in] 貼り付ける文字列。
 	ptrdiff_t		nTextLen,		//!< [in] pszTextの長さ。-1を指定すると、pszTextをNUL終端文字列とみなして長さを自動計算する
-	[[maybe_unused]] bool			bNoWaitCursor,	//!< 
+	bool			bNoWaitCursor [[maybe_unused]],	//!< 
 	bool			bLinePaste,		//!< [in] ラインモード貼り付け
 	bool			bFastMode,		//!< [in] 高速モード(レイアウト座標は無視する)
 	const CLogicRange*	pcSelectLogic	//!< [in] オプション。高速モードのときの削除範囲ロジック単位

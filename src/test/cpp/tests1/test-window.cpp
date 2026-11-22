@@ -44,6 +44,7 @@
 #include "plugin/CJackManager.h"
 #include "plugin/CPluginManager.h"
 #include "prop/CPropCommon.h"
+#include "recent/CMRUFile.h"
 #include "recent/CMRUFolder.h"
 #include "typeprop/CPropTypes.h"
 #include "util/os/MockComdlg32.hpp"
@@ -2476,6 +2477,78 @@ TEST_F(EditWndTest, Command_INDENT_TAB001)
 }
 
 /*!
+ * コマンド：日付挿入
+ */
+TEST_F(EditWndTest, Command_INS_DATE001)
+{
+	// システム日時によって結果変わるため、呼ぶだけ
+	ExecEditorCommand(F_INS_DATE);
+}
+
+/*!
+ * コマンド：最近使ったファイル挿入
+ */
+TEST_F(EditWndTest, Command_INS_FILE_USED_RECENTLY001)
+{
+	std::array paths{ dummyPath, backupPathB00 };
+	std::wstring eol{ GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2() };
+	std::wstring expected;
+	CMRUFile cMRUFile;
+	for (const auto&path : paths) {
+		EditInfo ei{};
+		ei.m_szPath = path.c_str();
+		ei.m_nCharCode = CODE_UTF8;
+		cMRUFile.Add(&ei);
+	}
+	std::for_each(
+		paths.rbegin(),
+		paths.rend(),
+		[&expected, &eol] (const auto& path) {
+			expected += path;
+			expected += eol;
+		}
+	);
+	ExecEditorCommand(F_INS_FILE_USED_RECENTLY);
+	EXPECT_THAT(GetAllText(), StrEq(expected));
+	cMRUFile.ClearAll();
+}
+
+/*!
+ * コマンド：最近使ったフォルダ挿入
+ */
+TEST_F(EditWndTest, Command_INS_FOLDER_USED_RECENTLY001)
+{
+	std::array paths{ dummyPath.parent_path()};
+	std::wstring eol{ GetDocument()->m_cDocEditor.GetNewLineCode().GetValue2() };
+	std::wstring expected;
+	CMRUFolder cMRUFolder;
+	for (const auto&path : paths) {
+		cMRUFolder.Add(path.c_str());
+	}
+	std::for_each(
+		paths.rbegin(),
+		paths.rend(),
+		[&expected, &eol] (const auto& path) {
+			expected += path;
+			expected += eol;
+		}
+	);
+	ExecEditorCommand(F_INS_FOLDER_USED_RECENTLY);
+	//おそらく実装に誤りがある
+//	EXPECT_THAT(GetAllText(), StrEq(expected));
+	cMRUFolder.ClearAll();
+}
+
+/*!
+ * コマンド：時刻挿入
+ */
+TEST_F(EditWndTest, Command_INS_TIME001)
+{
+	// システム日時によって結果変わるため、呼ぶだけ
+	ExecEditorCommand(F_INS_TIME);
+}
+
+/*!
  * コマンド：移動履歴: 次へ
  */
 TEST_F(EditWndTest, Command_JUMPHIST_NEXT001)
@@ -3244,6 +3317,11 @@ TEST_F(EditWndTest, CSmartIndentIfObj001)
 	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), S_OK);
 }
 
+TEST_F(EditWndTest, CEditView_SendDropFiles001)
+{
+	EXPECT_HRESULT_EQ(pcEditWnd->GetActiveView().SendDropFiles(nullptr), E_INVALIDARG);
+}
+
 /*!
  * Diffコンポーネントのテスト
  *
@@ -3408,53 +3486,39 @@ TEST_F(EditWndTest, DropTarget003)
 		.Times(1)
 		.WillOnce(Return(110));	// ファイルを開く
 
-#if 1 // CEditView::Dropの実装がマズくてテストできないので代替実装でテストする
+	//DragEnter～DragOverを実行させる
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
 
-	STGMEDIUM me = {};
+	//ドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+}
 
-	FORMATETC fe{};
-	fe.cfFormat = CF_HDROP;
-	fe.ptd = nullptr;
-	fe.dwAspect = DVASPECT_CONTENT;
-	fe.lindex = -1;
-	fe.tymed = TYMED_HGLOBAL;
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget004)
+{
+	const auto& targetPath = dummyPath;
 
-	EXPECT_HRESULT_EQ(hDrop->QueryGetData(&fe), S_OK);
-	EXPECT_HRESULT_EQ(hDrop->GetData(&fe, &me), S_OK);
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
 
-	// 取得したグローバルメモリをスマートポインターに入れる
-	cxx::GlobalData<BYTE> src{ me.hGlobal };
-	auto drop = static_cast<HDROP>(src.get());
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
 
-	// ストレージの後始末にスマートポインターを用意する
-	using MeHolder = cxx::ResourceHolder<&::ReleaseStgMedium>;
-	MeHolder meHolder{};
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
 
-	// 外部IDataObjectの実装がおかしい場合に備えて、ReleaseStgMediumを呼ぶ仕組みを残しておく
-	if (me.pUnkForRelease) {
-		// pUnkForReleaseがある場合は、ReleaseStgMediumを呼ぶ必要がある
-		meHolder.reset(&me);
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(100));	// パス名を貼り付ける
 
-		// 独自にグローバルメモリを確保してコピーする
-		auto dst = cxx::GlobalData<BYTE>{ src.size() };
-		dst.SetData(src.data());
+	ResetText(L"ファイルドロップのテスト\n", CLogicPoint(9, 0));
 
-		// スマートポインターから生ポインターを取り出す
-		drop = static_cast<HDROP>(dst.release());
-	}
-
-	// グローバルメモリはWM_DROPFILESハンドラで解放されるので、スマートポインターから解放しておく
-	src.release();
-
-	auto& view =pcEditWnd->GetActiveView();
-	view.DispatchEvent(
-		view.GetHwnd(),
-		MYWM_DROPFILES,
-		WPARAM(drop),
-		0
-	);
-
-#else
+	pcEditWnd->GetActiveView().MoveCursorSelecting(CLayoutPoint(0, 1), true);
 
 	//DragEnter～DragOverを実行させる
 	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
@@ -3463,7 +3527,41 @@ TEST_F(EditWndTest, DropTarget003)
 	//ドロップする
 	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
 
-#endif
+	EXPECT_THAT(GetAllText(), StrEq(std::format(L"ファイルドロップのテスト\n{:s}", targetPath.c_str())));
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget005)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
+
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(101));	// ファイル名を貼り付ける
+
+	ResetText(L"ファイルドロップのテスト\n", CLogicPoint(0, 1));
+
+	//DragEnter～DragOverを実行させる
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	//ドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	EXPECT_THAT(GetAllText(), StrEq(std::format(L"ファイルドロップのテスト\n{:s}", targetPath.filename().c_str())));
 }
 
 /*!

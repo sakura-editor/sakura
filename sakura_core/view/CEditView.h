@@ -361,8 +361,11 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragOver(DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
-	STDMETHODIMP PostMyDropFiles( LPDATAOBJECT pDataObject );		/* 独自ドロップファイルメッセージをポストする */	// 2008.06.20 ryoji
-	void OnMyDropFiles( HDROP hDrop );								/* 独自ドロップファイルメッセージ処理 */	// 2008.06.20 ryoji
+
+	void	DropFiles(HDROP hDrop, int nCommand);
+	void	DropText(std::wstring_view text);
+	HRESULT	SendDropFiles(LPDATAOBJECT pDataObject);
+	void	OnDropFiles(HWND hWnd, HDROP hDrop);
 
 	void EnterDragMode();
 	bool IsDragFile() const;

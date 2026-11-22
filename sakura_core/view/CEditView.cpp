@@ -398,11 +398,17 @@ LRESULT CEditView::DispatchEvent(
 	LPARAM	lParam 	// second message parameter
 )
 {
+	const auto hWnd = hwnd;
+
 	HDC			hdc;
 //	int			nPosX;
 //	int			nPosY;
 
 	switch ( uMsg ){
+// clang-format off
+	HANDLE_MSG(hWnd, WM_DROPFILES,						OnDropFiles);
+// clang-format on
+
 	case WM_MOUSEWHEEL:
 		if( GetEditWnd().DoMouseWheel( wParam, lParam ) ){
 			return 0L;
@@ -790,10 +796,6 @@ LRESULT CEditView::DispatchEvent(
 		}
 		// 2010.03.16 0LではなくTSFが何かするかもしれないのでDefにまかせる
 		return ::DefWindowProc( hwnd, uMsg, wParam, lParam );
-
-	case MYWM_DROPFILES:	// 独自のドロップファイル通知	// 2008.06.20 ryoji
-		OnMyDropFiles( (HDROP)wParam );
-		return 0L;
 
 	// 2007.10.02 nasukoji	マウスクリックにてアクティベートされた時はカーソル位置を移動しない
 	case WM_MOUSEACTIVATE:
