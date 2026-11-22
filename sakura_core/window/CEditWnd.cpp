@@ -2859,7 +2859,7 @@ IFACEMETHODIMP CDropTarget_CEditWnd::Drop(
 	// ファイルドロップをアクティブビューで処理する
 	*pdwEffect &= DROPEFFECT_LINK;
 
-	return GetEditWnd().GetActiveView().PostMyDropFiles( pDataObject );
+	return GetEditWnd().GetActiveView().SendDropFiles(pDataObject);
 }
 
 /*!
