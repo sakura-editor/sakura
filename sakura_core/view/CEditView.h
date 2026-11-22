@@ -362,6 +362,8 @@ public: /* テスト用にアクセス属性を変更 */
 	STDMETHODIMP DragLeave( void );
 	STDMETHODIMP Drop(LPDATAOBJECT pDataObject, DWORD dwKeyState, POINTL pt, LPDWORD pdwEffect);
 
+	void	DropFiles(HDROP hDrop, int nCommand);
+	void	DropText(std::wstring_view text);
 	HRESULT	SendDropFiles(LPDATAOBJECT pDataObject);
 	void	OnDropFiles(HWND hWnd, HDROP hDrop);
 

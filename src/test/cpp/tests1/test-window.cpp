@@ -3244,6 +3244,11 @@ TEST_F(EditWndTest, CSmartIndentIfObj001)
 	EXPECT_HRESULT_EQ(disp->Invoke(0, IID_NULL, LOCALE_USER_DEFAULT, DISPATCH_METHOD, &params, &result, nullptr, nullptr), S_OK);
 }
 
+TEST_F(EditWndTest, CEditView_SendDropFiles001)
+{
+	EXPECT_HRESULT_EQ(pcEditWnd->GetActiveView().SendDropFiles(nullptr), E_INVALIDARG);
+}
+
 /*!
  * Diffコンポーネントのテスト
  *
@@ -3414,6 +3419,76 @@ TEST_F(EditWndTest, DropTarget003)
 
 	//ドロップする
 	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget004)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
+
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(100));	// パス名を貼り付ける
+
+	ResetText(L"ファイルドロップのテスト\n", CLogicPoint(9, 0));
+
+	pcEditWnd->GetActiveView().MoveCursorSelecting(CLayoutPoint(0, 1), true);
+
+	//DragEnter～DragOverを実行させる
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	//ドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	EXPECT_THAT(GetAllText(), StrEq(std::format(L"ファイルドロップのテスト\n{:s}", targetPath.c_str())));
+}
+
+/*!
+ * IDropTarget実装のテスト。
+ */
+TEST_F(EditWndTest, DropTarget005)
+{
+	const auto& targetPath = dummyPath;
+
+	const auto target = CDropTarget::make_instance<CDropTarget>(&pcEditWnd->GetActiveView());
+
+	DWORD dwKeyState = MK_RBUTTON;
+	POINTL pt{};
+	DWORD dwEffect = DROPEFFECT_NONE;
+
+	cxx::com_pointer<IDataObject> hDrop;
+	EXPECT_HRESULT_SUCCEEDED(cxx::MakeDataObject(&hDrop, targetPath));
+	EXPECT_THAT(hDrop, NotNull());
+
+	auto pUser32 = (MockUser32*)User32::getInstance();
+	EXPECT_CALL(*pUser32, TrackPopupMenu(_, _, _, _, _, _, _))
+		.Times(1)
+		.WillOnce(Return(101));	// ファイル名を貼り付ける
+
+	ResetText(L"ファイルドロップのテスト\n", CLogicPoint(0, 1));
+
+	//DragEnter～DragOverを実行させる
+	dwEffect = DROPEFFECT_COPY | DROPEFFECT_LINK;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	//ドロップする
+	EXPECT_HRESULT_EQ(target->Drop(hDrop, dwKeyState, pt, &dwEffect), S_OK);
+
+	EXPECT_THAT(GetAllText(), StrEq(std::format(L"ファイルドロップのテスト\n{:s}", targetPath.filename().c_str())));
 }
 
 /*!
