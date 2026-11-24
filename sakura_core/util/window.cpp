@@ -127,6 +127,9 @@ HWND MyGetAncestor( HWND hWnd, UINT gaFlags )
 	処理中のユーザー操作を可能にする
 	ブロッキングフック(?)（メッセージ配送
 
+	@retval TRUE  溜まったメッセージを処理し終えた
+	@retval FALSE WM_QUIT を受け取った。WM_QUIT は同じ終了コードで投げ直すので、呼び出し元の後のメッセージループで受け取れる
+
 	@date 2003.07.04 genta 一回の呼び出しで複数メッセージを処理するように
 */
 BOOL BlockingHook( HWND hwndDlgCancel )
@@ -136,6 +139,7 @@ BOOL BlockingHook( HWND hwndDlgCancel )
 	//	Jun. 04, 2003 genta メッセージをあるだけ処理するように
 	while(( ret = (BOOL)::PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE )) != 0 ){
 		if ( msg.message == WM_QUIT ){
+			::PostQuitMessage( static_cast<int>( msg.wParam ) );	// 取り出した WM_QUIT を戻す
 			return FALSE;
 		}
 		if( nullptr != hwndDlgCancel && IsDialogMessage( hwndDlgCancel, &msg ) ){

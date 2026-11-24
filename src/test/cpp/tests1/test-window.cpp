@@ -331,6 +331,31 @@ TEST(ModalDialogCloserTest, HandlesMultipleEntriesInRegistrationOrder)
 }
 
 /*!
+ * @brief WM_QUIT が無いときは TRUE を返す
+ */
+TEST(BlockingHook, ReturnsTrueWithoutQuitMessage)
+{
+	EXPECT_THAT(::BlockingHook(nullptr), IsTrue());
+}
+
+/*!
+ * @brief 取り出した WM_QUIT を同じ終了コードで投げ直し、FALSE を返す
+ */
+TEST(BlockingHook, RepostsQuitMessage)
+{
+	constexpr int exitCode = 123;
+	::PostQuitMessage(exitCode);
+
+	EXPECT_THAT(::BlockingHook(nullptr), IsFalse());
+
+	// 投げ直した WM_QUIT を取り出す（後のテストに残さない）
+	MSG msg{};
+	const bool hasQuit = ::PeekMessageW(&msg, nullptr, WM_QUIT, WM_QUIT, PM_REMOVE) != FALSE;
+	EXPECT_THAT(hasQuit, IsTrue());
+	EXPECT_THAT(msg.wParam, Eq(WPARAM(exitCode)));
+}
+
+/*!
  * @brief ダイアログのメッセージ配送
  */
 TEST(CDialog, DlgProc101)
