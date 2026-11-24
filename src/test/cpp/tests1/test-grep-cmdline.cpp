@@ -2463,7 +2463,7 @@ TEST_F(GrepOutputTargetTest, HwndErrorToTarget)
 	@brief 1 つのフォルダーの中のファイルを並列に検索するテスト
 
 	スレッドの数の上限を変えて Grep し、出力先に足された文字列を比べる。
-	上限 1 は直列。コアが 1 つの環境では、どちらも直列になる。
+	上限 1 は直列。上限が 2 以上なら、コアの数に関係なく並列になる。
 */
 struct GrepParallelTest : public GrepOutputTargetTest {
 	/*!
@@ -2687,11 +2687,10 @@ TEST_F(GrepParallelTest, ShowsCurrentFolder)
 	const auto hitCount = GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XS")), &progress);
 	agent.m_nMaxGrepThreads = oldMaxThreads;
 	EXPECT_THAT(hitCount, Eq(86u));
-	// コアが 1 つと報告されるマシンでは並列にならず、表示は 1 件だけになるので確かめない
-	// EXPECT_THAT(progress.folders, ::testing::ElementsAre(
-	// 	::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder"),
-	// 	::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder\\sub"),
-	// 	::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder")));
+	EXPECT_THAT(progress.folders, ::testing::ElementsAre(
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder"),
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder\\sub"),
+		::testing::EndsWith(L"GrepParallelTest.ShowsCurrentFolder")));
 }
 
 //! ワーカー用の進み具合は、毎回確かめる時機で、中断はフラグに従う。ファイル名を表示する時機は来ず、表示の関数は呼んでも何もしない
@@ -2747,6 +2746,22 @@ TEST_F(GrepParallelTest, NoWorkerRegexpsWhenCompileFails)
 	CSearchStringPattern pattern;
 	ASSERT_THAT(pattern.SetPattern(nullptr, L"(", 1, option, &regexp), IsFalse());	// 正しくない正規表現(キーは覚えている)
 	EXPECT_THAT(grep::CreateWorkerRegexps(pattern, GrepInfo(), false, 4), ::testing::IsEmpty());
+}
+
+/*!
+	ワーカーごとの正規表現は、コアの数に関係なく、上限が 2 以上なら 2 つ以上作る(並列で検索する)
+
+	コアが 1 つ(または数が取れずに 0)と報告される環境でも、2 つ作る。上限が 1 なら作らない(直列)。
+*/
+TEST_F(GrepParallelTest, WorkerRegexpsRegardlessOfCores)
+{
+	CBregexp regexp;
+	const SSearchOption option(true, true, false);
+	CSearchStringPattern pattern;
+	ASSERT_THAT(pattern.SetPattern(nullptr, L"H.T", 3, option, &regexp), IsTrue());
+	EXPECT_THAT(grep::CreateWorkerRegexps(pattern, GrepInfo(), false, 2), ::testing::SizeIs(2));
+	EXPECT_THAT(grep::CreateWorkerRegexps(pattern, GrepInfo(), false, 4), ::testing::SizeIs(::testing::AllOf(::testing::Ge(2u), ::testing::Le(4u))));
+	EXPECT_THAT(grep::CreateWorkerRegexps(pattern, GrepInfo(), false, 1), ::testing::IsEmpty());
 }
 
 } // namespace grep_test

@@ -233,7 +233,7 @@ private:
 	@param[in]	pattern		検索パターン(SetPattern() でコンパイル済み)
 	@param[in]	gi			Grep実行の入力一式
 	@param[in]	bHwnd		編集中のテキストを検索するか
-	@param[in]	nMaxThreads	スレッドの数の上限(コア数でも抑える)
+	@param[in]	nMaxThreads	スレッドの数の上限(コア数でも抑える。コアが 1 つか、数が取れないときは 2 とみなす。1 なら直列)
 	@return ワーカーごとの正規表現。並列にしないとき・作れなかったときは空
 */
 std::vector<std::unique_ptr<CBregexp>> CreateWorkerRegexps( const CSearchStringPattern& pattern, const GrepInfo& gi, bool bHwnd, size_t nMaxThreads )
@@ -242,7 +242,8 @@ std::vector<std::unique_ptr<CBregexp>> CreateWorkerRegexps( const CSearchStringP
 	if( bHwnd || gi.bGrepReplace || gi.sGrepSearchOption.bWordOnly ){
 		return vRegexps;
 	}
-	const size_t nThreads = std::min<size_t>( nMaxThreads, std::thread::hardware_concurrency() );
+	// コアが 1 つ(または数が取れずに 0)の環境でも、2 スレッドで並列に検索する(上限が 1 なら直列のまま)
+	const size_t nThreads = std::min<size_t>( nMaxThreads, std::max<size_t>( 2, std::thread::hardware_concurrency() ) );
 	for( size_t i = 0; 1 < nThreads && i < nThreads; ++i ){
 		auto pRegexp = std::make_unique<CBregexp>();
 		if( !pattern.CompileRegexp( *pRegexp ) ){
