@@ -100,3 +100,31 @@ TEST(CDocTypeManager, ConvertTypesExtToDlgExtExts64LongFileExt)
 	std::wstring actual = CDocTypeManager::ConvertTypesExtToDlgExt(L"a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z,1,2,3,4,5,6", L".extension_260_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long_long");
 	EXPECT_EQ(expected, actual);
 }
+
+TEST(CDocTypeManager, GetFirstExtReturnsFirstExt)
+{
+	WCHAR szExt[MAX_TYPES_EXTS] = L"x";
+	CDocTypeManager::GetFirstExt(L"c,cpp,h", szExt, int(std::size(szExt)));
+	EXPECT_THAT(std::wstring(szExt), StrEq(L"c"));
+}
+
+TEST(CDocTypeManager, GetFirstExtSkipsWildcardExts)
+{
+	WCHAR szExt[MAX_TYPES_EXTS] = L"x";
+	CDocTypeManager::GetFirstExt(L"*,?x;*.ini txt,cpp", szExt, int(std::size(szExt)));
+	EXPECT_THAT(std::wstring(szExt), StrEq(L"txt"));
+}
+
+TEST(CDocTypeManager, GetFirstExtReturnsEmptyWhenAllExtsHaveWildcard)
+{
+	WCHAR szExt[MAX_TYPES_EXTS] = L"x";
+	CDocTypeManager::GetFirstExt(L"*", szExt, int(std::size(szExt)));
+	EXPECT_THAT(std::wstring(szExt), IsEmpty());
+}
+
+TEST(CDocTypeManager, GetFirstExtReturnsEmptyWhenNoExt)
+{
+	WCHAR szExt[MAX_TYPES_EXTS] = L"x";
+	CDocTypeManager::GetFirstExt(L"", szExt, int(std::size(szExt)));
+	EXPECT_THAT(std::wstring(szExt), IsEmpty());
+}
