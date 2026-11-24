@@ -72,6 +72,7 @@ const DWORD p_helpids[] = {	//12000
 };	//@@@ 2002.01.07 add end MIK
 
 static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder );
+static void SetJoinedGrepFolders( HWND hwndCtrl, const std::vector<std::wstring>& vPaths );
 
 CDlgGrep::CDlgGrep()
 {
@@ -449,25 +450,8 @@ BOOL CDlgGrep::OnBnClicked( int wID )
 				szFolder[nMaxPath-1] = L'\0';
 				if( DirectoryUp( szFolder ) ){
 					*(vPaths.rbegin()) = szFolder;
-					szFolder[0] = L'\0';
-					for( int i = 0 ; i < (int)vPaths.size(); i++ ){
-						WCHAR szFolderItem[nMaxPath];
-						wcsncpy( szFolderItem, vPaths[i].c_str(), nMaxPath );
-						szFolderItem[nMaxPath-1] = L'\0';
-						if( wcschr( szFolderItem, L';' ) ){
-							szFolderItem[0] = L'"';
-							wcsncpy( szFolderItem + 1, vPaths[i].c_str(), nMaxPath - 1 );
-							szFolderItem[nMaxPath-1] = L'\0';
-							wcscat( szFolderItem, L"\"" );
-							szFolderItem[nMaxPath-1] = L'\0';
-						}
-						if( i ){
-							wcscat( szFolder, L";" );
-							szFolder[nMaxPath-1] = L'\0';
-						}
-						wcscat_s( szFolder, nMaxPath, szFolderItem );
-					}
-					::SetWindowText( hwnd, szFolder );
+					// つないだ結果がフォルダー欄に収まらないときは、フォルダー欄を変えない
+					SetJoinedGrepFolders( hwnd, vPaths );
 				}
 			}
 		}
@@ -915,7 +899,8 @@ int CDlgGrep::GetData( void )
 				wcscat( szFolder, L";" );
 			}
 			wcscat( szFolder, szFolderItem );
-			nFolderLen = (int)wcslen( szFolder );
+			// つないだ長さに、次のフォルダーの前に入れる ; の 1 文字を足しておく(上の確認で、つないだ後の長さを見るため)
+			nFolderLen += nFolderItemLen + 1;
 		}
 		wcscpy( m_szFolder, szFolder );
 	}
@@ -977,5 +962,33 @@ static void SetGrepFolder( HWND hwndCtrl, LPCWSTR folder )
 		::SetWindowText( hwndCtrl, strQuoteFolder.c_str() );
 	}else{
 		::SetWindowText( hwndCtrl, folder );
+	}
+}
+
+/*!
+	フォルダーを ; でつないで、フォルダー欄に設定する。; を含むフォルダーは "" で囲う
+
+	@param[in]	hwndCtrl	フォルダー欄
+	@param[in]	vPaths		フォルダーの一覧
+	@note つないだ結果がフォルダー欄(MAX_GREP_PATH 文字)に収まらないときは、フォルダー欄を変えない
+*/
+static void SetJoinedGrepFolders( HWND hwndCtrl, const std::vector<std::wstring>& vPaths )
+{
+	std::wstring strFolders;
+	for( size_t i = 0; i < vPaths.size(); i++ ){
+		const std::wstring& strPath = vPaths[i];
+		if( 0 < i ){
+			strFolders += L';';
+		}
+		if( strPath.find( L';' ) != std::wstring::npos ){
+			strFolders += L'"';
+			strFolders += strPath;
+			strFolders += L'"';
+		}else{
+			strFolders += strPath;
+		}
+	}
+	if( strFolders.length() < size_t(MAX_GREP_PATH) ){
+		::SetWindowText( hwndCtrl, strFolders.c_str() );
 	}
 }
