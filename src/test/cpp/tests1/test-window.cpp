@@ -49,6 +49,7 @@
 #include "typeprop/CPropTypes.h"
 #include "util/os/MockComdlg32.hpp"
 #include "util/os/MockKernel32.hpp"
+#include "util/os/MockOle32.hpp"
 #include "util/os/MockShell32.hpp"
 #include "util/os/MockUser32.hpp"
 #include "util/shell.h"
@@ -3361,6 +3362,73 @@ TEST_F(EditWndTest, DiffComponents001)
 
 	auto pcDiffLineMgr = std::make_unique<CDiffLineMgr>(pcDocLineMgr);
 	ASSERT_THAT(pcDiffLineMgr, NotNull());
+}
+
+/*!
+ * ドラッグ＆ドロップのテスト（外部へのドロップ）
+ */
+TEST_F(EditWndTest, DragText001)
+{
+	Ole32::setInstance<MockOle32>();
+
+	ResetText(L"ドラッグ＆ドロップのテスト\n", CLogicPoint(10, 0));
+
+	CLayoutPoint ptSelectTo;
+	GetLayoutMgr().LogicToLayout(
+		CLogicPoint(13, 0),
+		&ptSelectTo
+	);
+	GetActiveView().MoveCursorSelecting(ptSelectTo, true);
+
+	auto pOle32 = (MockOle32*)Ole32::getInstance();
+	EXPECT_CALL(*pOle32, DoDragDrop(_, _, _, _))
+		.Times(1)
+		.WillOnce( Invoke([](
+			LPDATAOBJECT,
+			LPDROPSOURCE,
+			DWORD,
+			LPDWORD pdwEffect
+		)
+		{
+			*pdwEffect = DROPEFFECT_MOVE;	// ムーブした、を返す
+
+			return DRAGDROP_S_DROP;	// ドラッグ＆ドロップが実行された
+		}));
+
+	// ドラッグ＆ドロップを実行する
+	GetActiveView().DragSelection();
+
+	EXPECT_THAT(GetAllText(), StrEq(L"ドラッグ＆ドロップの\n"));
+
+	Ole32::resetInstance();
+}
+
+/*!
+ * ドラッグ＆ドロップ中断のテスト
+ */
+TEST_F(EditWndTest, DragText101)
+{
+	Ole32::setInstance<MockOle32>();
+
+	ResetText(L"ドラッグ＆ドロップのテスト\n", CLogicPoint(10, 0));
+
+	CLayoutPoint ptSelectTo;
+	GetLayoutMgr().LogicToLayout(
+		CLogicPoint(13, 0),
+		&ptSelectTo
+	);
+	GetActiveView().MoveCursorSelecting(ptSelectTo, true);
+
+	auto pOle32 = (MockOle32*)Ole32::getInstance();
+	EXPECT_CALL(*pOle32, DoDragDrop(_, _, _, _))
+		.Times(1)
+		.WillOnce(Return(DRAGDROP_S_CANCEL));	// ドラッグ＆ドロップがキャンセルされた
+
+	GetActiveView().DragSelection();
+
+	EXPECT_THAT(GetAllText(), StrEq(L"ドラッグ＆ドロップのテスト\n"));
+
+	Ole32::resetInstance();
 }
 
 /*!
