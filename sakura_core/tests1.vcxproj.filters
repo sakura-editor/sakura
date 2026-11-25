@@ -255,6 +255,9 @@
     <ClCompile Include="..\src\test\cpp\tests1\test-string_ex.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\test\cpp\tests1\test-tagjump.cpp">
+      <Filter>Test Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\test\cpp\tests1\test-window.cpp">
       <Filter>Test Files</Filter>
     </ClCompile>

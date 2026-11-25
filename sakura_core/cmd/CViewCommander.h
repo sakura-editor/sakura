@@ -25,6 +25,7 @@ class CColorStrategy;
 class CColorStrategyPool;
 class CSMacroMgr;
 class CStringRef;
+class CDocLineMgr;
 
 class CViewCommander{
 public:
@@ -297,6 +298,7 @@ public:
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	bool Command_TagJumpNoMessage( bool bClose );		// タグジャンプ機能(メッセージ通知なし)
+	static bool GetTagJumpTarget( const CDocLineMgr& cDocLineMgr, CLogicInt nLineY, bool bEnableExtEol, std::wstring& strJumpToFile, int& nJumpToLine, int& nJumpToColumn );	// 行からタグジャンプ先を読む(tags ファイルは見ない)
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFileMsg(bool bMsg);				//ダイレクトタグジャンプ(通知つき)
 	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
