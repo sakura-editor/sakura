@@ -417,6 +417,25 @@ TEST_F(GrepDialogTest, FolderUpButton)
 	EXPECT_THAT(multiple, Eq(std::format(LR"({};"{}")", p, qr)));
 }
 
+//! 「上階層へ」: 絶対パスにしてつないだ結果がフォルダー欄に収まらないときは、フォルダー欄を変えない(落ちない)
+TEST_F(GrepDialogTest, FolderUpButtonKeepsTooLongFolderList)
+{
+	std::filesystem::current_path(folder.Path());
+	// 「.」は絶対パス(このテストのフォルダー)になる。1 つ上にしても、つないだ長さが MAX_GREP_PATH を超える数だけ並べる
+	const size_t count = MAX_GREP_PATH / folder.Path().native().size() + 2;
+	std::wstring folders = L".";
+	for (size_t i = 1; i < count; ++i) {
+		folders += L";.";
+	}
+	std::wstring after;
+	CancelGrepDialog([&folders, &after](HWND hDlg) {
+		SetText(hDlg, IDC_COMBO_FOLDER, folders);
+		SendDlgCommand(hDlg, IDC_BUTTON_FOLDER_UP);
+		after = GetText(hDlg, IDC_COMBO_FOLDER);
+	});
+	EXPECT_THAT(after, Eq(folders));
+}
+
 //! 「現フォルダー」: 無題ならカレントディレクトリ、ファイルを開いていればそのフォルダー
 TEST_F(GrepDialogTest, CurrentFolderButton)
 {
@@ -1056,6 +1075,69 @@ TEST_F(GrepDialogTest, RejectsTooLongFolderList)
 		SetText(hDlg, IDC_COMBO_FOLDER, folders);
 	});
 	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP6)));
+}
+
+/*!
+	長い名前の絶対パスがちょうど length 文字になるフォルダーを作る
+
+	@return 作ったフォルダー。テストのフォルダーのパスが長くて作れないときは空
+*/
+static std::filesystem::path AddFolderOfLength(const TempFolder& folder, size_t length)
+{
+	const size_t baseLength = LongPathOf(folder.Path()).size();
+	if (baseLength == 0 || length < baseLength + 2) {
+		return {};
+	}
+	const std::wstring name(length - baseLength - 1, L'x');
+	folder.AddFolder(name);
+	return folder.Path() / name;
+}
+
+//! 「.」を count 個、; でつなぐ
+static std::wstring RepeatCurrentFolder(size_t count)
+{
+	std::wstring folders = L".";
+	for (size_t i = 1; i < count; ++i) {
+		folders += L";.";
+	}
+	return folders;
+}
+
+//! 2 件目からは区切りの ; も数える。; を含めて MAX_GREP_PATH 文字になると受け付けない
+TEST_F(GrepDialogTest, RejectsFolderListCountingSeparators)
+{
+	// 170 文字のフォルダーを 3 件: 170 * 3 + 2 = 512 文字
+	const auto path = AddFolderOfLength(folder, 170);
+	if (path.empty()) {
+		GTEST_SKIP() << "the test folder path is too long";
+	}
+	ASSERT_THAT(LongPathOf(path).size(), Eq(size_t(170)));
+	std::filesystem::current_path(path);
+	const auto folders = RepeatCurrentFolder(3);
+	const auto shown = RejectGrepDialog([this, &folders](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		SetText(hDlg, IDC_COMBO_FOLDER, folders);
+	});
+	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP6)));
+}
+
+//! ; を含めて MAX_GREP_PATH - 1 文字なら受け付ける
+TEST_F(GrepDialogTest, AcceptsFolderListOfMaxLength)
+{
+	// 127 文字のフォルダーを 4 件: 127 * 4 + 3 = 511 文字
+	const auto path = AddFolderOfLength(folder, 127);
+	if (path.empty()) {
+		GTEST_SKIP() << "the test folder path is too long";
+	}
+	ASSERT_THAT(LongPathOf(path).size(), Eq(size_t(127)));
+	folder.AddFile(path.filename() / L"a.txt", "HIT\r\n");
+	std::filesystem::current_path(path);
+	const auto folders = RepeatCurrentFolder(4);
+	AcceptGrepDialog([this, &folders](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		SetText(hDlg, IDC_COMBO_FOLDER, folders);
+	});
+	EXPECT_THAT(Contains(GetDocumentText(), L"a.txt"), IsTrue());
 }
 
 //! 検索文字列が _MAX_PATH 文字以上なら、Grep はするが、検索文字列の履歴と検索オプションを保存しない
