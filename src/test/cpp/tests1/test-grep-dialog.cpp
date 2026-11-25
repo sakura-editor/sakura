@@ -365,6 +365,44 @@ TEST_F(GrepDialogTest, RejectsUnclosedQuote)
 	EXPECT_THAT(shown, Eq(std::wstring(LS(STR_DLGGREP_QUOTE_ERROR))));
 }
 
+//! 除外ファイルの欄: フォルダー部分のワイルドカード(ファイルの欄と同じメッセージで止める)
+TEST_F(GrepDialogTest, RejectsWildcardInExcludeFileFolderPart)
+{
+	const auto shown = RejectGrepDialog([this](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"(sub*\a.txt)");
+	});
+	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP2)));
+}
+
+//! 除外フォルダーの欄: フォルダー部分のワイルドカード(ファイルの欄と同じメッセージで止める)
+TEST_F(GrepDialogTest, RejectsWildcardInExcludeFolderFolderPart)
+{
+	const auto shown = RejectGrepDialog([this](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*.txt");
+		SetText(hDlg, IDC_COMBO_EXCLUDE_FOLDER, LR"(sub*\d)");
+	});
+	EXPECT_THAT(shown, StrEq(LS(STR_DLGGREP2)));
+}
+
+//! 除外ファイルを正規表現で指定するときは、* の後に \ があってもパスとしては確かめない
+TEST_F(GrepDialogTest, AcceptsRegexpExcludeFileWithWildcard)
+{
+	folder.AddFile(L"a.txt", "HIT\r\n");
+	folder.AddFile(L"README", "HIT\r\n");
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	AcceptGrepDialog([this](HWND hDlg) {
+		SetConditions(hDlg, L"HIT", L"*");
+		SetText(hDlg, IDC_COMBO_EXCLUDE_FILE, LR"(.*\\README$)");
+		Check(hDlg, IDC_CHK_EXCLUDE_FILE_REGEXP, true);
+	});
+	const auto text = GetDocumentText();
+	search.m_bGrepExceptFileRegexp = false;	// 後続のテストのために戻す
+
+	// README を除いた a.txt の 1 件だけが一致する(条件の表示に除外のパターンが出るので、件数で確かめる)
+	EXPECT_THAT(Contains(text, MatchCountText(1)), IsTrue());
+}
+
 /*!
 	正しくない正規表現
 

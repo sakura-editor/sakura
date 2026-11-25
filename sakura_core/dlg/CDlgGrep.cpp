@@ -840,9 +840,10 @@ int CDlgGrep::GetData( void )
 		return FALSE;
 	}
 
-	if( m_szFile[0] != '\0' ) {
+	{
+		// 除外ファイル・除外フォルダーの欄も、Grep の実行時(CGrepAgent::DoGrep())と同じく、まとめた形で確かめる
 		CGrepEnumKeys enumKeys;
-		int nErrorNo = enumKeys.SetFileKeys( m_szFile );
+		const int nErrorNo = enumKeys.SetFileKeys( GetPackedGFileString().GetStringPtr(), m_bGrepExceptFileRegexp );
 		if( 1 == nErrorNo ){
 			WarningMessage(	GetHwnd(), LS(STR_DLGGREP2) );
 			return FALSE;
