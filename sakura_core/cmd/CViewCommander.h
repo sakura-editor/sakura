@@ -9,6 +9,8 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
+#include <optional>
+
 #include "basis/CEol.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CType.h"
@@ -298,7 +300,6 @@ public:
 	// Apr. 03, 2003 genta 引数追加
 	bool Command_TAGJUMP( bool bClose = false );		/* タグジャンプ機能 */
 	bool Command_TagJumpNoMessage( bool bClose );		// タグジャンプ機能(メッセージ通知なし)
-	static bool GetTagJumpTarget( const CDocLineMgr& cDocLineMgr, CLogicInt nLineY, bool bEnableExtEol, std::wstring& strJumpToFile, int& nJumpToLine, int& nJumpToColumn );	// 行からタグジャンプ先を読む(tags ファイルは見ない)
 	void Command_TAGJUMPBACK( void );					/* タグジャンプバック機能 */
 	bool Command_TagJumpByTagsFileMsg(bool bMsg);				//ダイレクトタグジャンプ(通知つき)
 	bool Command_TagJumpByTagsFile(bool bClose);				//ダイレクトタグジャンプ	//@@@ 2003.04.13 MIK
@@ -458,5 +459,18 @@ void	Command_WINMINIMIZE();			/* ウィンドウを最小化 */
 void	Command_WINRESTORE();			/* ウィンドウを元のサイズに戻す */
 
 } // namespace cmd::window
+
+namespace cmd::tagjump {
+
+//! タグジャンプ先
+struct STagJumpTarget {
+	std::wstring	strFile;		//!< ジャンプ先のファイル(無題のウィンドウでは :HWND: のタグ)
+	int				nLine = 0;		//!< ジャンプ先の行(1開始。0以下は指定なし)
+	int				nColumn = 0;	//!< ジャンプ先の桁(1開始。0以下は指定なし)
+};
+
+std::optional<STagJumpTarget> GetTagJumpTarget( const CDocLineMgr& cDocLineMgr, CLogicInt nLineY, bool bEnableExtEol );	// 行からタグジャンプ先を読む(tags ファイルは見ない)
+
+} // namespace cmd::tagjump
 
 #endif /* SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_ */

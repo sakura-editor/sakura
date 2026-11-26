@@ -72,36 +72,31 @@ static bool IsFileExists2( const wchar_t* pszFile )
 
 static bool IsHWNDTag( const wchar_t* pLine, std::wstring& str, int* pnLen = nullptr )
 {
-	if( 0 == wcsncmp(pLine, L":HWND:[", 7) ){
-		const wchar_t* pFileEnd = wcschr( pLine, L']' );
-		if( pFileEnd ){
-			const int nLen = int(pFileEnd - pLine + 1);
-			int i = 7;
-			for( ; i < nLen; i++ ){
-				if( !(WCODE::Is09(pLine[i]) || (L'a' <= pLine[i] && L'f' <= pLine[i])) ){
-					break;
-				}
-			}
-			if( i != nLen && nLen <= 16 + 8 ){
-				if( pnLen ){
-					*pnLen = nLen;
-					return true;
-				}
-				str.assign(pLine, nLen);
-				return true;
-			}
-		}
+	if( 0 != wcsncmp( pLine, L":HWND:[", 7 ) ){
+		return false;
 	}
-	return false;
+	// 「[」の後ろが 1 文字以上 16 文字以下の 16 進数で、そのすぐ後ろが「]」のとき
+	const size_t nHex = wcsspn( &pLine[7], L"0123456789abcdefABCDEF" );
+	if( nHex == 0 || 16 < nHex || pLine[7 + nHex] != L']' ){
+		return false;
+	}
+	const int nLen = int(7 + nHex + 1);
+	if( pnLen ){
+		*pnLen = nLen;
+		return true;
+	}
+	str.assign( pLine, nLen );
+	return true;
 }
 
 static int GetLineColumnPos(const wchar_t* pLine)
 {
 	// filename(1234,56): str
 	const wchar_t* pTagEnd = wcsstr( pLine, L"): " );
-	if( !pTagEnd ){
+	// 文字コード名の後ろの「]: 」が、本文の「): 」より前にあれば、文字コード名のほうを見る
+	if( const wchar_t* pCodeNameEnd = wcsstr( pLine, L"]: " ); !pTagEnd || (pCodeNameEnd && pCodeNameEnd < pTagEnd) ){
 		// filename(1234,56)  [SJIS]: str
-		pTagEnd = wcsstr( pLine, L"]: " );
+		pTagEnd = pCodeNameEnd;
 		if( pTagEnd ){
 			int fileEnd = int(pTagEnd - pLine - 1);
 			for( ; 1 < fileEnd; fileEnd-- ){
@@ -160,6 +155,58 @@ struct SFilePathPos {
 } // namespace
 
 /*!
+	パスの後ろが、Grep の結果の文字コード名(「  [UTF-8]」など)だけかを調べる
+
+	ファイル毎(WZ風)のファイル名の見出しと、検索キーが空のときのファイル名の行では、
+	パスの後ろに文字コード名だけが付く。文字コード名の数字を行番号として読まないために使う。
+	Windows はパスの末尾の空白を無視するので、IsFilePath() は「[」の前の空白までをパスとして読むことがある。
+	そのため、「[」の前の空白の数は問わない。
+
+	@param[in] pszRest パスの直後(閉じる「"」があれば、その位置)
+*/
+static bool IsGrepCodeNameOnly( const wchar_t* pszRest )
+{
+	if( *pszRest == L'"' ){
+		++pszRest;
+	}
+	pszRest += wcsspn( pszRest, L" " );
+	if( *pszRest != L'[' ){
+		return false;
+	}
+	const wchar_t* pszEnd = wcschr( pszRest + 1, L']' );
+	if( nullptr == pszEnd ){
+		return false;
+	}
+	++pszEnd;
+	return *pszEnd == L'\0' || *pszEnd == L'\r' || *pszEnd == L'\n';
+}
+
+/*!
+	ファイル毎(WZ風)の Grep の結果の行の、行・桁の部分(「(    12,34   ): 」)かを調べる
+
+	ノーマルの形式の、「(」で始まるファイル名の行(「・(1)memo.txt(5,2): 」)と区別するために使う。
+
+	@param[in] p 「(」の位置
+*/
+static bool IsWzStyleLineColumn( const wchar_t* p )
+{
+	// ・(%6I64d,%-5d): str
+	p += 1 + wcsspn( p + 1, L" " );
+	const size_t nLineDigits = wcsspn( p, L"0123456789" );
+	if( nLineDigits == 0 || p[nLineDigits] != L',' ){
+		return false;
+	}
+	p += nLineDigits + 1;
+	const size_t nColumnDigits = wcsspn( p, L"0123456789" );
+	if( nColumnDigits == 0 ){
+		return false;
+	}
+	p += nColumnDigits;
+	p += wcsspn( p, L" " );
+	return 0 == wcsncmp( p, L"): ", 3 );
+}
+
+/*!
 	Grep の結果の「・」で始まる行を読む
 
 	@retval true  見出しの行をさかのぼって、ファイルのパスを決める
@@ -178,7 +225,7 @@ static bool ReadTagJumpItemLine( const wchar_t* pLine, STagJumpParse& s )
 		s.searchMode = ETagListSearchMode::SubPath;
 		return true;
 	}
-	if( pLine[1] == L'(' ){
+	if( pLine[1] == L'(' && IsWzStyleLineColumn( &pLine[1] ) ){
 		// ファイル毎(WZ風)
 		// ・(    12,34   ): str
 		GetLineColumn( &pLine[1], &s.nJumpToLine, &s.nJumpToColumn );
@@ -215,7 +262,9 @@ static bool ReadTagJumpCursorLine( const wchar_t* pLine, STagJumpParse& s )
 		/* WZ風のタグリストか */
 		if( SFilePathPos pos; IsFilePath( &pLine[2], &pos.nBgn, &pos.nPathLen ) && !_IS_REL_PATH( &pLine[2] ) ){
 			s.strJumpToFile.assign( &pLine[2 + pos.nBgn], pos.nPathLen );
-			GetLineColumn( &pLine[2 + pos.nPathLen], &s.nJumpToLine, &s.nJumpToColumn );
+			if( !IsGrepCodeNameOnly( &pLine[2 + pos.nPathLen] ) ){
+				GetLineColumn( &pLine[2 + pos.nPathLen], &s.nJumpToLine, &s.nJumpToColumn );
+			}
 			return false;
 		}
 		if( !GetQuoteFilePath( &pLine[2], s.strFile, MAX_TAG_PATH ) ){
@@ -404,7 +453,12 @@ static void ReadTagJumpFilePathLine( const wchar_t* pLine, CLogicInt nLineLen, b
 		//	Check Path
 		if( SFilePathPos pos; IsFilePath( p, &pos.nBgn, &pos.nPathLen ) ){
 			s.strJumpToFile.assign( &p[pos.nBgn], pos.nPathLen );
-			GetLineColumn( &p[pos.nBgn + pos.nPathLen], &s.nJumpToLine, &s.nJumpToColumn );
+			if( IsGrepCodeNameOnly( &p[pos.nBgn + pos.nPathLen] ) ){
+				// 文字コード名の前の空白をパスに含めない
+				s.strJumpToFile.erase( s.strJumpToFile.find_last_not_of( L' ' ) + 1 );
+			}else{
+				GetLineColumn( &p[pos.nBgn + pos.nPathLen], &s.nJumpToLine, &s.nJumpToColumn );
+			}
 			break;
 		}
 		//	Jan. 04, 2001 genta Directoryを対象外にしたので文字列には柔軟に対応
@@ -451,17 +505,17 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 
 	//	2004.05.13 Moca 初期値を1ではなく元の位置を継承するように
 	// 0以下は未指定扱い。(1開始)
-	std::wstring	strJumpToFile;
-	int				nJumpToLine = 0;
-	int				nJumpToColumn = 0;
-	if( !GetTagJumpTarget( GetDocument()->m_cDocLineMgr, ptXY.GetY2(), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol, strJumpToFile, nJumpToLine, nJumpToColumn ) ){
+	const auto target = cmd::tagjump::GetTagJumpTarget( GetDocument()->m_cDocLineMgr, ptXY.GetY2(), GetDllShareData().m_Common.m_sEdit.m_bEnableExtEol );
+	if( !target ){
 		// 2011.11.29 Grep形式で失敗した後もTagsを検索する
 		return Command_TagJumpByTagsFile( bClose );	//@@@ 2003.04.13
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	return m_pCommanderView->TagJumpSub( strJumpToFile.c_str(), CMyPoint( nJumpToColumn, nJumpToLine ), bClose );	//@@@ 2003.04.13
+	return m_pCommanderView->TagJumpSub( target->strFile.c_str(), CMyPoint( target->nColumn, target->nLine ), bClose );	//@@@ 2003.04.13
 }
+
+namespace cmd::tagjump {
 
 /*!
 	行から、タグジャンプ先のファイルと位置を読む
@@ -472,26 +526,19 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	@param[in]  cDocLineMgr   文書の行
 	@param[in]  nLineY        読む行(0開始)
 	@param[in]  bEnableExtEol NEL・LS・PS を改行として扱うか
-	@param[out] strJumpToFile ジャンプ先のファイル(無題のウィンドウでは :HWND: のタグ)。見つからなければ変えない
-	@param[out] nJumpToLine   ジャンプ先の行(1開始。0以下は指定なし)。見つからなければ変えない
-	@param[out] nJumpToColumn ジャンプ先の桁(1開始。0以下は指定なし)。見つからなければ変えない
-	@retval true  ジャンプ先のファイルが見つかった
-	@retval false 見つからなかった
+	@return ジャンプ先。見つからなければ std::nullopt
 */
-bool CViewCommander::GetTagJumpTarget(
+std::optional<STagJumpTarget> GetTagJumpTarget(
 	const CDocLineMgr&	cDocLineMgr,
 	CLogicInt			nLineY,
-	bool				bEnableExtEol,
-	std::wstring&		strJumpToFile,
-	int&				nJumpToLine,
-	int&				nJumpToColumn
+	bool				bEnableExtEol
 )
 {
 	/* 行のデータを取得 */
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe( cDocLineMgr.GetLine( nLineY ), &nLineLen );
 	if( nullptr == pLine ){
-		return false;
+		return std::nullopt;
 	}
 
 	// ノーマル
@@ -596,14 +643,13 @@ bool CViewCommander::GetTagJumpTarget(
 		ReadTagJumpFilePathLine( pLine, nLineLen, bEnableExtEol, s );
 	}
 	if( s.strJumpToFile.empty() ){
-		return false;
+		return std::nullopt;
 	}
 
-	strJumpToFile = std::move( s.strJumpToFile );
-	nJumpToLine = s.nJumpToLine;
-	nJumpToColumn = s.nJumpToColumn;
-	return true;
+	return STagJumpTarget{ std::move( s.strJumpToFile ), s.nJumpToLine, s.nJumpToColumn };
 }
+
+} // namespace cmd::tagjump
 
 /* タグジャンプバック */
 void CViewCommander::Command_TAGJUMPBACK( void )
