@@ -19,7 +19,7 @@
 
 namespace {
 
-//! GetTagJumpTarget() の結果
+//! cmd::tagjump::GetTagJumpTarget() の結果
 struct STagJumpResult {
 	bool			bFound = false;
 	std::wstring	strFile;
@@ -30,7 +30,7 @@ struct STagJumpResult {
 } // namespace
 
 /*!
- * @brief CViewCommander::GetTagJumpTarget のテストのためのフィクスチャクラス
+ * @brief cmd::tagjump::GetTagJumpTarget のテストのためのフィクスチャクラス
  *
  * ジャンプ先のファイルがあるかを見るので、一時フォルダーにファイルを作る。
  * base\a.py、base\(1)memo.txt、base\sub\a.txt
@@ -77,7 +77,9 @@ protected:
 		}
 
 		STagJumpResult result;
-		result.bFound = CViewCommander::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false, result.strFile, result.nLine, result.nColumn);
+		if (const auto target = cmd::tagjump::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false)) {
+			result = { true, target->strFile, target->nLine, target->nColumn };
+		}
 		return result;
 	}
 
@@ -131,20 +133,23 @@ protected:
 
 /*!
  * @brief Grep の結果の行から、ファイルと行・桁を読む
- *  出力形式・ベースフォルダー表示・フォルダー毎に表示・文字コード名のすべての組み合わせで、一致の行を読む
+ *  出力形式・ベースフォルダー表示・フォルダー毎に表示・文字コード名のすべての組み合わせで、一致の行を読む。
+ *  本文に「): 」「]: 」があっても、ファイル名の後ろの行・桁を読む
  */
 TEST_F(TagJumpTargetTest, GrepResultLine)
 {
 	for (const auto& [nStyle, bBaseFolder, bSeparateFolder] : styles) {
 		for (const auto codeName : { L"", L"  [SJIS]", L"  [UTF-8]" }) {
-			const auto text = GrepResult(Style(nStyle, bBaseFolder, bSeparateFolder), codeName, L"sub", L"a.txt", L"hello\r\n");
-			SCOPED_TRACE(text);
+			for (const auto line : { L"hello\r\n", L"def f(x): pass\r\n", L"a[0]: b\r\n" }) {
+				const auto text = GrepResult(Style(nStyle, bBaseFolder, bSeparateFolder), codeName, L"sub", L"a.txt", line);
+				SCOPED_TRACE(text);
 
-			const auto result = Read(text);
-			EXPECT_THAT(result.bFound, IsTrue());
-			EXPECT_THAT(result.strFile, StrEq(Path(L"sub\\a.txt")));
-			EXPECT_THAT(result.nLine, Eq(12));
-			EXPECT_THAT(result.nColumn, Eq(3));
+				const auto result = Read(text);
+				EXPECT_THAT(result.bFound, IsTrue());
+				EXPECT_THAT(result.strFile, StrEq(Path(L"sub\\a.txt")));
+				EXPECT_THAT(result.nLine, Eq(12));
+				EXPECT_THAT(result.nColumn, Eq(3));
+			}
 		}
 	}
 }
@@ -169,12 +174,12 @@ TEST_F(TagJumpTargetTest, GrepResultLineInBaseFolder)
 
 /*!
  * @brief WZ風のファイル名の見出しの行から、ファイルを読む。行・桁は指定しない
- *  文字コード名に数字が無いもの(数字があるものは #2885 の 1)
+ *  文字コード名の数字([UTF-8] の 8)を行番号として読まない
  */
 TEST_F(TagJumpTargetTest, WzStyleFileHeading)
 {
 	for (const auto& [bBaseFolder, bSeparateFolder] : { std::pair{ false, false }, std::pair{ true, false }, std::pair{ false, true }, std::pair{ true, true } }) {
-		for (const auto codeName : { L"", L"  [SJIS]" }) {
+		for (const auto codeName : { L"", L"  [SJIS]", L"  [UTF-8]" }) {
 			const auto text = GrepResult(Style(2, bBaseFolder, bSeparateFolder), codeName, L"sub", L"a.txt", L"hello\r\n");
 			SCOPED_TRACE(text);
 
@@ -190,20 +195,19 @@ TEST_F(TagJumpTargetTest, WzStyleFileHeading)
 
 /*!
  * @brief 検索キーが空のときの、ファイル名だけの行から、ファイルを読む。行・桁は指定しない
- *  文字コード名に数字が無いもの(数字があるものは #2885 の 1)
+ *  文字コード名・コードページ名の数字([UTF-8] の 8、[CP932] の 932)を行番号として読まない
  */
 TEST_F(TagJumpTargetTest, FileNameOnlyLine)
 {
-	for (const auto codeName : { L"", L"  [SJIS]" }) {
+	for (const auto codeName : { L"", L"  [SJIS]", L"  [UTF-8]", L"  [CP932]" }) {
 		// ノーマル
 		{
 			const auto text = Path(L"sub\\a.txt") + codeName + L"\r\n";
 			SCOPED_TRACE(text);
 
-			// Windows はパスの末尾の空白を無視するので、IsFilePath() は文字コード名の前の空白までをパスとして読む
 			const auto result = Read(text);
 			EXPECT_THAT(result.bFound, IsTrue());
-			EXPECT_THAT(result.strFile.substr(0, result.strFile.find_last_not_of(L' ') + 1), StrEq(Path(L"sub\\a.txt")));
+			EXPECT_THAT(result.strFile, StrEq(Path(L"sub\\a.txt")));
 			EXPECT_THAT(result.nLine, Eq(0));
 		}
 		// ノーマル・フォルダー毎に表示
@@ -220,15 +224,33 @@ TEST_F(TagJumpTargetTest, FileNameOnlyLine)
 }
 
 /*!
+ * @brief 「(」で始まるファイル名の行を、WZ風の行として読まない
+ */
+TEST_F(TagJumpTargetTest, FileNameStartingWithParen)
+{
+	for (const auto codeName : { L"", L"  [UTF-8]" }) {
+		const auto text = GrepResult(Style(1, true, false), codeName, L"", L"(1)memo.txt", L"x\r\n");
+		SCOPED_TRACE(text);
+
+		const auto result = Read(text);
+		EXPECT_THAT(result.bFound, IsTrue());
+		EXPECT_THAT(result.strFile, StrEq(Path(L"(1)memo.txt")));
+		EXPECT_THAT(result.nLine, Eq(12));
+		EXPECT_THAT(result.nColumn, Eq(3));
+	}
+}
+
+/*!
  * @brief 無題のウィンドウを Grep した結果の行から、:HWND: のタグと行・桁を読む
  */
 TEST_F(TagJumpTargetTest, HwndTagLine)
 {
-	// ノーマル・ノーマル(ベースフォルダー表示)・16 進数の大文字
+	// ノーマル・ノーマル(ベースフォルダー表示)・16 進数の大文字・文字コード名と本文の「): 」
 	for (const auto& [text, tag] : {
 		std::pair{ L":HWND:[0000abcd]無題1(3,1): x\r\n", L":HWND:[0000abcd]" },
 		std::pair{ L"・:HWND:[0000abcd]無題1(3,1): x\r\n", L":HWND:[0000abcd]" },
 		std::pair{ L":HWND:[0000ABCD]無題1(3,1): x\r\n", L":HWND:[0000ABCD]" },
+		std::pair{ L":HWND:[0000abcd]無題1(3,1)  [SJIS]: def f(x): pass\r\n", L":HWND:[0000abcd]" },
 	}) {
 		SCOPED_TRACE(text);
 
@@ -237,6 +259,78 @@ TEST_F(TagJumpTargetTest, HwndTagLine)
 		EXPECT_THAT(result.strFile, StrEq(tag));
 		EXPECT_THAT(result.nLine, Eq(3));
 		EXPECT_THAT(result.nColumn, Eq(1));
+	}
+}
+
+/*!
+ * @brief 「[」と「]」の間が 16 進数でないタグを、:HWND: のタグとして読まない
+ */
+TEST_F(TagJumpTargetTest, HwndTagWithNonHexIsNotTag)
+{
+	for (const auto text : { L":HWND:[zzzz]無題1(3,1): x\r\n", L":HWND:[]無題1(3,1): x\r\n" }) {
+		SCOPED_TRACE(text);
+
+		EXPECT_THAT(Read(text).bFound, IsFalse());
+	}
+}
+
+/*!
+ * @brief 見出しの中の :HWND: のタグ(ファイル名の見出し・ファイル毎の見出し・「・"」の行)から、タグと行・桁を読む
+ */
+TEST_F(TagJumpTargetTest, HwndTagInHeading)
+{
+	for (const auto& [text, nLineY, nLine] : {
+		std::tuple{ L"◆\":HWND:[0000abcd]無題1\"\r\n", 0, 0 },
+		std::tuple{ L"◆\":HWND:[0000abcd]無題1\"  [SJIS]\r\n・(     3,1    ): x\r\n", 1, 3 },
+		std::tuple{ L"■\":HWND:[0000abcd]無題1\"  [SJIS]\r\n・(     3,1    ): x\r\n", 1, 3 },
+		std::tuple{ L"・\":HWND:[0000abcd]無題1\"\r\n", 0, 0 },
+	}) {
+		SCOPED_TRACE(text);
+
+		const auto result = Read(text, nLineY);
+		EXPECT_THAT(result.bFound, IsTrue());
+		EXPECT_THAT(result.strFile, StrEq(L":HWND:[0000abcd]"));
+		EXPECT_THAT(result.nLine, Eq(nLine));
+	}
+}
+
+/*!
+ * @brief 読めない見出し(閉じる「"」が無い・パスが長すぎる・ファイルが無い)では、見つからない
+ */
+TEST_F(TagJumpTargetTest, BrokenHeadingIsNotFound)
+{
+	const std::wstring baseFolder = base.native();
+	const std::wstring longName(250, L'x');
+	for (const auto& text : {
+		std::wstring(L"◆\"abc\r\n"),
+		std::wstring(L"・\"abc\r\n"),
+		std::wstring(L"■\"abc\r\n"),
+		std::format(L"■\"{}\r\n・sub\\a.txt(1,1): x\r\n", baseFolder),
+		std::format(L"◎\"{}\r\n■\"sub\"\r\n・a.txt(1,1): x\r\n", baseFolder),
+		std::format(L"・{}(1,1): x\r\n", std::wstring(260, L'x')),
+		std::format(L"■\"{}\"\r\n・\"{}\"  [SJIS]\r\n", baseFolder, longName),
+		std::format(L"◎\"{}\"\r\n■\"{}\"\r\n・a.txt(1,1): x\r\n", baseFolder, longName),
+		std::format(L"◎\"{}\"\r\n■\"sub\"\r\n・nofile.txt(1,1): x\r\n", baseFolder),
+	}) {
+		SCOPED_TRACE(text);
+
+		EXPECT_THAT(Read(text).bFound, IsFalse());
+	}
+}
+
+/*!
+ * @brief パスの後ろが文字コード名だけでない行(閉じる「]」が無い・「]」の後ろに文字がある)は、文字コード名だけの行として扱わない
+ */
+TEST_F(TagJumpTargetTest, NotOnlyCodeNameAfterPath)
+{
+	for (const auto codeName : { L"  [SJIS", L"  [SJIS]x" }) {
+		const auto text = std::format(L"■\"{}\"{}\r\n", Path(L"sub\\a.txt"), codeName);
+		SCOPED_TRACE(text);
+
+		const auto result = Read(text);
+		EXPECT_THAT(result.bFound, IsTrue());
+		EXPECT_THAT(result.strFile, StrEq(Path(L"sub\\a.txt")));
+		EXPECT_THAT(result.nLine, Eq(0));
 	}
 }
 
@@ -256,7 +350,7 @@ TEST_F(TagJumpTargetTest, BorlandMessage)
 }
 
 /*!
- * @brief ジャンプ先が無い行・無い行番号では、見つからない。結果の変数は変えない
+ * @brief ジャンプ先が無い行・無い行番号では、見つからない
  */
 TEST_F(TagJumpTargetTest, NotFound)
 {
@@ -267,12 +361,6 @@ TEST_F(TagJumpTargetTest, NotFound)
 		if (*text) {
 			cDocLineMgr.AddNewLine()->SetDocLineString(std::wstring_view(text), false);
 		}
-		std::wstring strFile = L"unchanged";
-		int nLine = -1;
-		int nColumn = -1;
-		EXPECT_THAT(CViewCommander::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false, strFile, nLine, nColumn), IsFalse());
-		EXPECT_THAT(strFile, StrEq(L"unchanged"));
-		EXPECT_THAT(nLine, Eq(-1));
-		EXPECT_THAT(nColumn, Eq(-1));
+		EXPECT_THAT(cmd::tagjump::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false).has_value(), IsFalse());
 	}
 }
