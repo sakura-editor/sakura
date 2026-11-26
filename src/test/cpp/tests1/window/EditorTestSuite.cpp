@@ -74,6 +74,12 @@ namespace window {
 	// ドキュメントがないのでエラー
 	EXPECT_ANY_THROW(GetEditDoc());
 
+	// ドキュメントがないのでエラー
+	EXPECT_ANY_THROW(GetDocLineMgr());
+
+	// ドキュメントがないのでエラー
+	EXPECT_ANY_THROW(GetLayoutMgr());
+
 #pragma endregion CanBeMove
 
 	const auto hInst = G_AppInstance();
@@ -93,6 +99,12 @@ namespace window {
 
 	EXPECT_THAT(&GetEditDoc(), GetDocument());
 
+	// ドキュメントがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetDocLineMgr(); });
+
+	// ドキュメントがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetLayoutMgr(); });
+
 	// 呼ぶだけ
 	pcEditDoc->m_cDocFile.GetSaveFilePath();
 
@@ -101,6 +113,12 @@ namespace window {
 
 	// 編集ウインドウがないのでエラー
 	EXPECT_ANY_THROW(GetEditWnd());
+
+	// 編集ウインドウがないのでエラー
+	EXPECT_ANY_THROW(GetSelectionInfo());
+
+	// 編集ウインドウがないのでエラー
+	EXPECT_ANY_THROW(GetCaret());
 
 #pragma endregion CanBeMove
 
@@ -140,6 +158,12 @@ namespace window {
 
 	// 編集ウィンドウ生成後にメインウィンドウ取得を試みると、編集ウィンドウがとれる
 	EXPECT_THAT(GetAppMainWndPtr(), pcEditWnd.get());
+
+	// 編集ウインドウがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetSelectionInfo(); });
+
+	// 編集ウインドウがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetCaret(); });
 
 #pragma endregion CanBeMove
 

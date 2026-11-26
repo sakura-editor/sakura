@@ -49,6 +49,7 @@
 #include "typeprop/CPropTypes.h"
 #include "util/os/MockComdlg32.hpp"
 #include "util/os/MockKernel32.hpp"
+#include "util/os/MockOle32.hpp"
 #include "util/os/MockShell32.hpp"
 #include "util/os/MockUser32.hpp"
 #include "util/shell.h"
@@ -3364,6 +3365,73 @@ TEST_F(EditWndTest, DiffComponents001)
 }
 
 /*!
+ * ドラッグ＆ドロップのテスト（外部へのドロップ）
+ */
+TEST_F(EditWndTest, DragText001)
+{
+	Ole32::setInstance<MockOle32>();
+
+	ResetText(L"ドラッグ＆ドロップのテスト\n", CLogicPoint(10, 0));
+
+	CLayoutPoint ptSelectTo;
+	GetLayoutMgr().LogicToLayout(
+		CLogicPoint(13, 0),
+		&ptSelectTo
+	);
+	GetActiveView().MoveCursorSelecting(ptSelectTo, true);
+
+	auto pOle32 = (MockOle32*)Ole32::getInstance();
+	EXPECT_CALL(*pOle32, DoDragDrop(_, _, _, _))
+		.Times(1)
+		.WillOnce( Invoke([](
+			LPDATAOBJECT,
+			LPDROPSOURCE,
+			DWORD,
+			LPDWORD pdwEffect
+		)
+		{
+			*pdwEffect = DROPEFFECT_MOVE;	// ムーブした、を返す
+
+			return DRAGDROP_S_DROP;	// ドラッグ＆ドロップが実行された
+		}));
+
+	// ドラッグ＆ドロップを実行する
+	GetActiveView().DragSelection();
+
+	EXPECT_THAT(GetAllText(), StrEq(L"ドラッグ＆ドロップの\n"));
+
+	Ole32::resetInstance();
+}
+
+/*!
+ * ドラッグ＆ドロップ中断のテスト
+ */
+TEST_F(EditWndTest, DragText101)
+{
+	Ole32::setInstance<MockOle32>();
+
+	ResetText(L"ドラッグ＆ドロップのテスト\n", CLogicPoint(10, 0));
+
+	CLayoutPoint ptSelectTo;
+	GetLayoutMgr().LogicToLayout(
+		CLogicPoint(13, 0),
+		&ptSelectTo
+	);
+	GetActiveView().MoveCursorSelecting(ptSelectTo, true);
+
+	auto pOle32 = (MockOle32*)Ole32::getInstance();
+	EXPECT_CALL(*pOle32, DoDragDrop(_, _, _, _))
+		.Times(1)
+		.WillOnce(Return(DRAGDROP_S_CANCEL));	// ドラッグ＆ドロップがキャンセルされた
+
+	GetActiveView().DragSelection();
+
+	EXPECT_THAT(GetAllText(), StrEq(L"ドラッグ＆ドロップのテスト\n"));
+
+	Ole32::resetInstance();
+}
+
+/*!
  * IDropTarget実装のテスト。
  */
 TEST_F(EditWndTest, DropTarget001)
@@ -3386,6 +3454,10 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
+	dwEffect = DROPEFFECT_COPY;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, MK_LBUTTON, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_THAT(dwEffect, Eq(DROPEFFECT_COPY));
+
 	//DragOverのパラメーターエラー仕様をチェックする
 	EXPECT_HRESULT_EQ(target->DragOver(dwKeyState, pt, nullptr), E_INVALIDARG);
 
@@ -3400,12 +3472,14 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
 	//DragEnter～DragOverを実行させる(1回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
 	//1回目はDragLeaveでキャンセルさせる
 	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
 
 	//DragEnter～DragOverを実行させる(2回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
 	//2回目はドロップする
@@ -3413,19 +3487,21 @@ TEST_F(EditWndTest, DropTarget001)
 
 	pcEditWnd->SetDragSourceView(&pcEditWnd->GetActiveView());
 
-	//DragEnter～DragOverを実行させる(1回目)
+	//DragEnter～DragOverを実行させる(3回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
-	//1回目はDragLeaveでキャンセルさせる
+	//3回目はDragLeaveでキャンセルさせる
 	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
 
-	//DragEnter～DragOverを実行させる(2回目)
+	//DragEnter～DragOverを実行させる(4回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
-	//2回目はドロップする(失敗する)
+	//4回目はドロップする(失敗する)
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), E_INVALIDARG);
 
-	//2回目はドロップする(成功する)
+	//5回目はドロップする(成功する)
 	dwEffect = DROPEFFECT_COPY | DROPEFFECT_MOVE;
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), S_OK);
 

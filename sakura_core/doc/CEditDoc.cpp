@@ -154,9 +154,24 @@ CEditDoc& GetEditDoc()
 	return *doc;
 }
 
+/*!
+ * @brief 行データマネージャーの参照を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
 CDocLineMgr& GetDocLineMgr()
 {
 	return GetEditDoc().m_cDocLineMgr;
+}
+
+/*!
+ * @brief レイアウトマネージャーの参照を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
+CLayoutMgr& GetLayoutMgr()
+{
+	return GetEditDoc().m_cLayoutMgr;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

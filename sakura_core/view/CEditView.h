@@ -795,4 +795,7 @@ public:
 	virtual bool IsEnableRunningDlg(){ return true; }
 	virtual bool IsActiveDebugWindow(){ return true; }
 };
+
+CEditView& GetActiveView();
+
 #endif /* SAKURA_CEDITVIEW_54DE503F_6F97_4A16_8165_27F5F0D232E2_H_ */

@@ -16,6 +16,15 @@
 
 class CEditView;
 
+/*!
+ * @brief 選択情報
+ *
+ * エディタ上の選択情報を取得する。
+ *
+ * 選択情報は通常「エディタ操作の結果」で更新されるが、
+ * 現状は選択情報が変更メソッドを持っている。
+ * （選択情報に選択を変更する機能がある状態。）
+ */
 class CViewSelect{
 public:
 	explicit CViewSelect(CEditView* pcEditView);
@@ -173,5 +182,7 @@ m_sSelectOldについて
 	現在の選択範囲をOldへコピーした上で新しい選択範囲をSelectに設定して
 	DrawSelectArea()を呼びだすことで新しい範囲が描かれる．
 */
+
+CViewSelect& GetSelectionInfo();
 
 #endif /* SAKURA_CVIEWSELECT_08C2314F_EB28_43C0_9719_56EB5A6A95C5_H_ */

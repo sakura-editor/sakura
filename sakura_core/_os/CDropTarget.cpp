@@ -18,6 +18,8 @@
 #include "_os/CDropTarget.h"
 
 #include "basis/primitive.h"
+#include "util/os/Ole32.hpp"
+
 #include "window/CEditWnd.h"	// 2008.06.20 ryoji
 #include "view/CEditView.h"// 2002/2/3 aroka
 #include "_main/global.h"
@@ -80,7 +82,7 @@ IFACEMETHODIMP CDropTarget::Drop(
 
 	const auto dropSource = Base::make_instance<Me>(bLeft);
 
-	if (FAILED(::DoDragDrop(
+	if (FAILED(Ole32::getInstance()->DoDragDrop(
 			pDataObject,
 			dropSource,
 			dwDesiredEffects,

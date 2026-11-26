@@ -165,6 +165,7 @@
     <ClInclude Include="..\src\main\cpp\util\os\Kernel32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\make_system_error.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\ntstatus_category.hpp" />
+    <ClInclude Include="..\src\main\cpp\util\os\Ole32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\Shell32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\os\User32.hpp" />
     <ClInclude Include="..\src\main\cpp\util\sync\EditorProcessHolder.hpp" />
@@ -553,6 +554,7 @@
     <ClCompile Include="..\src\main\cpp\util\os\Comdlg32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\Kernel32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\ntstatus_category.cpp" />
+    <ClCompile Include="..\src\main\cpp\util\os\Ole32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\Shell32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\os\User32.cpp" />
     <ClCompile Include="..\src\main\cpp\util\sync\EditorProcessHolder.cpp" />

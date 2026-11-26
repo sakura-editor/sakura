@@ -52,11 +52,6 @@ auto GetDragSourceView()
 	return GetEditWnd().GetDragSourceView();
 }
 
-auto& GetLayoutMgr()
-{
-	return GetDocument()->m_cLayoutMgr;
-}
-
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                      マウスイベント                         //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

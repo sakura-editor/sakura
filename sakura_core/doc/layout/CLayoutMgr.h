@@ -95,11 +95,20 @@ public:
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-/*!	@brief テキストのレイアウト情報管理
 
-	@date 2005.11.21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
-*/
-//2007.10.15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
+/*!
+ * @brief レイアウトマネージャー
+ *
+ * レイアウト行（編集ビューに表示する1行）の集合を管理する。
+ *
+ * レイアウト管理はエディタの中心機能なのでかなり複雑。
+ *
+ * 歴史的経緯で当初設計と実装が乖離していそう。
+ * （誰が直すんだ？これ。）
+ *
+ * @date 2005/11/21 Moca 色分け情報をメンバーへ移動．不要となった引数をメンバ関数から削除．
+ * @date 2007/10/15 XYLogicalToLayoutを廃止。LogicToLayoutに統合。
+ */
 class CLayoutMgr : public CProgressSubject
 {
 private:
@@ -433,5 +442,7 @@ protected:
 
 	DISALLOW_COPY_AND_ASSIGN(CLayoutMgr);
 };
+
+CLayoutMgr& GetLayoutMgr();
 
 #endif /* SAKURA_CLAYOUTMGR_5398B1C5_280C_4D86_B7BB_C7B5C8B0403F_H_ */
