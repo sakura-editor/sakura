@@ -117,6 +117,9 @@ namespace window {
 	// 編集ウインドウがないのでエラー
 	EXPECT_ANY_THROW(GetSelectionInfo());
 
+	// 編集ウインドウがないのでエラー
+	EXPECT_ANY_THROW(GetCaret());
+
 #pragma endregion CanBeMove
 
 	//IO管理
@@ -158,6 +161,9 @@ namespace window {
 
 	// 編集ウインドウがあるのでエラーにならない
 	EXPECT_NO_THROW([] { GetSelectionInfo(); });
+
+	// 編集ウインドウがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetCaret(); });
 
 #pragma endregion CanBeMove
 

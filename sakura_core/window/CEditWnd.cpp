@@ -217,6 +217,16 @@ CViewFont* GetViewFont(bool isMiniMap)
 }
 
 /*!
+ * @brief キャレット情報の参照を取得する
+ *
+ * @throws CEditWndが生成されていない
+ */
+CCaret& GetCaret()
+{
+	return GetEditWnd().GetActiveView().GetCaret();
+}
+
+/*!
  * @brief 選択情報の参照を取得する
  *
  * 選択情報は事実上のシングルトン。

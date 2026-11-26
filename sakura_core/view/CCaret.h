@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -69,6 +69,19 @@ private:
 	bool m_bVertLineDoNotOFF;
 };
 
+/*!
+ * @brief キャレット情報
+ *
+ * キャレットとは入力位置を示すインジケータのこと。
+ * 一般用語「カーソル」と同じ意味のコトバ。
+ *
+ * Windowsでは「マウスポインタもカーソル」なので、
+ * 区別のためできるだけ「キャレット」と呼ぶようにしている。
+ *
+ * キャレットはシステムリソースであり、
+ * フォーカスを持つウィンドウだけが表示できる。
+ * （逆に言えば、フォーカスを受け取るなら表示しないといけない。）
+ */
 class CCaret{
 	using Me = CCaret;
 
@@ -227,4 +240,7 @@ public:
 	
 	@date 2004.04.09 genta 説明文追加
 */
+
+CCaret& GetCaret();
+
 #endif /* SAKURA_CCARET_78A7C1D0_0D47_4FF9_AE73_3421E35ABCB0_H_ */
