@@ -3454,6 +3454,10 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_HRESULT_EQ(target->DragEnter(nullptr, dwKeyState, pt, &dwEffect), E_UNEXPECTED);
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
+	dwEffect = DROPEFFECT_COPY;
+	EXPECT_HRESULT_EQ(target->DragEnter(hDrop, MK_LBUTTON, pt, &dwEffect), E_INVALIDARG);
+	EXPECT_THAT(dwEffect, Eq(DROPEFFECT_COPY));
+
 	//DragOverのパラメーターエラー仕様をチェックする
 	EXPECT_HRESULT_EQ(target->DragOver(dwKeyState, pt, nullptr), E_INVALIDARG);
 
@@ -3468,12 +3472,14 @@ TEST_F(EditWndTest, DropTarget001)
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, nullptr), E_INVALIDARG);
 
 	//DragEnter～DragOverを実行させる(1回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
 	//1回目はDragLeaveでキャンセルさせる
 	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
 
 	//DragEnter～DragOverを実行させる(2回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
 	//2回目はドロップする
@@ -3481,19 +3487,21 @@ TEST_F(EditWndTest, DropTarget001)
 
 	pcEditWnd->SetDragSourceView(&pcEditWnd->GetActiveView());
 
-	//DragEnter～DragOverを実行させる(1回目)
+	//DragEnter～DragOverを実行させる(3回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
-	//1回目はDragLeaveでキャンセルさせる
+	//3回目はDragLeaveでキャンセルさせる
 	EXPECT_HRESULT_EQ(target->DragLeave(), S_OK);
 
-	//DragEnter～DragOverを実行させる(2回目)
+	//DragEnter～DragOverを実行させる(4回目)
+	dwEffect = DROPEFFECT_COPY;
 	EXPECT_HRESULT_EQ(target->DragEnter(data, dwKeyState, pt, &dwEffect), S_OK);
 
-	//2回目はドロップする(失敗する)
+	//4回目はドロップする(失敗する)
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), E_INVALIDARG);
 
-	//2回目はドロップする(成功する)
+	//5回目はドロップする(成功する)
 	dwEffect = DROPEFFECT_COPY | DROPEFFECT_MOVE;
 	EXPECT_HRESULT_EQ(target->Drop(data, dwKeyState, pt, &dwEffect), S_OK);
 
