@@ -217,13 +217,23 @@ CViewFont* GetViewFont(bool isMiniMap)
 }
 
 /*!
+ * @brief アクティブな編集ビューの参照を取得する
+ *
+ * @throws CEditWndが生成されていない
+ */
+CEditView& GetActiveView()
+{
+	return GetEditWnd().GetActiveView();
+}
+
+/*!
  * @brief キャレット情報の参照を取得する
  *
  * @throws CEditWndが生成されていない
  */
 CCaret& GetCaret()
 {
-	return GetEditWnd().GetActiveView().GetCaret();
+	return GetActiveView().GetCaret();
 }
 
 /*!
@@ -238,7 +248,7 @@ CCaret& GetCaret()
  */
 CViewSelect& GetSelectionInfo()
 {
-	return GetEditWnd().GetActiveView().m_cViewSelect;
+	return GetActiveView().m_cViewSelect;
 }
 
 extern template
