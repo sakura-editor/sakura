@@ -164,6 +164,16 @@ CDocLineMgr& GetDocLineMgr()
 	return GetEditDoc().m_cDocLineMgr;
 }
 
+/*!
+ * @brief レイアウトマネージャーの参照を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
+CLayoutMgr& GetLayoutMgr()
+{
+	return GetEditDoc().m_cLayoutMgr;
+}
+
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 //                        生成と破棄                           //
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
