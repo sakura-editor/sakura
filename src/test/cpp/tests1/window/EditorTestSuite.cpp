@@ -74,6 +74,9 @@ namespace window {
 	// ドキュメントがないのでエラー
 	EXPECT_ANY_THROW(GetEditDoc());
 
+	// ドキュメントがないのでエラー
+	EXPECT_ANY_THROW(GetDocLineMgr());
+
 #pragma endregion CanBeMove
 
 	const auto hInst = G_AppInstance();
@@ -92,6 +95,9 @@ namespace window {
 	EXPECT_NO_THROW([] { GetEditDoc(); });
 
 	EXPECT_THAT(&GetEditDoc(), GetDocument());
+
+	// ドキュメントがあるのでエラーにならない
+	EXPECT_NO_THROW([] { GetDocLineMgr(); });
 
 	// 呼ぶだけ
 	pcEditDoc->m_cDocFile.GetSaveFilePath();

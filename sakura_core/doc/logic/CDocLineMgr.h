@@ -51,7 +51,15 @@ struct DocLineReplaceArg {
 /*-----------------------------------------------------------------------
 クラスの宣言
 -----------------------------------------------------------------------*/
-//2007.09.30 kobake WhereCurrentWord_2 を CWordParse に移動
+
+/*!
+ * @brief 行データマネージャー
+ *
+ * 論理行（行頭から改行記号まで）の集合を管理する。
+ * 行データはUTF16LE拡張で格納される。
+ *
+ * @date 2007/09/30 kobake WhereCurrentWord_2 を CWordParse に移動
+ */
 class CDocLineMgr final {
 private:
 	using MemHolder = std::shared_ptr<std::pmr::memory_resource>;
