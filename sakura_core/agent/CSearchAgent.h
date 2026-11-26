@@ -21,9 +21,6 @@ struct DocLineReplaceArg;
 class CBregexp;
 class CNativeW;
 
-// #define SEARCH_STRING_KMP
-#define SEARCH_STRING_SUNDAY_QUICK
-
 class CSearchStringPattern
 {
 public:
@@ -34,8 +31,6 @@ public:
 	}
 	bool SetPattern(HWND, const wchar_t* pszPattern, size_t cchPattern, const wchar_t* pszPattern2, const SSearchOption& sSearchOption, CBregexp* pRegexp, bool bGlobal);
 	const wchar_t* GetKey() const{ return m_strKey.c_str(); }
-	//! 文字列検索で比べる検索語(大文字小文字を区別しないときは小文字にそろえたもの)
-	const wchar_t* GetCaseKey() const{ return GetIgnoreCase() ? m_strCaseKey.c_str() : m_strKey.c_str(); }
 	int GetLen() const{ return static_cast<int>(m_strKey.length()); }
 	bool GetIgnoreCase() const{ return !m_sSearchOption.bLoHiCase; }
 	bool GetLoHiCase() const{ return m_sSearchOption.bLoHiCase; }
@@ -44,18 +39,19 @@ public:
 	bool CompileRegexp( CBregexp& regexp ) const;
 	//! 文字列検索の準備ができているか(正規表現・単語単位・設定の前は false)
 	bool IsStringSearchReady() const{ return !m_skipMap.empty(); }
-#ifdef SEARCH_STRING_KMP
-	const int* GetKMPNextTable() const{ return m_nextPossArr.data(); }
-#endif
-#ifdef SEARCH_STRING_SUNDAY_QUICK
-	const int* GetUseCharSkipMap() const{ return m_skipMap.data(); }
-
-	static int GetMapIndex( wchar_t c );
-#endif
+	//! pText から検索語の長さの範囲が、検索語と同じか(大文字小文字の区別は検索オプションに従う)
+	bool EqualsAt( const wchar_t* pText ) const;
+	//! 検索語の次の文字が c のときに進める幅(Sunday 法)
+	int GetSkip( wchar_t c ) const;
 
 private:
+	static constexpr int SKIP_MAP_SIZE = 0x200;	//!< 読み飛ばす幅の表の大きさ
+
+	static int GetMapIndex( wchar_t c );
 	int GetRegexpOption() const;
 	const wchar_t* GetKey2() const;
+	//! 文字列検索で比べる検索語(大文字小文字を区別しないときは小文字にそろえたもの)
+	const wchar_t* GetCaseKey() const{ return GetIgnoreCase() ? m_strCaseKey.c_str() : m_strKey.c_str(); }
 
 	// SetPattern() に渡されたものの写し
 	std::wstring	m_strKey;						//!< 検索語
@@ -66,9 +62,6 @@ private:
 
 	// SetPattern() で作るもの
 	std::wstring	m_strCaseKey;					//!< 小文字にそろえた検索語(大文字小文字を区別しない文字列検索のときだけ)
-#ifdef SEARCH_STRING_KMP
-	std::vector<int>	m_nextPossArr;				//!< KMP 法の表
-#endif
 	std::vector<int>	m_skipMap;					//!< 読み飛ばす幅の表(文字列検索のときだけ)
 
 	DISALLOW_COPY_AND_ASSIGN(CSearchStringPattern);
