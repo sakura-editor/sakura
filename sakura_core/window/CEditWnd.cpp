@@ -216,6 +216,21 @@ CViewFont* GetViewFont(bool isMiniMap)
 	return GetEditWnd().GetViewFont(isMiniMap);
 }
 
+/*!
+ * @brief 選択情報の参照を取得する
+ *
+ * 選択情報は事実上のシングルトン。
+ *
+ * 2箇所以上の選択をサポートしても「現在の選択」は1つ。
+ *（≒2箇所以上選択している、という1つの情報になる。）
+ *
+ * @throws CEditWndが生成されていない
+ */
+CViewSelect& GetSelectionInfo()
+{
+	return GetEditWnd().GetActiveView().m_cViewSelect;
+}
+
 extern template
 bool CDropTargetWnd::AttachDropTarget<CEditWnd>(
 	CEditWnd* pThis
