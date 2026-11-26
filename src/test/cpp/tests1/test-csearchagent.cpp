@@ -1054,18 +1054,70 @@ TEST_F(CSearchAgentSearchTest, WordProlongedSoundMarkJoinsBothSides)
 	EXPECT_THAT(Search(3, 0, SEARCH_BACKWARD), IsEmpty());
 }
 
-/*!
-	文字列: 検索語がサロゲートペアの片方だけ(UTF-16 のコード片)なら、文字の途中では一致しない
-
-	今はペアの途中に一致するので DISABLED_ にしている(#2743 の 2)。
- */
-TEST_F(CSearchAgentSearchTest, DISABLED_StringKeyDoesNotCutCharacter)
+//! 文字列: 検索語がサロゲートペアの片方だけ(UTF-16 のコード片)なら、文字の途中では一致しない
+TEST_F(CSearchAgentSearchTest, StringKeyDoesNotCutCharacter)
 {
 	SetDocument({ L"\U00020BB7\n" });	// 𠮷
 	ASSERT_THAT(SetKey(L"\xDFB7", false, true, false), IsTrue());
 	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), IsEmpty());
 	ASSERT_THAT(SetKey(L"\xD842", false, true, false), IsTrue());
 	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), IsEmpty());
+}
+
+//! 文字列・大文字小文字を区別しない: 一致の始まりがサロゲートペアの途中なら一致しない
+TEST_F(CSearchAgentSearchTest, StringIgnoreCaseKeyDoesNotStartInsideCharacter)
+{
+	SetDocument({ L"A\U00020BB7" L"B\n" });	// A𠮷B
+	ASSERT_THAT(SetKey(L"\xDFB7" L"b", false, false, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), IsEmpty());
+}
+
+//! 文字列・大文字小文字を区別しない: 一致の終わりがサロゲートペアの途中なら一致しない
+TEST_F(CSearchAgentSearchTest, StringIgnoreCaseKeyDoesNotEndInsideCharacter)
+{
+	SetDocument({ L"A\U00020BB7" L"B\n" });	// A𠮷B
+	ASSERT_THAT(SetKey(L"a\xD842", false, false, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), IsEmpty());
+}
+
+//! 文字列・大文字小文字を区別しない: サロゲートペアをまるごと含む検索語は一致する
+TEST_F(CSearchAgentSearchTest, StringIgnoreCaseKeyWithWholeCharacter)
+{
+	SetDocument({ L"A\U00020BB7" L"B\n" });	// A𠮷B
+	ASSERT_THAT(SetKey(L"a\U00020BB7" L"b", false, false, false), IsTrue());	// a𠮷b
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(0, 0, 4, 0));
+}
+
+//! 文字列: 行の先頭の、ペアになっていない下位サロゲートには一致する
+TEST_F(CSearchAgentSearchTest, StringKeyLoneLowSurrogateAtLineHead)
+{
+	SetDocument({ L"\xDFB7" L"a\n" });
+	ASSERT_THAT(SetKey(L"\xDFB7", false, true, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(0, 0, 1, 0));
+}
+
+//! 文字列: ペアになっていない上位サロゲートには一致する
+TEST_F(CSearchAgentSearchTest, StringKeyLoneHighSurrogate)
+{
+	SetDocument({ L"a\xD842" L"b\n" });
+	ASSERT_THAT(SetKey(L"\xD842", false, true, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(1, 0, 2, 0));
+}
+
+//! 文字列: 改行の無い最後の行の、行末の上位サロゲートには一致する
+TEST_F(CSearchAgentSearchTest, StringKeyLoneHighSurrogateAtLineEnd)
+{
+	SetDocument({ L"a\xD842" });
+	ASSERT_THAT(SetKey(L"\xD842", false, true, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(1, 0, 2, 0));
+}
+
+//! 文字列: ペアを切る一致を捨てた後も、同じ行の続きの一致を見つける
+TEST_F(CSearchAgentSearchTest, StringKeyFindsMatchAfterCutMatch)
+{
+	SetDocument({ L"\U00020BB7\xDFB7\n" });	// 𠮷 と、ペアになっていない下位サロゲート
+	ASSERT_THAT(SetKey(L"\xDFB7", false, true, false), IsTrue());
+	EXPECT_THAT(Search(0, 0, SEARCH_FORWARD), ElementsAre(2, 0, 3, 0));
 }
 
 //! 正規表現: 行末(長さ 0)は、LF・CR・行末なしのどの行でも改行文字の前に一致する

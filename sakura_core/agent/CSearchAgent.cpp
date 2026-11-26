@@ -14,6 +14,7 @@
 #include "cmd/COpe.h"
 #include "dlg/CDlgCancel.h"
 #include "util/string_ex.h"
+#include "charset/codechecker.h"
 #include <algorithm>
 #include <limits>
 #include "sakura_rc.h"
@@ -162,7 +163,24 @@ int CSearchStringPattern::GetSkip( wchar_t c ) const
 }
 
 /*!
+	pLine[nPos] から nLen の範囲が、文書の中のサロゲートペアの途中で始まるか終わるか
+
+	範囲の中は検索語と同じなので、ペアを切るのは両端だけ。始まりの前と終わりの後ろの 1 つずつを見る。
+	ペアになっていない片方だけのサロゲートは切らない。
+*/
+static bool CutsSurrogatePair( const wchar_t* pLine, int nLineLen, int nPos, int nLen )
+{
+	if( 0 < nPos && IsUTF16Low( pLine[nPos] ) && IsUTF16High( pLine[nPos - 1] ) ){
+		return true;
+	}
+	const int nEnd = nPos + nLen;
+	return nEnd < nLineLen && IsUTF16High( pLine[nEnd - 1] ) && IsUTF16Low( pLine[nEnd] );
+}
+
+/*!
 	文字列検索(Sunday 法)
+
+	一致の端がサロゲートペアの途中になるところは、一致としない。
 	@return 見つかった場所のポインタ。見つからなかったらNULL。
 */
 const wchar_t* CSearchAgent::SearchString(
@@ -180,7 +198,8 @@ const wchar_t* CSearchAgent::SearchString(
 
 	int nPos = nIdxPos;
 	while( nPos + nPatternLen <= nLineLen ){
-		if( pattern.EqualsAt( &pLine[nPos] ) ){
+		// 端がペアを切る一致は捨てる。進める幅は一致しなかったときと同じ
+		if( pattern.EqualsAt( &pLine[nPos] ) && !CutsSurrogatePair( pLine, nLineLen, nPos, nPatternLen ) ){
 			return &pLine[nPos];
 		}
 		if( nPos + nPatternLen == nLineLen ){
