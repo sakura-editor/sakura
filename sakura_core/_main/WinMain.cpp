@@ -29,6 +29,7 @@
 #include "env/DLLSHAREDATA.h"
 #include "util/MessageBoxF.h"
 #include "util/module.h"
+#include "util/ole/OleInit.hpp"
 #include "util/os.h"
 
 #include <clocale>
@@ -81,7 +82,8 @@ int WINAPI wWinMain(
 	::setlocale(LC_ALL, "Japanese-Japan.932");
 	
 	// COMライブラリを初期化する(失敗したら即終了する)
-	if (FAILED(::OleInitialize(nullptr))) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
+	auto oleInit = cxx::OleInit();
+	if (!oleInit) return static_cast<int>(EAppExitCode::AbEnd);	// 失敗したら即終了する
 
 	//開発情報
 	DEBUG_TRACE(L"-- -- WinMain -- --\n");
@@ -142,7 +144,7 @@ int WINAPI wWinMain(
 		exitCode = EAppExitCode::UnExpected;
 	}
 
-	::OleUninitialize();	// 2009.01.07 ryoji 追加
+	// COMライブラリのクリーンアップはスコープアウト時に行われる
 
 	return static_cast<int>(exitCode);
 }

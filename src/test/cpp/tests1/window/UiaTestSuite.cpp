@@ -153,7 +153,7 @@ HWND WaitForWindow(
 /* static */ void UiaTestSuite::SetUpUiaTestSuite()
 {
 	// OLEを初期化する
-	pcOleInit = std::make_unique<cxx::COleInit>();
+	pcOleInit = std::make_unique<cxx::OleInit>();
 
 	// 初期化に失敗した場合はテストを中止する
 	ASSERT_TRUE(pcOleInit);
@@ -415,7 +415,7 @@ std::jthread UiaTestSuite::StartUiaThread(
 
 	return std::jthread([this, action] (std::stop_token st) {
 		// OLEを初期化する
-		cxx::COleInit oleInit;
+		cxx::OleInit oleInit;
 		ASSERT_TRUE(oleInit);
 
 		// 停止要求が来ていたら抜ける
