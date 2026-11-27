@@ -224,6 +224,62 @@ private:
 };
 
 /*!
+	@brief DoGrep() が始めに変えた状態を、戻るときに戻す
+
+	Grep 実行中のフラグ、出力先のビューの「元に戻すを記録しない」のフラグと操作ブロック(AddRef() した分)、
+	表示処理の ON/OFF(切り替えた後だけ)を戻す。
+	エラーで戻るときは、メッセージを出す前に Restore() を呼ぶ。例外で抜けるときは、デストラクターで戻す。
+*/
+class CGrepRunningRestorer {
+public:
+	/*!
+		@param[in,out]	bGrepRunning	Grep 実行中のフラグ(立てた後に作る。このオブジェクトより長く残す)
+		@param[in,out]	pcViewDst		出力先のビュー(m_bDoing_UndoRedo を立て、操作ブロックを AddRef() した後に作る)
+	*/
+	CGrepRunningRestorer( bool& bGrepRunning, CEditView* pcViewDst ) noexcept
+		: m_bGrepRunning( bGrepRunning )
+		, m_pcViewDst( pcViewDst )
+	{
+	}
+
+	CGrepRunningRestorer( const CGrepRunningRestorer& ) = delete;
+	CGrepRunningRestorer& operator = ( const CGrepRunningRestorer& ) = delete;
+
+	//! まだ戻していなければ戻す
+	~CGrepRunningRestorer()
+	{
+		Restore();
+	}
+
+	//! 表示処理の ON/OFF を切り替えたときに、切り替える前の値を渡す(戻すときは、すべてのビューをこの値にする)
+	void SetDrawSwitchOld( bool bDrawSwitchOld ) noexcept
+	{
+		m_optDrawSwitchOld = bDrawSwitchOld;
+	}
+
+	//! 状態を戻す(2 回目からは何もしない)
+	void Restore()
+	{
+		if( m_bRestored ){
+			return;
+		}
+		m_bRestored = true;
+		m_pcViewDst->SetUndoBuffer();
+		m_bGrepRunning = false;
+		m_pcViewDst->m_bDoing_UndoRedo = false;
+		if( m_optDrawSwitchOld.has_value() ){
+			CEditWnd::getInstance()->SetDrawSwitchOfAllViews( *m_optDrawSwitchOld );
+		}
+	}
+
+private:
+	bool&				m_bGrepRunning;		//!< Grep 実行中のフラグ
+	CEditView*			m_pcViewDst;		//!< 出力先のビュー
+	std::optional<bool>	m_optDrawSwitchOld;	//!< 表示処理の ON/OFF を切り替える前の値(切り替えるまでは空)
+	bool				m_bRestored = false;	//!< 戻したか
+};
+
+/*!
 	@brief 1 つのフォルダーの中のファイルを並列に検索するときの、ワーカーごとの正規表現を作る
 
 	編集中のテキストの検索(:HWND:)・Grep置換・単語単位は直列のままにする(空を返す)。
@@ -534,6 +590,9 @@ int GetHwndTitle(HWND& hWndTarget, CNativeW* pmemTitle, WCHAR* pszWindowName, WC
 		WCHAR szGrep[100];
 		editInfo->m_bIsModified = false;
 		const EditNode* node = CAppNodeManager::getInstance()->GetEditNode(hWndTarget);
+		if( nullptr == node ){
+			return -1; // 編集ウィンドウの一覧に無い(起動中・終了中のウィンドウなど)
+		}
 		WCHAR* pszTagName = szTitle;
 		if( editInfo->m_bIsGrep ){
 			// Grepは検索キーとタグがぶつかることがあるので単に(Grep)と表示
@@ -625,6 +684,9 @@ DWORD CGrepAgent::DoGrep(
 	}
 	pcViewDst->GetCommander().GetOpeBlk()->AddRef();
 
+	// 戻るとき(例外で抜けるときも)に、上で変えた状態を戻す
+	grep::CGrepRunningRestorer cRestorer( this->m_bGrepRunning, pcViewDst );
+
 	// 置換後文字列の準備
 	CNativeW cmemReplace;
 	if( gi.bGrepReplace ){
@@ -633,9 +695,7 @@ DWORD CGrepAgent::DoGrep(
 			bool bColmnSelect;
 			bool bLineSelect = false;
 			if( !pcViewDst->MyGetClipboardData( cmemReplace, &bColmnSelect, GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste? &bLineSelect: nullptr ) ){
-				this->m_bGrepRunning = false;
-				pcViewDst->m_bDoing_UndoRedo = false;
-				pcViewDst->SetUndoBuffer();
+				cRestorer.Restore();
 				ErrorMessage( pcViewDst->m_hwndParent, LS(STR_DLGREPLC_CLIPBOARD) );
 				return 0;
 			}
@@ -674,9 +734,7 @@ DWORD CGrepAgent::DoGrep(
 	pcViewDst->m_nCurSearchKeySequence = GetDllShareData().m_Common.m_sSearch.m_nSearchKeySequence;
 	if (!pcViewDst->RefreshSearchPattern())
 	{
-		this->m_bGrepRunning = false;
-		pcViewDst->m_bDoing_UndoRedo = false;
-		pcViewDst->SetUndoBuffer();
+		cRestorer.Restore();
 		return 0;
 	}
 
@@ -696,9 +754,7 @@ DWORD CGrepAgent::DoGrep(
 		pcDlgRunning = std::make_unique<grep::CDlgGrepRunning>();
 		if( nullptr == pcDlgRunning->DoModeless( G_AppInstance(), pcViewDst->m_hwndParent, IDD_GREPRUNNING ) ){
 			// ダイアログを出せなければ、検索せずに終える
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
+			cRestorer.Restore();
 			return 0;
 		}
 	}
@@ -726,9 +782,7 @@ DWORD CGrepAgent::DoGrep(
 				gi.sGrepSearchOption, &cRegexp);
 		}
 		if( bError ){
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
+			cRestorer.Restore();
 			return 0;
 		}
 	}
@@ -764,9 +818,7 @@ DWORD CGrepAgent::DoGrep(
 			nErrorNo = 3;
 		}
 		if( nErrorNo != 0 ){
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
+			cRestorer.Restore();
 
 			const WCHAR* pszErrorMessage = LS(STR_GREP_ERR_ENUMKEYS0);
 			if( nErrorNo == 1 ){
@@ -791,9 +843,7 @@ DWORD CGrepAgent::DoGrep(
 
 	// 存在しないフォルダーが含まれるときは、検索・置換を始める前に止める(Issue #2707)
 	if( !AllFoldersExist( vPaths ) ){
-		this->m_bGrepRunning = false;
-		pcViewDst->m_bDoing_UndoRedo = false;
-		pcViewDst->SetUndoBuffer();
+		cRestorer.Restore();
 
 		const std::wstring strMessage = LS( STR_DLGGREP5 );
 		if( sGrepOption.bGrepStdout ){
@@ -842,9 +892,7 @@ DWORD CGrepAgent::DoGrep(
 			if( sGrepOption.bGrepHeader ){
 				AppendResult( *pcOutput, cmemMessage );
 			}
-			this->m_bGrepRunning = false;
-			pcViewDst->m_bDoing_UndoRedo = false;
-			pcViewDst->SetUndoBuffer();
+			cRestorer.Restore();
 			return 0;
 		}else if( 0 == nHwndRet ){
 			{
@@ -972,7 +1020,7 @@ DWORD CGrepAgent::DoGrep(
 //	SetDrawSwitch(false);
 	if( !CEditWnd::getInstance()->UpdateTextWrap() )	// 折り返し方法関連の更新
 		CEditWnd::getInstance()->RedrawAllViews( pcViewDst );	//	他のペインの表示を更新
-	const bool bDrawSwitchOld = pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView);
+	cRestorer.SetDrawSwitchOld( pcViewDst->SetDrawSwitch(0 != GetDllShareData().m_Common.m_sSearch.m_bGrepRealTimeView) );
 
 	CGrepEnumOptions cGrepEnumOptions;
 	CGrepEnumFiles cGrepExceptAbsFiles;
@@ -1077,18 +1125,12 @@ DWORD CGrepAgent::DoGrep(
 	/* アクティブにする */
 	ActivateFrameWindow( CEditWnd::getInstance()->GetHwnd() );
 
-	/* アンドゥバッファの処理 */
-	pcViewDst->SetUndoBuffer();
+	/* アンドゥバッファの処理・Grep 実行中のフラグ・表示処理ON/OFF を戻す */
+	cRestorer.Restore();
 
 	//	Apr. 13, 2001 genta
 	//	Grep実行後はファイルを変更無しの状態にする．
 	pcViewDst->m_pcEditDoc->m_cDocEditor.SetModified(false,false);
-
-	this->m_bGrepRunning = false;
-	pcViewDst->m_bDoing_UndoRedo = false;
-
-	/* 表示処理ON/OFF */
-	pCEditWnd->SetDrawSwitchOfAllViews( bDrawSwitchOld );
 
 	/* 再描画 */
 	if( !pCEditWnd->UpdateTextWrap() )	// 折り返し方法関連の更新	// 2008.06.10 ryoji
@@ -1097,8 +1139,14 @@ DWORD CGrepAgent::DoGrep(
 	if (!gi.bGrepCurFolder &&
 		!vPaths.empty())
 	{
-		// 現行フォルダーを検索したフォルダーに変更
-		cxx::SetCurrentDirectoryW(vPaths.front());
+		// 現行フォルダーを検索したフォルダーに変更する。
+		// 検索の間にフォルダーが消えた・ネットワークが切れたなどで変えられないときは、変えずにおく
+		try{
+			cxx::SetCurrentDirectoryW(vPaths.front());
+		}
+		catch( const std::system_error& e ){
+			TRACE( "fail: %hs", e.what() );
+		}
 	}
 
 	return nHitCount;
