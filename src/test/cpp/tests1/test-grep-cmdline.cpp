@@ -1897,10 +1897,9 @@ TEST_F(GrepHwndTargetTest, ReadsWindowNotFile)
 	パスが空の文書(無題)で、編集ウィンドウの一覧に無いウィンドウは、ハンドルのエラーにする
 
 	GetHwndTitle() は、パスが空のとき、編集ウィンドウの一覧からウィンドウの番号を読む。
-	一覧に無いウィンドウ(この偽のウィンドウ・起動中や終了中のウィンドウ)では null を参照して落ちるので、
-	DISABLED_ にしている(#2884 の 2)。
+	一覧に無いウィンドウ(この偽のウィンドウ・起動中や終了中のウィンドウ)では、番号を読まずにハンドルのエラーにする。
 */
-TEST_F(GrepHwndTargetTest, DISABLED_UntitledWindowNotInListIsHandleError)
+TEST_F(GrepHwndTargetTest, UntitledWindowNotInListIsHandleError)
 {
 	FakeEditWindow window(L"", { L"alpha HIT one\r\n" });
 	EXPECT_THAT(window.GetHwnd(), Ne(nullptr));
@@ -2315,6 +2314,9 @@ class FakeGrepOutput : public IGrepOutputTarget {
 public:
 	void Append(const CNativeW& cmem) override
 	{
+		if (onAppend) {
+			onAppend(chunks.size());
+		}
 		chunks.emplace_back(cmem.GetStringPtr(), cmem.GetStringLength());
 		std::this_thread::sleep_for(appendDelay);
 	}
@@ -2349,6 +2351,7 @@ public:
 	std::vector<std::wstring> chunks;	//!< 足された文字列
 	bool drawing = false;				//!< IsDrawing() が返す値
 	std::chrono::milliseconds appendDelay{ 0 };	//!< 足すたびに待つ時間
+	std::function<void(size_t)> onAppend;	//!< 足す前に呼ぶ(引数は、それまでに足した数)。例外を投げると、足さずに DoGrep() から抜ける
 };
 
 /*!
@@ -2457,6 +2460,66 @@ TEST_F(GrepOutputTargetTest, HwndErrorToTarget)
 	EXPECT_THAT(GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L":HWND:0", L"X"))), Eq(0u));
 	EXPECT_THAT(Contains(output.Text(), L"HWND handle error."), IsTrue());
 	EXPECT_THAT(GetDocumentText(), ::testing::IsEmpty());
+}
+
+/*!
+	出力先が例外を投げて DoGrep() から抜けても、Grep 実行中のフラグ・元に戻すを記録しないフラグ・操作ブロック・表示処理の ON/OFF を戻す
+
+	見出しの次に足すとき(表示処理の ON/OFF を切り替えた後)に投げる。
+	リアルタイム表示の設定を、今の表示処理の ON/OFF と逆にして、Grep の間に切り替えさせる
+	(テストの編集ウィンドウはウィンドウを作らないので、表示処理は初めから OFF のことがある)。
+*/
+TEST_F(GrepOutputTargetTest, ExceptionFromTargetRestoresState)
+{
+	AddBasicFiles();
+	auto& view = pcEditWnd->GetActiveView();
+	const bool bDrawSwitchBefore = view.GetDrawSwitch();
+	auto& search = GetDllShareData().m_Common.m_sSearch;
+	const auto saved = search.m_bGrepRealTimeView;
+	search.m_bGrepRealTimeView = bDrawSwitchBefore ? FALSE : TRUE;	// Grep の間は、今と逆の値に切り替えさせる
+
+	FakeGrepOutput output;
+	output.onAppend = [](size_t count) {
+		if (count == 1) {
+			throw std::runtime_error("Append failed");
+		}
+	};
+	EXPECT_THAT(([this, &output] { GrepTo(output, ParseGrepCommandLine(Args(L"HIT", L"*.txt", L"XS"))); }),
+		ThrowsMessage<std::runtime_error>(Eq("Append failed")));
+	search.m_bGrepRealTimeView = saved;	// 後続のテストのために戻す
+
+	EXPECT_THAT(output.chunks.size(), Eq(1u));
+	EXPECT_THAT(CEditApp::getInstance()->m_pcGrepAgent->m_bGrepRunning, IsFalse());
+	EXPECT_THAT(view.m_bDoing_UndoRedo, IsFalse());
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+	EXPECT_THAT(view.GetDrawSwitch(), Eq(bDrawSwitchBefore));
+}
+
+/*!
+	X が無いとき、Grep の後に検索したフォルダーへ移れなくても(検索の間に消えた)、例外を投げず、カレントディレクトリを変えない
+
+	見出しを足すとき(検索の前)に、検索するフォルダーを消す。
+*/
+TEST_F(GrepOutputTargetTest, KeepsCurrentDirectoryWhenFolderRemoved)
+{
+	folder.AddFolder(L"gone");
+	const auto target = folder.Path() / L"gone";
+	const auto current = std::filesystem::current_path();
+
+	FakeGrepOutput output;
+	output.onAppend = [&target](size_t count) {
+		if (count == 0) {
+			std::error_code ec;
+			std::filesystem::remove(target, ec);
+		}
+	};
+	const auto args = std::format(LR"(-GREPMODE -GKEY="HIT" -GFILE="*.txt" -GFOLDER="{}" -GOPT=S)", target.native());
+	DWORD hitCount = 1;
+	EXPECT_NO_THROW(hitCount = GrepTo(output, ParseGrepCommandLine(args)));
+
+	EXPECT_THAT(std::filesystem::exists(target), IsFalse());
+	EXPECT_THAT(hitCount, Eq(0u));
+	EXPECT_THAT(std::filesystem::current_path().native(), StrEq(current.native()));
 }
 
 /*!
