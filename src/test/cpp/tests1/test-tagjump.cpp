@@ -78,7 +78,7 @@ protected:
 
 		STagJumpResult result;
 		if (const auto target = cmd::tagjump::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false)) {
-			result = { true, target->strFile, target->nLine, target->nColumn };
+			result = { true, target.strFile, target.nLine, target.nColumn };
 		}
 		return result;
 	}
@@ -361,6 +361,6 @@ TEST_F(TagJumpTargetTest, NotFound)
 		if (*text) {
 			cDocLineMgr.AddNewLine()->SetDocLineString(std::wstring_view(text), false);
 		}
-		EXPECT_THAT(cmd::tagjump::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false).has_value(), IsFalse());
+		EXPECT_THAT(static_cast<bool>(cmd::tagjump::GetTagJumpTarget(cDocLineMgr, CLogicInt(nLineY), false)), IsFalse());
 	}
 }

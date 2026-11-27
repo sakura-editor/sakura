@@ -2921,6 +2921,21 @@ TEST_F(EditWndTest, Command_TAGJUMP001)
 }
 
 /*!
+ * コマンド：タグジャンプ(行から読んだジャンプ先へ飛べないとき)
+ *
+ * カーソルの行の :HWND: のタグを読み、そのウィンドウが無いので、
+ * 移動せずに false を返す。
+ */
+TEST_F(EditWndTest, Command_TAGJUMP101)
+{
+	ResetText(L":HWND:[00000000]無題1(3,1): x\n", CLogicPoint(0, 0));
+
+	auto& cCommander = pcEditWnd->GetActiveView().GetCommander();
+	EXPECT_THAT(cCommander.Command_TagJumpNoMessage(false), IsFalse());
+	EXPECT_THAT(GetCaretPos(), CLogicPoint(0, 0));
+}
+
+/*!
  * コマンド：逆SPACEインデント
  */
 TEST_F(EditWndTest, Command_UNINDENT_SPACE001)

@@ -512,7 +512,7 @@ bool CViewCommander::Command_TagJumpNoMessage( bool bClose )
 	}
 
 	//	Apr. 21, 2003 genta bClose追加
-	return m_pCommanderView->TagJumpSub( target->strFile.c_str(), CMyPoint( target->nColumn, target->nLine ), bClose );	//@@@ 2003.04.13
+	return m_pCommanderView->TagJumpSub( target.strFile.c_str(), CMyPoint( target.nColumn, target.nLine ), bClose );	//@@@ 2003.04.13
 }
 
 namespace cmd::tagjump {
@@ -526,9 +526,9 @@ namespace cmd::tagjump {
 	@param[in]  cDocLineMgr   文書の行
 	@param[in]  nLineY        読む行(0開始)
 	@param[in]  bEnableExtEol NEL・LS・PS を改行として扱うか
-	@return ジャンプ先。見つからなければ std::nullopt
+	@return ジャンプ先。読めなければファイルが空(false に変換される)
 */
-std::optional<STagJumpTarget> GetTagJumpTarget(
+STagJumpTarget GetTagJumpTarget(
 	const CDocLineMgr&	cDocLineMgr,
 	CLogicInt			nLineY,
 	bool				bEnableExtEol
@@ -538,7 +538,7 @@ std::optional<STagJumpTarget> GetTagJumpTarget(
 	CLogicInt		nLineLen;
 	const wchar_t*	pLine = CDocLine::GetDocLineStrWithEOL_Safe( cDocLineMgr.GetLine( nLineY ), &nLineLen );
 	if( nullptr == pLine ){
-		return std::nullopt;
+		return STagJumpTarget{};
 	}
 
 	// ノーマル
@@ -641,9 +641,6 @@ std::optional<STagJumpTarget> GetTagJumpTarget(
 	}
 	if( s.strJumpToFile.empty() ){
 		ReadTagJumpFilePathLine( pLine, nLineLen, bEnableExtEol, s );
-	}
-	if( s.strJumpToFile.empty() ){
-		return std::nullopt;
 	}
 
 	return STagJumpTarget{ std::move( s.strJumpToFile ), s.nJumpToLine, s.nJumpToColumn };
