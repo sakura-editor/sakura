@@ -11,7 +11,10 @@
 
 #include "basis/CEol.h"
 #include "cmd/COpeBuf.h"
+#include "cxx/ResourceHolder.hpp"
 #include "doc/CDocListener.h"
+
+#include <memory>
 
 class CEditDoc;
 class CDocLineMgr;
@@ -26,7 +29,21 @@ class CDocLineMgr;
  * このクラスは「編集プロパティの保持」を担当している。
  */
 class CDocEditor : public CDocListenerEx{
+private:
+	using COpeBlkHolder = std::unique_ptr<COpeBlk>;
+
+	using Me = CDocEditor;
+
 public:
+	/*!
+	 * @brief アンドゥバッファを後始末する
+	 */
+	static void ReleaseUndoBuffer(
+		CDocEditor* pThis
+	);
+
+	using UndoBufferHolder = cxx::ResourceHolder<&ReleaseUndoBuffer>;
+
 	explicit CDocEditor(CEditDoc* pcDoc) noexcept;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -77,12 +94,22 @@ public:
 	//! クリップボードから貼り付け可能か？
 	bool IsEnablePaste( void ) const;
 
+	/*!
+	 * @brief アンドゥバッファを準備する
+	 */
+	UndoBufferHolder AllocUndoBuffer();
+
+	/*!
+	 * @brief 現在の操作ブロックを取得する
+	 */
+	COpeBlk* GetOpeBlk() const noexcept;
+
 	CEditDoc*		m_pcDocRef;
 
 	CEol 			m_cNewLineCode{ EEolType::cr_and_lf };	//!< Enter押下時に挿入する改行コード種別
 
 	COpeBuf			m_cOpeBuf{};				//!< アンドゥバッファ
-	COpeBlk*		m_pcOpeBlk = nullptr;		//!< 操作ブロック
+	COpeBlkHolder	m_OpeBlk = nullptr;		//!< 操作ブロック
 	int				m_nOpeBlkRedawCount = 0;	//!< OpeBlkの再描画非対象数
 
 	bool			m_bInsMode = true;			//!< 挿入・上書きモード

@@ -19,6 +19,46 @@
 #include "_os/CClipboard.h"
 #include "parse/DetectIndentationStyle.h"
 
+using UndoBufferHolder = CDocEditor::UndoBufferHolder;
+
+/*!
+ * @brief アンドゥバッファを後始末する
+ */
+/* static */ void CDocEditor::ReleaseUndoBuffer(
+	CDocEditor* pThis
+)
+{
+	// 現在の操作ブロックがない場合、何もしない
+	if (!pThis->m_OpeBlk) return;
+
+	// 現在の操作ブロックの参照カウンタを減らす
+	if (const auto refCount = pThis->m_OpeBlk->Release();
+		0 < refCount) return;
+
+	// 操作ブロックの格納数を取得する
+	if (const auto opeCount = pThis->m_OpeBlk->GetNum();
+		!opeCount)
+	{
+		// 空っぽなので捨てる
+		pThis->m_OpeBlk.reset(nullptr);
+
+		return;
+	}
+
+	// スマートポインターから切り離す
+	auto pOpeBlk = pThis->m_OpeBlk.release();
+
+	// アンドゥバッファに操作を追加する
+	pThis->m_cOpeBuf.AppendOpeBlk(pOpeBlk);
+
+	if (!GetEditWnd().UpdateTextWrap() &&	// 折り返し方法関連の更新
+		0 < pOpeBlk->GetNum() - pThis->m_nOpeBlkRedawCount)
+	{
+		// この仕様が必要かどうかは微妙
+		GetEditWnd().RedrawAllViews(&GetActiveView());	//	他のペインの表示を更新
+	}
+}
+
 CDocEditor::CDocEditor(CEditDoc* pcDoc) noexcept
 : m_pcDocRef(pcDoc)
 {
@@ -183,6 +223,33 @@ void CDocEditor::SetImeMode( int mode )
 bool CDocEditor::IsEnablePaste() const
 {
 	return CClipboard::HasValidData();
+}
+
+/*!
+ * @brief アンドゥバッファを準備する
+ */
+UndoBufferHolder CDocEditor::AllocUndoBuffer()
+{
+	// 現在の操作ブロックがない場合、新しく割り当てる
+	if (!GetOpeBlk()) {
+		m_OpeBlk = std::make_unique<COpeBlk>();
+	}
+
+	// 現在の操作ブロックの参照カウンタを増やす
+	GetOpeBlk()->AddRef();
+
+	// アンドゥバッファの後始末を行うためのリソースホルダーを返す
+	return UndoBufferHolder{ this };
+}
+
+/*!
+ * @brief 現在の操作ブロックを取得する
+ */
+COpeBlk* CDocEditor::GetOpeBlk() const noexcept
+{
+	return m_OpeBlk
+		? m_OpeBlk.get()
+		: nullptr;
 }
 
 /*!
