@@ -9,8 +9,6 @@
 #define SAKURA_CVIEWCOMMANDER_2790DAD1_148B_4DC5_8BCB_A2CE3D595F50_H_
 #pragma once
 
-#include <optional>
-
 #include "basis/CEol.h"
 #include "env/DLLSHAREDATA.h"
 #include "types/CType.h"
@@ -467,9 +465,12 @@ struct STagJumpTarget {
 	std::wstring	strFile;		//!< ジャンプ先のファイル(無題のウィンドウでは :HWND: のタグ)
 	int				nLine = 0;		//!< ジャンプ先の行(1開始。0以下は指定なし)
 	int				nColumn = 0;	//!< ジャンプ先の桁(1開始。0以下は指定なし)
+
+	//! ジャンプ先を読めたか(ファイルが空なら読めていない)
+	explicit operator bool() const noexcept { return !strFile.empty(); }
 };
 
-std::optional<STagJumpTarget> GetTagJumpTarget( const CDocLineMgr& cDocLineMgr, CLogicInt nLineY, bool bEnableExtEol );	// 行からタグジャンプ先を読む(tags ファイルは見ない)
+STagJumpTarget GetTagJumpTarget( const CDocLineMgr& cDocLineMgr, CLogicInt nLineY, bool bEnableExtEol );	// 行からタグジャンプ先を読む(tags ファイルは見ない。読めなければファイルが空)
 
 } // namespace cmd::tagjump
 
