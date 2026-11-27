@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -16,11 +16,13 @@
 #define SAKURA_COPEBUF_6320338E_171D_4A96_B110_6A9E8407492A_H_
 #pragma once
 
-class COpeBuf;
-
-#include <vector>
 #include "_main/global.h"
-class COpeBlk;/// 2002/2/10 aroka
+#include "cmd/COpeBlk.h"
+
+#include <memory>
+#include <vector>
+
+class COpeBuf;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -29,6 +31,8 @@ class COpeBlk;/// 2002/2/10 aroka
 	@brief アンドゥ・リドゥバッファ
 */
 class COpeBuf {
+private:
+	using COpeBlkHolder = std::unique_ptr<COpeBlk>;
 
 	using Me = COpeBuf;
 
@@ -61,8 +65,9 @@ public:
 	void DUMP();								//!< 編集操作要素ブロックのダンプ
 
 private:
-	std::vector<COpeBlk*>	m_vCOpeBlkArr;		//!< 操作ブロックの配列
-	int						m_nCurrentPointer;	//!< 現在位置
-	int						m_nNoModifiedIndex;	//!< 無変更な状態になった位置
+	std::vector<COpeBlkHolder>	m_vCOpeBlkArr{};		//!< 操作ブロックの配列
+	int							m_nCurrentPointer = 0;	//!< 現在位置
+	int							m_nNoModifiedIndex = 0;	//!< 無変更な状態になった位置
 };
+
 #endif /* SAKURA_COPEBUF_6320338E_171D_4A96_B110_6A9E8407492A_H_ */

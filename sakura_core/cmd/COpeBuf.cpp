@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -22,19 +22,15 @@
 /* COpeBufクラス構築 */
 COpeBuf::COpeBuf()
 {
-	m_nCurrentPointer = 0;	/* 現在位置 */
-	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
+	return;
 }
 
 /* COpeBufクラス消滅 */
 COpeBuf::~COpeBuf()
 {
-	/* 操作ブロックの配列を削除する */
-	int size = (int)m_vCOpeBlkArr.size();
-	for( int i = 0; i < size; ++i ){
-		SAFE_DELETE(m_vCOpeBlkArr[i]);
-	}
-	m_vCOpeBlkArr.clear();
+	ClearAll();
+
+	return;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -44,13 +40,17 @@ COpeBuf::~COpeBuf()
 /* Undo可能な状態か */
 bool COpeBuf::IsEnableUndo() const
 {
-	return 0 < m_vCOpeBlkArr.size() && 0 < m_nCurrentPointer;
+	return
+		!m_vCOpeBlkArr.empty() &&
+		0 < m_nCurrentPointer;
 }
 
 /* Redo可能な状態か */
 bool COpeBuf::IsEnableRedo() const
 {
-	return 0 < m_vCOpeBlkArr.size() && m_nCurrentPointer < (int)m_vCOpeBlkArr.size();
+	return
+		!m_vCOpeBlkArr.empty() &&
+		m_nCurrentPointer < std::ssize(m_vCOpeBlkArr);
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -63,13 +63,10 @@ bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 	/* 現在位置より後ろ（アンドゥ対象）がある場合は、消去 */
 	int size = (int)m_vCOpeBlkArr.size();
 	if( m_nCurrentPointer < size ){
-		for( int i = m_nCurrentPointer; i < size; ++i ){
-			SAFE_DELETE(m_vCOpeBlkArr[i]);
-		}
 		m_vCOpeBlkArr.resize(m_nCurrentPointer);
 	}
 	/* 配列のメモリサイズを調整 */
-	m_vCOpeBlkArr.push_back(pcOpeBlk);
+	m_vCOpeBlkArr.emplace_back(pcOpeBlk);
 	m_nCurrentPointer++;
 	return true;
 }
@@ -78,10 +75,6 @@ bool COpeBuf::AppendOpeBlk( COpeBlk* pcOpeBlk )
 void COpeBuf::ClearAll()
 {
 	/* 操作ブロックの配列を削除する */
-	int size = (int)m_vCOpeBlkArr.size();
-	for( int i = 0; i < size; ++i ){
-		SAFE_DELETE(m_vCOpeBlkArr[i]);
-	}
 	m_vCOpeBlkArr.clear();
 	m_nCurrentPointer = 0;	/* 現在位置 */
 	m_nNoModifiedIndex = 0;	/* 無変更な状態になった位置 */
@@ -110,7 +103,9 @@ COpeBlk* COpeBuf::DoUndo( bool* pbModified )
 	}else{
 		*pbModified = true;
 	}
-	return m_vCOpeBlkArr[m_nCurrentPointer];
+	return m_vCOpeBlkArr[m_nCurrentPointer]
+		? m_vCOpeBlkArr[m_nCurrentPointer].get()
+		: nullptr;
 }
 
 /* 現在のRedo対象の操作ブロックを返す */
@@ -121,7 +116,7 @@ COpeBlk* COpeBuf::DoRedo( bool* pbModified )
 	if( !IsEnableRedo() ){
 		return nullptr;
 	}
-	pcOpeBlk = m_vCOpeBlkArr[m_nCurrentPointer];
+	pcOpeBlk = m_vCOpeBlkArr[m_nCurrentPointer].get();
 	m_nCurrentPointer++;
 	if( m_nCurrentPointer == m_nNoModifiedIndex ){		/* 無変更な状態になった位置 */
 		*pbModified = false;
