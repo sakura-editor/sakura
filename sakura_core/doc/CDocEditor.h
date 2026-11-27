@@ -107,4 +107,6 @@ private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
 
+CDocEditor& GetDocEditor();
+
 #endif /* SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_ */
