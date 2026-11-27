@@ -6,7 +6,7 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
@@ -21,17 +21,12 @@
 
 COpeBlk::COpeBlk()
 {
-	m_refCount = 0;
+	return;
 }
 
 COpeBlk::~COpeBlk()
 {
-	/* 操作の配列を削除する */
-	int size = (int)m_ppCOpeArr.size();
-	for( int i = 0; i < size; ++i ){
-		SAFE_DELETE(m_ppCOpeArr[i]);
-	}
-	m_ppCOpeArr.clear();
+	return;
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
@@ -55,7 +50,7 @@ bool COpeBlk::AppendOpe( COpe* pcOpe )
 	}
 
 	/* 配列のメモリサイズを調整 */
-	m_ppCOpeArr.push_back(pcOpe);
+	m_ppCOpeArr.emplace_back(pcOpe);
 	return true;
 }
 
@@ -65,7 +60,7 @@ COpe* COpeBlk::GetOpe( int nIndex )
 	if( GetNum() <= nIndex ){
 		return nullptr;
 	}
-	return m_ppCOpeArr[nIndex];
+	return m_ppCOpeArr[nIndex].get();
 }
 
 // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
