@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -9,15 +9,25 @@
 #define SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_
 #pragma once
 
-#include "doc/CDocListener.h"
+#include "basis/CEol.h"
 #include "cmd/COpeBuf.h"
+#include "doc/CDocListener.h"
 
 class CEditDoc;
 class CDocLineMgr;
 
+/*!
+ * @brief エディタークラス
+ *
+ * 編集ドキュメントの編集機能を提供する
+ * ・・・はずだが、編集機能は実装されていない。
+ *
+ * 現状、編集機能はCViewCommanderクラスに実装されており、
+ * このクラスは「編集プロパティの保持」を担当している。
+ */
 class CDocEditor : public CDocListenerEx{
 public:
-	CDocEditor(CEditDoc* pcDoc);
+	explicit CDocEditor(CEditDoc* pcDoc) noexcept;
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                         イベント                            //
@@ -67,19 +77,25 @@ public:
 	//! クリップボードから貼り付け可能か？
 	bool IsEnablePaste( void ) const;
 
-public:
 	CEditDoc*		m_pcDocRef;
-	CEol 			m_cNewLineCode;				//!< Enter押下時に挿入する改行コード種別
-	COpeBuf			m_cOpeBuf;					//!< アンドゥバッファ
-	COpeBlk*		m_pcOpeBlk;					//!< 操作ブロック
-	int				m_nOpeBlkRedawCount;		//!< OpeBlkの再描画非対象数
-	bool			m_bInsMode;					//!< 挿入・上書きモード Oct. 2, 2005 genta
-	bool			m_bIsDocModified;
+
+	CEol 			m_cNewLineCode{ EEolType::cr_and_lf };	//!< Enter押下時に挿入する改行コード種別
+
+	COpeBuf			m_cOpeBuf{};				//!< アンドゥバッファ
+	COpeBlk*		m_pcOpeBlk = nullptr;		//!< 操作ブロック
+	int				m_nOpeBlkRedawCount = 0;	//!< OpeBlkの再描画非対象数
+
+	bool			m_bInsMode = true;			//!< 挿入・上書きモード
+
+	bool			m_bIsDocModified = false;
 };
 
 class CDocEditAgent{
 public:
-	CDocEditAgent(CDocLineMgr* pcDocLineMgr) : m_pcDocLineMgr(pcDocLineMgr) { }
+	explicit CDocEditAgent(CDocLineMgr* pcDocLineMgr) noexcept
+		: m_pcDocLineMgr(pcDocLineMgr)
+	{
+	}
 
 	// -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 	//                           操作                              //
@@ -90,4 +106,5 @@ public:
 private:
 	CDocLineMgr* m_pcDocLineMgr;
 };
+
 #endif /* SAKURA_CDOCEDITOR_87202DA6_D60E_4235_AD2F_02507F4E101A_H_ */

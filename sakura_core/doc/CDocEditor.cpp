@@ -1,7 +1,7 @@
 ﻿/*! @file */
 /*
 	Copyright (C) 2008, kobake
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	SPDX-License-Identifier: Zlib
 */
@@ -19,12 +19,8 @@
 #include "_os/CClipboard.h"
 #include "parse/DetectIndentationStyle.h"
 
-CDocEditor::CDocEditor(CEditDoc* pcDoc)
+CDocEditor::CDocEditor(CEditDoc* pcDoc) noexcept
 : m_pcDocRef(pcDoc)
-, m_cNewLineCode( EEolType::cr_and_lf )		//	New Line Type
-, m_pcOpeBlk( nullptr )
-, m_bInsMode( true )	// Oct. 2, 2005 genta
-, m_bIsDocModified( false )	/* 変更フラグ */ // Jan. 22, 2002 genta 型変更
 {
 	//	Oct. 2, 2005 genta 挿入モード
 	this->SetInsMode( GetDllShareData().m_Common.m_sGeneral.m_bIsINSMode );
