@@ -22,8 +22,6 @@
 #include "cmd/CViewCommander.h"
 #include "cmd/CViewCommander_inline.h"
 
-#include "cmd/ECopyAndPasteMode.hpp"
-
 #include "view/colors/CColorStrategy.h"
 #include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
@@ -419,40 +417,6 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, size_t cchPaste )
 
 	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	// 2002.01.25 hor
 	return;
-}
-
-/** 矩形貼り付け(クリップボードから矩形貼り付け)
-	@param [in] option 未使用
-
-	@date 2004.06.29 Moca 未使用だったものを有効にする
-	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
-*/
-void CViewCommander::Command_PASTEBOX( [[maybe_unused]] LPARAM option )
-{
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
-	{
-		ErrorBeep();
-		return;
-	}
-
-	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
-	{
-		return;
-	}
-
-	// クリップボードからデータを取得
-	CNativeW	cmemClip;
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, nullptr ) ){
-		ErrorBeep();
-		return;
-	}
-	// 2004.07.13 Moca \0コピー対策
-	const size_t cchText = cmemClip.GetStringLength();
-	const wchar_t *pszText = cmemClip.GetStringPtr();
-
-	Command_PASTEBOX(pszText, cchText);
-	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
-	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
 
 /*! 矩形文字列挿入
