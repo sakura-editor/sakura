@@ -465,13 +465,14 @@ jobs:
       if: ${{ matrix.config == 'Release' }}
       shell: cmd
 
+    ## リリースできる状態になるまで、公開停止
     ## see https://github.com/actions/upload-artifact
-    - name: Upload Installer
-      uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-      if: ${{ matrix.config == 'Release' }}
-      with:
-        name: Installer ${{ matrix.platform }} ${{ matrix.config }}
-        path: 'sakura-*-Installer.zip'
+    ## - name: Upload Installer
+    ##   uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+    ##   if: ${{ matrix.config == 'Release' }}
+    ##   with:
+    ##     name: Installer ${{ matrix.platform }} ${{ matrix.config }}
+    ##     path: 'sakura-*-Installer.zip'
 
     - name: Upload Exe
       uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
