@@ -150,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\main\cpp\basis\initialization_error.hpp" />
     <ClInclude Include="..\src\main\cpp\basis\make_initialization_error.hpp" />
+    <ClInclude Include="..\src\main\cpp\cmd\ECopyAndPasteMode.hpp" />
     <ClInclude Include="..\src\main\cpp\extmodule\DbgHelp.hpp" />
     <ClInclude Include="..\src\main\cpp\util\debug\MiniDumpWriter.hpp" />
     <ClInclude Include="..\src\main\cpp\util\debug\StackTraceWriter.hpp" />
