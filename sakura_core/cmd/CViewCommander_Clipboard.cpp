@@ -19,8 +19,9 @@
 */
 
 #include "StdAfx.h"
-#include "CViewCommander.h"
-#include "CViewCommander_inline.h"
+#include "cmd/CViewCommander.h"
+#include "cmd/CViewCommander_inline.h"
+
 #include "view/colors/CColorStrategy.h"
 #include "view/colors/CColor_Found.h"
 #include "uiparts/CWaitCursor.h"
@@ -141,17 +142,20 @@ void CViewCommander::Command_COPY(
 	return;
 }
 
-/** 貼り付け(クリップボードから貼り付け)
-	@param [in] option 貼り付け時のオプション
-	@li 0x01 改行コード変換有効
-	@li 0x02 改行コード変換無効
-	@li 0x04 ラインモード貼り付け有効
-	@li 0x08 ラインモード貼り付け無効
-	@li 0x10 矩形コピーは常に矩形貼り付け
-	@li 0x20 矩形コピーは常に通常貼り付け
-
-	@date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
-*/
+/*!
+ * @brief 貼り付け(クリップボードから貼り付け)
+ *
+ * @param [in] option 貼り付け時のオプション
+ *
+ * @li 0x01 改行コード変換を有効にする
+ * @li 0x02 改行コード変換を無効にする
+ * @li 0x04 ラインモード貼り付けを有効にする
+ * @li 0x08 ラインモード貼り付けを無効にする
+ * @li 0x10 矩形貼り付けを有効にする
+ * @li 0x20 矩形貼り付けを無効にする
+ *
+ * @date 2007.10.04 ryoji MSDEVLineSelect形式の行コピー対応処理を追加（VS2003/2005のエディタと類似の挙動に）
+ */
 void CViewCommander::Command_PASTE( int option )
 {
 	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() ){	/* マウスによる範囲選択中 */
@@ -159,14 +163,35 @@ void CViewCommander::Command_PASTE( int option )
 		return;
 	}
 
+	// モード解釈のため enum を使う
+	using enum ECopyAndPasteMode;
+
+	// オプション指定をフラグに変換
+	const auto mode = static_cast<ECopyAndPasteMode>(option);
+
+	// 編集設定を参照する
+	const auto& sEdit = GetDllShareData().m_Common.m_sEdit;
+
+	// 矩形貼り付けのモードを解釈する
+	// 引数で有効指定、または、設定が有効かつ無効指定されていない
+	const auto bAutoColumnPaste =
+		(mode & EnableColumnModePaste) == EnableColumnModePaste ||
+		sEdit.m_bAutoColumnPaste && (mode & DisableColumnModePaste) != DisableColumnModePaste;
+
+	// 改行コード変換のモードを解釈する
+	const auto bConvertEol =
+		(mode & EnableEolConversion) == EnableEolConversion ||
+		sEdit.m_bConvertEOLPaste && (mode & DisableEolConversion) != DisableEolConversion;
+
+	// ラインモード貼り付けのモードを解釈する
+	const auto bLineSelectOption =
+		(mode & EnableLineModePaste) == EnableLineModePaste||
+		sEdit.m_bEnableLineModePaste && (mode & DisableLineModePaste) != DisableLineModePaste;
+
 	// クリップボードからデータを取得 -> clipData, bColumnSelect
 	std::wstring	clipData;
 	bool		bColumnSelect;
 	bool		bLineSelect = false;
-	bool		bLineSelectOption = 
-		((option & 0x04) == 0x04) ? true :
-		((option & 0x08) == 0x08) ? false :
-		GetDllShareData().m_Common.m_sEdit.m_bEnableLineModePaste;
 
 	if( !m_pCommanderView->MyGetClipboardData( clipData, &bColumnSelect, bLineSelectOption ? &bLineSelect: nullptr ) ){
 		ErrorBeep();
@@ -176,16 +201,6 @@ void CViewCommander::Command_PASTE( int option )
 	// クリップボードデータ取得 -> pszText, nTextLen
 	size_t nTextLen = clipData.size();
 	const wchar_t*	pszText = clipData.data();
-
-	bool bConvertEol = 
-		((option & 0x01) == 0x01) ? true :
-		((option & 0x02) == 0x02) ? false :
-		GetDllShareData().m_Common.m_sEdit.m_bConvertEOLPaste;
-
-	bool bAutoColumnPaste = 
-		((option & 0x10) == 0x10) ? true :
-		((option & 0x20) == 0x20) ? false :
-		GetDllShareData().m_Common.m_sEdit.m_bAutoColumnPaste != FALSE;
 
 	// 矩形コピーのテキストは常に矩形貼り付け
 	if( bAutoColumnPaste ){
@@ -402,40 +417,6 @@ void CViewCommander::Command_PASTEBOX( const wchar_t *szPaste, size_t cchPaste )
 
 	m_pCommanderView->SetDrawSwitch(bDrawSwitchOld);	// 2002.01.25 hor
 	return;
-}
-
-/** 矩形貼り付け(クリップボードから矩形貼り付け)
-	@param [in] option 未使用
-
-	@date 2004.06.29 Moca 未使用だったものを有効にする
-	オリジナルのCommand_PASTEBOX(void)はばっさり削除 (genta)
-*/
-void CViewCommander::Command_PASTEBOX( [[maybe_unused]] LPARAM option )
-{
-	if( m_pCommanderView->GetSelectionInfo().IsMouseSelecting() )	// マウスによる範囲選択中
-	{
-		ErrorBeep();
-		return;
-	}
-
-	if( !GetDllShareData().m_Common.m_sView.m_bFontIs_FIXED_PITCH )	// 現在のフォントは固定幅フォントである
-	{
-		return;
-	}
-
-	// クリップボードからデータを取得
-	CNativeW	cmemClip;
-	if( !m_pCommanderView->MyGetClipboardData( cmemClip, nullptr ) ){
-		ErrorBeep();
-		return;
-	}
-	// 2004.07.13 Moca \0コピー対策
-	const size_t cchText = cmemClip.GetStringLength();
-	const wchar_t *pszText = cmemClip.GetStringPtr();
-
-	Command_PASTEBOX(pszText, cchText);
-	m_pCommanderView->AdjustScrollBars(); // 2007.07.22 ryoji
-	m_pCommanderView->Redraw();			// 2002.01.25 hor
 }
 
 /*! 矩形文字列挿入

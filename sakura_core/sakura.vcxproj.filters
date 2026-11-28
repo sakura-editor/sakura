@@ -208,6 +208,9 @@
     <ClInclude Include="..\src\main\cpp\basis\make_initialization_error.hpp">
       <Filter>Cpp Source Files\basis</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\main\cpp\cmd\ECopyAndPasteMode.hpp">
+      <Filter>Cpp Source Files\cmd</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\main\cpp\cxx\com_pointer.hpp">
       <Filter>Cpp Source Files\cxx</Filter>
     </ClInclude>
