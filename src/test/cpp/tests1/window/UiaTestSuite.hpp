@@ -9,6 +9,7 @@
 #include "cxx/com_pointer.hpp"
 #include "cxx/type_of_Nth_lambda_arg.hpp"
 #include "dlg/ModalDialogCloser.hpp"
+#include "util/ole/OleInit.hpp"
 #include "util/tchar_convert.h"
 
 // UI Automation経由でGUI操作を行う
@@ -18,48 +19,6 @@
 #include "testing/StartEditorProcess.hpp"
 
 namespace cxx {
-
-/*!
- * @brief COMライブラリの初期化状態をRAIIで管理するクラス
- */
-class COleInit final
-{
-private:
-	/*!
-	 * @brief COMライブラリのクリーンアップ
-	 */
-	static void _CleanUp(
-		[[maybe_unused]] const COleInit* /* pThis */
-	) noexcept
-	{
-		// OLEをシャットダウンする
-		::OleUninitialize();
-	}
-
-	using Holder = cxx::ResourceHolder<&_CleanUp>;
-
-	using Me = COleInit;
-
-	/*!
-	 * @brief COMライブラリの初期化状態
-	 * 
-	 * クラスの生成と同時にSTAモードでCOMライブラリを初期化する。
-	 * 初期化に成功した場合、クリーンアップ用のリソースホルダーを生成する。
-	 * 初期化失敗した場合、リソースホルダーはnullptrとなり、クリーンアップは行われない。
-	 */
-	Holder m_Initialized = SUCCEEDED(::OleInitialize(nullptr)) ? this : nullptr;
-
-public:
-	COleInit() = default;
-	~COleInit() noexcept = default;
-
-	COleInit(const Me&) = delete;
-	Me& operator=(const Me&) = delete;
-
-	explicit operator bool() const noexcept {
-		return m_Initialized;
-	}
-};
 
 template<typename TQuery, typename R = cxx::lambda_traits<TQuery>::return_type>
 R WaitForQuery(
@@ -122,7 +81,7 @@ struct UiaTestSuite
 	//! デフォルトの待機時間
 	static constexpr auto defaultTimeoutMillis = 5000;
 
-	static inline std::unique_ptr<cxx::COleInit> pcOleInit = nullptr;
+	static inline std::unique_ptr<cxx::OleInit> pcOleInit = nullptr;
 
 	static BOOL CALLBACK CloseBlockingWindowProc(
 		_In_ HWND   hWnd,

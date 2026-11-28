@@ -358,7 +358,7 @@ TEST_F(CSakuraEnvironmentTest, GetDlgInitialDir001)
 TEST_F(CSakuraEnvironmentTest, ResolvePath001)
 {
 	// OLEを初期化する
-	const auto pcOleInit = std::make_unique<cxx::COleInit>();
+	const auto pcOleInit = std::make_unique<cxx::OleInit>();
 
 	// ショートカットのターゲットとなるファイルを作成する
 	const auto target = GetTempFilePathWithExt(L"lnk", L"txt");
