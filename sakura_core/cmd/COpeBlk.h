@@ -6,20 +6,22 @@
 */
 /*
 	Copyright (C) 1998-2001, Norio Nakatani
-	Copyright (C) 2018-2022, Sakura Editor Organization
+	Copyright (C) 2018-2026, Sakura Editor Organization
 
 	This source code is designed for sakura editor.
 	Please contact the copyright holder to use this code for other purpose.
-*/
+ */
 
 #ifndef SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_
 #define SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_
 #pragma once
 
-class COpeBlk;
-
 #include "cmd/COpe.h"
+
+#include <memory>
 #include <vector>
+
+class COpeBlk;
 
 /*-----------------------------------------------------------------------
 クラスの宣言
@@ -30,6 +32,8 @@ class COpeBlk;
 	COpe を複数束ねるためのもの。Undo, Redoはこのブロック単位で行われる。
 */
 class COpeBlk {
+private:
+	using COpeHolder = std::unique_ptr<COpe>;
 
 	using Me = COpeBlk;
 
@@ -56,15 +60,14 @@ public:
 
 private:
 	//メンバ変数
-	std::vector<COpe*>	m_ppCOpeArr;	//!< 操作の配列
+	std::vector<COpeHolder>	m_ppCOpeArr{};	//!< 操作の配列
 
 	//参照カウンタ
 	//　HandleCommand内から再帰的にHandleCommandが呼ばれる場合、
 	//  内側のHandleCommand終了時にCOpeBlkが破棄されて後続の処理に影響が出るのを防ぐため、
 	//　参照カウンタを用いて一番外側のHandleCommand終了時のみCOpeBlkを破棄する。
 	//　COpeBlkをnewしたときにAddRef()するのが作法だが、しなくても使える。
-	int m_refCount;
+	int m_refCount = 0;
 };
 
-//////////////////////////////////////////////////////////////////////12
 #endif /* SAKURA_COPEBLK_2A5AF589_5860_4512_9E59_51CC2ECC37C1_H_ */

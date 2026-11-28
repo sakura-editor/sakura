@@ -30,6 +30,8 @@
 #include "CViewCommander.h"
 #include "CViewCommander_inline.h"
 
+#include "doc/CDocEditor.h"
+
 //@@@ 2002.2.2 YAZAKI マクロはCSMacroMgrに統一
 #include "macro/CSMacroMgr.h"
 #include "CEditApp.h"
@@ -41,6 +43,42 @@
 CViewCommander::CViewCommander(CEditView* pEditView) : m_pCommanderView(pEditView)
 {
 	m_pcSMacroMgr = CEditApp::getInstance()->m_pcSMacroMgr;
+}
+
+/*!
+ * @brief 現在の操作ブロックを取得する
+ *
+ * 旧方式なので使用しないこと。
+ */
+COpeBlk* CViewCommander::GetOpeBlk()
+{
+	return GetDocEditor().GetOpeBlk();
+}
+
+/*!
+ * @brief 操作ブロックを設定する
+ *
+ * 旧方式なので使用しないこと。
+ *
+ * @param p 設定する操作ブロック （new COpeBlk を指定する）
+ */
+void CViewCommander::SetOpeBlk(COpeBlk* p)
+{
+	// スマートポインターに入れて削除する
+	auto holder = std::unique_ptr<COpeBlk>(p);
+	holder.reset( nullptr );
+
+	// アンドゥバッファの準備
+	auto undoBuffer = GetDocEditor().AllocUndoBuffer();
+
+	// 余分に1つ参照カウントを増やす
+	GetOpeBlk()->AddRef();
+
+	// アンドゥバッファの後始末
+	undoBuffer = nullptr;
+
+	// 余分に増やした参照カウントを減らす
+	GetOpeBlk()->Release();
 }
 
 /*!
@@ -194,10 +232,7 @@ BOOL CViewCommander::HandleCommand(
 	//	ここより前ではUndoバッファの準備ができていないので
 	//	文書の操作を行ってはいけない
 	//@@@ 2002.2.2 YAZAKI HandleCommand内でHandleCommandを呼び出せない問題に対処（何か副作用がある？）
-	if( nullptr == GetOpeBlk() ){	/* 操作ブロック */
-		SetOpeBlk(new COpeBlk);
-	}
-	GetOpeBlk()->AddRef();	//参照カウンタ増加
+	auto undoBuffer = GetDocEditor().AllocUndoBuffer();
 
 	//	Jan. 10, 2005 genta コメント
 	//	ここより後ではswitchの後ろでUndoを正しく登録するため，
@@ -689,8 +724,8 @@ BOOL CViewCommander::HandleCommand(
 		}
 	}
 
-	/* アンドゥバッファの処理 */
-	m_pCommanderView->SetUndoBuffer( true );
+	// アンドゥバッファの後始末
+	undoBuffer = nullptr;
 
 	return bRet;
 }

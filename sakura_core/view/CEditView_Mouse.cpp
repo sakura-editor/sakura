@@ -1867,10 +1867,7 @@ IFACEMETHODIMP CEditView::Drop(
 	}
 
 	// アンドゥバッファの準備
-	if( nullptr == m_cCommander.GetOpeBlk() ){
-		m_cCommander.SetOpeBlk(new COpeBlk);
-	}
-	m_cCommander.GetOpeBlk()->AddRef();
+	auto undoBuffer = GetDocEditor().AllocUndoBuffer();
 
 	/* 移動の場合、位置関係を算出 */
 	if( bMove ){
@@ -2058,8 +2055,8 @@ IFACEMETHODIMP CEditView::Drop(
 	}
 	GetSelectionInfo().DrawSelectArea();
 
-	/* アンドゥバッファの処理 */
-	SetUndoBuffer();
+	// アンドゥバッファの後始末
+	undoBuffer = nullptr;
 
 	::GlobalUnlock( hData );
 	// 2004.07.12 fotomo/もか メモリリークの修正
@@ -2361,15 +2358,14 @@ void CEditView::DragSelection()
 		// 移動範囲を削除する
 		// ドロップ先が移動を処理したが自ドキュメントにここまで変更が無い
 		// →ドロップ先は外部のウィンドウである
-		if (!GetCommander().GetOpeBlk()) {
-			GetCommander().SetOpeBlk(new COpeBlk);
-		}
-		GetCommander().GetOpeBlk()->AddRef();
+
+		// アンドゥバッファの準備
+		auto undoBuffer = GetDocEditor().AllocUndoBuffer();
 
 		// 選択範囲を削除
 		DeleteData(true);
 
-		// アンドゥバッファの処理
-		SetUndoBuffer();
+		// アンドゥバッファの後始末
+		undoBuffer = nullptr;
 	}
 }

@@ -7026,6 +7026,49 @@ TEST_F(EditWndTest, DISABLED_Timeout101)
 	});
 }
 
+/*!
+ * アンドゥバッファのテスト
+ *
+ * 旧式のテスト
+ */
+TEST_F(EditWndTest, UndoBuffer001)
+{
+	auto& view = GetActiveView();
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+
+	if (!view.GetCommander().GetOpeBlk()) {
+		view.GetCommander().SetOpeBlk(new COpeBlk);
+	}
+	view.GetCommander().GetOpeBlk()->AddRef();
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), NotNull());
+
+	view.SetUndoBuffer();
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+}
+
+/*!
+ * アンドゥバッファのテスト
+ *
+ * 新方式のテスト
+ */
+TEST_F(EditWndTest, UndoBuffer002)
+{
+	auto& view = GetActiveView();
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+
+	auto undoBuffer = GetDocEditor().AllocUndoBuffer();
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), NotNull());
+
+	undoBuffer = nullptr;
+
+	EXPECT_THAT(view.GetCommander().GetOpeBlk(), IsNull());
+}
+
 TEST(CDiffManager, test001)
 {
 	auto pcDiffManager = CDiffManager::getInstance();

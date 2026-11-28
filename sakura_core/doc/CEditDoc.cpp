@@ -165,6 +165,16 @@ CDocLineMgr& GetDocLineMgr()
 }
 
 /*!
+ * @brief エディターの参照を取得する
+ *
+ * @throws CEditDocが生成されていない
+ */
+CDocEditor& GetDocEditor()
+{
+	return GetEditDoc().m_cDocEditor;
+}
+
+/*!
  * @brief レイアウトマネージャーの参照を取得する
  *
  * @throws CEditDocが生成されていない

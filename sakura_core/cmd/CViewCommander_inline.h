@@ -27,15 +27,6 @@ inline HWND CViewCommander::GetMainWindow()
 {
 	return ::GetParent( m_pCommanderView->m_hwndParent );
 }
-inline COpeBlk* CViewCommander::GetOpeBlk()
-{
-	return GetDocument()->m_cDocEditor.m_pcOpeBlk;
-}
-inline void CViewCommander::SetOpeBlk(COpeBlk* p)
-{
-	GetDocument()->m_cDocEditor.m_pcOpeBlk = p;
-	GetDocument()->m_cDocEditor.m_nOpeBlkRedawCount = 0;
-}
 inline CLayoutRange& CViewCommander::GetSelect()
 {
 	return m_pCommanderView->GetSelectionInfo().m_sSelect;
